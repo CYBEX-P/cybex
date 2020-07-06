@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="jumbotron">
+  <h1 class="display-4">CYBEX</h1>
+  <p class="lead">Cyber Data Exchange
+  <hr class="my-4">
+    <p>Next generation cyber data exchange framework</p>
+  <a class="btn btn-primary btn-lg" href="/graph" role="button">Graph</a>
+  <a class="btn btn-primary btn-lg" href="/admin" role="button">Admin</a>
+  {% if user.is_authenticated %}
+    <a class="btn btn-primary btn-lg" href="{% url 'logout' %}" role="button">Logout</a>
+    {% else %}
+  <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Login</a>
+  {% endif %}
+  {% endblock %}
+</div>
