@@ -84,6 +84,7 @@ def enrichLocalNode(enrich_type, value, node_type, graph):
     elif enrich_type == "mailservers":
             status = getMailServer(value, graph)
             return json.dumps({"insert status" : status})
+            
     elif enrich_type == "cybexCount":
             #status = insertCybexCount(value, graph)
             status = cybexCountHandler(node_type,value)
