@@ -1,15 +1,13 @@
 import shodan
 import yaml
 from py2neo import Graph, Node, Relationship
+from django.conf import settings
 
 #TODO
 #Move to django.settings. and document
 def shodan_lookup(ip):
-    with open('../config.yaml','r') as f:
-        conf = yaml.load(f)
-
-
-    API_KEY = conf['shodanData']['apikey']
+    
+    API_KEY = settings.SHODAN_KEY
 
     api = shodan.Shodan(API_KEY)
     try:

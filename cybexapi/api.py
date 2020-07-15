@@ -84,6 +84,7 @@ def enrichLocalNode(enrich_type, value, node_type, graph):
     elif enrich_type == "mailservers":
             status = getMailServer(value, graph)
             return json.dumps({"insert status" : status})
+
     elif enrich_type == "cybexCount":
             #status = insertCybexCount(value, graph)
             status = cybexCountHandler(node_type,value)
@@ -113,9 +114,9 @@ class exportNeoDB(APIView):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass, current_user.graphdb.dbip, current_user.graphdb.dbport)
         g = export(graph)
-        print(g)
+        #print(g)
         p = processExport(g)
-        print(p)
+        #print(p)
         return Response(p)
 
 class insert(APIView):
