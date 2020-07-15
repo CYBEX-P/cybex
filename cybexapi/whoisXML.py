@@ -2,6 +2,7 @@ import os
 import json
 from py2neo import Graph, Node, Relationship
 import yaml
+from django.conf import settings
 
 #TODO
 #Need to convert this to use django.settings to retrieve key from env 
@@ -12,11 +13,9 @@ def whois(data):
     except ImportError:
         from urllib2 import urlopen
         
-    with open('../config.yaml','r') as f:
-        conf = yaml.load(f)
 
     domainName = data
-    apiKey = conf['whoisData']['apikey']
+    apiKey = settings.WHOIS_KEY
 
     url = 'https://www.whoisxmlapi.com/whoisserver/WhoisService?'\
         + 'domainName=' + domainName + '&apiKey=' + apiKey + "&outputFormat=JSON"
@@ -28,7 +27,7 @@ def whois(data):
 
 
 def insertWhois(data, graph, value):
-    # print(str(data))
+    print(str(data))
     if(data != 0):
         try:
             c = Node("Whois", data = data["WhoisRecord"]["registryData"]["registrant"]["organization"])
