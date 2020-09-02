@@ -11,7 +11,10 @@ The project is split into three apps
 - cybexdata
   - container project for all custom data models.
 
-Keys are stored in a .env environment file and loaded dynamicall in the settings. 
+Keys are stored in a .env environment file and loaded dynamicall in the settings.
+
+> NOTE: Docker must be installed before cloning and running. Details for installing
+> Docker can be found here: [Docker](https://docs.docker.com/get-docker/).
 
 Steps to run
 
