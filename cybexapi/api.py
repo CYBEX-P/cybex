@@ -243,7 +243,8 @@ class macro(APIView):
                 status2 = insert_netblock(value, graph)
             
             print("Done with", str(value))
-        return json.dumps(nodes)
+        return Response({"Status":"All nodes were processed."})
+        # return json.dumps(nodes)
 
 class wipe(APIView):
     permission_classes = (IsAuthenticated, )
