@@ -1,6 +1,8 @@
 from py2neo import Graph, Node, Relationship
 from cybexapi.exportDB import bucket
+from cybexapi.api import *
 import json
+import requests
 
 def pull_ip_src():
 
@@ -130,7 +132,7 @@ def replaceType(value):
 # TODO
 # Use django.settings to get keys and move URLS to settings as well.
 def cybexCountHandler(Ntype,data1):
-    graph = connect2graph()
+    # graph = connect2graph()
     Ntype1 = replaceType(Ntype)
 
     # First, query total count
@@ -157,7 +159,7 @@ def cybexCountHandler(Ntype,data1):
         numOccur = res["data"]
         numMal = resMal["data"]
         #status = insertCybex(numOccur, graph, data1)
-        status = insertCybexCount(numOccur,numMal,graph,data1,Ntype)
+        # status = insertCybexCount(numOccur,numMal,graph,data1,Ntype)
         #return jsonify({"insert status" : status})
         return status
 

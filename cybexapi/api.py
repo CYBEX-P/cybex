@@ -170,6 +170,7 @@ class macro(APIView):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass, current_user.graphdb.dbip, current_user.graphdb.dbport)
         
+        data = processExport(export(graph))
         nodes = data["Neo4j"][0][0]["nodes"]
 
         for node in nodes:
@@ -242,8 +243,8 @@ class macro(APIView):
                 status2 = insert_netblock(value, graph)
             
             print("Done with", str(value))
-
-        return json.dumps(nodes)
+        return Response({"Status":"All nodes were processed."})
+        # return json.dumps(nodes)
 
 class wipe(APIView):
     permission_classes = (IsAuthenticated, )
