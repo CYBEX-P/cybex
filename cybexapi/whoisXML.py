@@ -4,15 +4,16 @@ from py2neo import Graph, Node, Relationship
 import yaml
 from django.conf import settings
 
-#TODO
-#Need to convert this to use django.settings to retrieve key from env 
+# TODO
+# Need to convert this to use django.settings to retrieve key from env
+
+
 def whois(data):
 
     try:
         from urllib.request import urlopen
     except ImportError:
         from urllib2 import urlopen
-        
 
     domainName = data
     apiKey = settings.WHOIS_KEY
@@ -22,7 +23,7 @@ def whois(data):
 
     response = urlopen(url).read().decode('utf8')
     jsonResponse = json.loads(response)
-    
+
     return jsonResponse
 
 
@@ -30,9 +31,11 @@ def insertWhois(data, graph, value):
     print(str(data))
     if(data != 0):
         try:
-            c = Node("Whois", data = data["WhoisRecord"]["registryData"]["registrant"]["organization"])
-            ip_node = graph.nodes.match( data=value).first()
-            c_node = graph.nodes.match("Whois", data = data["WhoisRecord"]["registryData"]["registrant"]["organization"]).first()
+            c = Node("Whois", data=data["WhoisRecord"]
+                     ["registryData"]["registrant"]["organization"])
+            ip_node = graph.nodes.match(data=value).first()
+            c_node = graph.nodes.match(
+                "Whois", data=data["WhoisRecord"]["registryData"]["registrant"]["organization"]).first()
 
             if(c_node):
                 rel = Relationship(ip_node, "HAS_WHOIS", c_node)
@@ -47,9 +50,10 @@ def insertWhois(data, graph, value):
 
         except:
             try:
-                c = Node("Whois", data = data["WhoisRecord"]["registrant"])
-                ip_node = graph.nodes.match( data=value).first()
-                c_node = graph.nodes.match("Whois", data = data["WhoisRecord"]["registrant"]["organization"]).first()
+                c = Node("Whois", data=data["WhoisRecord"]["registrant"])
+                ip_node = graph.nodes.match(data=value).first()
+                c_node = graph.nodes.match(
+                    "Whois", data=data["WhoisRecord"]["registrant"]["organization"]).first()
 
                 if(c_node):
                     rel = Relationship(ip_node, "HAS_WHOIS", c_node)
@@ -61,12 +65,11 @@ def insertWhois(data, graph, value):
                     graph.create(rel)
                     print("New whois node created and linked")
                 return 1
-                
+
             except:
                 print("No registrant on file")
                 return 0
 
-        
     else:
-            print("No whois Entry")
-            return 0
+        print("No whois Entry")
+        return 0
