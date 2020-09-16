@@ -158,9 +158,9 @@ def cybexCountHandler(Ntype,data1):
     try:
         numOccur = res["data"]
         numMal = resMal["data"]
-        #status = insertCybex(numOccur, graph, data1)
+        # status = insertCybex(numOccur, graph, data1)
         # status = insertCybexCount(numOccur,numMal,graph,data1,Ntype)
-        #return jsonify({"insert status" : status})
+        # return jsonify({"insert status" : status})
         return status
 
     except:

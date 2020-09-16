@@ -85,10 +85,13 @@ def enrichLocalNode(enrich_type, value, node_type, graph):
             status = getMailServer(value, graph)
             return json.dumps({"insert status" : status})
 
-    elif enrich_type == "cybexCount":
-            #status = insertCybexCount(value, graph)
-            status = cybexCountHandler(node_type,value)
-            return json.dumps({"insert status" : status})
+    # Server is down for queries in cybexlib.py and currently is being ignored right now.
+    # elif enrich_type == "cybexCount":
+    #         #status = insertCybexCount(value, graph)
+    #         status = cybexCountHandler(node_type,value)
+    #         return json.dumps({"insert status" : status})
+
+    
     # elif enrich_type == "comment":
     #         # req = request.get_json()
     #         # Ntype = str(req['Ntype'])
@@ -103,8 +106,6 @@ def enrichLocalNode(enrich_type, value, node_type, graph):
 def insertLocalNode(Ntype, data, graph):
     status = insertNode(Ntype, data, graph)
     return status
-
-
 
 
 class exportNeoDB(APIView):
