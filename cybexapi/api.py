@@ -21,6 +21,7 @@ import json
 from cybexapi.wipe_db import wipeDB
 import pandas as pd
 import time
+import threading
 
 # TODO
 # This needs more error checking and probably a more elegent check to see if the db is available
@@ -28,7 +29,6 @@ def connect2graph(user, passw, addr, bolt_port):
     URI = "bolt://" + addr + ":" + str(bolt_port)
 
     graph = Graph(URI, auth=(user, passw))
-
     return graph
 
 # TODO
@@ -170,10 +170,19 @@ class macroCybex(APIView):
 
 # TODO
 # Move the bulk of code here to library file
+
 class macro(APIView):
     permission_classes = (IsAuthenticated, )
 
+    # Description: Runs the Phishing Investigation Macro. Note: I have implemented a multithreading
+    #               version to increase pooling rate. I have left the non-threaded version as well commented out.
+    #               To run the seralized version, comment out the threaded version and uncomment the non-threaded version.
+    # Parameters: <object>request - The user request
+    #             <object>graph - The current graph
+    # Returns: Response status
+    # Author: Spencer Kase Rohlfing & (Someone else, sorry don't know who)
     def get(self, request, format=None, data=None, ntype=None):
+        start = time.time()
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
@@ -181,80 +190,168 @@ class macro(APIView):
         data = processExport(export(graph))
         nodes = data["Neo4j"][0][0]["nodes"]
 
+        ## Start of threaded version
+        thread_list = []
         for node in nodes:
-            value = node["properties"]["data"]
-            nType = node["properties"]["type"]
-            print("--> Enriching", value)
+            thread = threading.Thread(target=self.threadedLoop, args=(node,graph))
+            thread_list.append(thread)
+        for thread in thread_list:
+            thread.start()
+        for thread in thread_list:
+            thread.join()
+        ## End of threaded version
 
-            if nType == "URL":
-                # deconstruct URL
-                status = insert_domain(value, graph)
-                print(str(status))
+        ## Start of non-threaded version
+        # for node in nodes:
+        #     value = node["properties"]["data"]
+        #     nType = node["properties"]["type"]
+        #     print("--> Enriching", value)
 
-            elif nType == "Email":
-                # deconstruct Email
-                status = insert_domain_and_user(value, graph)
-                print(str(status))
+        #     if nType == "URL":
+        #         # deconstruct URL
+        #         status = insert_domain(value, graph)
+        #         print(str(status))
 
-            elif nType == "Host":
-                # resolve IP, MX, nameservers
-                try:
-                    status1 = resolveHost(value, graph)
-                except:
-                    print("IP resolve Error")
-                try:
-                    status2 = getMailServer(value, graph)
-                except:
-                    print("MX Error")
-                try:
-                    w_results = whois(value)
-                    status3 = getNameservers(w_results, graph, value)
-                except:
-                    print("Nameserver Error")
-                try:
-                    w_results = whois(value)
-                    status3 = getRegistrar(w_results, graph, value)
-                except:
-                    print("No registrar")
+        #     elif nType == "Email":
+        #         # deconstruct Email
+        #         status = insert_domain_and_user(value, graph)
+        #         print(str(status))
 
-            elif nType == "Domain":
-                # resolve IP, MX, nameservers
-                try:
-                    status1 = resolveHost(value, graph)
-                except:
-                    print("IP resolve Error")
-                try:
-                    status2 = getMailServer(value, graph)
-                except:
-                    print("MX Error")
-                try:
-                    w_results = whois(value)
-                    status3 = getNameservers(w_results, graph, value)
-                except:
-                    print("Nameserver Error")
-                try:
-                    w_results = whois(value)
-                    status3 = getRegistrar(w_results, graph, value)
-                except:
-                    print("No registrar")
+        #     elif nType == "Host":
+        #         # resolve IP, MX, nameservers
+        #         try:
+        #             status1 = resolveHost(value, graph)
+        #         except:
+        #             print("IP resolve Error")
+        #         try:
+        #             status2 = getMailServer(value, graph)
+        #         except:
+        #             print("MX Error")
+        #         try:
+        #             w_results = whois(value)
+        #             status3 = getNameservers(w_results, graph, value)
+        #         except:
+        #             print("Nameserver Error")
+        #         try:
+        #             w_results = whois(value)
+        #             status3 = getRegistrar(w_results, graph, value)
+        #         except:
+        #             print("No registrar")
 
-            elif nType == "IP":
-                # enrich all + ports + netblock
-                enrichLocalNode('asn', value, nType, graph)
-                enrichLocalNode('gip', value, nType, graph)
-                enrichLocalNode('whois', value, nType, graph)
-                enrichLocalNode('hostname', value, nType, graph)
-                # enrich cybexp needed here
-                results = shodan_lookup(value)
-                status1 = insert_ports(results, graph, value)
+        #     elif nType == "Domain":
+        #         # resolve IP, MX, nameservers
+        #         try:
+        #             status1 = resolveHost(value, graph)
+        #         except:
+        #             print("IP resolve Error")
+        #         try:
+        #             status2 = getMailServer(value, graph)
+        #         except:
+        #             print("MX Error")
+        #         try:
+        #             w_results = whois(value)
+        #             status3 = getNameservers(w_results, graph, value)
+        #         except:
+        #             print("Nameserver Error")
+        #         try:
+        #             w_results = whois(value)
+        #             status3 = getRegistrar(w_results, graph, value)
+        #         except:
+        #             print("No registrar")
 
-                status2 = insert_netblock(value, graph)
+        #     elif nType == "IP":
+        #         # enrich all + ports + netblock
+        #         enrichLocalNode('asn', value, nType, graph)
+        #         enrichLocalNode('gip', value, nType, graph)
+        #         enrichLocalNode('whois', value, nType, graph)
+        #         enrichLocalNode('hostname', value, nType, graph)
+        #         # enrich cybexp needed here
+        #         results = shodan_lookup(value)
+        #         status1 = insert_ports(results, graph, value)
 
-            print("Done with", str(value))
+        #         status2 = insert_netblock(value, graph)
+
+        #     print("Done with", str(value))
+        ## End of non-threaded version
+
+        ## This is used for tracking the performance speedup between seralized and threaded versions
+        # end = time.time()
+        # print(f"TIME: {end - start}")
         return Response({"Status": "All nodes were processed."})
         # return json.dumps(nodes)
 
+    def threadedLoop(self, node, graph):
+        value = node["properties"]["data"]
+        nType = node["properties"]["type"]
+        print("--> Enriching", value)
 
+        if nType == "URL":
+            # deconstruct URL
+            status = insert_domain(value, graph)
+            print(str(status))
+
+        elif nType == "Email":
+            # deconstruct Email
+            status = insert_domain_and_user(value, graph)
+            print(str(status))
+
+        elif nType == "Host":
+            # resolve IP, MX, nameservers
+            try:
+                status1 = resolveHost(value, graph)
+            except:
+                print("IP resolve Error")
+            try:
+                status2 = getMailServer(value, graph)
+            except:
+                print("MX Error")
+            try:
+                w_results = whois(value)
+                status3 = getNameservers(w_results, graph, value)
+            except:
+                print("Nameserver Error")
+            try:
+                w_results = whois(value)
+                status3 = getRegistrar(w_results, graph, value)
+            except:
+                print("No registrar")
+
+        elif nType == "Domain":
+            # resolve IP, MX, nameservers
+            try:
+                status1 = resolveHost(value, graph)
+            except:
+                print("IP resolve Error")
+            try:
+                status2 = getMailServer(value, graph)
+            except:
+                print("MX Error")
+            try:
+                w_results = whois(value)
+                status3 = getNameservers(w_results, graph, value)
+            except:
+                print("Nameserver Error")
+            try:
+                w_results = whois(value)
+                status3 = getRegistrar(w_results, graph, value)
+            except:
+                print("No registrar")
+
+        elif nType == "IP":
+            # enrich all + ports + netblock
+            enrichLocalNode('asn', value, nType, graph)
+            enrichLocalNode('gip', value, nType, graph)
+            enrichLocalNode('whois', value, nType, graph)
+            enrichLocalNode('hostname', value, nType, graph)
+            # enrich cybexp needed here
+            results = shodan_lookup(value)
+            status1 = insert_ports(results, graph, value)
+
+            status2 = insert_netblock(value, graph)
+
+        print("Done with", str(value))
+
+    
 class wipe(APIView):
     permission_classes = (IsAuthenticated, )
 
