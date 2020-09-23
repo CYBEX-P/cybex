@@ -7,7 +7,6 @@ from django.conf import settings
 # TODO
 # Need to convert this to use django.settings to retrieve key from env
 
-
 def whois(data):
 
     try:

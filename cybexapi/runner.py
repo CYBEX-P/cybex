@@ -3,6 +3,7 @@ from py2neo import Graph, Node, Relationship
 import socket
 import json
 import os
+from django.conf import settings
 
 # Import local scripts
 from cybexapi.cybexlib import pull_ip_src

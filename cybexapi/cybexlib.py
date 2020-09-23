@@ -3,6 +3,7 @@ from cybexapi.exportDB import bucket
 from cybexapi.api import *
 import json
 import requests
+from django.conf import settings
 
 
 def pull_ip_src():
