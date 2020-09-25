@@ -35,7 +35,10 @@ Production Server Deployment:
   - https://docs.djangoproject.com/en/3.0/howto/static-files/deployment/
 2. Ensure /etc/nginx/conf.d/virtual.conf.d is set like the following:
 
-  server {
+  117
+
+```javascript
+server {
     listen 80;
     server_name 134.197.20.16;
     location / {
@@ -45,6 +48,8 @@ Production Server Deployment:
       alias   /srv/www/cybex/static/;
     }
   }
+```
+  
   
   Deployment uses standard supervisor w/guncicorn approach to run Django app.
   Is run behind nginx web server as a reverse proxy, as shown above.
