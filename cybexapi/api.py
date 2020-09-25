@@ -363,6 +363,19 @@ class wipe(APIView):
         wipeDB(graph)
         return Response({"Status": "Neo4j DB full wipe complete!"})
 
+class importJson(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, format=None):
+        print("HI")
+        # print(request.json())
+        return Response({"Status": "Success"})
+        
+    def post(self, request, format=None):
+        print("HI")
+        return Response({"Status": "Success"})
+
+
 
 class insertURL(APIView):
     permission_classes = (IsAuthenticated, )
