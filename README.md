@@ -29,3 +29,24 @@ Steps to run
 12. python3 manage.py createsuperuser
 13. rename dot-env to .env file for sensitive settings.  Request keys from admin
 14. python3 manage.py runserver
+
+Production Server Deployment:
+1. Follow the guidance here (static files are pushed to '/static/'):
+  - https://docs.djangoproject.com/en/3.0/howto/static-files/deployment/
+2. Ensure /etc/nginx/conf.d/virtual.conf.d is set like the following:
+
+  server {
+    listen 80;
+    server_name 134.197.20.16;
+
+    location / {
+      proxy_pass http://127.0.0.1:8000;
+    }
+    location /static/ {
+      alias   /srv/www/cybex/static/;
+    }
+  }
+  
+  Deployment uses standard supervisor w/guncicorn approach to run Django app.
+  Is run behind nginx web server as a reverse proxy, as shown above.
+  - 
