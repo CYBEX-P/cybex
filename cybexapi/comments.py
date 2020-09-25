@@ -1,6 +1,7 @@
 from py2neo import Graph, Node, Relationship
 from exportDB import bucket
 import json
+from django.conf import settings
 
 # Description: Adds user comment to node data
 # Parameters: <string>comment - Comment to add to node
