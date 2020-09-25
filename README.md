@@ -38,7 +38,6 @@ Production Server Deployment:
   server {
     listen 80;
     server_name 134.197.20.16;
-
     location / {
       proxy_pass http://127.0.0.1:8000;
     }
