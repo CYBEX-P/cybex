@@ -15,7 +15,7 @@ const ImportJson = props => {
         const data = new FormData()
         data.append('file', e.target.files[0])
         axios
-        .get('/import_json', data,{   
+        .post('/import_json', data,{   
         })
         .then(res => {
             console.log(res.data)

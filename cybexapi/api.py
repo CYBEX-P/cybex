@@ -183,7 +183,7 @@ class macro(APIView):
     # Returns: Response status
     # Author: Spencer Kase Rohlfing & (Someone else, sorry don't know who)
     def get(self, request, format=None, data=None, ntype=None):
-        start = time.time()
+        # start = time.time()
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
@@ -363,16 +363,33 @@ class wipe(APIView):
         wipeDB(graph)
         return Response({"Status": "Neo4j DB full wipe complete!"})
 
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
+@method_decorator(csrf_exempt, name='post')
 class importJson(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, format=None):
-        print("HI")
-        # print(request.json())
+        print("===========================")
         return Response({"Status": "Success"})
-        
+
+    @csrf_exempt
     def post(self, request, format=None):
-        print("HI")
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+
+        from py2neo import Graph, Node, Relationship
+        
+        tx = graph.begin()
+
+
+        # print(graph)
+        # g = export(graph)
+        # print(g)
+        # p = processExport(g)
+        # print(p)
         return Response({"Status": "Success"})
 
 
