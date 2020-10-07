@@ -18,6 +18,7 @@ from cybexapi.whoisXML import whois, insertWhois
 from cybexapi.enrichments import insert_domain_and_user, insert_netblock, insert_domain, resolveHost, getNameservers, getRegistrar, getMailServer
 from cybexapi.cybexlib import cybexCountHandler,  pull_ip_src
 from cybexapi.shodanSearch import shodan_lookup, insert_ports
+from cybexapi.import_json import import_json
 import json
 from cybexapi.wipe_db import wipeDB
 import pandas as pd
@@ -363,42 +364,21 @@ class wipe(APIView):
         wipeDB(graph)
         return Response({"Status": "Neo4j DB full wipe complete!"})
 
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
+# Remove before release
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication 
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening
 
-# @method_decorator(csrf_exempt, name='post')
 class importJson(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, format=None):
-        print("=============ss==============")
-        data = request.data
-        print(request.is_ajax())
+    # Also remove this line, it was to bypass the CSRF
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
-        return Response(data)
-
-    # @csrf_exempt
     def post(self, request, format=None):
-        current_user = request.user
-        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
-                              current_user.graphdb.dbip, current_user.graphdb.dbport)
-
-        data = request.data
-        print(request.is_ajax())
-        print(data)
-
-        from py2neo import Graph, Node, Relationship
-        
-        # tx = graph.begin()
-
-
-        # print(graph)
-        # g = export(graph)
-        # print(g)
-        # p = processExport(g)
-        # print(p)
-        return Response(data)
-
+        responce = Response(import_json(request.data))
+        return(responce)
 
 
 class insertURL(APIView):
