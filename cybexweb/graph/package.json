@@ -10,6 +10,8 @@
     "@fortawesome/react-fontawesome": "^0.1.4",
     "axios": "^0.18.0",
     "bootstrap": "^4.3.1",
+    "browserslist": "^4.14.5",
+    "caniuse-lite": "^1.0.30001144",
     "formik": "^1.5.1",
     "jwt-decode": "^2.2.0",
     "prop-types": "^15.7.2",

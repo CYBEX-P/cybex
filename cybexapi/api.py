@@ -366,23 +366,30 @@ class wipe(APIView):
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
-@method_decorator(csrf_exempt, name='post')
+# @method_decorator(csrf_exempt, name='post')
 class importJson(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, format=None):
-        print("===========================")
-        return Response({"Status": "Success"})
+        print("=============ss==============")
+        data = request.data
+        print(request.is_ajax())
 
-    @csrf_exempt
+        return Response(data)
+
+    # @csrf_exempt
     def post(self, request, format=None):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
 
+        data = request.data
+        print(request.is_ajax())
+        print(data)
+
         from py2neo import Graph, Node, Relationship
         
-        tx = graph.begin()
+        # tx = graph.begin()
 
 
         # print(graph)
@@ -390,7 +397,7 @@ class importJson(APIView):
         # print(g)
         # p = processExport(g)
         # print(p)
-        return Response({"Status": "Success"})
+        return Response(data)
 
 
 
