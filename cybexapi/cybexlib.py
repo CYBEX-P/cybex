@@ -4,6 +4,7 @@ from cybexapi.api import *
 import json
 import requests
 from django.conf import settings
+from threading import Timer
 
 
 def pull_ip_src():
@@ -148,37 +149,88 @@ def cybexCountHandler(Ntype, data1):
     # graph = connect2graph()
     Ntype1 = replaceType(Ntype)
 
+    # test_url = "http://cybex-api.cse.unr.edu:5000/hello"
+    # test_r = requests.get(test_url)
+    # print(test_r.text)
+
     # First, query total count
-    url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count"
+    #url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count"
+    #url = "http://localhost:5001/query"
+    url = "http://cybex-api.cse.unr.edu:5000/query"
     headers = {'content-type': 'application/json',
                'Authorization': 'Bearer: xxxxxx'}
-    data = {Ntype1: data1, "from": "2019/8/30 00:00",
-            "to": "2020/3/1 6:00am", "tzname": "US/Pacific"}
-    data = json.dumps(data)
-    print("Fetching cybexCount...")
-    r = requests.post(url, headers=headers, data=data)
-    res = json.loads(r.text)
-    # print(res)
+    # data = {Ntype1: data1, "from": "2019/8/30 00:00",
+    #         "to": "2020/3/1 6:00am", "tzname": "US/Pacific"}
+    def raise_timeout():
+        raise requests.exceptions.Timeout("Count query timed out.")
 
-    # Next, query malicious count
-    urlMal = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count/malicious"
-    headersMal = {'content-type': 'application/json',
-                  'Authorization': 'Bearer xxxxx'}
-    dataMal = {Ntype1: data1, "from": "2019/8/30 00:00",
-               "to": "2020/4/23 6:00am", "tzname": "US/Pacific"}
-    dataMal = json.dumps(dataMal)
-    print("Fetching cybexCountMalicious...")
-    rMal = requests.post(urlMal, headers=headersMal, data=dataMal)
-    resMal = json.loads(rMal.text)
-    # print(resMal)
+    try:
+        data = {
+            "type": "count", 
+            "data" : {
+                "sub_type": Ntype1, 
+                "data": data1,
+                "category": "all",
+                "context": "all",
+                "last": "1Y"
+            }
+        }
+        data = json.dumps(data)
+        print("Fetching cybexCount...")
+        valid = False # Flag to be set when valid api response is returned
+        api_timeout = False
+        t = Timer(10.0, raise_timeout)
+        t.start()      
+        while not valid:
+            r = requests.post(url, headers=headers, data=data)
+            res = json.loads(r.text)
+            if res.status is not "processing":
+                t.cancel()
+                valid = True
+            # print(res)
+
+        # Next, query malicious count
+        #urlMal = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count/malicious"
+        #urlMal = "http://localhost:5001/query"
+        urlMal = "http://cybex-api.cse.unr.edu:5000/query"
+        headersMal = {'content-type': 'application/json',
+                    'Authorization': 'Bearer xxxxx'}
+        #dataMal = {Ntype1: data1, "from": "2019/8/30 00:00",
+        #           "to": "2020/4/23 6:00am", "tzname": "US/Pacific"}
+        dataMal = {
+            "type": "count", 
+            "data" : {
+                "sub_type": Ntype1, 
+                "data": data1,
+                "category": "malicious",
+                "context": "all",
+                "last": "1Y"
+            }
+        }
+        dataMal = json.dumps(dataMal)
+        print("Fetching cybexCountMalicious...")
+        valid = False # Flag to be set when valid api response is returned
+        api_timeout = False
+        t = Timer(10.0, raise_timeout)
+        t.start()
+        while not valid:
+            rMal = requests.post(urlMal, headers=headersMal, data=dataMal)
+            resMal = json.loads(rMal.text)
+            #print(resMal)
+            if resMal.status is not "processing":
+                t.cancel()
+                valid = True
+    except:
+        return 0
 
     try:
         numOccur = res["data"]
         numMal = resMal["data"]
         # status = insertCybex(numOccur, graph, data1)
-        # status = insertCybexCount(numOccur,numMal,graph,data1,Ntype)
+        status = insertCybexCount(numOccur,numMal,graph,data1,Ntype)
         # return jsonify({"insert status" : status})
         return status
 
     except:
+        print("error")
         return 0

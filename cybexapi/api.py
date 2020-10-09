@@ -87,10 +87,10 @@ def enrichLocalNode(enrich_type, value, node_type, graph):
         return json.dumps({"insert status": status})
 
     # Server is down for queries in cybexlib.py and currently is being ignored right now.
-    # elif enrich_type == "cybexCount":
-    #         #status = insertCybexCount(value, graph)
-    #         status = cybexCountHandler(node_type,value)
-    #         return json.dumps({"insert status" : status})
+    elif enrich_type == "cybexCount":
+            #status = insertCybexCount(value, graph)
+            status = cybexCountHandler(node_type,value)
+            return json.dumps({"insert status" : status})
 
     # elif enrich_type == "comment":
     #         # req = request.get_json()
@@ -145,6 +145,19 @@ class enrichNode(APIView):
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         result = enrichLocalNode(x, y, z, graph)
+        return Response(result)
+
+class enrichNodePost(APIView):
+    permission_classes = (IsAuthenticated, )
+    
+    def post(self, request, x=None):
+        current_user = request.user
+        data = request.data
+        print(data)
+        value = ""
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+        result = enrichLocalNode(x, data["Ntype"], data["value"], graph)
         return Response(result)
 
 
