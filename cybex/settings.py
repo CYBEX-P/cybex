@@ -57,7 +57,20 @@ INSTALLED_APPS = [
     'cybexdata',
     'cybexweb',
     'cybexapi',
+    'multifactor',
 ]
+
+MULTIFACTOR = {
+    'LOGIN_CALLBACK': False,             # False, or dotted import path to function to process after successful authentication
+    'RECHECK': True,                     # Invalidate previous authorisations at random intervals
+    'RECHECK_MIN': 60 * 60 * 3,          # No recheks before 3 hours
+    'RECHECK_MAX': 60 * 60 * 6,          # But within 6 hours
+
+    'FIDO_SERVER_ID': 'example.com',     # Server ID for FIDO request
+    'FIDO_SERVER_NAME': 'Django App',    # Human-readable name for FIDO request
+    'TOKEN_ISSUER_NAME': 'Django App',   # TOTP token issuing name (to be shown in authenticator)
+    'U2F_APPID': 'https://example.com',  # U2F request issuer
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

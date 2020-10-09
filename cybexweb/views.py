@@ -6,6 +6,8 @@ from django.views.generic import TemplateView
 from cybexweb.dockers import check_db, create_db
 import docker
 import json
+
+from multifactor.decorators import multifactor_protected
 #def checkalive(dbport, dbip, dbuser, dbpass, containerid):
  #   return true
 
@@ -18,6 +20,7 @@ import json
 
 #def recreate():
 
+@method_decorator(multifactor_protected(factors=0, user_filter=None, max_age=0, advertise=False), name='get')
 class GraphView(View):
     template_name = 'index.html'
 
