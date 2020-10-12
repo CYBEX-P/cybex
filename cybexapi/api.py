@@ -16,7 +16,7 @@ from cybexapi.runner import insertNode, insertHostname
 from cybexapi.gip import asn_insert, ASN, geoip, geoip_insert
 from cybexapi.whoisXML import whois, insertWhois
 from cybexapi.enrichments import insert_domain_and_user, insert_netblock, insert_domain, resolveHost, getNameservers, getRegistrar, getMailServer
-from cybexapi.cybexlib import cybexCountHandler,  pull_ip_src
+from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_src
 from cybexapi.shodanSearch import shodan_lookup, insert_ports
 import json
 from cybexapi.wipe_db import wipeDB
@@ -90,6 +90,11 @@ def enrichLocalNode(enrich_type, value, node_type, graph):
             #status = insertCybexCount(value, graph)
             status = cybexCountHandler(node_type,value, graph)
             return json.dumps({"insert status" : status})
+
+    elif enrich_type == "cybexRelated":
+        #status = insertCybexCount(value, graph)
+        status = cybexRelatedHandler(node_type,value, graph)
+        return json.dumps({"insert status" : status})
 
     # elif enrich_type == "comment":
     #         # req = request.get_json()
@@ -388,22 +393,22 @@ class importJson(APIView):
 
 
 
-class insertURL(APIView):
-    permission_classes = (IsAuthenticated, )
+# class insertURL(APIView):
+#     permission_classes = (IsAuthenticated, )
 
-    def post(self, request, format=None):
-        current_user = request.user
-        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
-                              current_user.graphdb.dbip, current_user.graphdb.dbport)
-        req = request.get_json()
-        Ntype = req['Ntype']
-        data = req['value']
+#     def post(self, request, format=None):
+#         current_user = request.user
+#         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+#                               current_user.graphdb.dbip, current_user.graphdb.dbport)
+#         req = request.get_json()
+#         Ntype = req['Ntype']
+#         data = req['value']
 
-        status = insertNode(Ntype, data, graph)
-        if status == 1:
-            return Response({"Status": "Success"})
-        else:
-            return Response({"Status": "Failed"})
+#         status = insertNode(Ntype, data, graph)
+#         if status == 1:
+#             return Response({"Status": "Success"})
+#         else:
+#             return Response({"Status": "Failed"})
 
 
 class start(APIView):
