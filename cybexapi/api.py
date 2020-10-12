@@ -179,7 +179,19 @@ class macroCybex(APIView):
             value = node["properties"]["data"]
             nType = node["properties"]["type"]
             if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
-                print("--> Enriching", value)
+                print("--> Querying cybexRelated IOCs for", value)
+                enrichLocalNode('cybexRelated', value, nType, graph)
+                print("Done with", str(value))
+
+        # Now that new related IOCs have been added, query cybexCount
+        # This is done all all nodes including the newly added ones
+        data = processExport(export(graph))
+        nodes = data["Neo4j"][0][0]["nodes"]
+        for node in nodes:
+            value = node["properties"]["data"]
+            nType = node["properties"]["type"]
+            if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+                print("--> Querying cybexCounts for ", value)
                 enrichLocalNode('cybexCount', value, nType, graph)
                 print("Done with", str(value))
 
