@@ -16,7 +16,7 @@ from cybexapi.runner import insertNode, insertHostname
 from cybexapi.gip import asn_insert, ASN, geoip, geoip_insert
 from cybexapi.whoisXML import whois, insertWhois
 from cybexapi.enrichments import insert_domain_and_user, insert_netblock, insert_domain, resolveHost, getNameservers, getRegistrar, getMailServer
-from cybexapi.cybexlib import cybexCountHandler,  pull_ip_src
+from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_src
 from cybexapi.shodanSearch import shodan_lookup, insert_ports
 import json
 from cybexapi.wipe_db import wipeDB
@@ -86,11 +86,15 @@ def enrichLocalNode(enrich_type, value, node_type, graph):
         status = getMailServer(value, graph)
         return json.dumps({"insert status": status})
 
-    # Server is down for queries in cybexlib.py and currently is being ignored right now.
-    # elif enrich_type == "cybexCount":
-    #         #status = insertCybexCount(value, graph)
-    #         status = cybexCountHandler(node_type,value)
-    #         return json.dumps({"insert status" : status})
+    elif enrich_type == "cybexCount":
+            #status = insertCybexCount(value, graph)
+            status = cybexCountHandler(node_type,value, graph)
+            return json.dumps({"insert status" : status})
+
+    elif enrich_type == "cybexRelated":
+        #status = insertCybexCount(value, graph)
+        status = cybexRelatedHandler(node_type,value, graph)
+        return json.dumps({"insert status" : status})
 
     # elif enrich_type == "comment":
     #         # req = request.get_json()
@@ -147,6 +151,18 @@ class enrichNode(APIView):
         result = enrichLocalNode(x, y, z, graph)
         return Response(result)
 
+class enrichNodePost(APIView):
+    permission_classes = (IsAuthenticated, )
+    
+    def post(self, request, x=None):
+        current_user = request.user
+        data = request.data
+        value = ""
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+        result = enrichLocalNode(x, data["value"], data["Ntype"], graph)
+        return Response(result)
+
 
 class macroCybex(APIView):
     permission_classes = (IsAuthenticated, )
@@ -163,7 +179,19 @@ class macroCybex(APIView):
             value = node["properties"]["data"]
             nType = node["properties"]["type"]
             if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
-                print("--> Enriching", value)
+                print("--> Querying cybexRelated IOCs for", value)
+                enrichLocalNode('cybexRelated', value, nType, graph)
+                print("Done with", str(value))
+
+        # Now that new related IOCs have been added, query cybexCount
+        # This is done all all nodes including the newly added ones
+        data = processExport(export(graph))
+        nodes = data["Neo4j"][0][0]["nodes"]
+        for node in nodes:
+            value = node["properties"]["data"]
+            nType = node["properties"]["type"]
+            if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+                print("--> Querying cybexCounts for ", value)
                 enrichLocalNode('cybexCount', value, nType, graph)
                 print("Done with", str(value))
 
@@ -377,22 +405,22 @@ class importJson(APIView):
 
 
 
-class insertURL(APIView):
-    permission_classes = (IsAuthenticated, )
+# class insertURL(APIView):
+#     permission_classes = (IsAuthenticated, )
 
-    def post(self, request, format=None):
-        current_user = request.user
-        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
-                              current_user.graphdb.dbip, current_user.graphdb.dbport)
-        req = request.get_json()
-        Ntype = req['Ntype']
-        data = req['value']
+#     def post(self, request, format=None):
+#         current_user = request.user
+#         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+#                               current_user.graphdb.dbip, current_user.graphdb.dbport)
+#         req = request.get_json()
+#         Ntype = req['Ntype']
+#         data = req['value']
 
-        status = insertNode(Ntype, data, graph)
-        if status == 1:
-            return Response({"Status": "Success"})
-        else:
-            return Response({"Status": "Failed"})
+#         status = insertNode(Ntype, data, graph)
+#         if status == 1:
+#             return Response({"Status": "Success"})
+#         else:
+#             return Response({"Status": "Failed"})
 
 
 class start(APIView):

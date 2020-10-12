@@ -18,11 +18,15 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
     return <></>;
   }
 
+  
+  axios.defaults.xsrfCookieName = 'csrftoken'
+  axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+
   function EnrichIPbyType(type) {
     setLoading(true);
     if (type === "cybexCount" || type === "cybexRelated"){
       axios
-        .post(`/api/v1/enrich/${type}`, {Ntype: `${nodeType.properties.type}`, value: `${nodeType.properties.data}`})
+        .post(`/api/v1/enrich/${type}/`, {Ntype: `${nodeType.properties.type}`, value: `${nodeType.properties.data}`})
         .then(({ data }) => {
           if (data['insert status'] !== 0) {
             axios

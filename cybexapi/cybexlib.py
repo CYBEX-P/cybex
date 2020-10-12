@@ -4,6 +4,7 @@ from cybexapi.api import *
 import json
 import requests
 from django.conf import settings
+from threading import Timer
 
 
 def pull_ip_src():
@@ -82,9 +83,8 @@ def insertCybexCount(numOccur, numMal, graph, value, nType):
 # Parameters: <string>data - JSON response string from the Related Attribute Summary API call
 #             <object>graph - The current graph
 #             <string>value - JSON data for the originating node
-# Returns: 1 if successful
+# Returns: 0 if successful
 # Author: Adam Cassell
-
 
 def insertRelatedAttributes(data, graph, value):
     # Converts string to proper JSON using "" instead of ''
@@ -120,7 +120,7 @@ def insertRelatedAttributes(data, graph, value):
                 graph.create(rel)
                 print("New CybexRelated node created and linked")
 
-    return 1
+    return 0
 
 
 def replaceType(value):
@@ -129,7 +129,9 @@ def replaceType(value):
     elif value == "Host":
         return "hostname"
     elif value == "URL":
-        return "uri"
+        return "url"
+    elif value == "Domain":
+        return "domain"
     elif value == "User":
         return "username"
     else:
@@ -144,41 +146,127 @@ def replaceType(value):
 # Use django.settings to get keys and move URLS to settings as well.
 
 
-def cybexCountHandler(Ntype, data1):
+def cybexCountHandler(Ntype, data1, graph):
     # graph = connect2graph()
     Ntype1 = replaceType(Ntype)
 
+    # test_url = "http://cybex-api.cse.unr.edu:5000/hello"
+    # test_r = requests.get(test_url)
+    # print(test_r.text)
+
     # First, query total count
-    url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count"
+    #url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count"
+    #url = "http://localhost:5001/query"
+    url = "http://cybex-api.cse.unr.edu:5000/query"
     headers = {'content-type': 'application/json',
                'Authorization': 'Bearer: xxxxxx'}
-    data = {Ntype1: data1, "from": "2019/8/30 00:00",
-            "to": "2020/3/1 6:00am", "tzname": "US/Pacific"}
-    data = json.dumps(data)
-    print("Fetching cybexCount...")
-    r = requests.post(url, headers=headers, data=data)
-    res = json.loads(r.text)
-    # print(res)
-
-    # Next, query malicious count
-    urlMal = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count/malicious"
-    headersMal = {'content-type': 'application/json',
-                  'Authorization': 'Bearer xxxxx'}
-    dataMal = {Ntype1: data1, "from": "2019/8/30 00:00",
-               "to": "2020/4/23 6:00am", "tzname": "US/Pacific"}
-    dataMal = json.dumps(dataMal)
-    print("Fetching cybexCountMalicious...")
-    rMal = requests.post(urlMal, headers=headersMal, data=dataMal)
-    resMal = json.loads(rMal.text)
-    # print(resMal)
+    # data = {Ntype1: data1, "from": "2019/8/30 00:00",
+    #         "to": "2020/3/1 6:00am", "tzname": "US/Pacific"}
+    def raise_timeout():
+        raise requests.exceptions.Timeout("Count query timed out.")
 
     try:
-        numOccur = res["data"]
-        numMal = resMal["data"]
-        # status = insertCybex(numOccur, graph, data1)
-        # status = insertCybexCount(numOccur,numMal,graph,data1,Ntype)
-        # return jsonify({"insert status" : status})
+        data = {
+            "type": "count", 
+            "data" : {
+                "sub_type": Ntype1, 
+                "data": data1,
+                "category": "all",
+                "context": "all",
+                "last": "1Y"
+            }
+        }
+        data = json.dumps(data)
+        print("Fetching cybexCount...")
+        valid = False # Flag to be set when valid api response is returned
+        api_timeout = False
+        t = Timer(60.0, raise_timeout)
+        t.start()      
+        while not valid:
+            print("requesting...")
+            r = requests.post(url, headers=headers, data=data)
+            res = json.loads(r.text)
+            if "status" not in res:
+                t.cancel()
+                valid = True
+
+        # Next, query malicious count
+        #urlMal = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count/malicious"
+        #urlMal = "http://localhost:5001/query"
+        urlMal = "http://cybex-api.cse.unr.edu:5000/query"
+        headersMal = {'content-type': 'application/json',
+                    'Authorization': 'Bearer xxxxx'}
+        #dataMal = {Ntype1: data1, "from": "2019/8/30 00:00",
+        #           "to": "2020/4/23 6:00am", "tzname": "US/Pacific"}
+        dataMal = {
+            "type": "count", 
+            "data" : {
+                "sub_type": Ntype1, 
+                "data": data1,
+                "category": "malicious",
+                "context": "all",
+                "last": "1Y"
+            }
+        }
+        dataMal = json.dumps(dataMal)
+        print("Fetching cybexCountMalicious...")
+        valid = False # Flag to be set when valid api response is returned
+        api_timeout = False
+        t = Timer(60.0, raise_timeout)
+        t.start()
+        while not valid:
+            rMal = requests.post(urlMal, headers=headersMal, data=dataMal)
+            resMal = json.loads(rMal.text)
+            # if resMal["status"] is not "processing":
+            if "status" not in resMal:
+                t.cancel()
+                valid = True
+
+    except requests.exceptions.Timeout as e:
+        print(e)
+        return 1
+
+    numOccur = res["data"]
+    numMal = resMal["data"]
+    # status = insertCybex(numOccur, graph, data1)
+    status = insertCybexCount(numOccur,numMal,graph,data1,Ntype)
+    # return jsonify({"insert status" : status})
+    return status
+
+def cybexRelatedHandler(Ntype, data1, graph):
+    #graph = connect2graph()
+    #req = request.get_json()
+    #Ntype = str(req['Ntype'])
+    Ntype1 = replaceType(Ntype)
+    #data1 = req['value']
+    #print(req)
+
+    #url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/related/attribute/summary"
+    url = "http://cybex-api.cse.unr.edu:5000/query"
+    headers = {'content-type': 'application/json', 'Authorization' : 'Bearer xxxxx'}
+    #data = { Ntype1 : data1, "from" : "2019/8/30 00:00", "to" : "2019/12/5 6:00am", "tzname" : "US/Pacific" }
+    data = {
+        "type": "related",
+        "data": {
+            "sub_type": Ntype1, # make sure ipv4 works for ip (replaceType())
+            "data": data1,
+            "return_type": "attribute",
+            "summary" : True
+        }
+	}
+    
+
+    data = json.dumps(data) # data is jsonified request
+    print(data)
+
+    r = requests.post(url, headers=headers, data=data)
+    res = json.loads(r.text)
+    print(res)
+
+    try:
+        #status = insertRelated(str(res), graph, data1)
+        status = insertRelatedAttributes(str(res), graph, data1)
         return status
 
     except:
-        return 0
+        return 1

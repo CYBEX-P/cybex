@@ -19,18 +19,18 @@ const InsertForm = props => {
 
   function handleInsertIP(values, actions) {
     const { ipToInsert } = values;
-    if (selectedIOC === 'URL' && ipToInsert !== '') {
-      axios.post('/api/v1/neo4j/insertURL', {Ntype: "URL", value: `${ipToInsert}`}).then(() => {
-        axios
-          .get('/api/v1/neo4j/export')
-          .then(({ data }) => {
-            setNeo4jData(data);
-          })
-          .catch(() => {});
-      });
-      actions.resetForm();
-    }
-    else if (ipToInsert !== '') {
+    // if (selectedIOC === 'URL' && ipToInsert !== '') {
+    //   axios.post('/api/v1/neo4j/insertURL', {Ntype: "URL", value: `${ipToInsert}`}).then(() => {
+    //     axios
+    //       .get('/api/v1/neo4j/export')
+    //       .then(({ data }) => {
+    //         setNeo4jData(data);
+    //       })
+    //       .catch(() => {});
+    //   });
+    //   actions.resetForm();
+    // }
+    if (ipToInsert !== '') {
       axios.get(`/api/v1/neo4j/insert/${selectedIOC}/${ipToInsert}`).then(() => {
         axios
           .get('/api/v1/neo4j/export')
