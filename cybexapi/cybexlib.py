@@ -131,6 +131,8 @@ def replaceType(value):
         return "hostname"
     elif value == "URL":
         return "uri"
+    elif value == "Domain":
+        return "domain"
     elif value == "User":
         return "username"
     else:
@@ -145,7 +147,7 @@ def replaceType(value):
 # Use django.settings to get keys and move URLS to settings as well.
 
 
-def cybexCountHandler(Ntype, data1):
+def cybexCountHandler(Ntype, data1, graph):
     # graph = connect2graph()
     Ntype1 = replaceType(Ntype)
 
@@ -179,15 +181,16 @@ def cybexCountHandler(Ntype, data1):
         print("Fetching cybexCount...")
         valid = False # Flag to be set when valid api response is returned
         api_timeout = False
-        t = Timer(10.0, raise_timeout)
+        t = Timer(60.0, raise_timeout)
         t.start()      
         while not valid:
+            print("requesting...")
             r = requests.post(url, headers=headers, data=data)
             res = json.loads(r.text)
-            if res.status is not "processing":
+            if "status" not in res:
                 t.cancel()
                 valid = True
-            # print(res)
+            
 
         # Next, query malicious count
         #urlMal = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count/malicious"
@@ -211,26 +214,24 @@ def cybexCountHandler(Ntype, data1):
         print("Fetching cybexCountMalicious...")
         valid = False # Flag to be set when valid api response is returned
         api_timeout = False
-        t = Timer(10.0, raise_timeout)
+        t = Timer(60.0, raise_timeout)
         t.start()
         while not valid:
             rMal = requests.post(urlMal, headers=headersMal, data=dataMal)
             resMal = json.loads(rMal.text)
-            #print(resMal)
-            if resMal.status is not "processing":
+            # if resMal["status"] is not "processing":
+            if "status" not in resMal:
                 t.cancel()
                 valid = True
-    except:
-        return 0
 
-    try:
-        numOccur = res["data"]
-        numMal = resMal["data"]
-        # status = insertCybex(numOccur, graph, data1)
-        status = insertCybexCount(numOccur,numMal,graph,data1,Ntype)
-        # return jsonify({"insert status" : status})
-        return status
+    except requests.exceptions.Timeout as e:
+        print(e)
+        return 1
 
-    except:
-        print("error")
-        return 0
+    numOccur = res["data"]
+    numMal = resMal["data"]
+    # status = insertCybex(numOccur, graph, data1)
+    status = insertCybexCount(numOccur,numMal,graph,data1,Ntype)
+    # return jsonify({"insert status" : status})
+    return status
+
