@@ -20,11 +20,11 @@ from multifactor.decorators import multifactor_protected
 
 #def recreate():
 
-@method_decorator(multifactor_protected(factors=0, user_filter=None, max_age=0, advertise=False), name='get')
+# @method_decorator(multifactor_protected(factors=0, user_filter=None, max_age=0, advertise=False), name='get')
 class GraphView(View):
     template_name = 'index.html'
 
-    @method_decorator(login_required)
+    @method_decorator(multifactor_protected())
     def get(self,request,format=None):
         print("Begin checking docker")
         current_user = request.user
