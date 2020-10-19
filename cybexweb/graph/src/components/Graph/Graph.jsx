@@ -33,6 +33,9 @@ function InitializeGraph(data) {
     },
     edges: {
       length: 200,
+      arrows: {
+        to: {enabled: true, scaleFactor: 0.5}
+      }
       //color: {'inherit':false},
       //dashes: true
     },
