@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', decorator_include(multifactor_protected(factors=1), admin.site.urls)),
     # path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+    # path('', include('cybexweb.urls')),
     path('', include('cybexweb.urls')),
-    path('', include('cybexapi.urls')),
+    path('', decorator_include(multifactor_protected(factors=1),'cybexapi.urls')),
 ]

@@ -3,6 +3,10 @@ from . import views
 from cybexapi.api import exportNeoDB, insert, enrichNode, macroCybex, macro, wipe, insertURL, start, startFile, importJson
 
 urlpatterns = [
+    # View
+    path('graph', views.GraphView.as_view(), name='graph'),
+
+
     path('api/v1/admin/config', views.getconfig.as_view()),
     path('api/v1/neo4j/export', exportNeoDB.as_view()),
     path('api/v1/neo4j/insert/<x>/<y>/', insert.as_view() ),
@@ -19,6 +23,5 @@ urlpatterns = [
     #Depracate these two functions
     path('isSignedIn', views.isSignedIn.as_view()),
     path('isAdmin', views.isAdmin.as_view()),
-#    path('/testAPI',),
 
 ]
