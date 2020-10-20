@@ -16,8 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from decorator_include import decorator_include
+from multifactor.decorators import multifactor_protected
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/multifactor/', include('multifactor.urls')),
+    path('admin/', decorator_include(multifactor_protected(factors=1), admin.site.urls)),
+    # path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('cybexweb.urls')),
     path('', include('cybexapi.urls')),

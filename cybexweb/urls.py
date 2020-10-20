@@ -10,7 +10,7 @@ urlpatterns = [
     path('home', HomeView.as_view(), name='home'),
     path('', HomeView.as_view(), name='home'),
 
-    path('admin/multifactor/', include('multifactor.urls')),
+    # path('admin/multifactor/', include('multifactor.urls')),
 
     # These are include if you don't want to use the whole multifactor.urls urlpatterns
     # path('totp/new/', totp.Create.as_view(), name="totp_start"),
