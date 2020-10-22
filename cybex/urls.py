@@ -30,10 +30,11 @@ urlpatterns = [
 ]
 
 
-######
-## Code below is used to override a function with multifactor.factors.totp Create class
-## I changed the redirect return
-#####
+########################
+## Code below is used to override a function with multifactor.factors.totp Create class.
+## Code was copied from the multifactor totp.py.
+## The redirect return changed, a comment is where the original one was.
+########################
 
 from multifactor.factors.totp import Create
 from multifactor.models import UserKey, KEY_TYPE_TOPT
@@ -44,7 +45,6 @@ from django.shortcuts import redirect
 WINDOW = 60
 
 def post(self, request, *args, **kwargs):
-    print("NEW ONE CALLED")
     if self.totp.verify(request.POST["answer"], valid_window=WINDOW):
         key = UserKey.objects.create(
             user=request.user,
@@ -54,9 +54,10 @@ def post(self, request, *args, **kwargs):
         write_session(request, key)
         messages.success(request, 'TOPT Authenticator added.')
         return redirect(request.session['multifactor-next'])
+        # return redirect("multifactor:home")
 
 Create.post = post
 
-######
+########################
 ## END OF OVERRIDE
-#####
+########################

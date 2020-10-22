@@ -7,7 +7,6 @@ from cybexweb.dockers import check_db, create_db
 import docker
 import json
 
-from multifactor.decorators import multifactor_protected
 #def checkalive(dbport, dbip, dbuser, dbpass, containerid):
  #   return true
 
@@ -19,6 +18,10 @@ from multifactor.decorators import multifactor_protected
 #    return [dbport,dbip,dbuser,dbpass,containerid]
 
 #def recreate():
+
+## This was moved to different views.py file. This can be removed on a cleanup
+## 
+# from multifactor.decorators import multifactor_protected
 
 # class GraphView(View):
 #     template_name = 'index.html'
@@ -43,6 +46,9 @@ from multifactor.decorators import multifactor_protected
 #             print("Container running")
                 
 #         return render(request, self.template_name)
+
+##
+## 
 
 class HomeView(TemplateView):
     template_name = 'home.html'
