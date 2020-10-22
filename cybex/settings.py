@@ -35,8 +35,6 @@ LOGIN_REDIRECT_URL = 'home'
 
 LOGOUT_REDIRECT_URL = 'home'
 
-# LOGIN_URL = 'two_factor:login'
-
 
 with open(BASE_DIR + '/cybex/config.yaml','r') as f:
     conf = yaml.load(f)
@@ -72,6 +70,7 @@ MULTIFACTOR = {
     'FIDO_SERVER_NAME': 'Django App',    # Human-readable name for FIDO request
     'TOKEN_ISSUER_NAME': 'Django App',   # TOTP token issuing name (to be shown in authenticator)
     'U2F_APPID': 'https://example.com',  # U2F request issuer
+    'FACTORS': ['FIDO2', 'U2F', 'TOTP'], # <- this is the default
 }
 
 MIDDLEWARE = [

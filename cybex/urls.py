@@ -22,9 +22,8 @@ from multifactor.decorators import multifactor_protected
 urlpatterns = [
     path('admin/multifactor/', include('multifactor.urls')),
     path('admin/', decorator_include(multifactor_protected(factors=1), admin.site.urls)),
-    # path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls), # Before mutlifactor was added
     path('accounts/', include('django.contrib.auth.urls')),
-    # path('', include('cybexweb.urls')),
     path('', include('cybexweb.urls')),
     path('', decorator_include(multifactor_protected(factors=1),'cybexapi.urls')),
 ]
