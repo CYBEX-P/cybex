@@ -28,3 +28,35 @@ urlpatterns = [
     path('', include('cybexweb.urls')),
     path('', decorator_include(multifactor_protected(factors=1),'cybexapi.urls')),
 ]
+
+
+######
+## Code below is used to override a function with multifactor.factors.totp Create class
+## I changed the redirect return
+#####
+
+from multifactor.factors.totp import Create
+from multifactor.models import UserKey, KEY_TYPE_TOPT
+from multifactor.common import write_session, login
+from multifactor.app_settings import mf_settings
+from django.contrib import messages
+from django.shortcuts import redirect
+WINDOW = 60
+
+def post(self, request, *args, **kwargs):
+    print("NEW ONE CALLED")
+    if self.totp.verify(request.POST["answer"], valid_window=WINDOW):
+        key = UserKey.objects.create(
+            user=request.user,
+            properties={"secret_key": self.secret_key},
+            key_type=KEY_TYPE_TOPT
+        )
+        write_session(request, key)
+        messages.success(request, 'TOPT Authenticator added.')
+        return redirect(request.session['multifactor-next'])
+
+Create.post = post
+
+######
+## END OF OVERRIDE
+#####
