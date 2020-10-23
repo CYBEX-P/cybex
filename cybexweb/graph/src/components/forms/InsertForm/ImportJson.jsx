@@ -15,13 +15,12 @@ const ImportJson = props => {
         const data = new FormData()
         data.append('file', e.target.files[0])
         axios
-        .get('/import_json', data,{   
+        .post('/import_json', data,{   
         })
         .then(res => {
             console.log(res.data)
             setNeo4jData(res.data)
         })
-    
     }
     return(
         <div style={{backgroundColor: "rgba(0,0,0,0.3)", padding: "10px", borderRadius: "5px",minHeight: "90px"}}>
