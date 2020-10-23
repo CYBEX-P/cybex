@@ -180,7 +180,7 @@ def cybexCountHandler(Ntype, data1, graph):
         print("Fetching cybexCount...")
         valid = False # Flag to be set when valid api response is returned
         api_timeout = False
-        t = Timer(60.0, raise_timeout)
+        t = Timer(300.0, raise_timeout)
         t.start()      
         while not valid:
             print("requesting...")
@@ -212,7 +212,7 @@ def cybexCountHandler(Ntype, data1, graph):
         print("Fetching cybexCountMalicious...")
         valid = False # Flag to be set when valid api response is returned
         api_timeout = False
-        t = Timer(60.0, raise_timeout)
+        t = Timer(300.0, raise_timeout)
         t.start()
         while not valid:
             rMal = requests.post(urlMal, headers=headersMal, data=dataMal)
