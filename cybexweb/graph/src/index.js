@@ -33,6 +33,7 @@ import {
 import axios from 'axios';
 import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Config from './testdata/get_graph.json';
 
 library.add(
   faChartBar,
@@ -65,15 +66,26 @@ library.add(
 
 let YAMLConfig = {};
 
-axios
-  .get(`/api/v1/admin/config`)
-  .then(({ data }) => {
-    YAMLConfig =  JSON.parse(data);
-    ReactDOM.render(<App config={YAMLConfig} />, document.getElementById('root'));
-  })
-  .catch(() => {
-    ReactDOM.render(
-      <h1 className="text-center">Oops! We were not able to get a response from the server.</h1>,
-      document.getElementById('root')
-    );
-  });
+// Detect Chrome 
+let chromeAgent = window.navigator.userAgent.indexOf('Chrome') !== -1; 
+if (!chromeAgent) {
+  alert("Please use Google Chrome for optimal experience.")
+}
+
+if (process.env.NODE_ENV !== 'production') {
+  YAMLConfig = Config;
+  ReactDOM.render(<App config={YAMLConfig} />, document.getElementById('root'));
+} else {
+  axios
+    .get(`/api/v1/admin/config`)
+    .then(({ data }) => {
+      YAMLConfig = JSON.parse(data);
+      ReactDOM.render(<App config={YAMLConfig} />, document.getElementById('root'));
+    })
+    .catch(() => {
+      ReactDOM.render(
+        <h1 className="text-center">Oops! We were not able to get a response from the server.</h1>,
+        document.getElementById('root')
+      );
+    });
+}
