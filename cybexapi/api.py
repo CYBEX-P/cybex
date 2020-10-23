@@ -164,6 +164,17 @@ class enrichNodePost(APIView):
         result = enrichLocalNode(x, data["value"], data["Ntype"], graph)
         return Response(result)
 
+class enrichURL(APIView):
+    permission_classes = (IsAuthenticated, )
+    
+    def post(self, request, x=None):
+        current_user = request.user
+        data = request.data
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+        status = insert_domain(data["value"], graph)
+        return Response(status)
+
 
 class macroCybex(APIView):
     permission_classes = (IsAuthenticated, )
