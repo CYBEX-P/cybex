@@ -157,7 +157,7 @@ def cybexCountHandler(Ntype, data1, graph):
     # First, query total count
     #url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count"
     #url = "http://localhost:5001/query"
-    url = "http://cybex-api.cse.unr.edu:5000/query"
+    url = "https://cybex-api.cse.unr.edu:5000/query"
     headers = {'content-type': 'application/json',
                'Authorization': 'Bearer: xxxxxx'}
     # data = {Ntype1: data1, "from": "2019/8/30 00:00",
@@ -193,7 +193,7 @@ def cybexCountHandler(Ntype, data1, graph):
         # Next, query malicious count
         #urlMal = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count/malicious"
         #urlMal = "http://localhost:5001/query"
-        urlMal = "http://cybex-api.cse.unr.edu:5000/query"
+        urlMal = "https://cybex-api.cse.unr.edu:5000/query"
         headersMal = {'content-type': 'application/json',
                     'Authorization': 'Bearer xxxxx'}
         #dataMal = {Ntype1: data1, "from": "2019/8/30 00:00",
@@ -242,7 +242,7 @@ def cybexRelatedHandler(Ntype, data1, graph):
     #print(req)
 
     #url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/related/attribute/summary"
-    url = "http://cybex-api.cse.unr.edu:5000/query"
+    url = "https://cybex-api.cse.unr.edu:5000/query"
     headers = {'content-type': 'application/json', 'Authorization' : 'Bearer xxxxx'}
     #data = { Ntype1 : data1, "from" : "2019/8/30 00:00", "to" : "2019/12/5 6:00am", "tzname" : "US/Pacific" }
     data = {

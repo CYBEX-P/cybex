@@ -28,7 +28,7 @@ class NewDropdown extends React.Component {
 
         <DropdownMenu>
           <DropdownItem>
-            <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/">
+            <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/home">
                 <FontAwesomeIcon fixedWidth size="lg" icon="home" color="#e0e0e0" />
                 <span style={{ paddingLeft: '12px' }}>Home</span>
             </Link>
@@ -36,7 +36,7 @@ class NewDropdown extends React.Component {
           
           {!this.props.isSignedIn && (
             <DropdownItem>
-                <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/login">
+                <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/home">
                     <FontAwesomeIcon fixedWidth size="lg" icon="user" color="#e0e0e0" />
                     <span style={{ paddingLeft: '12px' }}>Login</span>
                 </Link>
