@@ -20,7 +20,7 @@ const NavBar = (props) => {
           <NewDropdown permissions={props.permissions} dispatchExpand={dispatchExpand} isSignedIn={props.isSignedIn}/>
         </div>
         
-        <a style={{ flexGrow: 2, textAlign: 'center', color: 'white' }} href="/tiweb/graph">
+        <a style={{ flexGrow: 2, textAlign: 'center', color: 'white' }} href="/">
           <h3 style ={{display: "inline-block", color: "#58a5f0"}}>CYBEX-P</h3>
           <h6 style ={{display: "inline-block"}}>&nbsp;&nbsp;Threat Intelligence</h6>
         </a>
