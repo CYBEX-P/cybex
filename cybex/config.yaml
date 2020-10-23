@@ -1,27 +1,27 @@
 IOC:
   types:
     - IP
-    - SPort
-    - DPort
-    - Email
-    - Host
     - URL
-    - Hash
-    - BTC
-    - ASN
-    - MAC
-    - BGPath
-    - SSID
-    - Country
+    - Email
     - Domain
-    - User
+    - ASN
+    - Host
+    - Country
     - Subnet
     - Whois
     - Ports
     - Registrar
     - Nameserver
     - MailServer
+    - Hash
+    - User
     - Phone
+    - BTC
+    - MAC
+    - BGPath
+    - SSID
+    - SPort
+    - DPort
 
 
   enrichments:
