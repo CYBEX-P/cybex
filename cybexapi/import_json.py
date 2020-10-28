@@ -1,9 +1,10 @@
 import json
 import os
-
+from cybexapi.wipe_db import wipeDB
 from django.conf import settings
 
 def import_json(graph, data):
+    wipeDB(graph) # clear graph before importing
     values = data['file'].read()
     values = json.loads(values)
     # print(values)
