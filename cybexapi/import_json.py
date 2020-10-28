@@ -8,6 +8,7 @@ def import_json(graph, data):
     values = json.loads(values)
     # print(values)
     writeToDB(graph,values)
+    print("Imported entire graph")
     return values
 
 def writeToDB(graph,json):
