@@ -3,21 +3,16 @@ import os
 
 from django.conf import settings
 
-import pprint
-
 def import_json(graph, data):
     values = data['file'].read()
     values = json.loads(values)
     # print(values)
-    pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint(values['Neo4j'][0][0]['nodes'])
     writeToDB(graph,values)
     return values
 
 def writeToDB(graph,json):
     nodes = json['Neo4j'][0][0]['nodes']
     # print(nodes)
-    pp = pprint.PrettyPrinter(indent=4)
     for index, node in enumerate(nodes):
         data = node['properties']['data']
         data_type = node['properties']['type']
@@ -27,8 +22,22 @@ def writeToDB(graph,json):
             {{ data: '{data}'}}) \
             RETURN ID(n)").data()
         # print(id_response)
-        pp.pprint(id_response)
-        nodes[index]['new_info']['updated_id'] = id_response[0]['ID(n)']
+        nodes[index]['updated_id'] = id_response[0]['ID(n)']
     # print(nodes) # Has new element 'updated_id'
-    pp.pprint(nodes)
 
+    edges = json['Neo4j'][1][0]['edges']
+    for edge in edges:
+        old_source = edge['from']
+        relation_type = edge['type']
+        old_destination = edge['to']
+
+        for node in nodes:
+            if(node['id'] == old_source):
+                new_source = node['updated_id']
+            elif(node['id'] == old_destination):
+                new_destination = node['updated_id']
+        # print(f"New Source: {new_source}")
+        # print(f"New Destination: {new_destination}")
+        graph.run(f"MATCH (a),(b) \
+            WHERE id(a) = {new_source} AND id(b) = {new_destination} \
+            CREATE (a)-[r:{relation_type}]->(b)")
