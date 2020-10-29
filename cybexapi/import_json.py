@@ -18,14 +18,30 @@ def writeToDB(graph,json):
     for index, node in enumerate(nodes):
         data = node['properties']['data']
         data_type = node['properties']['type']
+        data_properties = node['properties']
 
         # Used double {{ }} b/c of how formatting works in Python
         id_response = graph.run(f"CREATE (n:{data_type} \
             {{ data: '{data}'}}) \
             RETURN ID(n)").data()
         # print(id_response)
-        nodes[index]['updated_id'] = id_response[0]['ID(n)']
-    # print(nodes) # Has new element 'updated_id'
+
+        id_value = id_response[0]['ID(n)']
+        nodes[index]['updated_id'] = id_value
+        # print(nodes) # Has new element 'updated_id
+
+        # Comparing if the length is greater than 2 means that there is more values besides 'data' & 'type'
+        if(len(data_properties) > 2):
+            for key, value in data_properties.items():
+                # Don't do anything if the key is data or type
+                if isinstance(value,str):
+                    # Add quotes to string so Neo4j recognizes it as string. 
+                    value = f"\"{value}\""
+
+                if(key != 'data' and key != 'type'): 
+                    graph.run(f"MATCH (a) \
+                        WHERE id(a) = {id_value} \
+                        SET a.{key} = {value}")
 
     edges = json['Neo4j'][1][0]['edges']
     for edge in edges:
