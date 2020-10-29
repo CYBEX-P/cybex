@@ -18,7 +18,7 @@ from cybexapi.whoisXML import whois, insertWhois
 from cybexapi.enrichments import insert_domain_and_user, insert_netblock, insert_domain, resolveHost, getNameservers, getRegistrar, getMailServer
 from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_src
 from cybexapi.shodanSearch import shodan_lookup, insert_ports
-from cybexapi.import_json import import_json, writeToDB
+from cybexapi.import_json import import_json
 import json
 from cybexapi.wipe_db import wipeDB
 import pandas as pd
@@ -121,7 +121,6 @@ class exportNeoDB(APIView):
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         g = export(graph)
-        # return Response(g)
         # print(g)
         p = processExport(g)
         # print(p)
