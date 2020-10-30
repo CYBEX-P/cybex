@@ -6,6 +6,7 @@ from django.views.generic import TemplateView
 from cybexweb.dockers import check_db, create_db
 import docker
 import json
+
 #def checkalive(dbport, dbip, dbuser, dbpass, containerid):
  #   return true
 
@@ -18,29 +19,36 @@ import json
 
 #def recreate():
 
-class GraphView(View):
-    template_name = 'index.html'
+## This was moved to different views.py file. This can be removed on a cleanup
+## 
+# from multifactor.decorators import multifactor_protected
 
-    @method_decorator(login_required)
-    def get(self,request,format=None):
-        print("Begin checking docker")
-        current_user = request.user
-        client = docker.from_env()
-        if not current_user.graphdb.containerid or (current_user.graphdb.containerid and not check_db(client,current_user.graphdb.containerid)):
-            print("container missing or not running.  recreating")
-            stats = json.loads(create_db(client))
+# class GraphView(View):
+#     template_name = 'index.html'
+
+#     @method_decorator(login_required)
+#     def get(self,request,format=None):
+#         print("Begin checking docker")
+#         current_user = request.user
+#         client = docker.from_env()
+#         if not current_user.graphdb.containerid or (current_user.graphdb.containerid and not check_db(client,current_user.graphdb.containerid)):
+#             print("container missing or not running.  recreating")
+#             stats = json.loads(create_db(client))
             
-            print(stats)
-            current_user.graphdb.dbport = stats['bolt']
-            current_user.graphdb.dbip = stats['ip']
-            current_user.graphdb.dbuser = 'neo4j'
-            current_user.graphdb.dbpass = stats['password']
-            current_user.graphdb.containerid = stats['id']
-            current_user.save()
-        else:
-            print("Container running")
+#             print(stats)
+#             current_user.graphdb.dbport = stats['bolt']
+#             current_user.graphdb.dbip = stats['ip']
+#             current_user.graphdb.dbuser = 'neo4j'
+#             current_user.graphdb.dbpass = stats['password']
+#             current_user.graphdb.containerid = stats['id']
+#             current_user.save()
+#         else:
+#             print("Container running")
                 
-        return render(request, self.template_name)
+#         return render(request, self.template_name)
+
+##
+## 
 
 class HomeView(TemplateView):
     template_name = 'home.html'

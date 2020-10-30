@@ -29,11 +29,13 @@ function InitializeGraph(data) {
       borderWidth: 4,
       color: 'rgba(151,194,252,1)',
       widthConstraint: 100,
-      //removed background: undefined
       font:{color:'white',strokeWidth:3,strokeColor:"black"}
     },
     edges: {
       length: 200,
+      arrows: {
+        to: {enabled: true, scaleFactor: 0.5}
+      }
       //color: {'inherit':false},
       //dashes: true
     },
@@ -56,19 +58,29 @@ const Graph = ({ isLoading }) => {
   const [dragStart, setDragStart] = useState(false);
 
   const [hoverText, setHoverText] = useState(null);
-  // selctText is like hoverText, but is to be persistently shown when node is selected
+  const [hoverTextEdge, setHoverTextEdge] = useState(null);
+  // selectText is like hoverText, but is to be persistently shown when node is selected
   const [selectText, setSelectText] = useState(null);
+  // pinnedText is like selectText, but stays stored and displayed if user pins an IOC
+  const [pinnedText, setPinnedText] = useState(null);
+  const [pinnedPos, setPinnedPos] = useState(320)
+
   const [selection, setSelection] = useState({ nodes: [], edges: [] });
   const [selectedNodeType, setSelectedNodeType] = useState(null);
+  const [pinnedNodeType, setPinnedNodeType] = useState(null);
   const [radialPosition, setRadialPosition] = useState(null);
   const [eventListenersAdded, setEventListenersAdded] = useState(false);
 
   const [network, setNetwork] = useState(null);
 
   const [filterState,setFilterState] = useState(false);
-  const [commentState,setCommentState] = useState(false);
 
+  const [commentState,setCommentState] = useState(false);
   const [commentTextState, setCommentTextState] = useState('');
+  const [pinnedCommentState,setPinnedCommentState] = useState(false);
+  const [pinnedCommentTextState, setPinnedCommentTextState] = useState('');
+
+  var zoomTimer;
 
   function UpdatePositions() {
     if (network === null || selection === null) {
@@ -135,6 +147,9 @@ const Graph = ({ isLoading }) => {
     // blurNode fires when leaving a node
     nw.on('blurNode', () => setHoverText(null));
 
+    // blurEdge fires when leaving an edge
+    nw.on('blurEdge', () => setHoverTextEdge(null));
+
     // Change the selection state whenever a node is selected and deselected
     nw.on('deselectNode', (params) => 
     {
@@ -153,10 +168,12 @@ const Graph = ({ isLoading }) => {
           nw.body.nodes[currentId].options.color.background = nw.body.nodes[currentId].options.color.border = opaqueColorStr;
         }
       });
-      setSelectText(false)
+      setSelectText(false);
+      setPinnedPos(10);
     });
     nw.on('selectNode', (params) => {
       setSelection(nw.getSelection());
+      setHoverText(null); // No need for hovertext after selection, redundant
       var opacityBlurred = 0.1;
       var nodeId = params.nodes[0];
       // nodeObj is the Neo4j object that representes the currently selected node. Note: Slightly different here than with on('hoverNode')
@@ -185,6 +202,7 @@ const Graph = ({ isLoading }) => {
         countMalicious: JSON.stringify(nodeObj[0].properties.countMal),
         type: JSON.stringify(nodeObj[0].properties.type),
       });
+      setPinnedPos(320);
     });
 
     // Set state when drag starts and ends. Used to determine whether to draw radial menu or not
@@ -205,34 +223,64 @@ const Graph = ({ isLoading }) => {
       setIsStabilized(true);
     });
 
-    // We just get rid of the selection and radial menu on zoom since there isn't a good way to tell
-    // when zoom ends and begins
+    // Wait half a second to re-display radial menu after graph zoom. Less jarring for user.
     nw.on('zoom', () => {
+      clearTimeout(zoomTimer);
       setRadialPosition(null);
-      if (selection !== null) {
-        nw.unselectAll();
-        setSelection(null);
+      zoomTimer = setTimeout(function(){ setSelection(nw.getSelection()); }, 500);
+      
+      // DEPRECATED - Remove in future release:
+      // We just get rid of the selection and radial menu on zoom since there isn't a good way to tell
+      // when zoom ends and begins
+      // if (selection !== null) {
+      //   nw.unselectAll();
+      //   setSelection(null);
+      // }
+    });
+
+    nw.on('hoverEdge', e => 
+    {
+      if (typeof data.Neo4j !== 'undefined') {
+        var edgeObj = data.Neo4j[1][0].edges.filter(properties => properties.id === e.edge);
+        setHoverTextEdge({
+          // Set the select text to the properties of the data
+          data: JSON.stringify(edgeObj[0].type),
+          x: e.event.clientX,
+          y: e.event.clientY,
+          //label: JSON.stringify(nodeObj[0].label),
+        });
       }
     });
-    return true;
   }
 
-  function handleComment()
+  // handles all comments submitted from IOC card comment boxes
+  function handleComment(node)
   {
-    if (commentTextState != '')
+    // node object and comment text states differ depending on which
+    // IOC card is being handled ('selected or pinned')
+    var nodeObj;
+    var currentCommentText;
+    if (node == "selected") {
+      nodeObj = selectedNodeType;
+      currentCommentText = commentTextState;
+    }
+    else {
+      nodeObj = pinnedNodeType;
+      currentCommentText = pinnedCommentTextState;
+    }
+    if (currentCommentText != '')
     {
-      setSelectText(null);
-      setCommentState(false);
+      resetCards();
       setLoading(true);
       axios
-        .post(`/api/v1/enrich/comment`, {Ntype: `${selectedNodeType.properties.type}`, value: `${selectedNodeType.properties.data}`, comment: `${commentTextState}`})
+        .post(`/api/v1/enrich/comment`, {Ntype: `${nodeObj.properties.type}`, value: `${nodeObj.properties.data}`, comment: `${currentCommentText}`})
         .then(({ data }) => {
           if (data['insert status'] !== 0) {
             axios
               .get('/api/v1/neo4j/export')
               .then(response => {
                 setNeo4jData(response.data);
-                setCommentTextState('');
+                //setCommentTextState(''); // replaced by resetCards();
                 setLoading(false);
               })
               .catch(() => {
@@ -242,6 +290,37 @@ const Graph = ({ isLoading }) => {
           }
         }); 
     }
+  }
+
+  // remove Pinned IOC card
+  function removePin()
+  {
+    setPinnedText(null);
+    setPinnedCommentState(false);
+    setPinnedCommentTextState('');
+    setPinnedPos(10);
+  }
+
+  // resets all IOC cards to empty null state (removes them)
+  function resetCards()
+  {
+    setSelectText(null);
+    setCommentState(false);
+    setCommentTextState('');
+
+    removePin();
+  }
+
+  // handles IOC card pinning logic and associated state changes
+  function pinHandler()
+  {
+    setPinnedText(selectText);
+    setPinnedNodeType(selectedNodeType); // Store pinned node obj state
+
+    // Because selected and pinned IOC are initially the same, only show IOC in the
+    // 'pinned' slot. Otherwise is redundant. Accomplished by nulling selectText
+    setSelectText(null);
+    setPinnedPos(10);
   }
 
   useEffect(() => {
@@ -261,6 +340,7 @@ const Graph = ({ isLoading }) => {
   useEffect(() => {
     if (typeof neo4jData.Neo4j !== 'undefined') {
       setNetwork(InitializeGraph(neo4jData));
+      resetCards();
       setEventListenersAdded(false);
       setRadialPosition(null);
       // console.log(neo4jData);
@@ -486,7 +566,7 @@ const Graph = ({ isLoading }) => {
           }}>
             <b>{hoverText.type.replace(/"/g,"")}</b>
           </h4>
-          <hr/>
+          {/* <hr/> */}
           <h6 style={{textAlign:"center"}}>{hoverText.data.replace(/"/g,"")}</h6>
           {hoverText.percentMal != "" && (
             <div style={{color:"white",fontSize:"large",textAlign:"center"}}>
@@ -494,6 +574,25 @@ const Graph = ({ isLoading }) => {
             {hoverText.percentMal}
           </div>
           )}
+        </div>
+      )}
+      {hoverTextEdge && (
+        <div
+          style={{
+                position: 'absolute',
+                zIndex: 1000,
+                top: hoverTextEdge.y,
+                left: hoverTextEdge.x,
+                // backgroundColor: '#111', // Used for classic Card styling only.
+                pointerEvents: 'none',
+                backgroundColor: "black",
+                color: "white",
+                opacity: "0.85",
+                borderRadius: "10px",
+                padding: "10px",
+                boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"
+              }}>
+          <h6 style={{textAlign:"center"}}>{hoverTextEdge.data.replace(/"/g,"")}</h6>
         </div>
       )}
       {/* TODO: Turn selectText box into seperate component */}
@@ -505,7 +604,7 @@ const Graph = ({ isLoading }) => {
             width:"300px", 
             right:"10px",
             bottom:"10px",
-            zIndex: 5,
+            zIndex: 2,
             // backgroundColor: '#111', // Used for classic Card styling only.
             pointerEvents: 'none',
             backgroundColor: "rgba(0,0,0,0.7)",
@@ -515,8 +614,9 @@ const Graph = ({ isLoading }) => {
             boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)",
             backdropFilter: "blur(20px)"
           }}>
-          <FontAwesomeIcon size="2x" icon={faMapPin} style={{position:'absolute',left:'10px',top:'10px'}}/>
-          <FontAwesomeIcon size="2x" icon={faTimesCircle} style={{position:'absolute',right:'10px',top:'10px'}}/>
+          <div onClick={() => pinHandler()}>
+            <FontAwesomeIcon size="2x" icon={faMapPin} style={{position:'absolute',left:'10px',top:'10px',pointerEvents:'auto'}}/>
+          </div>
           <h4 style={{
             textAlign:"center",
             color: selectText.color.replace(/"/g,""),
@@ -556,7 +656,7 @@ const Graph = ({ isLoading }) => {
             right:"10px",
             bottom:"10px",
             height: "230px",
-            zIndex: 5,
+            zIndex: 2,
             // backgroundColor: '#111', // Used for classic Card styling only.
             backgroundColor: "black",
             color: "white",
@@ -567,7 +667,7 @@ const Graph = ({ isLoading }) => {
           }}>
             <div style={{width: "100%", height: "100%", backgroundColor: "#171717", borderRadius: "5px", padding: "10px",backdropFilter: "blur(20px)"}}>
               <div onClick={() => setCommentState(false)}>
-                <FontAwesomeIcon size="1x" icon={faTimesCircle} style={{position:'absolute',right:'10px',top:'10px'}}/>
+                <FontAwesomeIcon size="1x" icon={faTimesCircle} style={{position:'absolute',right:'10px',top:'10px',pointerEvents:''}}/>
               </div>
               <div style={{color: selectText.color.replace(/"/g,"")}}>{selectText.data.replace(/"/g,"")}</div>
               <h5>Comments</h5>
@@ -593,7 +693,120 @@ const Graph = ({ isLoading }) => {
                     flexDirection: "column",
                     justifyContent: "center"
                   }}
-                  onClick={() => handleComment()}
+                  onClick={() => handleComment("selected")}
+                >
+                  <FontAwesomeIcon size="2x" icon={faArrowCircleUp}/>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        </div>
+        
+        
+      )}
+      {/* Temporary duplication of above for pinnedText. Needs to be cleaned up and merged into a common component. */}
+      {pinnedText && (
+        <div>
+          <div style={{
+            position:"absolute",
+            width:"300px", 
+            right: pinnedPos + 'px',
+            bottom:"10px",
+            zIndex: 2,
+            // backgroundColor: '#111', // Used for classic Card styling only.
+            pointerEvents: 'none',
+            backgroundColor: "rgba(0,0,0,0.7)",
+            color: "white",
+            borderRadius: "10px",
+            padding: "20px",
+            boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)",
+            backdropFilter: "blur(20px)",
+            transition: "right 1s",
+          }}>
+          {/* <FontAwesomeIcon size="2x" icon={faMapPin} style={{position:'absolute',left:'10px',top:'10px',color:'#58a5f0'}}/> */}
+          <div onClick={() => removePin()}>
+            <FontAwesomeIcon size="2x" icon={faTimesCircle} style={{pointerEvents: 'auto', position:'absolute',left:'10px',top:'10px'}}/>
+          </div>
+          {/* <FontAwesomeIcon size="2x" icon={faTimesCircle} style={{position:'absolute',right:'10px',top:'10px'}}/> */}
+          <h4 style={{
+            textAlign:"center",
+            color: pinnedText.color.replace(/"/g,""),
+            //textShadow: "-1px 0 grey, 0 1px grey, 1px 0 grey, 0 -1px grey"
+          }}>
+            <b>{pinnedText.type.replace(/"/g,"")}</b>
+          </h4>
+          <h6 style={{textAlign:"center"}}>{pinnedText.data.replace(/"/g,"")}</h6>
+          <div style={{color:"white"}}>
+            <div style = {{backgroundColor: "#232323",borderRadius: "10px", padding: "10px",marginBottom:"10px",backdropFilter: "blur(20px)"}}>
+              <div style = {{display: "flex", justifyContent: "space-between"}}>
+                <div>Comments</div>          
+                <button onClick={() => setPinnedCommentState(true)} style={{pointerEvents: 'auto', backgroundColor:"#white",color:"black",border:"none",borderRadius:"5px"}}>
+                <FontAwesomeIcon size="1x" icon={faCommentDots}/>
+                  View/Add
+                  </button>
+              </div>
+            </div>
+          </div>
+          <div style={{color:"white"}}>
+            {/* <h6>CYBEX-P Sightings</h6> */}
+            <div style = {{backgroundColor: "#232323",borderRadius: "10px", padding: "10px",}}>
+              <h6 >CYBEX-P Sightings:</h6>
+              {/* <FontAwesomeIcon size="1x" icon={faExclamationCircle} style={{marginRight:"3px"}}/> */}
+              Benign = {pinnedText.count}, Malicious = {pinnedText.countMalicious}
+            </div>
+            {/* <hr/> */}
+            {/* <h5>Highlight Related:</h5>
+            <button style={{backgroundColor:"#232323",color:"white",border:"none",borderRadius:"5px",marginRight:'10px'}}>Attributes</button>
+            <button style={{backgroundColor:"#232323",color:"white",border:"none",borderRadius:"5px"}}>Events</button> */}
+          </div>
+        </div>
+        {pinnedCommentState && (
+          <div style={{
+            position:"absolute",
+            width:"300px", 
+            right: pinnedPos + "px",
+            bottom:"10px",
+            height: "230px",
+            zIndex: 2,
+            // backgroundColor: '#111', // Used for classic Card styling only.
+            backgroundColor: "black",
+            color: "white",
+            opacity: "1",
+            borderRadius: "10px",
+            padding: "5px",
+            boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)",
+            transition: "right 1s"
+          }}>
+            <div style={{width: "100%", height: "100%", backgroundColor: "#171717", borderRadius: "5px", padding: "10px",backdropFilter: "blur(20px)"}}>
+              <div onClick={() => setPinnedCommentState(false)}>
+                <FontAwesomeIcon size="1x" icon={faTimesCircle} style={{position:'absolute',right:'10px',top:'10px'}}/>
+              </div>
+              <div style={{color: pinnedText.color.replace(/"/g,"")}}>{pinnedText.data.replace(/"/g,"")}</div>
+              <h5>Comments</h5>
+              {/* <div style={{height: "80px", padding:"0px 0px 0px 5px",overflow: "hide",backgroundColor: "black", marginLeft: "5px", marginRight: "5px",padding: "5px",borderRadius:"5px"}}>
+                <p>4-7-2020 9:02: Test.</p>
+                <p>4-7-2020 9:07: Test 123.</p>
+              </div> */}
+              <div style={{display: "flex", justifyContent: "space-between",padding: "5px"}}>
+                <div style={{height: "130px",padding: "5px",backgroundColor: "black",borderRadius: "5px"}}>
+                  <textarea 
+                    // rows="5" 
+                    style={{width: "200px", height: "100%", border: "none", borderRadius: "5px",backgroundColor: "black", color: "white"}}
+                    onChange={event => setPinnedCommentTextState(event.target.value)}>
+                      {pinnedNodeType.properties.comment}
+                  </textarea>
+                </div>
+                <div 
+                  style={{
+                    color:"white",
+                    border:"none",
+                    borderRadius:"5px", 
+                    display: "flex", 
+                    flexDirection: "column",
+                    justifyContent: "center"
+                  }}
+                  onClick={() => handleComment("pinned")}
                 >
                   <FontAwesomeIcon size="2x" icon={faArrowCircleUp}/>
                 </div>

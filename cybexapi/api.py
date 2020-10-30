@@ -18,6 +18,7 @@ from cybexapi.whoisXML import whois, insertWhois
 from cybexapi.enrichments import insert_domain_and_user, insert_netblock, insert_domain, resolveHost, getNameservers, getRegistrar, getMailServer
 from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_src
 from cybexapi.shodanSearch import shodan_lookup, insert_ports
+from cybexapi.import_json import import_json
 import json
 from cybexapi.wipe_db import wipeDB
 import pandas as pd
@@ -163,6 +164,17 @@ class enrichNodePost(APIView):
         result = enrichLocalNode(x, data["value"], data["Ntype"], graph)
         return Response(result)
 
+class enrichURL(APIView):
+    permission_classes = (IsAuthenticated, )
+    
+    def post(self, request, x=None):
+        current_user = request.user
+        data = request.data
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+        status = insert_domain(data["value"], graph)
+        return Response(status)
+
 
 class macroCybex(APIView):
     permission_classes = (IsAuthenticated, )
@@ -211,7 +223,7 @@ class macro(APIView):
     # Returns: Response status
     # Author: Spencer Kase Rohlfing & (Someone else, sorry don't know who)
     def get(self, request, format=None, data=None, ntype=None):
-        start = time.time()
+        # start = time.time()
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
@@ -391,18 +403,21 @@ class wipe(APIView):
         wipeDB(graph)
         return Response({"Status": "Neo4j DB full wipe complete!"})
 
+# Remove before release
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication 
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening
+
 class importJson(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, format=None):
-        print("HI")
-        # print(request.json())
-        return Response({"Status": "Success"})
-        
-    def post(self, request, format=None):
-        print("HI")
-        return Response({"Status": "Success"})
+    # Also remove this line, it was to bypass the CSRF
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
+    def post(self, request, format=None):
+        responce = Response(import_json(request.data))
+        return(responce)
 
 
 # class insertURL(APIView):

@@ -68,7 +68,7 @@ def processExport(dataObject):
                 # key['color'] = '#34E5FF'
                 # key['color'] = 'rgba(151,194,252,1)'
             elif key['label'] == 'Hash':
-                key['color'] = '#FDF5BF'
+                key['color'] = threatColor(threatLevel)
             elif key['label'] == 'ASN':
                 # key['color'] = '#8CB369'
                 #key['color'] = 'rgba(168, 50, 50)'
@@ -122,13 +122,13 @@ def processExport(dataObject):
                 key['color'] = threatColor(threatLevel)
                 # key['color'] = "#06de9e"
             elif key['label'] == 'Nameserver':
-                key['color'] = "#cf4cf3"
+                key['color'] = threatColor(threatLevel)
             elif key['label'] == 'MailServer':
                 key['image'] = '/static/SVG/DataAnalytics/svg_mail.svg'
                 key['color'] = threatColor(threatLevel)
                 # key['color'] = 'rgba(151,194,252,1)'
             elif key['label'] == 'User':
-                key['color'] = "#d8e5f6"
+                key['color'] = threatColor(threatLevel)
             elif key['label'] == 'CybexCount':
                 # key['color'] = "#29e682"
                 key['color'] = 'rgba(151,194,252,1)'
