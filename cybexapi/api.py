@@ -19,6 +19,7 @@ from cybexapi.enrichments import insert_domain_and_user, insert_netblock, insert
 from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_src
 from cybexapi.shodanSearch import shodan_lookup, insert_ports
 from cybexapi.import_json import import_json
+from cybexapi.delete_node import delete_node
 import json
 from cybexapi.wipe_db import wipeDB
 import pandas as pd
@@ -146,9 +147,17 @@ class enrichNode(APIView):
 
     def get(self, request, format=None, x=None, y=None, z=None):
         current_user = request.user
-        value = ""
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
+        
+        #  enrichLocalNode(enrich_type, value, node_type, graph):
+        print("HI")
+        print(request.data)
+        delete_node(x, y, z, request.data, graph)
+        
+        # Below is the correct code, above is just for testing a delete node feature
+        
+        
         result = enrichLocalNode(x, y, z, graph)
         return Response(result)
 
