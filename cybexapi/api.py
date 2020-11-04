@@ -141,6 +141,22 @@ class insert(APIView):
         else:
             return Response({"Status": "Failed"})
 
+class delete(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, format=None, node_type=None, data=None):
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+        
+        status = delete_node(node_type, data, graph)
+
+        if status == 1:
+            return Response({"Status": "Success"})
+        else:
+            return Response({"Status": "Failed"})
+
+
 
 class enrichNode(APIView):
     permission_classes = (IsAuthenticated, )
@@ -153,10 +169,10 @@ class enrichNode(APIView):
         #  enrichLocalNode(enrich_type, value, node_type, graph):
         print("HI")
         print(request.data)
-        delete_node(x, y, z, request.data, graph)
+        delete_node(x, y, request.data, graph)
         
         # Below is the correct code, above is just for testing a delete node feature
-        
+        return Response("Remove this line")
         
         result = enrichLocalNode(x, y, z, graph)
         return Response(result)
