@@ -416,7 +416,10 @@ class importJson(APIView):
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def post(self, request, format=None):
-        responce = Response(import_json(request.data))
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+        responce = Response(import_json(graph,request.data))
         return(responce)
 
 
