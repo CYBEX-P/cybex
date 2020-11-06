@@ -127,7 +127,6 @@ class exportNeoDB(APIView):
         # print(p)
         return Response(p)
 
-
 class insert(APIView):
     permission_classes = (IsAuthenticated, )
 
@@ -157,7 +156,6 @@ class delete(APIView):
             return Response({"Status": "Failed"})
 
 
-
 class enrichNode(APIView):
     permission_classes = (IsAuthenticated, )
 
@@ -165,14 +163,6 @@ class enrichNode(APIView):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
-        
-        #  enrichLocalNode(enrich_type, value, node_type, graph):
-        print("HI")
-        print(request.data)
-        delete_node(x, y, request.data, graph)
-        
-        # Below is the correct code, above is just for testing a delete node feature
-        return Response("Remove this line")
         
         result = enrichLocalNode(x, y, z, graph)
         return Response(result)
@@ -183,7 +173,6 @@ class enrichNodePost(APIView):
     def post(self, request, x=None):
         current_user = request.user
         data = request.data
-        value = ""
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         result = enrichLocalNode(x, data["value"], data["Ntype"], graph)
@@ -199,7 +188,6 @@ class enrichURL(APIView):
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         status = insert_domain(data["value"], graph)
         return Response(status)
-
 
 class macroCybex(APIView):
     permission_classes = (IsAuthenticated, )
@@ -417,7 +405,6 @@ class macro(APIView):
 
         print("Done with", str(value))
 
-    
 class wipe(APIView):
     permission_classes = (IsAuthenticated, )
 
@@ -443,7 +430,6 @@ class importJson(APIView):
     def post(self, request, format=None):
         responce = Response(import_json(request.data))
         return(responce)
-
 
 # class insertURL(APIView):
 #     permission_classes = (IsAuthenticated, )
