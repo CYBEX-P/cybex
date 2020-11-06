@@ -11,9 +11,9 @@ def delete_node(node_type, data, graph):
     node = f"\"{data}\""
 
     # Need to add a check to see if the test doesn't return true
-    del_node = graph.evaluate(f"MATCH (n:IP) where n.data = {node} RETURN n")
+    del_node = graph.evaluate(f"MATCH (n:{node_type}) where n.data = {node} RETURN n")
     # print(test.identity)
-    
+
     graph.delete(del_node)
     print("Deleted node")
     return 1
