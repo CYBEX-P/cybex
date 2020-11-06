@@ -114,9 +114,45 @@ const App = props => {
             </TrendsContext.Provider> */}
             <MenuBar side="left" icon="search">
               <h3 style={{paddingLeft: "0%", paddingRight: "25%", marginLeft: "30%", marginTop: "5%",color:"white"}}>Macros</h3>
-              <hr style={{marginLeft: "0%"}}/>
+              {/* <hr style={{marginLeft: "0%"}}/> */}
               <div style={{padding: "5%"}}>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",borderRadius:'5px',padding:'5px',paddingLeft:'5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
+              <hr></hr> 
+              <h4>Automations</h4>
+              <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "#0277bd",color: "white", borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
+                Threat Search
+                <div 
+                  style={{display:"inline"}}
+                  onClick={() => {
+                    setLoading(true);
+                    axios.get('/api/v1/macroEmail')
+                    .then(() => {
+                      axios
+                        .get('/api/v1/neo4j/export')
+                        .then(({ data }) => {
+                          setNeo4jData(data);
+                          setLoading(false);
+                        })
+                        .catch(() => {
+                          dispatchModal('Error');
+                          setLoading(false);
+                        });
+                      })
+                      //setLoading(false);
+                    }}
+                >
+                  <FontAwesomeIcon 
+                    size="lg" 
+                    icon={faPlayCircle} 
+                    color="" 
+                    style={{marginLeft:"3%",float:'right'}}/>
+                </div>
+                <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                  <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
+                </div>
+              </div>
+              <hr></hr> 
+              <h4>Investigation Patterns</h4>
+                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft:'5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Phishing Investigation
                   <div
                     style={{display:"inline"}}
@@ -152,7 +188,7 @@ const App = props => {
                       </div> 
                   </div>  
                 </div>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
+                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   CYBEX-P Analysis
                   <div 
                     style={{display:"inline"}}
@@ -184,7 +220,9 @@ const App = props => {
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
                   </div>
                 </div>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
+                <hr></hr> 
+                <h4>Subroutines</h4>
+                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Enrich IPs
                   <div 
                     style={{display:"inline"}}
@@ -216,7 +254,7 @@ const App = props => {
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
                   </div>
                 </div>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
+                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Deconstruct URLs
                   <div 
                     style={{display:"inline"}}
@@ -248,7 +286,7 @@ const App = props => {
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
                   </div>
                 </div>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
+                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Resolve Domains
                   <div 
                     style={{display:"inline"}}
@@ -280,7 +318,7 @@ const App = props => {
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
                   </div>
                 </div>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
+                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Resolve Hosts
                   <div 
                     style={{display:"inline"}}
@@ -312,7 +350,7 @@ const App = props => {
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
                   </div>
                 </div>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
+                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Deconstruct Emails
                   <div 
                     style={{display:"inline"}}
