@@ -7,7 +7,7 @@
 import React, { useContext } from 'react';
 import axios from 'axios';
 import MenuContext from '../App/MenuContext';
-
+import Button from '../Button/Button';
 
 
 
@@ -79,6 +79,23 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
     }
   }
 
+  function deleteNode(type,value)
+  {
+    axios
+        // replace below with actual node deletion api call
+        .post(`/api/v1/delete/`, {Ntype: `${type}`, value: `${value}`})
+        .then(({ data }) => {
+          if (data['insert status'] !== 0) {
+            axios
+              .get('/api/v1/neo4j/export')
+              .then(response => {
+                setNeo4jData(response.data);
+                setLoading(false);
+              })
+          }
+        }); 
+  }
+
   // function EnrichIPAll() {
   //   config.enrichments.IP.map(enrichmentType => {
   //     axios.get(`/api/v1/enrich/${enrichmentType}/${nodeType.properties.data}`).then(({ data }) => {
@@ -129,7 +146,34 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
   titles = config.enrichments[`${nodeLabel}`].map(val => val);
   icons = titles.map(val => val);
   return props => {
-    return <RadialMenuComponent titles={titles} icons={icons} onClickFunctions={onClickFns} {...props} />;
+    return (
+      <div>
+        <RadialMenuComponent titles={titles} icons={icons} onClickFunctions={onClickFns} {...props} />
+        <div 
+          style={{
+            backgroundColor: "#58a5f0",
+            color: "black",
+            borderRadius:'5px',
+            padding:'5px',
+            paddingBottom: '0px',
+            paddingTop: '10px',
+            boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)",
+            position: "absolute",
+            left: "10px",
+            bottom: "10px",
+            zIndex: 100000
+          }} 
+          onClick={() => deleteNode(nodeType.properties.type, nodeType.properties.data)}
+        >
+          <p>Delete {nodeType.properties.type}: {nodeType.properties.data}</p>
+        </div>
+        {/* <Button width="100%" type="button" onClickFunction={() => deleteNode(nodeType.properties.type, nodeType.properties.data)}>
+          Delete 
+          {nodeType.properties.type}
+          {nodeType.properties.data}
+        </Button> */}
+      </div>
+    );
   };
 
 }

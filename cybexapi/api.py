@@ -25,6 +25,35 @@ import pandas as pd
 import time
 import threading
 
+# Move the following to seperate signals file
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth.models import User
+import requests
+
+# Receiver function for user creation/registration signals
+# Checks kwargs for whether signal is from a user creation event.
+# If so, trigger user creation function for cybex backend.
+@receiver(post_save, sender=User)
+def user_saved(sender, instance, **kwargs):
+    print("user saved: " + str(instance))
+    print(instance.profile.orgid)
+    if kwargs['created'] == True:
+        url = "https://cybex-api.cse.unr.edu:5000/test/token"
+        payload = {
+            "email":"test@example.com",
+            "password":"password",
+            "password2":"password",
+            "name": instance
+        }
+        headers = {
+            'content-type': "application/json",
+            # we use Bearer token auth mode
+            'authorization': "Bearer place-token-here"
+            }
+        response = requests.request("POST", url, data=payload, headers=headers)
+        print(response)
+
 # TODO
 # This needs more error checking and probably a more elegent check to see if the db is available
 def connect2graph(user, passw, addr, bolt_port):

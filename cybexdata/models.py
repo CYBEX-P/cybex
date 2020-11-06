@@ -9,12 +9,16 @@ class Profile(models.Model):
     orgid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name='Organization ID')
     organizationname = models.CharField(max_length=256, blank=True, verbose_name='Organization Name')
     tzname = models.CharField(max_length=50, blank=True, verbose_name='Timezone Name')
+    #cybex_token = tzname = models.CharField(max_length=50, blank=True, verbose_name='Timezone Name')
 
 @receiver(post_save, sender=User)
 def create_user_extra(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
         Graphdb.objects.create(user=instance)
+        # u = User.objects.get(username='test9')
+        # org_id = u.profile.orgid
+        # print("user added with org_id: " + str(org_id))
 
 @receiver(post_save, sender=User)
 def save_user_extra(sender, instance, **kwargs):

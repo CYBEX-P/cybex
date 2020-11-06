@@ -33,6 +33,12 @@ class NewDropdown extends React.Component {
                 <span style={{ paddingLeft: '12px' }}>Home</span>
             </Link>
           </DropdownItem>
+          <DropdownItem>
+            <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/home">
+                <FontAwesomeIcon fixedWidth size="lg" icon="home" color="#e0e0e0" />
+                <span style={{ paddingLeft: '12px' }}>Tutorial</span>
+            </Link>
+          </DropdownItem>
           
           {!this.props.isSignedIn && (
             <DropdownItem>

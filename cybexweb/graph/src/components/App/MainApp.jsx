@@ -183,7 +183,168 @@ const App = props => {
                   <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
                   </div>
-                </div>  
+                </div>
+                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
+                  Enrich IPs
+                  <div 
+                    style={{display:"inline"}}
+                    onClick={() => {
+                      setLoading(true);
+                      axios.get('/api/v1/macroIP')
+                      .then(() => {
+                        axios
+                          .get('/api/v1/neo4j/export')
+                          .then(({ data }) => {
+                            setNeo4jData(data);
+                            setLoading(false);
+                          })
+                          .catch(() => {
+                            dispatchModal('Error');
+                            setLoading(false);
+                          });
+                        })
+                        //setLoading(false);
+                      }}
+                  >
+                    <FontAwesomeIcon 
+                      size="lg" 
+                      icon={faPlayCircle} 
+                      color="" 
+                      style={{marginLeft:"3%",float:'right'}}/>
+                  </div>
+                  <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                    <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
+                  </div>
+                </div>
+                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
+                  Deconstruct URLs
+                  <div 
+                    style={{display:"inline"}}
+                    onClick={() => {
+                      setLoading(true);
+                      axios.get('/api/v1/macroURL')
+                      .then(() => {
+                        axios
+                          .get('/api/v1/neo4j/export')
+                          .then(({ data }) => {
+                            setNeo4jData(data);
+                            setLoading(false);
+                          })
+                          .catch(() => {
+                            dispatchModal('Error');
+                            setLoading(false);
+                          });
+                        })
+                        //setLoading(false);
+                      }}
+                  >
+                    <FontAwesomeIcon 
+                      size="lg" 
+                      icon={faPlayCircle} 
+                      color="" 
+                      style={{marginLeft:"3%",float:'right'}}/>
+                  </div>
+                  <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                    <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
+                  </div>
+                </div>
+                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
+                  Resolve Domains
+                  <div 
+                    style={{display:"inline"}}
+                    onClick={() => {
+                      setLoading(true);
+                      axios.get('/api/v1/macroDomain')
+                      .then(() => {
+                        axios
+                          .get('/api/v1/neo4j/export')
+                          .then(({ data }) => {
+                            setNeo4jData(data);
+                            setLoading(false);
+                          })
+                          .catch(() => {
+                            dispatchModal('Error');
+                            setLoading(false);
+                          });
+                        })
+                        //setLoading(false);
+                      }}
+                  >
+                    <FontAwesomeIcon 
+                      size="lg" 
+                      icon={faPlayCircle} 
+                      color="" 
+                      style={{marginLeft:"3%",float:'right'}}/>
+                  </div>
+                  <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                    <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
+                  </div>
+                </div>
+                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
+                  Resolve Hosts
+                  <div 
+                    style={{display:"inline"}}
+                    onClick={() => {
+                      setLoading(true);
+                      axios.get('/api/v1/macroHost')
+                      .then(() => {
+                        axios
+                          .get('/api/v1/neo4j/export')
+                          .then(({ data }) => {
+                            setNeo4jData(data);
+                            setLoading(false);
+                          })
+                          .catch(() => {
+                            dispatchModal('Error');
+                            setLoading(false);
+                          });
+                        })
+                        //setLoading(false);
+                      }}
+                  >
+                    <FontAwesomeIcon 
+                      size="lg" 
+                      icon={faPlayCircle} 
+                      color="" 
+                      style={{marginLeft:"3%",float:'right'}}/>
+                  </div>
+                  <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                    <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
+                  </div>
+                </div>
+                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
+                  Deconstruct Emails
+                  <div 
+                    style={{display:"inline"}}
+                    onClick={() => {
+                      setLoading(true);
+                      axios.get('/api/v1/macroEmail')
+                      .then(() => {
+                        axios
+                          .get('/api/v1/neo4j/export')
+                          .then(({ data }) => {
+                            setNeo4jData(data);
+                            setLoading(false);
+                          })
+                          .catch(() => {
+                            dispatchModal('Error');
+                            setLoading(false);
+                          });
+                        })
+                        //setLoading(false);
+                      }}
+                  >
+                    <FontAwesomeIcon 
+                      size="lg" 
+                      icon={faPlayCircle} 
+                      color="" 
+                      style={{marginLeft:"3%",float:'right'}}/>
+                  </div>
+                  <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                    <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
+                  </div>
+                </div>
+                
                 {/* <div style={{backgroundColor:'white',padding: "5%", marginLeft: "20%", marginTop: "45%",marginBottom: "5%",borderRadius:'5px',boxShadow: "0px -2px 5px 0px rgba(31,30,31,1)"}}>
                   <h5 style={{textAlign:'center'}}>Macro 1 Details</h5>
                   <hr></hr>
@@ -286,7 +447,6 @@ const App = props => {
                       <ul>
                           <li>Determines IOC threat level</li>
                           <li>Scales IOC nodes according to relative number of sightings</li>
-                          <li>NOTE: Currently, exposing related attributes found in CYBEX-P must be done manually on each node. For that functionality, select a desired node and use the "Cybex Related" radial menu option.</li>
                         </ul>
                     </div>
                     }
@@ -336,7 +496,7 @@ const App = props => {
                   <Button width="55%" type="button" onClickFunction={() => dispatchModal('Neo4j Data')}>
                     Export JSON
                   </Button>
-                  <Button
+                  {/* <Button
                     type="button"
                     onClickFunction={() => {
                       axios.get('/api/v1/neo4j/wipe').then(() => {
@@ -348,14 +508,14 @@ const App = props => {
                     width="55%"
                   >
                     Wipe DB
-                  </Button>
+                  </Button> */}
                 </div>
                 <div style={{ gridColumn: 2 }}>
                 <ImportJson/>   
                 </div>
                 <div style={{ gridColumn: 3}}>
                   <div style={{width: "55%",float: "right"}}>
-                    <Button
+                    {/* <Button
                         width="100%"
                         hasIcon
                         onClickFunction={() => {
@@ -364,7 +524,20 @@ const App = props => {
                       >
                         <FontAwesomeIcon size="lg" icon="server" />
                         More...
-                    </Button>
+                    </Button> */
+                    <Button
+                      type="button"
+                      onClickFunction={() => {
+                        axios.get('/api/v1/neo4j/wipe').then(() => {
+                          axios.get('/api/v1/neo4j/export').then(({ data }) => {
+                            setNeo4jData(data);
+                          });
+                        });
+                      }}
+                      width="100%"
+                    >
+                      Wipe DB
+                    </Button>}
                   </div>          
                 </div>
               </div>
