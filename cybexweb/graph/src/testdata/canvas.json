@@ -1,0 +1,308 @@
+{
+  "Neo4j": [
+    [
+      {
+        "nodes": [
+          {
+            "id": 5,
+            "label": "8:8:8:8",
+            "properties": { "data": "8:8:8:8", "type": "IP" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_ip.svg"
+          },
+          {
+            "id": 6,
+            "label": "facebook.com",
+            "properties": { "data": "facebook.com", "type": "Domain" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_ip.svg"
+          },
+          {
+            "id": 7,
+            "label": "twitter.com",
+            "properties": { "data": "twitter.com", "type": "Domain" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_ip.svg"
+          },
+          {
+            "id": 8,
+            "label": "twilio.com",
+            "properties": { "data": "twilio.com", "type": "Domain" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_ip.svg"
+          },
+          {
+            "id": 9,
+            "label": "ya.ru",
+            "properties": { "data": "ya.ru", "type": "URL" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_ip.svg"
+          },
+          {
+            "id": 10,
+            "label": "104.244.42.1",
+            "properties": { "data": "104.244.42.1", "type": "IP" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_ip.svg"
+          },
+          {
+            "id": 11,
+            "label": "31.13.70.36",
+            "properties": { "data": "31.13.70.36", "type": "IP" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_ip.svg"
+          },
+          {
+            "id": 12,
+            "label": "99.84.191.101",
+            "properties": { "data": "99.84.191.101", "type": "IP" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_ip.svg"
+          },
+          {
+            "id": 13,
+            "label": "ya.ru",
+            "properties": { "data": "ya.ru", "type": "Domain" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_ip.svg"
+          },
+          {
+            "id": 14,
+            "label": "8:8:8:8/16",
+            "properties": { "data": "8:8:8:8/16", "type": "Subnet" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_subnet.svg"
+          },
+          {
+            "id": 15,
+            "label": "10 mxa-0023...",
+            "properties": { "data": "10 mxa-0023de01.gslb.pphosted.com.", "type": "MailServer" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_mail.svg"
+          },
+          {
+            "id": 16,
+            "label": "10 smtpin.v...",
+            "properties": { "data": "10 smtpin.vvv.facebook.com.", "type": "MailServer" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_mail.svg"
+          },
+          {
+            "id": 17,
+            "label": "30 ASPMX3.G...",
+            "properties": { "data": "30 ASPMX3.GOOGLEMAIL.com.", "type": "MailServer" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_mail.svg"
+          },
+          {
+            "id": 18,
+            "label": "10 mxb-0023...",
+            "properties": { "data": "10 mxb-0023de01.gslb.pphosted.com.", "type": "MailServer" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_mail.svg"
+          },
+          {
+            "id": 19,
+            "label": "30 ASPMX2.G...",
+            "properties": { "data": "30 ASPMX2.GOOGLEMAIL.com.", "type": "MailServer" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_mail.svg"
+          },
+          {
+            "id": 20,
+            "label": "10 aspmx.l....",
+            "properties": { "data": "10 aspmx.l.google.com.", "type": "MailServer" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_mail.svg"
+          },
+          {
+            "id": 21,
+            "label": "20 alt2.asp...",
+            "properties": { "data": "20 alt2.aspmx.l.google.com.", "type": "MailServer" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_mail.svg"
+          },
+          {
+            "id": 22,
+            "label": "20 alt1.asp...",
+            "properties": { "data": "20 alt1.aspmx.l.google.com.", "type": "MailServer" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_mail.svg"
+          },
+          {
+            "id": 23,
+            "label": "104.244.42.129",
+            "properties": { "data": "104.244.42.129", "type": "IP" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_ip.svg"
+          },
+          {
+            "id": 24,
+            "label": "99.84.191.122",
+            "properties": { "data": "99.84.191.122", "type": "IP" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_ip.svg"
+          },
+          {
+            "id": 25,
+            "label": "13414",
+            "properties": { "data": "13414", "type": "ASN" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_asn.svg"
+          },
+          {
+            "id": 26,
+            "label": "16509",
+            "properties": { "data": "16509", "type": "ASN" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_asn.svg"
+          },
+          {
+            "id": 27,
+            "label": "32934",
+            "properties": { "data": "32934", "type": "ASN" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_asn.svg"
+          },
+          {
+            "id": 28,
+            "label": "United States",
+            "properties": { "data": "United States", "type": "Country" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_country_alt.svg"
+          },
+          {
+            "id": 29,
+            "label": "United States",
+            "properties": { "data": "United States", "type": "Country" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_country_alt.svg"
+          },
+          {
+            "id": 30,
+            "label": "United States",
+            "properties": { "data": "United States", "type": "Country" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_country_alt.svg"
+          },
+          {
+            "id": 31,
+            "label": "87.250.250.242",
+            "properties": { "data": "87.250.250.242", "type": "IP" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_ip.svg"
+          },
+          {
+            "id": 32,
+            "label": "server-99-8...",
+            "properties": { "data": "server-99-84-191-101.iad89.r.cloudfront.net", "type": "Host" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_host.svg"
+          },
+          {
+            "id": 33,
+            "label": "edge-star-m...",
+            "properties": { "data": "edge-star-mini-shv-01-lax3.facebook.com", "type": "Host" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_host.svg"
+          },
+          {
+            "id": 34,
+            "label": "99.84.191.1...",
+            "properties": { "data": "99.84.191.101/16", "type": "Subnet" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_subnet.svg"
+          },
+          {
+            "id": 35,
+            "label": "10 mx.yande...",
+            "properties": { "data": "10 mx.yandex.ru.", "type": "MailServer" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_mail.svg"
+          },
+          {
+            "id": 36,
+            "label": "31.13.70.36/16",
+            "properties": { "data": "31.13.70.36/16", "type": "Subnet" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_subnet.svg"
+          },
+          {
+            "id": 37,
+            "label": "104.244.42....",
+            "properties": { "data": "104.244.42.1/16", "type": "Subnet" },
+            "color": "rgba(151,194,252,1)",
+            "value": -1,
+            "image": "/static/SVG/DataAnalytics/svg_subnet.svg"
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "edges": [
+          { "from": 7, "to": 10, "type": "IS_RELATED_TO", "id": "6206b05d-f619-4906-b43d-8408c3ecc192" },
+          { "from": 6, "to": 11, "type": "IS_RELATED_TO", "id": "f86255af-5805-493f-886c-4f9309bd80af" },
+          { "from": 8, "to": 12, "type": "IS_RELATED_TO", "id": "cb923db9-00d1-4e39-8ef5-59d84e9eda1e" },
+          { "from": 9, "to": 13, "type": "FROM_DOMAIN", "id": "93d6da19-e000-4ba7-ae11-e7633ed41a76" },
+          { "from": 5, "to": 14, "type": "HAS_SUBNET", "id": "3a0c0512-f6ff-4228-985c-267a730c72c1" },
+          { "from": 8, "to": 15, "type": "HAS", "id": "d2dfa50c-eeec-4018-8ddd-70e9617a3287" },
+          { "from": 6, "to": 16, "type": "HAS", "id": "01c755c8-d046-4194-8c46-837926123203" },
+          { "from": 7, "to": 17, "type": "HAS", "id": "7542deda-7c2e-4a78-9a98-63e6e1d7e9f5" },
+          { "from": 8, "to": 18, "type": "HAS", "id": "de4526f7-1f0d-4df1-a5d4-17b90f870a54" },
+          { "from": 7, "to": 19, "type": "HAS", "id": "4b7a7bf6-79bb-4a4c-8572-25257e6acc26" },
+          { "from": 7, "to": 20, "type": "HAS", "id": "519a4f6a-3832-4698-844f-4a8ff578ff07" },
+          { "from": 7, "to": 21, "type": "HAS", "id": "7797ddd3-4e6b-48a7-8d9c-7e8153ecf880" },
+          { "from": 7, "to": 22, "type": "HAS", "id": "791856c8-313c-4ecb-afa8-f0e0a8060f43" },
+          { "from": 7, "to": 23, "type": "IS_RELATED_TO", "id": "84bc2e2b-e2a0-4470-b987-8d7c438d9372" },
+          { "from": 8, "to": 24, "type": "IS_RELATED_TO", "id": "ffbf040a-28fb-4f89-af04-32f8c622d644" },
+          { "from": 10, "to": 25, "type": "HAS_ASN", "id": "935352d1-5a22-49c5-9fb6-c9b7b5c195e3" },
+          { "from": 12, "to": 26, "type": "HAS_ASN", "id": "14292e37-5b65-44ef-96fe-efc85e43947e" },
+          { "from": 11, "to": 27, "type": "HAS_ASN", "id": "baff6a8e-53ed-40b3-b893-d84c8365d094" },
+          { "from": 11, "to": 28, "type": "IS_LOCATED_IN", "id": "ea2488d1-bdc0-4aad-98f2-2d93f11592ff" },
+          { "from": 10, "to": 29, "type": "IS_LOCATED_IN", "id": "292e954a-f8bc-4140-aa6b-7cdcbe3905ca" },
+          { "from": 12, "to": 30, "type": "IS_LOCATED_IN", "id": "3d874b78-484b-4d71-83a5-28776fc06c71" },
+          { "from": 9, "to": 31, "type": "IS_RELATED_TO", "id": "4177b3b6-1d0b-4436-adcd-54bba4ba8e11" },
+          { "from": 12, "to": 32, "type": "IS_RELATED_TO", "id": "53bf6cb3-767b-4c64-9202-148ece722c29" },
+          { "from": 11, "to": 33, "type": "IS_RELATED_TO", "id": "6018ebdd-1b5c-4818-afe4-5f10d591e14a" },
+          { "from": 12, "to": 34, "type": "HAS_SUBNET", "id": "672d2b26-9f4f-407f-aad6-b5d8b9239265" },
+          { "from": 9, "to": 35, "type": "HAS", "id": "7b503501-4f81-4b37-afec-089523d19477" },
+          { "from": 11, "to": 36, "type": "HAS_SUBNET", "id": "b4c48fc5-742d-4ee0-a160-eb98bd9b8399" },
+          { "from": 10, "to": 37, "type": "HAS_SUBNET", "id": "20358343-9a96-46df-8f9c-07fe968c6609" }
+        ]
+      }
+    ]
+  ]
+}
