@@ -7,7 +7,7 @@
 import React, { useContext } from 'react';
 import axios from 'axios';
 import MenuContext from '../App/MenuContext';
-
+import Button from '../Button/Button';
 
 
 function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
