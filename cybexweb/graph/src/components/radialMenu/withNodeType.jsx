@@ -10,7 +10,6 @@ import MenuContext from '../App/MenuContext';
 import Button from '../Button/Button';
 
 
-
 function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
   const { setLoading } = useContext(MenuContext);
 
@@ -83,7 +82,7 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
   {
     axios
         // replace below with actual node deletion api call
-        .post(`/api/v1/delete/`, {Ntype: `${type}`, value: `${value}`})
+        .get(`/api/v1/delete/${type}/${value}`)
         .then(({ data }) => {
           if (data['insert status'] !== 0) {
             axios
@@ -167,11 +166,6 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
         >
           <p>Delete {nodeType.properties.type}: {nodeType.properties.data}</p>
         </div>
-        {/* <Button width="100%" type="button" onClickFunction={() => deleteNode(nodeType.properties.type, nodeType.properties.data)}>
-          Delete 
-          {nodeType.properties.type}
-          {nodeType.properties.data}
-        </Button> */}
       </div>
     );
   };

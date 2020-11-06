@@ -19,6 +19,7 @@ from cybexapi.enrichments import insert_domain_and_user, insert_netblock, insert
 from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_src
 from cybexapi.shodanSearch import shodan_lookup, insert_ports
 from cybexapi.import_json import import_json
+from cybexapi.delete_node import delete_node
 import json
 from cybexapi.wipe_db import wipeDB
 import pandas as pd
@@ -155,7 +156,6 @@ class exportNeoDB(APIView):
         # print(p)
         return Response(p)
 
-
 class insert(APIView):
     permission_classes = (IsAuthenticated, )
 
@@ -169,15 +169,30 @@ class insert(APIView):
         else:
             return Response({"Status": "Failed"})
 
+class delete(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, format=None, node_type=None, data=None):
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+        
+        status = delete_node(node_type, data, graph)
+
+        if status == 1:
+            return Response({"Status": "Success"})
+        else:
+            return Response({"Status": "Failed"})
+
 
 class enrichNode(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, format=None, x=None, y=None, z=None):
         current_user = request.user
-        value = ""
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
+        
         result = enrichLocalNode(x, y, z, graph)
         return Response(result)
 
@@ -187,7 +202,6 @@ class enrichNodePost(APIView):
     def post(self, request, x=None):
         current_user = request.user
         data = request.data
-        value = ""
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         result = enrichLocalNode(x, data["value"], data["Ntype"], graph)
@@ -203,7 +217,6 @@ class enrichURL(APIView):
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         status = insert_domain(data["value"], graph)
         return Response(status)
-
 
 class macroCybex(APIView):
     permission_classes = (IsAuthenticated, )
@@ -421,7 +434,6 @@ class macro(APIView):
 
         print("Done with", str(value))
 
-    
 class wipe(APIView):
     permission_classes = (IsAuthenticated, )
 
@@ -447,7 +459,6 @@ class importJson(APIView):
     def post(self, request, format=None):
         responce = Response(import_json(request.data))
         return(responce)
-
 
 # class insertURL(APIView):
 #     permission_classes = (IsAuthenticated, )
