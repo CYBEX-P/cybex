@@ -340,7 +340,7 @@ class macro(APIView):
             thread.join()
         ## End of threaded version
 
-        # ## Start of non-threaded version
+        ## Start of non-threaded version
         # for node in nodes:
         #     value = node["properties"]["data"]
         #     nType = node["properties"]["type"]
