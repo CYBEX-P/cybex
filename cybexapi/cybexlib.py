@@ -146,7 +146,7 @@ def replaceType(value):
 # Use django.settings to get keys and move URLS to settings as well.
 
 
-def cybexCountHandler(Ntype, data1, graph):
+def cybexCountHandler(Ntype, data1, graph, user):
     # graph = connect2graph()
     Ntype1 = replaceType(Ntype)
 
@@ -158,8 +158,9 @@ def cybexCountHandler(Ntype, data1, graph):
     #url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count"
     #url = "http://localhost:5001/query"
     url = "https://cybex-api.cse.unr.edu:5000/query"
+    user_token = user.profile.cybex_token
     headers = {'content-type': 'application/json',
-               'Authorization': 'Bearer: xxxxxx'}
+               'Authorization': 'Bearer ' + user_token}
     # data = {Ntype1: data1, "from": "2019/8/30 00:00",
     #         "to": "2020/3/1 6:00am", "tzname": "US/Pacific"}
     def raise_timeout():
@@ -193,9 +194,9 @@ def cybexCountHandler(Ntype, data1, graph):
         # Next, query malicious count
         #urlMal = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count/malicious"
         #urlMal = "http://localhost:5001/query"
-        urlMal = "https://cybex-api.cse.unr.edu:5000/query"
-        headersMal = {'content-type': 'application/json',
-                    'Authorization': 'Bearer xxxxx'}
+        # urlMal = "https://cybex-api.cse.unr.edu:5000/query"
+        # headersMal = {'content-type': 'application/json',
+        #             'Authorization': 'Bearer xxxxx'}
         #dataMal = {Ntype1: data1, "from": "2019/8/30 00:00",
         #           "to": "2020/4/23 6:00am", "tzname": "US/Pacific"}
         dataMal = {
@@ -215,7 +216,7 @@ def cybexCountHandler(Ntype, data1, graph):
         t = Timer(300.0, raise_timeout)
         t.start()
         while not valid:
-            rMal = requests.post(urlMal, headers=headersMal, data=dataMal)
+            rMal = requests.post(url, headers=headers, data=dataMal)
             resMal = json.loads(rMal.text)
             # if resMal["status"] is not "processing":
             if "status" not in resMal:
@@ -233,7 +234,7 @@ def cybexCountHandler(Ntype, data1, graph):
     # return jsonify({"insert status" : status})
     return status
 
-def cybexRelatedHandler(Ntype, data1, graph):
+def cybexRelatedHandler(Ntype, data1, graph, user):
     #graph = connect2graph()
     #req = request.get_json()
     #Ntype = str(req['Ntype'])
@@ -243,7 +244,8 @@ def cybexRelatedHandler(Ntype, data1, graph):
 
     #url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/related/attribute/summary"
     url = "https://cybex-api.cse.unr.edu:5000/query"
-    headers = {'content-type': 'application/json', 'Authorization' : 'Bearer xxxxx'}
+    user_token = user.profile.cybex_token
+    headers = {'content-type': 'application/json', 'Authorization' : 'Bearer ' + user_token}
     #data = { Ntype1 : data1, "from" : "2019/8/30 00:00", "to" : "2019/12/5 6:00am", "tzname" : "US/Pacific" }
     data = {
         "type": "related",

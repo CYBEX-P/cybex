@@ -22,6 +22,13 @@ class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'get_orgid', 'get_tzname', 'get_dbport', 'get_dbip', 'get_dbpass', 'get_dbuser', 'get_containerid')
     list_select_related = ('profile', )
 
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'email', 'password1', 'password2')}
+        ),
+    )
+
     def get_tzname(self, instance):
         return instance.profile.tzname
     get_tzname.short_description = 'Timezone Name'
