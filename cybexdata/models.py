@@ -15,6 +15,7 @@ class Profile(models.Model):
     tzname = models.CharField(max_length=50, blank=True, verbose_name='Timezone Name')
     cybex_token = models.CharField(max_length=50, blank=True, verbose_name='CYBEX Token')
 
+# Receiver function for user creation/registration signals
 @receiver(post_save, sender=User)
 def create_user_extra(sender, instance, created, **kwargs):
     if created:
@@ -44,7 +45,7 @@ def create_user_extra(sender, instance, created, **kwargs):
         headers = {
             'content-type': "application/json",
             # we use Bearer token auth mode
-            'Authorization': "Bearer xxxxx"
+            'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWJfdHlwZSI6ImN5YmV4cF91c2VyIiwiX2hhc2giOiJjMDU3ZWVkZTYxMTRiOWZjMTFkZWY3YTMzOGY2OTRkNjY5MWJkNjU2NjEzZjIxNzE4YzFiYmRmYWJkMzkxMDM2IiwianRpIjoiODY2YzNjMmMtMmQ3OC00Njg1LTgzNzUtYzQyMmMwODk1M2U2In0.pibz34CfF0B3QLsIKcP8qFzc7jZ57kvOOTHRq7RSS88"
             }
         payload = json.dumps(payload)
         r = requests.post(url, data=payload, headers=headers)

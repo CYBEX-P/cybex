@@ -87,11 +87,8 @@ def insertCybexCount(numOccur, numMal, graph, value, nType):
 # Author: Adam Cassell
 
 def insertRelatedAttributes(data, graph, value):
-    # Converts string to proper JSON using "" instead of ''
-    data = data.replace("'", '"',)
-    dataDict = json.loads(data)  # convert json string to dict
     # iterate over all related attributes..
-    for attr, val in dataDict["data"].items():
+    for attr, val in data["data"].items():
         attr = bucket(attr)
         valString = ""
         for each in val:
@@ -247,28 +244,36 @@ def cybexRelatedHandler(Ntype, data1, graph, user):
     user_token = user.profile.cybex_token
     headers = {'content-type': 'application/json', 'Authorization' : 'Bearer ' + user_token}
     #data = { Ntype1 : data1, "from" : "2019/8/30 00:00", "to" : "2019/12/5 6:00am", "tzname" : "US/Pacific" }
-    data = {
-        "type": "related",
-        "data": {
-            "sub_type": Ntype1, # make sure ipv4 works for ip (replaceType())
-            "data": data1,
-            "return_type": "attribute",
-            "summary" : True
+    count = 1
+    r = None
+    #TODO REPLACE below with real stop condition and/or max pagination
+    while r != "[]" and count <= 1:
+        print(count)
+        data = {
+            "type": "related",
+            "data": {
+                "sub_type": Ntype1, # make sure ipv4 works for ip (replaceType())
+                "data": data1,
+                "return_type": "attribute",
+                "summary" : True,
+                "page": count
+            }
         }
-	}
-    
+        
 
-    data = json.dumps(data) # data is jsonified request
-    print(data)
+        data = json.dumps(data) # data is jsonified request
+        print(data)
 
-    r = requests.post(url, headers=headers, data=data)
-    res = json.loads(r.text)
-    print(res)
+        r = requests.post(url, headers=headers, data=data)
+        res = json.loads(r.text)
+        print(res)
+        count += 1
 
-    try:
-        #status = insertRelated(str(res), graph, data1)
-        status = insertRelatedAttributes(str(res), graph, data1)
-        return status
+        try:
+            #status = insertRelated(str(res), graph, data1)
+            status = insertRelatedAttributes(res, graph, data1)
 
-    except:
-        return 1
+        except:
+            return 1
+
+    return 0
