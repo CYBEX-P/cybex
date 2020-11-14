@@ -19,7 +19,7 @@ class GraphdbInline(admin.StackedInline):
 
 class CustomUserAdmin(UserAdmin):
     inlines = (ProfileInline, GraphdbInline, )
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'get_orgid', 'get_tzname', 'get_dbport', 'get_dbip', 'get_dbpass', 'get_dbuser', 'get_containerid')
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'get_cybex_token', 'get_orgid', 'get_tzname', 'get_dbport', 'get_dbip', 'get_dbpass', 'get_dbuser', 'get_containerid')
     list_select_related = ('profile', )
 
     add_fieldsets = (
@@ -28,6 +28,10 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('username', 'email', 'password1', 'password2')}
         ),
     )
+
+    def get_cybex_token(self, instance):
+        return instance.profile.cybex_token
+    get_cybex_token.short_description = 'CYBEX Token'
 
     def get_tzname(self, instance):
         return instance.profile.tzname
