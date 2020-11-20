@@ -247,7 +247,7 @@ def cybexRelatedHandler(Ntype, data1, graph, user):
     count = 1
     r = None
     #TODO REPLACE below with real stop condition and/or max pagination
-    while r != "[]" and count <= 1:
+    while r != "[]" and count <= 10:
         print(count)
         data = {
             "type": "related",
