@@ -193,7 +193,15 @@ class enrichURL(APIView):
 class macroCybex(APIView):
     permission_classes = (IsAuthenticated, )
 
+    # Description: Runs the CYBEX-P Analysis Macro. Note: I have implemented a multithreading
+    #               version to increase pooling rate. I have left the non-threaded version as well commented out.
+    #               To run the seralized version, comment out the threaded version and uncomment the non-threaded version.
+    # Parameters: <object>request - The user request
+    #             <object>graph - The current graph
+    # Returns: Response status
+    # Author: Spencer Kase Rohlfing & (Someone else, sorry don't know who)
     def get(self, request, format=None):
+        # start = time.time()
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
@@ -201,27 +209,75 @@ class macroCybex(APIView):
         data = processExport(export(graph))
         nodes = data["Neo4j"][0][0]["nodes"]
 
+        ## Start of threaded version part 1
+        thread_list = []
         for node in nodes:
-            value = node["properties"]["data"]
-            nType = node["properties"]["type"]
-            if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
-                print("--> Querying cybexRelated IOCs for", value)
-                enrichLocalNode('cybexRelated', value, nType, graph, current_user)
-                print("Done with", str(value))
+            thread = threading.Thread(target=self.threadedLoop_cybexRelated, args=(node,graph))
+            thread_list.append(thread)
+        for thread in thread_list:
+            thread.start()
+        for thread in thread_list:
+            thread.join()
 
         # Now that new related IOCs have been added, query cybexCount
         # This is done all all nodes including the newly added ones
+        # Re-process graph because new nodes have been added from part 1
         data = processExport(export(graph))
         nodes = data["Neo4j"][0][0]["nodes"]
+        
+        ## Start of threaded version part 2
+        thread_list = []
         for node in nodes:
-            value = node["properties"]["data"]
-            nType = node["properties"]["type"]
-            if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
-                print("--> Querying cybexCounts for ", value)
-                enrichLocalNode('cybexCount', value, nType, graph, current_user)
-                print("Done with", str(value))
+            thread = threading.Thread(target=self.threadedLoop_cybexCount, args=(node,graph))
+            thread_list.append(thread)
+        for thread in thread_list:
+            thread.start()
+        for thread in thread_list:
+            thread.join()
+        ## End of threaded version
 
+        ## Start of non-threaded version
+        # for node in nodes:
+        #     value = node["properties"]["data"]
+        #     nType = node["properties"]["type"]
+        #     if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+        #         print("--> Querying cybexRelated IOCs for", value)
+        #         enrichLocalNode('cybexRelated', value, nType, graph)
+        #         print("Done with", str(value))
+
+        # # Now that new related IOCs have been added, query cybexCount
+        # # This is done all all nodes including the newly added ones
+        # data = processExport(export(graph))
+        # nodes = data["Neo4j"][0][0]["nodes"]
+        # for node in nodes:
+        #     value = node["properties"]["data"]
+        #     nType = node["properties"]["type"]
+        #     if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+        #         print("--> Querying cybexCounts for ", value)
+        #         enrichLocalNode('cybexCount', value, nType, graph)
+        #         print("Done with", str(value))
+        ## End of non-threaded version
+
+        ## This is used for tracking the performance speedup between seralized and threaded versions
+        # end = time.time()
+        # print(f"TIME: {end - start}")
         return Response(nodes)
+
+    def threadedLoop_cybexRelated(self, node, graph):
+        value = node["properties"]["data"]
+        nType = node["properties"]["type"]
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+            print("--> Querying cybexRelated IOCs for", value)
+            enrichLocalNode('cybexRelated', value, nType, graph)
+            print("Done with", str(value))
+
+    def threadedLoop_cybexCount(self, node, graph):
+        value = node["properties"]["data"]
+        nType = node["properties"]["type"]
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+            print("--> Querying cybexCounts for ", value)
+            enrichLocalNode('cybexCount', value, nType, graph)
+            print("Done with", str(value))
 
 # TODO
 # Move the bulk of code here to library file
@@ -429,7 +485,10 @@ class importJson(APIView):
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def post(self, request, format=None):
-        responce = Response(import_json(request.data))
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+        responce = Response(import_json(graph,request.data))
         return(responce)
 
 # class insertURL(APIView):
