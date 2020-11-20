@@ -414,7 +414,7 @@ const App = props => {
                     style={{
                       position: 'fixed',
                       height: '90%',
-                      width: '100%',
+                      width: '300px',
                       top: '10%',
                       left: '340px',
                       padding: '10px',
@@ -493,7 +493,7 @@ const App = props => {
                     style={{
                       position: 'fixed',
                       minHeight: '25%',
-                      width: '100%',
+                      width: '300px',
                       top: '10%',
                       left: '340px',
                       padding: '10px',

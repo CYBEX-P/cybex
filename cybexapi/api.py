@@ -203,6 +203,8 @@ class macroCybex(APIView):
     def get(self, request, format=None):
         # start = time.time()
         current_user = request.user
+        print("current user:")
+        print(current_user)
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
 
@@ -212,7 +214,7 @@ class macroCybex(APIView):
         ## Start of threaded version part 1
         thread_list = []
         for node in nodes:
-            thread = threading.Thread(target=self.threadedLoop_cybexRelated, args=(node,graph))
+            thread = threading.Thread(target=self.threadedLoop_cybexRelated, args=(node,graph,current_user))
             thread_list.append(thread)
         for thread in thread_list:
             thread.start()
@@ -228,7 +230,7 @@ class macroCybex(APIView):
         ## Start of threaded version part 2
         thread_list = []
         for node in nodes:
-            thread = threading.Thread(target=self.threadedLoop_cybexCount, args=(node,graph))
+            thread = threading.Thread(target=self.threadedLoop_cybexCount, args=(node,graph,current_user))
             thread_list.append(thread)
         for thread in thread_list:
             thread.start()
@@ -263,20 +265,20 @@ class macroCybex(APIView):
         # print(f"TIME: {end - start}")
         return Response(nodes)
 
-    def threadedLoop_cybexRelated(self, node, graph):
+    def threadedLoop_cybexRelated(self, node, graph, current_user):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
         if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
             print("--> Querying cybexRelated IOCs for", value)
-            enrichLocalNode('cybexRelated', value, nType, graph)
+            enrichLocalNode('cybexRelated', value, nType, graph, current_user)
             print("Done with", str(value))
 
-    def threadedLoop_cybexCount(self, node, graph):
+    def threadedLoop_cybexCount(self, node, graph, current_user):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
         if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
             print("--> Querying cybexCounts for ", value)
-            enrichLocalNode('cybexCount', value, nType, graph)
+            enrichLocalNode('cybexCount', value, nType, graph, current_user)
             print("Done with", str(value))
 
 # TODO
