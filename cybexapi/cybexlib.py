@@ -87,11 +87,8 @@ def insertCybexCount(numOccur, numMal, graph, value, nType):
 # Author: Adam Cassell
 
 def insertRelatedAttributes(data, graph, value):
-    # Converts string to proper JSON using "" instead of ''
-    data = data.replace("'", '"',)
-    dataDict = json.loads(data)  # convert json string to dict
     # iterate over all related attributes..
-    for attr, val in dataDict["data"].items():
+    for attr, val in data["data"].items():
         attr = bucket(attr)
         valString = ""
         for each in val:
@@ -146,7 +143,7 @@ def replaceType(value):
 # Use django.settings to get keys and move URLS to settings as well.
 
 
-def cybexCountHandler(Ntype, data1, graph):
+def cybexCountHandler(Ntype, data1, graph, user):
     # graph = connect2graph()
     Ntype1 = replaceType(Ntype)
 
@@ -158,8 +155,9 @@ def cybexCountHandler(Ntype, data1, graph):
     #url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count"
     #url = "http://localhost:5001/query"
     url = "https://cybex-api.cse.unr.edu:5000/query"
+    user_token = user.profile.cybex_token
     headers = {'content-type': 'application/json',
-               'Authorization': 'Bearer: xxxxxx'}
+               'Authorization': 'Bearer ' + user_token}
     # data = {Ntype1: data1, "from": "2019/8/30 00:00",
     #         "to": "2020/3/1 6:00am", "tzname": "US/Pacific"}
     def raise_timeout():
@@ -193,9 +191,9 @@ def cybexCountHandler(Ntype, data1, graph):
         # Next, query malicious count
         #urlMal = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count/malicious"
         #urlMal = "http://localhost:5001/query"
-        urlMal = "https://cybex-api.cse.unr.edu:5000/query"
-        headersMal = {'content-type': 'application/json',
-                    'Authorization': 'Bearer xxxxx'}
+        # urlMal = "https://cybex-api.cse.unr.edu:5000/query"
+        # headersMal = {'content-type': 'application/json',
+        #             'Authorization': 'Bearer xxxxx'}
         #dataMal = {Ntype1: data1, "from": "2019/8/30 00:00",
         #           "to": "2020/4/23 6:00am", "tzname": "US/Pacific"}
         dataMal = {
@@ -215,7 +213,7 @@ def cybexCountHandler(Ntype, data1, graph):
         t = Timer(300.0, raise_timeout)
         t.start()
         while not valid:
-            rMal = requests.post(urlMal, headers=headersMal, data=dataMal)
+            rMal = requests.post(url, headers=headers, data=dataMal)
             resMal = json.loads(rMal.text)
             # if resMal["status"] is not "processing":
             if "status" not in resMal:
@@ -233,7 +231,7 @@ def cybexCountHandler(Ntype, data1, graph):
     # return jsonify({"insert status" : status})
     return status
 
-def cybexRelatedHandler(Ntype, data1, graph):
+def cybexRelatedHandler(Ntype, data1, graph, user):
     #graph = connect2graph()
     #req = request.get_json()
     #Ntype = str(req['Ntype'])
@@ -243,30 +241,39 @@ def cybexRelatedHandler(Ntype, data1, graph):
 
     #url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/related/attribute/summary"
     url = "https://cybex-api.cse.unr.edu:5000/query"
-    headers = {'content-type': 'application/json', 'Authorization' : 'Bearer xxxxx'}
+    user_token = user.profile.cybex_token
+    headers = {'content-type': 'application/json', 'Authorization' : 'Bearer ' + user_token}
     #data = { Ntype1 : data1, "from" : "2019/8/30 00:00", "to" : "2019/12/5 6:00am", "tzname" : "US/Pacific" }
-    data = {
-        "type": "related",
-        "data": {
-            "sub_type": Ntype1, # make sure ipv4 works for ip (replaceType())
-            "data": data1,
-            "return_type": "attribute",
-            "summary" : True
+    count = 1
+    r = None
+    #TODO REPLACE below with real stop condition and/or max pagination
+    while r != "[]" and count <= 10:
+        print(count)
+        data = {
+            "type": "related",
+            "data": {
+                "sub_type": Ntype1, # make sure ipv4 works for ip (replaceType())
+                "data": data1,
+                "return_type": "attribute",
+                "summary" : True,
+                "page": count
+            }
         }
-	}
-    
+        
 
-    data = json.dumps(data) # data is jsonified request
-    print(data)
+        data = json.dumps(data) # data is jsonified request
+        print(data)
 
-    r = requests.post(url, headers=headers, data=data)
-    res = json.loads(r.text)
-    print(res)
+        r = requests.post(url, headers=headers, data=data)
+        res = json.loads(r.text)
+        print(res)
+        count += 1
 
-    try:
-        #status = insertRelated(str(res), graph, data1)
-        status = insertRelatedAttributes(str(res), graph, data1)
-        return status
+        try:
+            #status = insertRelated(str(res), graph, data1)
+            status = insertRelatedAttributes(res, graph, data1)
 
-    except:
-        return 1
+        except:
+            return 1
+
+    return 0
