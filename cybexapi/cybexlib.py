@@ -77,6 +77,7 @@ def insertCybexCount(numOccur, numMal, graph, value, nType):
         print("CybexCount added to node")
     else:
         print("Error adding CybexCount")
+        return -1
     return 1
 
 # Description: Attaches nodes to an object for all related attributes queried from Cybex
@@ -188,6 +189,9 @@ def cybexCountHandler(Ntype, data1, graph, user):
                 t.cancel()
                 valid = True
 
+        # Handle situation where timeout occurs on query:
+        if r.status_code == 504:
+            raise_timeout()
         # Next, query malicious count
         #urlMal = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count/malicious"
         #urlMal = "http://localhost:5001/query"
@@ -222,7 +226,7 @@ def cybexCountHandler(Ntype, data1, graph, user):
 
     except requests.exceptions.Timeout as e:
         print(e)
-        return 1
+        return 0
 
     numOccur = res["data"]
     numMal = resMal["data"]
