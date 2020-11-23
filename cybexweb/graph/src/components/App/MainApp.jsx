@@ -126,7 +126,7 @@ const App = props => {
               {/* <hr style={{marginLeft: "0%"}}/> */}
               <div style={{padding: "5%"}}>
               <hr></hr> 
-              <h4>Automations</h4>
+              {/* <h4>Automations</h4>
               <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "#0277bd",color: "white", borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                 Threat Search
                 <div 
@@ -159,7 +159,7 @@ const App = props => {
                   <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
                 </div>
               </div>
-              <hr></hr> 
+              <hr></hr>  */}
               <h4>Investigation Patterns</h4>
                 <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft:'5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Phishing Investigation
@@ -237,7 +237,7 @@ const App = props => {
                     />
                   </div>
                 </div>
-                <hr></hr> 
+                {/* <hr></hr> 
                 <h4>Subroutines</h4>
                 <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Enrich IPs
@@ -397,8 +397,8 @@ const App = props => {
                   </div>
                   <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                  </div>
-                </div>
+                  </div> */}
+                {/* </div> */}
                 {/* <div style={{backgroundColor:'white',padding: "5%", marginLeft: "20%", marginTop: "45%",marginBottom: "5%",borderRadius:'5px',boxShadow: "0px -2px 5px 0px rgba(31,30,31,1)"}}>
                   <h5 style={{textAlign:'center'}}>Macro 1 Details</h5>
                   <hr></hr>
