@@ -190,6 +190,7 @@ class enrichURL(APIView):
         status = insert_domain(data["value"], graph)
         return Response(status)
 
+
 class macroCybex(APIView):
     permission_classes = (IsAuthenticated, )
 
