@@ -27,7 +27,26 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
       axios
         .post(`/api/v1/enrich/${type}/`, {Ntype: `${nodeType.properties.type}`, value: `${nodeType.properties.data}`})
         .then(({ data }) => {
-          if (data['insert status'] !== 0) {
+          if (data['insert status'] > 0) {
+            axios
+              .get('/api/v1/neo4j/export')
+              .then(response => {
+                setNeo4jData(response.data);
+                setLoading(false);
+              })
+          }
+          // Adding status code response handling for common cybex enrichment problems
+          else if (data['insert status'] == 0){
+            alert("CYBEX Query timed out. Graph must now reload.")
+            axios
+              .get('/api/v1/neo4j/export')
+              .then(response => {
+                setNeo4jData(response.data);
+                setLoading(false);
+              })
+          }
+          else if (data['insert status'] < 0){
+            alert("An error occured with the CYBEX Query. Graph must now reload.")
             axios
               .get('/api/v1/neo4j/export')
               .then(response => {
