@@ -19,11 +19,13 @@ from cybexapi.enrichments import insert_domain_and_user, insert_netblock, insert
 from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_src
 from cybexapi.shodanSearch import shodan_lookup, insert_ports
 from cybexapi.import_json import import_json
+from cybexapi.delete_node import delete_node
 import json
 from cybexapi.wipe_db import wipeDB
 import pandas as pd
 import time
 import threading
+import requests
 
 # TODO
 # This needs more error checking and probably a more elegent check to see if the db is available
@@ -35,7 +37,7 @@ def connect2graph(user, passw, addr, bolt_port):
 
 # TODO
 # Move to library file
-def enrichLocalNode(enrich_type, value, node_type, graph):
+def enrichLocalNode(enrich_type, value, node_type, graph, user=None):
 
     if(enrich_type == "asn"):
         a_results = ASN(value)
@@ -89,12 +91,12 @@ def enrichLocalNode(enrich_type, value, node_type, graph):
 
     elif enrich_type == "cybexCount":
             #status = insertCybexCount(value, graph)
-            status = cybexCountHandler(node_type,value, graph)
+            status = cybexCountHandler(node_type,value, graph, user)
             return json.dumps({"insert status" : status})
 
     elif enrich_type == "cybexRelated":
         #status = insertCybexCount(value, graph)
-        status = cybexRelatedHandler(node_type,value, graph)
+        status = cybexRelatedHandler(node_type,value, graph, user)
         return json.dumps({"insert status" : status})
 
     # elif enrich_type == "comment":
@@ -126,7 +128,6 @@ class exportNeoDB(APIView):
         # print(p)
         return Response(p)
 
-
 class insert(APIView):
     permission_classes = (IsAuthenticated, )
 
@@ -140,15 +141,30 @@ class insert(APIView):
         else:
             return Response({"Status": "Failed"})
 
+class delete(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, format=None, node_type=None, data=None):
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+        
+        status = delete_node(node_type, data, graph)
+
+        if status == 1:
+            return Response({"Status": "Success"})
+        else:
+            return Response({"Status": "Failed"})
+
 
 class enrichNode(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, format=None, x=None, y=None, z=None):
         current_user = request.user
-        value = ""
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
+        
         result = enrichLocalNode(x, y, z, graph)
         return Response(result)
 
@@ -158,10 +174,9 @@ class enrichNodePost(APIView):
     def post(self, request, x=None):
         current_user = request.user
         data = request.data
-        value = ""
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
-        result = enrichLocalNode(x, data["value"], data["Ntype"], graph)
+        result = enrichLocalNode(x, data["value"], data["Ntype"], graph, current_user)
         return Response(result)
 
 class enrichURL(APIView):
@@ -179,35 +194,93 @@ class enrichURL(APIView):
 class macroCybex(APIView):
     permission_classes = (IsAuthenticated, )
 
+    # Description: Runs the CYBEX-P Analysis Macro. Note: I have implemented a multithreading
+    #               version to increase pooling rate. I have left the non-threaded version as well commented out.
+    #               To run the seralized version, comment out the threaded version and uncomment the non-threaded version.
+    # Parameters: <object>request - The user request
+    #             <object>graph - The current graph
+    # Returns: Response status
+    # Author: Spencer Kase Rohlfing & (Someone else, sorry don't know who)
     def get(self, request, format=None):
+        # start = time.time()
         current_user = request.user
+        print("current user:")
+        print(current_user)
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
 
         data = processExport(export(graph))
         nodes = data["Neo4j"][0][0]["nodes"]
 
+        ## Start of threaded version part 1
+        thread_list = []
         for node in nodes:
-            value = node["properties"]["data"]
-            nType = node["properties"]["type"]
-            if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
-                print("--> Querying cybexRelated IOCs for", value)
-                enrichLocalNode('cybexRelated', value, nType, graph)
-                print("Done with", str(value))
+            thread = threading.Thread(target=self.threadedLoop_cybexRelated, args=(node,graph,current_user))
+            thread_list.append(thread)
+        for thread in thread_list:
+            thread.start()
+        for thread in thread_list:
+            thread.join()
 
         # Now that new related IOCs have been added, query cybexCount
         # This is done all all nodes including the newly added ones
+        # Re-process graph because new nodes have been added from part 1
         data = processExport(export(graph))
         nodes = data["Neo4j"][0][0]["nodes"]
+        
+        ## Start of threaded version part 2
+        thread_list = []
         for node in nodes:
-            value = node["properties"]["data"]
-            nType = node["properties"]["type"]
-            if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
-                print("--> Querying cybexCounts for ", value)
-                enrichLocalNode('cybexCount', value, nType, graph)
-                print("Done with", str(value))
+            thread = threading.Thread(target=self.threadedLoop_cybexCount, args=(node,graph,current_user))
+            thread_list.append(thread)
+        for thread in thread_list:
+            thread.start()
+        for thread in thread_list:
+            thread.join()
+        ## End of threaded version
 
+        ## Start of non-threaded version
+        # for node in nodes:
+        #     value = node["properties"]["data"]
+        #     nType = node["properties"]["type"]
+        #     if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+        #         print("--> Querying cybexRelated IOCs for", value)
+        #         enrichLocalNode('cybexRelated', value, nType, graph)
+        #         print("Done with", str(value))
+
+        # # Now that new related IOCs have been added, query cybexCount
+        # # This is done all all nodes including the newly added ones
+        # data = processExport(export(graph))
+        # nodes = data["Neo4j"][0][0]["nodes"]
+        # for node in nodes:
+        #     value = node["properties"]["data"]
+        #     nType = node["properties"]["type"]
+        #     if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+        #         print("--> Querying cybexCounts for ", value)
+        #         enrichLocalNode('cybexCount', value, nType, graph)
+        #         print("Done with", str(value))
+        ## End of non-threaded version
+
+        ## This is used for tracking the performance speedup between seralized and threaded versions
+        # end = time.time()
+        # print(f"TIME: {end - start}")
         return Response(nodes)
+
+    def threadedLoop_cybexRelated(self, node, graph, current_user):
+        value = node["properties"]["data"]
+        nType = node["properties"]["type"]
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+            print("--> Querying cybexRelated IOCs for", value)
+            enrichLocalNode('cybexRelated', value, nType, graph, current_user)
+            print("Done with", str(value))
+
+    def threadedLoop_cybexCount(self, node, graph, current_user):
+        value = node["properties"]["data"]
+        nType = node["properties"]["type"]
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+            print("--> Querying cybexCounts for ", value)
+            enrichLocalNode('cybexCount', value, nType, graph, current_user)
+            print("Done with", str(value))
 
 # TODO
 # Move the bulk of code here to library file
@@ -392,7 +465,6 @@ class macro(APIView):
 
         print("Done with", str(value))
 
-    
 class wipe(APIView):
     permission_classes = (IsAuthenticated, )
 
@@ -421,7 +493,6 @@ class importJson(APIView):
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         responce = Response(import_json(graph,request.data))
         return(responce)
-
 
 # class insertURL(APIView):
 #     permission_classes = (IsAuthenticated, )

@@ -117,6 +117,7 @@ const ExpandedMenuBar = styled.div`
         align-items: center;
         justify-items: end;
         border-top: none;
+        color: white;
         `;
     }
     if (props.side === 'right') {
