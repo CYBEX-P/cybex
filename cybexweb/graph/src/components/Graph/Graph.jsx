@@ -519,27 +519,51 @@ const Graph = ({ isLoading }) => {
         </div>
       )}
       {isLoading && (
-        <div
-          style={{
-            gridRow: '2',
-            gridColumn: 1,
-            backgroundColor: 'black',
-            zIndex: 10,
-            display: 'grid',
-            opacity: 0.9
+        <div style={{
+          display:"flex",
+          justifyContent:"center",
+          position:"absolute",
+          right: "0px",
+          top:"65px",
+          width: "100%"
           }}
         >
-          <div style={{ justifySelf: 'center', alignSelf: 'end', fontSize: '24px', width: '80px', color: 'white',opacity: 1}}>Loading</div>
           <div
+          // style={{
+          //   gridRow: '2',
+          //   gridColumn: 1,
+          //   backgroundColor: 'black',
+          //   zIndex: 10,
+          //   display: 'grid',
+          //   opacity: 0.9
+          // }}
             style={{
-              alignSelf: 'start',
-              justifySelf: 'center',
-              opacity: 1
-            }}
+              zIndex: 4,
+              backgroundColor: "black",
+              color: "white",
+              opacity: "0.95",
+              borderRadius: "10px",
+              padding: "10px",
+              boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)",
+              display: "flex",
+              justifyContent: "flex-start",
+              alignItems: "center"
+              }}
           >
-            <CircleLoader color="#00cbcc" />
+            <div style={{fontSize: '20px', color: 'white',opacity: 1}}>Querying CYBEX</div>
+            <div
+              style={{
+                marginLeft: '15px',
+                opacity: 1
+              }}
+            >
+              <CircleLoader color="#00cbcc" />
+            </div>
           </div>
+
         </div>
+
+        
       )}
       {radialPosition && <RadialToRender position={radialPosition} network={network} scale={network.getScale()} />}
       {/* TODO: Turn hoverText box into seperate component */}
