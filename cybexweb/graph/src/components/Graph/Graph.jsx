@@ -113,8 +113,6 @@ const Graph = ({ isLoading }) => {
     }
     
     var nodes = JSON.stringify(objectToArray(network.getPositions()));
-
-    console.log(nodes)
     axios.get(`/api/v1/position/${nodes}`)
 
 
