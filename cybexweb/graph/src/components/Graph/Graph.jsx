@@ -112,8 +112,8 @@ const Graph = ({ isLoading }) => {
       });
     }
     
-    var nodes = JSON.stringify(objectToArray(network.getPositions()));
-    axios.get(`/api/v1/position/${nodes}`)
+    var nodes = objectToArray(network.getPositions());
+    axios.post('/api/v1/position', nodes, {});
 
 
     // hoverNode fires whenever the mouse hovers over a node

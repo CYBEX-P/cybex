@@ -156,18 +156,6 @@ class delete(APIView):
             return Response({"Status": "Success"})
         else:
             return Response({"Status": "Failed"})
-
-class position(APIView):
-    permission_classes = (IsAuthenticated, )
-    
-    def get(self, request, format=None, data=None):
-        current_user = request.user
-        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
-                              current_user.graphdb.dbip, current_user.graphdb.dbport)
-        
-        status = update_positions(data, graph)
-        return Response({"Status": "Success"})
-
         
 class enrichNode(APIView):
     permission_classes = (IsAuthenticated, )
@@ -505,6 +493,31 @@ class importJson(APIView):
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         responce = Response(import_json(graph,request.data))
         return(responce)
+
+class position(APIView):
+    permission_classes = (IsAuthenticated, )
+
+        # Also remove this line, it was to bypass the CSRF
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    
+    def get(self, request, format=None, data=None):
+        print("get")
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+        
+        status = update_positions(data, graph)
+        return Response({"Status": "Success"})
+    
+    def post(self, request, format=None):
+        print("post")
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+
+        status = update_positions(request.data, graph)
+        return Response({"Status": "Success"})
+
 
 # class insertURL(APIView):
 #     permission_classes = (IsAuthenticated, )

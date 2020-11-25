@@ -8,7 +8,6 @@ urlpatterns = [
 
     path('api/v1/admin/config', views.getconfig.as_view()),
     path('api/v1/neo4j/export', exportNeoDB.as_view()),
-    path('api/v1/position/<data>', position.as_view()),
     path('api/v1/neo4j/insert/<x>/<y>/', insert.as_view()),
     path('api/v1/enrich/<x>/<y>/', enrichNode.as_view()),
     path('api/v1/delete/<node_type>/<data>/', delete.as_view()),
@@ -19,6 +18,7 @@ urlpatterns = [
     path('api/v1/neo4j/wipe', wipe.as_view()),
     #post
     path('import_json', importJson.as_view()),
+    path('api/v1/position', position.as_view()),
     #path('api/v1/neo4j/insertURL', insertURL.as_view()), # using /insert now
     path('api/v1/event/start', start.as_view()),
     path('api/v1/event/start/file', startFile.as_view()),
