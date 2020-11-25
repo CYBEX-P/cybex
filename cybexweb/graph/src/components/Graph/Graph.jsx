@@ -4,6 +4,7 @@ import { Network } from 'vis';
 import PropTypes from 'prop-types';
 import { CircleLoader } from 'react-spinners';
 
+import _ from 'lodash';
 import NetworkContext from '../App/DataContext';
 import MenuContext from '../App/MenuContext';
 import RadialMenu from '../radialMenu/radialMenu';
@@ -22,6 +23,7 @@ import {
   faCommentDots,
   faArrowCircleUp
 } from '@fortawesome/free-solid-svg-icons';
+import { Header, IOC, IOCCard, Container, IOCContainer } from '../IOCCard';
 
 function InitializeGraph(data) {
   if (typeof data.Neo4j === 'undefined') {
@@ -107,6 +109,11 @@ const Graph = ({ isLoading }) => {
     return setRadialPosition(domPositions);
   }
 
+  const pinNode = pinned => {
+    console.log(pinned);
+    console.log(IOCs);
+  };
+
   function AddEventListenersToNetwork(nw, data) {
     if (typeof data.Neo4j === 'undefined') {
       return false;
@@ -157,6 +164,9 @@ const Graph = ({ isLoading }) => {
 
     // Change the selection state whenever a node is selected and deselected
     nw.on('deselectNode', params => {
+      IOCs ? setSelectText() : setSelectText();
+
+      console.log('deselectNode');
       setCommentState(false);
       setCommentTextState('');
       var opacityNormal = 1;
@@ -181,13 +191,22 @@ const Graph = ({ isLoading }) => {
       setPinnedPos(10);
     });
     nw.on('selectNode', params => {
-      return <div>asdfas</div>;
       setSelection(nw.getSelection());
       setHoverText(null); // No need for hovertext after selection, redundant
       var opacityBlurred = 0.1;
       var nodeId = params.nodes[0];
       // nodeObj is the Neo4j object that representes the currently selected node. Note: Slightly different here than with on('hoverNode')
       var nodeObj = data.Neo4j[0][0].nodes.filter(properties => properties.id === nodeId);
+      console.log('NodeObj');
+      console.log(nodeObj);
+      // Check if there is currently a node in IOCs
+      console.log('IOCs');
+      console.log(IOCs);
+
+      setIOCs(nodeObj);
+      var m = new Map();
+      setNewIOCs(m.set(nodeObj, false));
+
       Object.keys(nw.body.nodes).forEach(function(currentId) {
         if (!currentId.includes('edgeId')) {
           if (currentId != nodeId) {
@@ -206,6 +225,7 @@ const Graph = ({ isLoading }) => {
           }
         }
       });
+      console.log(newIOCs);
       setSelectText({
         // Set the select text to the properties of the data
         text: JSON.stringify(nodeObj[0].properties),
@@ -380,6 +400,8 @@ const Graph = ({ isLoading }) => {
 
   // HOC that returns the radial menu to use
   const RadialToRender = withNodeType(RadialMenu, selectedNodeType, setNeo4jData, config);
+  const [IOCs, setIOCs] = React.useState({});
+  const [newIOCs, setNewIOCs] = React.useState(new Map());
 
   return (
     <div style={{ display: 'grid', gridTemplateRows: '56px auto' }}>
@@ -809,82 +831,8 @@ const Graph = ({ isLoading }) => {
       {/* {selectText && ( */}
 
       {selectText && (
-        <div>
-          <div
-            style={{
-              position: 'absolute',
-              width: '300px',
-              right: '10px',
-              bottom: '10px',
-              zIndex: 2,
-              // backgroundColor: '#111', // Used for classic Card styling only.
-              pointerEvents: 'none',
-              backgroundColor: 'rgba(0,0,0,0.7)',
-              color: 'white',
-              borderRadius: '10px',
-              padding: '20px',
-              boxShadow: '0px 2px 5px 0px rgba(31,30,31,1)',
-              backdropFilter: 'blur(20px)'
-            }}
-          >
-            <div onClick={() => pinHandler()}>
-              <FontAwesomeIcon
-                size="2x"
-                icon={faMapPin}
-                style={{ position: 'absolute', left: '10px', top: '10px', pointerEvents: 'auto' }}
-              />
-            </div>
-            <h4
-              style={{
-                textAlign: 'center',
-                color: selectText.color.replace(/"/g, '')
-                //textShadow: "-1px 0 grey, 0 1px grey, 1px 0 grey, 0 -1px grey"
-              }}
-            >
-              <b>{selectText.type.replace(/"/g, '')}</b>
-            </h4>
-            <h6 style={{ textAlign: 'center' }}>{selectText.data.replace(/"/g, '')}</h6>
-            <div style={{ color: 'white' }}>
-              <div
-                style={{
-                  backgroundColor: '#232323',
-                  borderRadius: '10px',
-                  padding: '10px',
-                  marginBottom: '10px',
-                  backdropFilter: 'blur(20px)'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <div>Comments</div>
-                  <button
-                    onClick={() => setCommentState(true)}
-                    style={{
-                      pointerEvents: 'auto',
-                      backgroundColor: '#white',
-                      color: 'black',
-                      border: 'none',
-                      borderRadius: '5px'
-                    }}
-                  >
-                    <FontAwesomeIcon size="1x" icon={faCommentDots} />
-                    View/Add
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div style={{ color: 'white' }}>
-              {/* <h6>CYBEX-P Sightings</h6> */}
-              <div style={{ backgroundColor: '#232323', borderRadius: '10px', padding: '10px' }}>
-                <h6>CYBEX-P Sightings:</h6>
-                {/* <FontAwesomeIcon size="1x" icon={faExclamationCircle} style={{marginRight:"3px"}}/> */}
-                Benign = {selectText.count}, Malicious = {selectText.countMalicious}
-              </div>
-              {/* <hr/> */}
-              {/* <h5>Highlight Related:</h5>
-            <button style={{backgroundColor:"#232323",color:"white",border:"none",borderRadius:"5px",marginRight:'10px'}}>Attributes</button>
-            <button style={{backgroundColor:"#232323",color:"white",border:"none",borderRadius:"5px"}}>Events</button> */}
-            </div>
-          </div>
+        <>
+          <IOCContainer data={IOCs} pinNode={pinNode} />
           {commentState && (
             <div
               style={{
@@ -960,7 +908,7 @@ const Graph = ({ isLoading }) => {
               </div>
             </div>
           )}
-        </div>
+        </>
       )}
       {/* Temporary duplication of above for pinnedText. Needs to be cleaned up and merged into a common component. */}
       {pinnedText && (

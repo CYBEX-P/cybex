@@ -1,30 +1,57 @@
 import styled from 'styled-components';
 
-export const IOCContainer = styled.div`
-  display: flex;
-  height: 500px;
-  width: 1000px;
-  border: 1px solid black;
-  color: papayawhip;
+export const CardTextField = styled.input`
+  width: 200px;
+  height: 100%;
+  border: none;
+  border-radius: 5px;
+  background-color: black;
+  color: white;
+  pointer-events: auto;
 `;
 
-export const IOCCard = styled.div`
-  height: 500px;
-  width: 250px;
-  padding: 5px;
-  background-color: black
+export const Container = styled.div`
+  display: flex;
+  position: fixed;
+  width: 600px;
+  height: 260px;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 10px;
+  padding: 20px;
+  justify-content: space-between;
+`;
+
+export const Card = styled.div`
+  position: absolute;
+  width: 300px;
+  right: 10px;
+  bottom: 10px;
+  height: 230px;
+  z-index: 2;
+  background-color: black;
   color: white;
+  opacity: 1;
+  border-radius: 10px;
+  padding: 5px;
+  box-shadow: 0px 2px 5px 0px rgba(31, 30, 31, 1);
 `;
 
 export const CardBody = styled.div`
+  width: 100%;
+  height: 25%;
+  background-color: #171717;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  backdrop-filter: blur(20px);
   display: flex;
   justify-content: space-between;
-  background-color: grey;
-  margin-bottom: 20px;
-  border-radius: 5px;
 `;
 
-export const CardText = styled.h5`
+export const CardText = styled.h6`
   color: white;
 `;
 
@@ -35,5 +62,14 @@ export const IOCButton = styled.button`
   border-radius: 10px;
 `;
 
+export const Header = styled.h6`
+  color: papayawhip;
+`;
+
 // Need to delete this component once done
-export const MockCloseButton = styled.button``;
+export const MockCloseButton = styled.button`
+  height: 25px;
+  width: 25px;
+  color: white;
+  pointer-events: auto;
+`;
