@@ -104,6 +104,20 @@ const Graph = ({ isLoading }) => {
     if (nw === null) {
       return false;
     }
+
+    function objectToArray(obj) {
+      return Object.keys(obj).map(function (key) {
+        obj[key].id = key;
+        return obj[key];
+      });
+    }
+    
+    var nodes = JSON.stringify(objectToArray(network.getPositions()));
+
+    console.log(nodes)
+    axios.get(`/api/v1/position/${nodes}`)
+
+
     // hoverNode fires whenever the mouse hovers over a node
     nw.on('hoverNode', e => {
       if (typeof data.Neo4j !== 'undefined') {

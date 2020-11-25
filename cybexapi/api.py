@@ -20,6 +20,7 @@ from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_sr
 from cybexapi.shodanSearch import shodan_lookup, insert_ports
 from cybexapi.import_json import import_json
 from cybexapi.delete_node import delete_node
+from cybexapi.positions import update_positions
 import json
 from cybexapi.wipe_db import wipeDB
 import pandas as pd
@@ -156,7 +157,18 @@ class delete(APIView):
         else:
             return Response({"Status": "Failed"})
 
+class position(APIView):
+    permission_classes = (IsAuthenticated, )
+    
+    def get(self, request, format=None, data=None):
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+        
+        status = update_positions(data, graph)
+        return Response({"Status": "Success"})
 
+        
 class enrichNode(APIView):
     permission_classes = (IsAuthenticated, )
 
