@@ -10,7 +10,7 @@ urlpatterns = [
     path('api/v1/neo4j/export', exportNeoDB.as_view()),
     path('api/v1/neo4j/insert/<x>/<y>/', insert.as_view()),
     path('api/v1/enrich/<x>/<y>/', enrichNode.as_view()),
-    path('api/v1/delete/<node_type>/<data>/', delete.as_view()),
+    path('api/v1/delete/<node_id>/', delete.as_view()),
     path('api/v1/enrich/<x>/', enrichNodePost.as_view()),
     path('api/v1/enrichURL', enrichURL.as_view()),
     path('api/v1/macroCybex', macroCybex.as_view()),
