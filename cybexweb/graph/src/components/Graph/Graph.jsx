@@ -97,6 +97,14 @@ const Graph = ({ isLoading }) => {
     return setRadialPosition(domPositions);
   }
 
+  // Used for converting to a json object
+  function objectToArray(obj) {
+    return Object.keys(obj).map(function (key) {
+      obj[key].id = key;
+      return obj[key];
+    });
+  }
+
   function AddEventListenersToNetwork(nw, data) {
     if (typeof data.Neo4j === 'undefined') {
       return false;
@@ -104,17 +112,10 @@ const Graph = ({ isLoading }) => {
     if (nw === null) {
       return false;
     }
-
-    function objectToArray(obj) {
-      return Object.keys(obj).map(function (key) {
-        obj[key].id = key;
-        return obj[key];
-      });
-    }
     
+    // Used for updating the positions of the current nodes
     var nodes = objectToArray(network.getPositions());
     axios.post('/api/v1/position', nodes, {});
-
 
     // hoverNode fires whenever the mouse hovers over a node
     nw.on('hoverNode', e => {
@@ -223,6 +224,10 @@ const Graph = ({ isLoading }) => {
     });
     nw.on('dragEnd', () => {
       setDragStart(false);
+      
+      // Used for updating the positions of the current nodes
+      var nodes_pos = objectToArray(network.getPositions());
+      axios.post('/api/v1/position', nodes_pos, {});
     });
 
     // Similar to dragStart and dragEnd, but changes the selection state during stabilization
