@@ -144,12 +144,12 @@ class insert(APIView):
 class delete(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, format=None, node_type=None, data=None):
+    def get(self, request, format=None, node_id=None):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         
-        status = delete_node(node_type, data, graph)
+        status = delete_node(node_id, graph)
 
         if status == 1:
             return Response({"Status": "Success"})

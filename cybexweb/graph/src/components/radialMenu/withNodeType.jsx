@@ -99,11 +99,11 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
     }
   }
 
-  function deleteNode(type,value)
+  function deleteNode(id)
   {
     axios
         // replace below with actual node deletion api call
-        .get(`/api/v1/delete/${type}/${value}`)
+        .get(`/api/v1/delete/${id}`)
         .then(({ data }) => {
           if (data['insert status'] !== 0) {
             axios
@@ -183,7 +183,7 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
             bottom: "10px",
             zIndex: 100000
           }} 
-          onClick={() => deleteNode(nodeType.properties.type, nodeType.properties.data)}
+          onClick={() => deleteNode(nodeType.id)}
         >
           <p>Delete {nodeType.properties.type}: {truncate(nodeType.properties.data,32)}</p>
         </div>
