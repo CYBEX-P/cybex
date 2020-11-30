@@ -513,6 +513,7 @@ const App = props => {
                     <hr />
                     <h6>Performs threat analysis on all supported IOC nodes.</h6>
                     <ul>
+                      <li>Adds related IOCs exposed by CYBEX event data</li>
                       <li>Determines IOC threat level</li>
                       <li>Scales IOC nodes according to relative number of sightings</li>
                     </ul>

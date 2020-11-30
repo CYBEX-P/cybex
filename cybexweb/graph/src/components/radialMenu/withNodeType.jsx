@@ -9,6 +9,8 @@ import axios from 'axios';
 import MenuContext from '../App/MenuContext';
 import Button from '../Button/Button';
 
+// Helper function to truncate strings (used for delete button text)
+const truncate = (input,numChar) => input.length > numChar ? `${input.substring(0, numChar)}...` : input;
 
 function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
   const { setLoading } = useContext(MenuContext);
@@ -183,7 +185,7 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
           }} 
           onClick={() => deleteNode(nodeType.properties.type, nodeType.properties.data)}
         >
-          <p>Delete {nodeType.properties.type}: {nodeType.properties.data}</p>
+          <p>Delete {nodeType.properties.type}: {truncate(nodeType.properties.data,32)}</p>
         </div>
       </div>
     );
