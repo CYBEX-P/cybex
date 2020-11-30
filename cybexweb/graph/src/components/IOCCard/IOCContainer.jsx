@@ -3,7 +3,7 @@ import { CardText, Container, Header, Card, CardBody, MockCloseButton, CardTextF
 import IOCContext from '../App/IOCContext';
 import IOCMapContext from '../App/IOCMapContext';
 
-export const IOCContainer = ({ data, pinNode, pinnedCards, handlePinClick }) => {
+export const IOCContainer = ({ handlePinClick }) => {
   const [isComment, setIsComment] = React.useState(false);
   const { pinnedCardsWithContext, setPinnedCardsWithContext } = React.useContext(IOCContext);
   const { mapNode } = React.useContext(IOCMapContext);
@@ -12,6 +12,12 @@ export const IOCContainer = ({ data, pinNode, pinnedCards, handlePinClick }) => 
   const handleCommentClick = () => {
     setIsComment(!isComment);
   };
+
+  //
+  mapNode.map(n => {
+    console.log(n);
+    // Fetch details
+  });
 
   return (
     <Container>
@@ -52,43 +58,3 @@ export const IOCContainer = ({ data, pinNode, pinnedCards, handlePinClick }) => 
     </Container>
   );
 };
-
-/*
-  return (
-    <Container>
-      {pinnedCardsWithContext.length ? (
-        pinnedCardsWithContext.map(node => (
-          <Card>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <MockCloseButton onClick={() => handlePinClick(node)}>X</MockCloseButton>
-              <CardText>{node.properties.type}</CardText>
-              <Header>{node.properties.data}</Header>
-              <MockCloseButton noEvent>X</MockCloseButton>
-            </div>
-            {isComment ? (
-              <>
-                <CardBody>
-                  <CardText>Comments</CardText>
-                  <MockCloseButton onClick={handleCommentClick}>return</MockCloseButton>
-                  <CardTextField />
-                </CardBody>
-              </>
-            ) : (
-              <>
-                <CardBody>
-                  <CardText>Comments</CardText>
-                  <MockCloseButton onClick={handleCommentClick}>X</MockCloseButton>
-                </CardBody>
-                <CardBody>CYBEX-P Sightings</CardBody>
-              </>
-            )}
-          </Card>
-        ))
-      ) : (
-        <>
-          <div>empty</div>
-        </>
-      )}
-    </Container>
-  );
-  */

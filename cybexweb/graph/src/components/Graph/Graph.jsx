@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { Network } from 'vis';
-import PropTypes, { node } from 'prop-types';
+import PropTypes from 'prop-types';
 import { CircleLoader } from 'react-spinners';
 import IOCContext from '../App/IOCContext';
 import IOCMapContext from '../App/IOCMapContext';
@@ -11,21 +11,9 @@ import NetworkContext from '../App/DataContext';
 import MenuContext from '../App/MenuContext';
 import RadialMenu from '../radialMenu/radialMenu';
 import withNodeType from '../radialMenu/withNodeType';
-import Trends from '../modal/Trends';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faExclamationCircle,
-  faArrowRight,
-  faTimesCircle,
-  faFilter,
-  faMapPin,
-  faCircleNotch,
-  faDotCircle,
-  faCommentDollar,
-  faCommentDots,
-  faArrowCircleUp
-} from '@fortawesome/free-solid-svg-icons';
-import { Header, IOC, IOCCard, Container, IOCContainer } from '../IOCCard';
+import { faExclamationCircle, faTimesCircle, faFilter } from '@fortawesome/free-solid-svg-icons';
+import { IOCContainer } from '../IOCCard';
 
 function InitializeGraph(data) {
   if (typeof data.Neo4j === 'undefined') {
@@ -76,8 +64,8 @@ const Graph = ({ isLoading }) => {
   // selectText is like hoverText, but is to be persistently shown when node is selected
   const [selectText, setSelectText] = useState(null);
   // pinnedText is like selectText, but stays stored and displayed if user pins an IOC
-  const [pinnedText, setPinnedText] = useState(null);
-  const [pinnedPos, setPinnedPos] = useState(320);
+  const [, setPinnedText] = useState(null);
+  const [, setPinnedPos] = useState(320);
 
   const [selection, setSelection] = useState({ nodes: [], edges: [] });
   const [selectedNodeType, setSelectedNodeType] = useState(null);
@@ -89,9 +77,9 @@ const Graph = ({ isLoading }) => {
 
   const [filterState, setFilterState] = useState(false);
 
-  const [commentState, setCommentState] = useState(false);
+  const [, setCommentState] = useState(false);
   const [commentTextState, setCommentTextState] = useState('');
-  const [pinnedCommentState, setPinnedCommentState] = useState(false);
+  const [, setPinnedCommentState] = useState(false);
   const [pinnedCommentTextState, setPinnedCommentTextState] = useState('');
 
   var zoomTimer;
@@ -110,11 +98,6 @@ const Graph = ({ isLoading }) => {
     setSelectedNodeType(neo4jData.Neo4j[0][0].nodes.filter(properties => properties.id === selection.nodes[0])[0]);
     return setRadialPosition(domPositions);
   }
-
-  // pinNode
-  const pinNode = pinnedID => {
-    // Take current nodeID and append it
-  };
 
   function AddEventListenersToNetwork(nw, data) {
     if (typeof data.Neo4j === 'undefined') {
@@ -165,7 +148,7 @@ const Graph = ({ isLoading }) => {
     nw.on('blurEdge', () => setHoverTextEdge(null));
 
     // Change the selection state whenever a node is selected and deselected
-    nw.on('deselectNode', params => {
+    nw.on('deselectNode', () => {
       setCommentState(false);
       setCommentTextState('');
       var opacityNormal = 1;
@@ -293,46 +276,6 @@ const Graph = ({ isLoading }) => {
     });
   }
 
-  // handles all comments submitted from IOC card comment boxes
-  function handleComment(node) {
-    // node object and comment text states differ depending on which
-    // IOC card is being handled ('selected or pinned')
-    var nodeObj;
-    var currentCommentText;
-    if (node == 'selected') {
-      nodeObj = selectedNodeType;
-      currentCommentText = commentTextState;
-    } else {
-      nodeObj = pinnedNodeType;
-      currentCommentText = pinnedCommentTextState;
-    }
-    if (currentCommentText != '') {
-      resetCards();
-      setLoading(true);
-      axios
-        .post(`/api/v1/enrich/comment`, {
-          Ntype: `${nodeObj.properties.type}`,
-          value: `${nodeObj.properties.data}`,
-          comment: `${currentCommentText}`
-        })
-        .then(({ data }) => {
-          if (data['insert status'] !== 0) {
-            axios
-              .get('/api/v1/neo4j/export')
-              .then(response => {
-                setNeo4jData(response.data);
-                //setCommentTextState(''); // replaced by resetCards();
-                setLoading(false);
-              })
-              .catch(() => {
-                alert('Error');
-                setLoading(false);
-              });
-          }
-        });
-    }
-  }
-
   // remove Pinned IOC card
   function removePin() {
     setPinnedText(null);
@@ -351,15 +294,6 @@ const Graph = ({ isLoading }) => {
   }
 
   // handles IOC card pinning logic and associated state changes
-  function pinHandler() {
-    setPinnedText(selectText);
-    setPinnedNodeType(selectedNodeType); // Store pinned node obj state
-
-    // Because selected and pinned IOC are initially the same, only show IOC in the
-    // 'pinned' slot. Otherwise is redundant. Accomplished by nulling selectText
-    setSelectText(null);
-    setPinnedPos(10);
-  }
 
   useEffect(() => {
     if (!dragStart) {
@@ -405,10 +339,10 @@ const Graph = ({ isLoading }) => {
   // HOC that returns the radial menu to use
   const RadialToRender = withNodeType(RadialMenu, selectedNodeType, setNeo4jData, config);
   const [IOCs, setIOCs] = React.useState({});
-  const [newIOCs, setNewIOCs] = React.useState(new Map());
+  const [, setNewIOCs] = React.useState(new Map());
 
   // pinnedCards represents the state for the data passed down to the IOCContainer
-  const [pinnedCards, setPinnedCards] = React.useState([]);
+  const [pinnedCards] = React.useState([]);
   const [pinnedCardsWithContext, setPinnedCardsWithContext] = React.useState([]);
   // Types: string -> bool,
   const [mapNode, setMap] = React.useState([]);
@@ -859,15 +793,11 @@ const Graph = ({ isLoading }) => {
           <h6 style={{ textAlign: 'center' }}>{hoverTextEdge.data.replace(/"/g, '')}</h6>
         </div>
       )}
-      {selectText && (
-        <>
-          <IOCMapContext.Provider value={{ mapNode, setMap }}>
-            <IOCContext.Provider value={{ pinnedCardsWithContext, setPinnedCardsWithContext }}>
-              <IOCContainer data={IOCs} pinNode={pinNode} pinnedCards={pinnedCards} handlePinClick={handlePinClick} />
-            </IOCContext.Provider>
-          </IOCMapContext.Provider>
-        </>
-      )}
+      <IOCMapContext.Provider value={{ mapNode, setMap }}>
+        <IOCContext.Provider value={{ pinnedCardsWithContext, setPinnedCardsWithContext }}>
+          <IOCContainer data={IOCs} pinnedCards={pinnedCards} handlePinClick={handlePinClick} />
+        </IOCContext.Provider>
+      </IOCMapContext.Provider>
     </div>
   );
 };
