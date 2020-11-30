@@ -269,7 +269,7 @@ class macroCybex(APIView):
     def threadedLoop_cybexRelated(self, node, graph, current_user):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
-        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename" or nType == "Subnet" or nType == "password":
             print("--> Querying cybexRelated IOCs for", value)
             enrichLocalNode('cybexRelated', value, nType, graph, current_user)
             print("Done with", str(value))
@@ -277,7 +277,7 @@ class macroCybex(APIView):
     def threadedLoop_cybexCount(self, node, graph, current_user):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
-        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename" or nType == "Subnet" or nType == "password":
             print("--> Querying cybexCounts for ", value)
             enrichLocalNode('cybexCount', value, nType, graph, current_user)
             print("Done with", str(value))

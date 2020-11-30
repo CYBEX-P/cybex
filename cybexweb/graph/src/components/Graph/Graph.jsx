@@ -49,6 +49,8 @@ function InitializeGraph(data) {
   return nw;
 }
 
+// Helper function to truncate strings (used for tooltips)
+const truncate = (input,numChar) => input.length > numChar ? `${input.substring(0, numChar)}...` : input;
 
 const Graph = ({ isLoading }) => {
   const { setLoading } = useContext(MenuContext);
@@ -425,6 +427,13 @@ const Graph = ({ isLoading }) => {
           <h4 style={{textAlign:"center"}}>
             <b>Filters</b>
           </h4>
+          
+          <h5>Threat Display Mode</h5>
+          <select style={{color: "white",backgroundColor: "#232323",border:"none"}}>
+            <option value="colorAndSightings">Node Color (w/sightings)</option>
+            <option value="color">Node Color</option>
+            <option value="size">Node Size</option>
+          </select>
           <hr/>
           <h5>Time</h5>
           <div style={{color:"white",fontSize:"large"}}>
@@ -591,7 +600,7 @@ const Graph = ({ isLoading }) => {
             <b>{hoverText.type.replace(/"/g,"")}</b>
           </h4>
           {/* <hr/> */}
-          <h6 style={{textAlign:"center"}}>{hoverText.data.replace(/"/g,"")}</h6>
+          <h6 style={{textAlign:"center"}}>{truncate(hoverText.data.replace(/"/g,""),32)}</h6>
           {hoverText.percentMal != "" && (
             <div style={{color:"white",fontSize:"large",textAlign:"center"}}>
             <FontAwesomeIcon size="1x" icon={faExclamationCircle} style={{marginRight:"3px"}}/>
