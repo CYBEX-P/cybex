@@ -1,8 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { Network } from 'vis';
-import PropTypes from 'prop-types';
+import PropTypes, { node } from 'prop-types';
 import { CircleLoader } from 'react-spinners';
+import IOCContext from '../App/IOCContext';
+import IOCMapContext from '../App/IOCMapContext';
 
 import _ from 'lodash';
 import NetworkContext from '../App/DataContext';
@@ -109,9 +111,9 @@ const Graph = ({ isLoading }) => {
     return setRadialPosition(domPositions);
   }
 
-  const pinNode = pinned => {
-    console.log(pinned);
-    console.log(IOCs);
+  // pinNode
+  const pinNode = pinnedID => {
+    // Take current nodeID and append it
   };
 
   function AddEventListenersToNetwork(nw, data) {
@@ -164,9 +166,6 @@ const Graph = ({ isLoading }) => {
 
     // Change the selection state whenever a node is selected and deselected
     nw.on('deselectNode', params => {
-      IOCs ? setSelectText() : setSelectText();
-
-      console.log('deselectNode');
       setCommentState(false);
       setCommentTextState('');
       var opacityNormal = 1;
@@ -191,18 +190,25 @@ const Graph = ({ isLoading }) => {
       setPinnedPos(10);
     });
     nw.on('selectNode', params => {
+      // Check if there is data in the IOCs
+
+      // Check if the IOCs nodeIDs are true
+
       setSelection(nw.getSelection());
       setHoverText(null); // No need for hovertext after selection, redundant
       var opacityBlurred = 0.1;
       var nodeId = params.nodes[0];
       // nodeObj is the Neo4j object that representes the currently selected node. Note: Slightly different here than with on('hoverNode')
       var nodeObj = data.Neo4j[0][0].nodes.filter(properties => properties.id === nodeId);
-      console.log('NodeObj');
-      console.log(nodeObj);
       // Check if there is currently a node in IOCs
-      console.log('IOCs');
-      console.log(IOCs);
+      var newStuff = new Object();
+      newStuff[nodeId.toString()] = false;
+      if (pinnedCardsWithContext.length > 0) {
+        setPinnedCardsWithContext(prevArray => [...prevArray, nodeObj]);
+      }
+      setPinnedCardsWithContext(prevArray => [...prevArray, nodeObj]);
 
+      // Check if there are now pinnedCards
       setIOCs(nodeObj);
       var m = new Map();
       setNewIOCs(m.set(nodeObj, false));
@@ -225,7 +231,6 @@ const Graph = ({ isLoading }) => {
           }
         }
       });
-      console.log(newIOCs);
       setSelectText({
         // Set the select text to the properties of the data
         text: JSON.stringify(nodeObj[0].properties),
@@ -376,7 +381,6 @@ const Graph = ({ isLoading }) => {
       resetCards();
       setEventListenersAdded(false);
       setRadialPosition(null);
-      // console.log(neo4jData);
     }
   }, [neo4jData]);
 
@@ -402,6 +406,34 @@ const Graph = ({ isLoading }) => {
   const RadialToRender = withNodeType(RadialMenu, selectedNodeType, setNeo4jData, config);
   const [IOCs, setIOCs] = React.useState({});
   const [newIOCs, setNewIOCs] = React.useState(new Map());
+
+  // pinnedCards represents the state for the data passed down to the IOCContainer
+  const [pinnedCards, setPinnedCards] = React.useState([]);
+  const [pinnedCardsWithContext, setPinnedCardsWithContext] = React.useState([]);
+  // Types: string -> bool,
+  const [mapNode, setMap] = React.useState([]);
+
+  const handlePinClick = node => {
+    // Check if the current node is pinned
+    mapNode.forEach(n => {
+      if (n.id === node.id) {
+        setMap(prevArray => [
+          ...prevArray,
+          {
+            id: node.id,
+            pinned: false
+          }
+        ]);
+      }
+    });
+    setMap(prevArray => [
+      ...prevArray,
+      {
+        id: node.id,
+        pinned: true
+      }
+    ]);
+  };
 
   return (
     <div style={{ display: 'grid', gridTemplateRows: '56px auto' }}>
@@ -827,247 +859,14 @@ const Graph = ({ isLoading }) => {
           <h6 style={{ textAlign: 'center' }}>{hoverTextEdge.data.replace(/"/g, '')}</h6>
         </div>
       )}
-      {/* TODO: Turn selectText box into seperate component */}
-      {/* {selectText && ( */}
-
       {selectText && (
         <>
-          <IOCContainer data={IOCs} pinNode={pinNode} />
-          {commentState && (
-            <div
-              style={{
-                position: 'absolute',
-                width: '300px',
-                right: '10px',
-                bottom: '10px',
-                height: '230px',
-                zIndex: 2,
-                // backgroundColor: '#111', // Used for classic Card styling only.
-                backgroundColor: 'black',
-                color: 'white',
-                opacity: '1',
-                borderRadius: '10px',
-                padding: '5px',
-                boxShadow: '0px 2px 5px 0px rgba(31,30,31,1)'
-              }}
-            >
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  backgroundColor: '#171717',
-                  borderRadius: '5px',
-                  padding: '10px',
-                  backdropFilter: 'blur(20px)'
-                }}
-              >
-                <div onClick={() => setCommentState(false)}>
-                  <FontAwesomeIcon
-                    size="1x"
-                    icon={faTimesCircle}
-                    style={{ position: 'absolute', right: '10px', top: '10px', pointerEvents: '' }}
-                  />
-                </div>
-                <div style={{ color: selectText.color.replace(/"/g, '') }}>{selectText.data.replace(/"/g, '')}</div>
-                <h5>Comments</h5>
-                {/* <div style={{height: "80px", padding:"0px 0px 0px 5px",overflow: "hide",backgroundColor: "black", marginLeft: "5px", marginRight: "5px",padding: "5px",borderRadius:"5px"}}>
-                <p>4-7-2020 9:02: Test.</p>
-                <p>4-7-2020 9:07: Test 123.</p>
-              </div> */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px' }}>
-                  <div style={{ height: '130px', padding: '5px', backgroundColor: 'black', borderRadius: '5px' }}>
-                    <textarea
-                      // rows="5"
-                      style={{
-                        width: '200px',
-                        height: '100%',
-                        border: 'none',
-                        borderRadius: '5px',
-                        backgroundColor: 'black',
-                        color: 'white'
-                      }}
-                      onChange={event => setCommentTextState(event.target.value)}
-                    >
-                      {selectedNodeType.properties.comment}
-                    </textarea>
-                  </div>
-                  <div
-                    style={{
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '5px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center'
-                    }}
-                    onClick={() => handleComment('selected')}
-                  >
-                    <FontAwesomeIcon size="2x" icon={faArrowCircleUp} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          <IOCMapContext.Provider value={{ mapNode, setMap }}>
+            <IOCContext.Provider value={{ pinnedCardsWithContext, setPinnedCardsWithContext }}>
+              <IOCContainer data={IOCs} pinNode={pinNode} pinnedCards={pinnedCards} handlePinClick={handlePinClick} />
+            </IOCContext.Provider>
+          </IOCMapContext.Provider>
         </>
-      )}
-      {/* Temporary duplication of above for pinnedText. Needs to be cleaned up and merged into a common component. */}
-      {pinnedText && (
-        <div>
-          <div
-            style={{
-              position: 'absolute',
-              width: '300px',
-              right: pinnedPos + 'px',
-              bottom: '10px',
-              zIndex: 2,
-              // backgroundColor: '#111', // Used for classic Card styling only.
-              pointerEvents: 'none',
-              backgroundColor: 'rgba(0,0,0,0.7)',
-              color: 'white',
-              borderRadius: '10px',
-              padding: '20px',
-              boxShadow: '0px 2px 5px 0px rgba(31,30,31,1)',
-              backdropFilter: 'blur(20px)',
-              transition: 'right 1s'
-            }}
-          >
-            {/* <FontAwesomeIcon size="2x" icon={faMapPin} style={{position:'absolute',left:'10px',top:'10px',color:'#58a5f0'}}/> */}
-            <div onClick={() => removePin()}>
-              <FontAwesomeIcon
-                size="2x"
-                icon={faTimesCircle}
-                style={{ pointerEvents: 'auto', position: 'absolute', left: '10px', top: '10px' }}
-              />
-            </div>
-            {/* <FontAwesomeIcon size="2x" icon={faTimesCircle} style={{position:'absolute',right:'10px',top:'10px'}}/> */}
-            <h4
-              style={{
-                textAlign: 'center',
-                color: pinnedText.color.replace(/"/g, '')
-                //textShadow: "-1px 0 grey, 0 1px grey, 1px 0 grey, 0 -1px grey"
-              }}
-            >
-              <b>{pinnedText.type.replace(/"/g, '')}</b>
-            </h4>
-            <h6 style={{ textAlign: 'center' }}>{pinnedText.data.replace(/"/g, '')}</h6>
-            <div style={{ color: 'white' }}>
-              <div
-                style={{
-                  backgroundColor: '#232323',
-                  borderRadius: '10px',
-                  padding: '10px',
-                  marginBottom: '10px',
-                  backdropFilter: 'blur(20px)'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <div>Comments</div>
-                  <button
-                    onClick={() => setPinnedCommentState(true)}
-                    style={{
-                      pointerEvents: 'auto',
-                      backgroundColor: '#white',
-                      color: 'black',
-                      border: 'none',
-                      borderRadius: '5px'
-                    }}
-                  >
-                    <FontAwesomeIcon size="1x" icon={faCommentDots} />
-                    View/Add
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div style={{ color: 'white' }}>
-              {/* <h6>CYBEX-P Sightings</h6> */}
-              <div style={{ backgroundColor: '#232323', borderRadius: '10px', padding: '10px' }}>
-                <h6>CYBEX-P Sightings:</h6>
-                {/* <FontAwesomeIcon size="1x" icon={faExclamationCircle} style={{marginRight:"3px"}}/> */}
-                Benign = {pinnedText.count}, Malicious = {pinnedText.countMalicious}
-              </div>
-              {/* <hr/> */}
-              {/* <h5>Highlight Related:</h5>
-            <button style={{backgroundColor:"#232323",color:"white",border:"none",borderRadius:"5px",marginRight:'10px'}}>Attributes</button>
-            <button style={{backgroundColor:"#232323",color:"white",border:"none",borderRadius:"5px"}}>Events</button> */}
-            </div>
-          </div>
-          {pinnedCommentState && (
-            <div
-              style={{
-                position: 'absolute',
-                width: '300px',
-                right: pinnedPos + 'px',
-                bottom: '10px',
-                height: '230px',
-                zIndex: 2,
-                // backgroundColor: '#111', // Used for classic Card styling only.
-                backgroundColor: 'black',
-                color: 'white',
-                opacity: '1',
-                borderRadius: '10px',
-                padding: '5px',
-                boxShadow: '0px 2px 5px 0px rgba(31,30,31,1)',
-                transition: 'right 1s'
-              }}
-            >
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  backgroundColor: '#171717',
-                  borderRadius: '5px',
-                  padding: '10px',
-                  backdropFilter: 'blur(20px)'
-                }}
-              >
-                <div onClick={() => setPinnedCommentState(false)}>
-                  <FontAwesomeIcon
-                    size="1x"
-                    icon={faTimesCircle}
-                    style={{ position: 'absolute', right: '10px', top: '10px' }}
-                  />
-                </div>
-                <div style={{ color: pinnedText.color.replace(/"/g, '') }}>{pinnedText.data.replace(/"/g, '')}</div>
-                <h5>Comments</h5>
-                {/* <div style={{height: "80px", padding:"0px 0px 0px 5px",overflow: "hide",backgroundColor: "black", marginLeft: "5px", marginRight: "5px",padding: "5px",borderRadius:"5px"}}>
-                <p>4-7-2020 9:02: Test.</p>
-                <p>4-7-2020 9:07: Test 123.</p>
-              </div> */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px' }}>
-                  <div style={{ height: '130px', padding: '5px', backgroundColor: 'black', borderRadius: '5px' }}>
-                    <textarea
-                      // rows="5"
-                      style={{
-                        width: '200px',
-                        height: '100%',
-                        border: 'none',
-                        borderRadius: '5px',
-                        backgroundColor: 'black',
-                        color: 'white'
-                      }}
-                      onChange={event => setPinnedCommentTextState(event.target.value)}
-                    >
-                      {pinnedNodeType.properties.comment}
-                    </textarea>
-                  </div>
-                  <div
-                    style={{
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '5px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center'
-                    }}
-                    onClick={() => handleComment('pinned')}
-                  >
-                    <FontAwesomeIcon size="2x" icon={faArrowCircleUp} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
       )}
     </div>
   );

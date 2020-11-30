@@ -68,9 +68,12 @@ let YAMLConfig = {};
 
 // Detect Chrome 
 let chromeAgent = window.navigator.userAgent.indexOf('Chrome') !== -1; 
+
+/*
 if (!chromeAgent) {
   alert("Please use Google Chrome for optimal experience.")
 }
+*/
 
 if (process.env.NODE_ENV !== 'production') {
   YAMLConfig = Config;
