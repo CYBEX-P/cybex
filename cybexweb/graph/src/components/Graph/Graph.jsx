@@ -596,7 +596,7 @@ const Graph = ({ isLoading }) => {
           >
             <p>{visMode}</p>
             <p>Monitoring task...</p>
-            <p>{taskTime.minutes}:{taskTime.seconds} </p>
+            {/* <p>{taskTime.minutes}:{taskTime.seconds} </p> */}
             {/* <p>{taskTime.minutes}:{taskTime.seconds} </p>
             <p>Select: {mouseMotion.select}</p>
             <p>Hover: {mouseMotion.hover}</p>
