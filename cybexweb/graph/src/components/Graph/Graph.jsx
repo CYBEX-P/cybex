@@ -609,13 +609,25 @@ const Graph = ({ isLoading }) => {
           gridRow: '2',
           gridColumn: 1,
           backgroundColor: 'black',
+          color: 'white',
           zIndex: 1000,
           display: 'grid',
           textAlign: 'center',
           paddingTop: '300px'
         }}
         onClick={() => beginTask()}>
-          <h2>Click anywhere to begin task</h2>
+          <h2>Task: {visMode}</h2>
+          <img style={{
+              display: "block",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+            src={"/static/images/"+visMode+".png"} 
+            alt="Visualization mode diagram"
+            height="250"
+            width="250">
+          </img>
+          <h3>Click anywhere to begin task</h3>
         </div>
       )}
       {finalStats && (
@@ -627,16 +639,18 @@ const Graph = ({ isLoading }) => {
           color: 'white',
           zIndex: 1000,
           display: 'grid',
-          padding: '20px;'
+          padding: '20px'
           }} 
         >
-        <h3>Task Statistics (Refresh page to try new task)</h3>
-        <p>{visMode}</p>
-        <p>{taskTime.minutes}:{taskTime.seconds} </p>
-        <p>Select: {mouseMotion.select}</p>
-        <p>Hover: {mouseMotion.hover}</p>
-        <p>Drag: {mouseMotion.drag}</p>
-        <p>Zoom: {mouseMotion.zoom}</p>
+        <div>
+          <h3>Task Statistics (Refresh page to try new task)</h3>
+          <p>{visMode}</p>
+          <p>{taskTime.minutes}:{taskTime.seconds} </p>
+          <p>Select: {mouseMotion.select}</p>
+          <p>Hover: {mouseMotion.hover}</p>
+          <p>Drag: {mouseMotion.drag}</p>
+          <p>Zoom: {mouseMotion.zoom}</p>
+        </div>
 
         {/* <p>{taskTime.minutes}:{taskTime.seconds} </p>
         <p>Select: {mouseMotion.select}</p>
