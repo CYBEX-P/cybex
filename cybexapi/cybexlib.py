@@ -5,6 +5,7 @@ import json
 import requests
 from django.conf import settings
 from threading import Timer
+from cybexapi.shodanSearch import insert_ports
 
 
 def pull_ip_src():
@@ -84,39 +85,48 @@ def insertCybexCount(numOccur, numMal, graph, value, nType):
 # Parameters: <string>data - JSON response string from the Related Attribute Summary API call
 #             <object>graph - The current graph
 #             <string>value - JSON data for the originating node
+#             <string>originalType - type of originating node
 # Returns: 0 if successful
 # Author: Adam Cassell
 
-def insertRelatedAttributes(data, graph, value):
+def insertRelatedAttributes(data, graph, value, originalType):
     # iterate over all related attributes..
     for attr, val in data["data"].items():
         attr = bucket(attr)
+        originalType = bucket(originalType)
         valString = ""
-        for each in val:
-            #     valString = valString + str(each) + ','
-            # valString = valString[:-1] # remove trailing comma
-            # #nodeData = attr + ": " + valString # currently only using value
-            # nodeData = valString
-            nodeData = each
-            c = Node(attr, data=nodeData)
-            c["source"] = "cybex"
-            ip_node = graph.nodes.match(data=value).first()
-            c_node = graph.nodes.match(attr, data=nodeData).first()
+        # Only connect ports to graph if the original node is of type 'IP'
+        # Doesn't make sense to add ports to a url node, for example
+        if attr == "Ports":
+            if originalType == "IP" or originalType == "Subnet":
+                # Special case for ports. Group them together.
+                insert_ports(val,graph,value)
+        else:
+            for each in val:
+                #     valString = valString + str(each) + ','
+                # valString = valString[:-1] # remove trailing comma
+                # #nodeData = attr + ": " + valString # currently only using value
+                # nodeData = valString
+                nodeData = each
+                c = Node(attr, data=nodeData)
+                c["source"] = "cybex"
+                ip_node = graph.nodes.match(data=value).first()
+                c_node = graph.nodes.match(attr, data=nodeData).first()
 
-            if(c_node):
-                if (ip_node != c_node):
-                    rel = Relationship(ip_node, "CYBEX", c_node)
+                if(c_node):
+                    if (ip_node != c_node):
+                        rel = Relationship(ip_node, "CYBEX", c_node)
+                        #rel['color'] = 'rgb(255,255,255)'
+                        graph.create(rel)
+                        print("Existing CybexRelated node linked")
+                    else:
+                        print("Related node is same as origin node. Skipped.")
+                else:
+                    graph.create(c)
+                    rel = Relationship(ip_node, "CYBEX", c)
                     #rel['color'] = 'rgb(255,255,255)'
                     graph.create(rel)
-                    print("Existing CybexRelated node linked")
-                else:
-                    print("Related node is same as origin node. Skipped.")
-            else:
-                graph.create(c)
-                rel = Relationship(ip_node, "CYBEX", c)
-                #rel['color'] = 'rgb(255,255,255)'
-                graph.create(rel)
-                print("New CybexRelated node created and linked")
+                    print("New CybexRelated node created and linked")
 
     return 0
 
@@ -276,7 +286,7 @@ def cybexRelatedHandler(Ntype, data1, graph, user):
 
         try:
             #status = insertRelated(str(res), graph, data1)
-            status = insertRelatedAttributes(res, graph, data1)
+            status = insertRelatedAttributes(res, graph, data1,Ntype1)
 
         except:
             return 1

@@ -129,6 +129,20 @@ class exportNeoDB(APIView):
         # print(p)
         return Response(p)
 
+# Special version of exportNeoDB just for user study
+class exportNeoDBMode(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, format=None, x="colorAndSightings"):
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+        g = export(graph)
+        # print(g)
+        p = processExport(g,x)
+        # print(p)
+        return Response(p)
+
 class insert(APIView):
     permission_classes = (IsAuthenticated, )
 
@@ -145,12 +159,12 @@ class insert(APIView):
 class delete(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, format=None, node_type=None, data=None):
+    def get(self, request, format=None, node_id=None):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         
-        status = delete_node(node_type, data, graph)
+        status = delete_node(node_id, graph)
 
         if status == 1:
             return Response({"Status": "Success"})
@@ -269,7 +283,7 @@ class macroCybex(APIView):
     def threadedLoop_cybexRelated(self, node, graph, current_user):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
-        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename" or nType == "Subnet" or nType == "password":
             print("--> Querying cybexRelated IOCs for", value)
             enrichLocalNode('cybexRelated', value, nType, graph, current_user)
             print("Done with", str(value))
@@ -277,7 +291,7 @@ class macroCybex(APIView):
     def threadedLoop_cybexCount(self, node, graph, current_user):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
-        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename" or nType == "Subnet" or nType == "password":
             print("--> Querying cybexCounts for ", value)
             enrichLocalNode('cybexCount', value, nType, graph, current_user)
             print("Done with", str(value))
