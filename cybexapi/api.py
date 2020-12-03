@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.http import HttpResponse
 from rest_framework import status
 import pytz
+import os
 from datetime import datetime
 from django.conf import settings
 from py2neo import Graph
@@ -160,18 +161,18 @@ class delete(APIView):
 class enrichNode(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, enrich_type=None, value=None, z=None):
+    def get(self, request, format=None, enrich_type=None, value=None, node_type=None):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         
-        result = enrichLocalNode(enrich_type, value, z, graph)
+        result = enrichLocalNode(enrich_type, value, node_type, graph)
         return Response(result)
 
 class enrichNodePost(APIView):
     permission_classes = (IsAuthenticated, )
     
-    def post(self, request, enrich_type=None):
+    def post(self, request, format=None, enrich_type=None):
         current_user = request.user
         data = request.data
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
@@ -182,7 +183,7 @@ class enrichNodePost(APIView):
 class enrichURL(APIView):
     permission_classes = (IsAuthenticated, )
     
-    def post(self, request, x=None):
+    def post(self, request, format=None, enrich_type=None):
         current_user = request.user
         data = request.data
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
@@ -295,7 +296,7 @@ class macro(APIView):
     #             <object>graph - The current graph
     # Returns: Response status
     # Author: Spencer Kase Rohlfing & (Someone else, sorry don't know who)
-    def get(self, request, format=None, data=None, ntype=None):
+    def get(self, request, format=None, data=None):
         # start = time.time()
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
