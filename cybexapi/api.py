@@ -330,18 +330,18 @@ class macro(APIView):
         #     nType = node["properties"]["type"]
         #     print("--> Enriching", value)
 
-        #     if nType == "URL":
-        #         # deconstruct URL
+        #     if(nType == "URL" and (subroutine == 'url' or subroutine == 'all')):
+        #         ## deconstruct URL
         #         status = insert_domain(value, graph)
-        #         print(str(status))
+        #         # print(str(status))
 
-        #     elif nType == "Email":
-        #         # deconstruct Email
+        #     elif(nType == "Email" and (subroutine == 'email' or subroutine == 'all')):
+        #         ## deconstruct Email
         #         status = insert_domain_and_user(value, graph)
-        #         print(str(status))
+        #         # print(str(status))
 
-        #     elif nType == "Host":
-        #         # resolve IP, MX, nameservers
+        #     elif(nType == "Host" and (subroutine == 'host' or subroutine == 'all')):
+        #         ## resolve IP, MX, nameservers
         #         try:
         #             status1 = resolveHost(value, graph)
         #         except:
@@ -361,8 +361,8 @@ class macro(APIView):
         #         except:
         #             print("No registrar")
 
-        #     elif nType == "Domain":
-        #         # resolve IP, MX, nameservers
+        #     elif(nType == "Domain" and (subroutine == 'domain' or subroutine == 'all')):
+        #         ## resolve IP, MX, nameservers
         #         try:
         #             status1 = resolveHost(value, graph)
         #         except:
@@ -382,13 +382,13 @@ class macro(APIView):
         #         except:
         #             print("No registrar")
 
-        #     elif nType == "IP":
-        #         # enrich all + ports + netblock
+        #     elif(nType == "IP" and (subroutine == 'ip' or subroutine == 'all')):
+        #         ## enrich all + ports + netblock
         #         enrichLocalNode('asn', value, nType, graph)
         #         enrichLocalNode('gip', value, nType, graph)
         #         enrichLocalNode('whois', value, nType, graph)
         #         enrichLocalNode('hostname', value, nType, graph)
-        #         # enrich cybexp needed here
+        #         ## enrich cybexp needed here
         #         results = shodan_lookup(value)
         #         status1 = insert_ports(results, graph, value)
 
@@ -408,7 +408,6 @@ class macro(APIView):
         nType = node["properties"]["type"]
         print("--> Enriching", value)
 
-        # if(subroutine == 'url' or subroutine == 'all'):
         if(nType == "URL" and (subroutine == 'url' or subroutine == 'all')):
             ## deconstruct URL
             status = insert_domain(value, graph)
