@@ -19,6 +19,7 @@ urlpatterns = [
     path('api/v1/neo4j/wipe', wipe.as_view()),
     #post
     path('import_json', importJson.as_view()),
+    path('api/v1/position', position.as_view()),
     #path('api/v1/neo4j/insertURL', insertURL.as_view()), # using /insert now
     path('api/v1/event/start', start.as_view()),
     path('api/v1/event/start/file', startFile.as_view()),
