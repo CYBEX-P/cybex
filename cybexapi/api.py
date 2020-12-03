@@ -110,15 +110,14 @@ def enrichLocalNode(enrich_type, value, node_type, graph, user=None):
 
 # TODO
 # Move to library file
-def insertLocalNode(Ntype, data, graph):
-    status = insertNode(Ntype, data, graph)
+def insertLocalNode(node_type, value, graph):
+    status = insertNode(node_type, value, graph)
     return status
-
 
 class exportNeoDB(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, format=None):
+    def get(self, request):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
@@ -131,11 +130,12 @@ class exportNeoDB(APIView):
 class insert(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, format=None, x=None, y=None):
+    def get(self, request, node_type=None, value=None):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
-        status = insertLocalNode(x, y, graph)
+        status = insertLocalNode(node_type, value, graph)
+        
         if status == 1:
             return Response({"Status": "Success"})
         else:
@@ -160,23 +160,23 @@ class delete(APIView):
 class enrichNode(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, format=None, x=None, y=None, z=None):
+    def get(self, request, enrich_type=None, value=None, z=None):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         
-        result = enrichLocalNode(x, y, z, graph)
+        result = enrichLocalNode(enrich_type, value, z, graph)
         return Response(result)
 
 class enrichNodePost(APIView):
     permission_classes = (IsAuthenticated, )
     
-    def post(self, request, x=None):
+    def post(self, request, enrich_type=None):
         current_user = request.user
         data = request.data
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
-        result = enrichLocalNode(x, data["value"], data["Ntype"], graph, current_user)
+        result = enrichLocalNode(enrich_type, data["value"], data["Ntype"], graph, current_user)
         return Response(result)
 
 class enrichURL(APIView):
