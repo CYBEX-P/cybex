@@ -30,7 +30,10 @@ function InitializeGraph(data) {
       color: 'rgba(151,194,252,1)',
       widthConstraint: 100,
       font:{color:'white',strokeWidth:3,strokeColor:"black"},
-      scaling:{max:100}
+      scaling:{max:100},
+      // shapeProperties: {
+      //   interpolation: false    // 'true' for intensive zooming
+      // }
     },
     edges: {
       length: 200,
@@ -43,6 +46,10 @@ function InitializeGraph(data) {
     interaction: {
       hover: true,
       hoverConnectedEdges: false
+    },
+    physics: {
+      stabilization: false
+      // enabled: false
     }
   };
   const container = document.getElementById('mynetwork');
