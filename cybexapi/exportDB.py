@@ -154,7 +154,7 @@ def processExport(dataObject, visMode="colorAndSightings"):
             #     #key['shape'] = 'hexagon'
             #     key['color'] = 'rgba(255,255,255,1)'
             #     #key['color'] = 'rgba(151,252,158,1)',
-
+            
             # Just for user study -> invalidate above coloring and switch
             # to default color for 'size' visMode
             if visMode == "size":

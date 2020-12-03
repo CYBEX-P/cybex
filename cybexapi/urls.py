@@ -1,6 +1,6 @@
 from django.urls import include, path
 from . import views
-from cybexapi.api import exportNeoDB, exportNeoDBMode, insert, delete, enrichNode, enrichNodePost, enrichURL, macroCybex, macro, wipe, start, startFile, importJson #, insertURL
+from cybexapi.api import exportNeoDB, exportNeoDBMode, insert, delete, enrichNode, enrichNodePost, enrichURL, macroCybex, macro, wipe, start, startFile, importJson, position #, insertURL
 
 urlpatterns = [
     # View

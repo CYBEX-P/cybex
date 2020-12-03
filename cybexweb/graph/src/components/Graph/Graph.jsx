@@ -12,7 +12,7 @@ import Trends from '../modal/Trends';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle, faArrowRight,faTimesCircle, faFilter, faMapPin, faCircleNotch, faDotCircle, faCommentDollar, faCommentDots, faArrowCircleUp } from '@fortawesome/free-solid-svg-icons';
 
-function InitializeGraph(data) {
+function InitializeGraph(data,physics,stabilization) {
   if (typeof data.Neo4j === 'undefined') {
     return null;
   }
@@ -48,8 +48,11 @@ function InitializeGraph(data) {
       hoverConnectedEdges: false
     },
     physics: {
-      stabilization: false
-      // enabled: false
+      stabilization: {
+        iterations: 200,
+        enabled: stabilization
+      },
+      enabled: physics
     }
   };
   const container = document.getElementById('mynetwork');
@@ -110,6 +113,9 @@ const Graph = ({ isLoading }) => {
   })
   const [finalStats, setFinalStats] = useState(false)
   const [timerObj, setTimerObj] = useState(null);
+
+  const [physics, setPhysics] = useState(true);
+  const [stabilization, setStabilization] = useState(true);
 
   var zoomTimer;
 
@@ -426,7 +432,30 @@ const Graph = ({ isLoading }) => {
     //let value = event.target.value;
     setVisMode(event.target.value);
   }
-
+  function physicsHandler(event)
+  {
+    let value = event.target.value;
+    if (value == "on")
+    {
+      setPhysics(true);
+    }
+    else
+    {
+      setPhysics(false);
+    }
+  }
+  function stabilizationHandler(event)
+  {
+    let value = event.target.value;
+    if (value == "on")
+    {
+      setStabilization(true);
+    }
+    else
+    {
+      setStabilization(false);
+    }
+  }
   // function changeVisMode(mode)
   // {
   //   console.log(mode);
@@ -509,7 +538,7 @@ const Graph = ({ isLoading }) => {
 
   useEffect(() => {
     if (typeof neo4jData.Neo4j !== 'undefined') {
-      setNetwork(InitializeGraph(neo4jData));
+      setNetwork(InitializeGraph(neo4jData,physics,stabilization));
       resetCards();
       setEventListenersAdded(false);
       setRadialPosition(null);
@@ -547,7 +576,7 @@ const Graph = ({ isLoading }) => {
         alert('Error');
         setLoading(false);
       });
-  }, [visMode]);
+  }, [visMode,physics,stabilization]);
 
   useEffect(() => {
     clearInterval(timerObj);
@@ -731,6 +760,16 @@ const Graph = ({ isLoading }) => {
             <option value="colorAndSightings">Node Color (w/sightings)</option>
             <option value="color">Node Color</option>
             <option value="size">Node Size</option>
+          </select>
+          <h5>Graph Physics</h5>
+          <select defaultValue = "on" onChange={physicsHandler} style={{color: "white",backgroundColor: "#232323",border:"none"}}>
+            <option value="on">on</option>
+            <option value="off">off</option>
+          </select>
+          <h5>Graph Stabilization</h5>
+          <select defaultValue = "on" onChange={stabilizationHandler} style={{color: "white",backgroundColor: "#232323",border:"none"}}>
+            <option value="on">on</option>
+            <option value="off">off</option>
           </select>
           <hr/>
           <h5>Time</h5>
