@@ -155,7 +155,7 @@ class delete(APIView):
             return Response({"Status": "Success"})
         else:
             return Response({"Status": "Failed"})
-
+# enrich_type, value, node_type,
 
 class enrichNode(APIView):
     permission_classes = (IsAuthenticated, )
@@ -165,6 +165,9 @@ class enrichNode(APIView):
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         
+        print(x)
+        print(y)
+        print(z)
         result = enrichLocalNode(x, y, z, graph)
         return Response(result)
 
@@ -293,9 +296,10 @@ class macro(APIView):
     #               To run the seralized version, comment out the threaded version and uncomment the non-threaded version.
     # Parameters: <object>request - The user request
     #             <object>graph - The current graph
+    #             <string>subroutine - which macro to run. If value is None then run all macros
     # Returns: Response status
     # Author: Spencer Kase Rohlfing & (Someone else, sorry don't know who)
-    def get(self, request, format=None, data=None, ntype=None):
+    def get(self, request, format=None, subroutine=None):
         # start = time.time()
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
@@ -303,11 +307,11 @@ class macro(APIView):
 
         data = processExport(export(graph))
         nodes = data["Neo4j"][0][0]["nodes"]
-
+    
         ## Start of threaded version
         thread_list = []
         for node in nodes:
-            thread = threading.Thread(target=self.threadedLoop, args=(node,graph))
+            thread = threading.Thread(target=self.threadedLoop, args=(node,graph,subroutine))
             thread_list.append(thread)
         for thread in thread_list:
             thread.start()
