@@ -408,18 +408,18 @@ class macro(APIView):
         nType = node["properties"]["type"]
         print("--> Enriching", value)
 
-        if(subroutine == 'url' or subroutine == 'all'):
-            if(nType == "URL"):
-                ## deconstruct URL
-                status = insert_domain(value, graph)
-                # print(str(status))
+        # if(subroutine == 'url' or subroutine == 'all'):
+        if(nType == "URL" and (subroutine == 'url' or subroutine == 'all')):
+            ## deconstruct URL
+            status = insert_domain(value, graph)
+            # print(str(status))
 
-        elif nType == "Email":
+        elif(nType == "Email" and (subroutine == 'email' or subroutine == 'all')):
             ## deconstruct Email
             status = insert_domain_and_user(value, graph)
             # print(str(status))
 
-        elif nType == "Host":
+        elif(nType == "Host" and (subroutine == 'host' or subroutine == 'all')):
             ## resolve IP, MX, nameservers
             try:
                 status1 = resolveHost(value, graph)
@@ -440,7 +440,7 @@ class macro(APIView):
             except:
                 print("No registrar")
 
-        elif nType == "Domain":
+        elif(nType == "Domain" and (subroutine == 'domain' or subroutine == 'all')):
             ## resolve IP, MX, nameservers
             try:
                 status1 = resolveHost(value, graph)
@@ -461,7 +461,7 @@ class macro(APIView):
             except:
                 print("No registrar")
 
-        elif nType == "IP":
+        elif(nType == "IP" and (subroutine == 'ip' or subroutine == 'all')):
             ## enrich all + ports + netblock
             enrichLocalNode('asn', value, nType, graph)
             enrichLocalNode('gip', value, nType, graph)
