@@ -10,6 +10,11 @@ def processExport(dataObject):
             # Before assigning color, referene malicious counts to assign threat level.
             threatLevel = -1  # default to -1 for inconclusive threat level
             sightings = -1  # default to -1 for unknown sightings
+            # Set x and y to stored positions (if stored). Otherwise, ignore,
+            # and the graph will be positioned randomly then stabilized.
+            if 'x' in key['properties'] and 'y' in key['properties']:
+                key['x'] = key['properties']['x']
+                key['y'] = key['properties']['y']
             if 'countMal' in str(key):
                 if (key['properties']['count'] != 0):
                     # if (key['properties']['countMal'] != 0) and (key['properties']['count'] != 0):
