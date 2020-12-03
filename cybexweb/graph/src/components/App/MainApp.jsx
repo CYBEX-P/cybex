@@ -20,6 +20,8 @@ import EventInsertForm from '../EventInsertForm/EventInsertForm';
 import ImportJson from '../forms/InsertForm/ImportJson';
 import Trends from '../modal/Trends';
 import TrendsContext from './TrendsContext';
+import { MacroCardContainer, MacroCardSubContainer, MacroCardText } from '../MacroCard';
+import { Macros } from '../MacroCard';
 
 const App = props => {
   const [isLoading, setLoading] = useState(false);
@@ -122,121 +124,21 @@ const App = props => {
               <Trends title = "Trends"/>
             </TrendsContext.Provider> */}
             <MenuBar side="left" icon="search">
-              <h3 style={{paddingLeft: "0%", paddingRight: "25%", marginLeft: "30%", marginTop: "5%",color:"white"}}>Macros</h3>
-              {/* <hr style={{marginLeft: "0%"}}/> */}
-              <div style={{padding: "5%"}}>
-              <hr></hr> 
-              {/* <h4>Automations</h4>
-              <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "#0277bd",color: "white", borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
-                Threat Search
-                <div 
-                  style={{display:"inline"}}
-                  onClick={() => {
-                    setLoading(true);
-                    axios.get('/api/v1/macroEmail')
-                    .then(() => {
-                      axios
-                        .get('/api/v1/neo4j/export')
-                        .then(({ data }) => {
-                          setNeo4jData(data);
-                          setLoading(false);
-                        })
-                        .catch(() => {
-                          dispatchModal('Error');
-                          setLoading(false);
-                        });
-                      })
-                      //setLoading(false);
-                    }}
-                >
-                  <FontAwesomeIcon 
-                    size="lg" 
-                    icon={faPlayCircle} 
-                    color="" 
-                    style={{marginLeft:"3%",float:'right'}}/>
-                </div>
-                <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
-                  <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                </div>
-              </div>
-              <hr></hr>  */}
-              <h4>Investigation Patterns</h4>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft:'5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
+              <MacroCardText>Macros</MacroCardText>
+              <div style={{ padding: '5%' }}>
+                <hr />
+                <MacroCardText>Investigation Patterns</MacroCardText>
+                <MacroCardContainer>
                   Phishing Investigation
-                  <div style={{ display: 'inline' }}>
-                    <div
-                      style={{ display: 'inline' }}
-                      onClick={() => {
-                        setLoading(true);
-                        axios.get('/api/v1/macro').then(() => {
-                          axios
-                            .get('/api/v1/neo4j/export')
-                            .then(({ data }) => {
-                              setNeo4jData(data);
-                              setLoading(false);
-                            })
-                            .catch(() => {
-                              dispatchModal('Error');
-                              setLoading(false);
-                            });
-                        });
-                        //setLoading(false);
-                      }}
-                    >
-                      <FontAwesomeIcon
-                        size="lg"
-                        icon={faPlayCircle}
-                        color=""
-                        style={{ marginLeft: '3%', float: 'right' }}
-                      />
-                    </div>
-                    <div style={{ display: 'inline' }} onClick={() => setMacroDetails('macro1')}>
-                      <FontAwesomeIcon
-                        size="lg"
-                        icon={faInfoCircle}
-                        color={macroDetails == 'macro1' && '#0277bd'}
-                        style={{ marginLeft: '3%', float: 'right' }}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
-                  CYBEX-P Analysis
-                  <div
-                    style={{ display: 'inline' }}
-                    onClick={() => {
-                      setLoading(true);
-                      axios.get('/api/v1/macroCybex').then(() => {
-                        axios
-                          .get('/api/v1/neo4j/export')
-                          .then(({ data }) => {
-                            setNeo4jData(data);
-                            setLoading(false);
-                          })
-                          .catch(() => {
-                            dispatchModal('Error');
-                            setLoading(false);
-                          });
-                      });
-                      //setLoading(false);
-                    }}
-                  >
-                    <FontAwesomeIcon
-                      size="lg"
-                      icon={faPlayCircle}
-                      color=""
-                      style={{ marginLeft: '3%', float: 'right' }}
+                  <MacroCardSubContainer>
+                    <Macros
+                      setLoading={setLoading}
+                      setNeo4jData={setNeo4jData}
+                      dispatchModal={dispatchModal}
+                      setMacroDetails={setMacroDetails}
                     />
-                  </div>
-                  <div style={{ display: 'inline' }} onClick={() => setMacroDetails('macro2')}>
-                    <FontAwesomeIcon
-                      size="lg"
-                      icon={faInfoCircle}
-                      color={macroDetails == 'macro2' && '#0277bd'}
-                      style={{ marginLeft: '3%', float: 'right' }}
-                    />
-                  </div>
-                </div>
+                  </MacroCardSubContainer>
+                </MacroCardContainer>
                 {/* <hr></hr> 
                 <h4>Subroutines</h4>
                 <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
@@ -581,9 +483,10 @@ const App = props => {
                 <div style={{ gridColumn: 2 }}>
                   <ImportJson />
                 </div>
-                <div style={{ gridColumn: 3}}>
-                  <div style={{width: "55%",float: "right"}}>
-                    {/* <Button
+                <div style={{ gridColumn: 3 }}>
+                  <div style={{ width: '55%', float: 'right' }}>
+                    {
+                      /* <Button
                         width="100%"
                         hasIcon
                         onClickFunction={() => {
@@ -593,20 +496,21 @@ const App = props => {
                         <FontAwesomeIcon size="lg" icon="server" />
                         More...
                     </Button> */
-                    <Button
-                      type="button"
-                      onClickFunction={() => {
-                        axios.get('/api/v1/neo4j/wipe').then(() => {
-                          axios.get('/api/v1/neo4j/export').then(({ data }) => {
-                            setNeo4jData(data);
+                      <Button
+                        type="button"
+                        onClickFunction={() => {
+                          axios.get('/api/v1/neo4j/wipe').then(() => {
+                            axios.get('/api/v1/neo4j/export').then(({ data }) => {
+                              setNeo4jData(data);
+                            });
                           });
-                        });
-                      }}
-                      width="100%"
-                    >
-                      Wipe DB
-                    </Button>}
-                  </div>          
+                        }}
+                        width="100%"
+                      >
+                        Wipe DB
+                      </Button>
+                    }
+                  </div>
                 </div>
               </div>
             </MenuBar>
