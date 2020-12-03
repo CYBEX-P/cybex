@@ -307,6 +307,11 @@ class macro(APIView):
 
         data = processExport(export(graph))
         nodes = data["Neo4j"][0][0]["nodes"]
+
+        if(subroutine=='all'):
+            print("Running full phishing investigation macro")
+        else:
+            print(f"Running macro for subroutine: {subroutine}")
     
         ## Start of threaded version
         thread_list = []
@@ -398,23 +403,24 @@ class macro(APIView):
         return Response({"Status": "All nodes were processed."})
         # return json.dumps(nodes)
 
-    def threadedLoop(self, node, graph):
+    def threadedLoop(self, node, graph, subroutine):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
         print("--> Enriching", value)
 
-        if nType == "URL":
-            # deconstruct URL
-            status = insert_domain(value, graph)
-            print(str(status))
+        if(subroutine == 'url' or subroutine == 'all'):
+            if(nType == "URL"):
+                ## deconstruct URL
+                status = insert_domain(value, graph)
+                # print(str(status))
 
         elif nType == "Email":
-            # deconstruct Email
+            ## deconstruct Email
             status = insert_domain_and_user(value, graph)
-            print(str(status))
+            # print(str(status))
 
         elif nType == "Host":
-            # resolve IP, MX, nameservers
+            ## resolve IP, MX, nameservers
             try:
                 status1 = resolveHost(value, graph)
             except:
@@ -435,7 +441,7 @@ class macro(APIView):
                 print("No registrar")
 
         elif nType == "Domain":
-            # resolve IP, MX, nameservers
+            ## resolve IP, MX, nameservers
             try:
                 status1 = resolveHost(value, graph)
             except:
@@ -456,12 +462,12 @@ class macro(APIView):
                 print("No registrar")
 
         elif nType == "IP":
-            # enrich all + ports + netblock
+            ## enrich all + ports + netblock
             enrichLocalNode('asn', value, nType, graph)
             enrichLocalNode('gip', value, nType, graph)
             enrichLocalNode('whois', value, nType, graph)
             enrichLocalNode('hostname', value, nType, graph)
-            # enrich cybexp needed here
+            ## enrich cybexp needed here
             results = shodan_lookup(value)
             status1 = insert_ports(results, graph, value)
 

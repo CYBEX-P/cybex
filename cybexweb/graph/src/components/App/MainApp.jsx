@@ -168,7 +168,7 @@ const App = props => {
                       style={{ display: 'inline' }}
                       onClick={() => {
                         setLoading(true);
-                        axios.get('/api/v1/macro').then(() => {
+                        axios.get('/api/v1/macro/all').then(() => {
                           axios
                             .get('/api/v1/neo4j/export')
                             .then(({ data }) => {
