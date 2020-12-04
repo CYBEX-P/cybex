@@ -246,6 +246,8 @@ def cybexCountHandler(Ntype, data1, graph, user):
     return status
 
 def cybexRelatedHandler(Ntype, data1, graph, user):
+    #TODO: Modify timeout/execption handling and returns
+    
     #graph = connect2graph()
     #req = request.get_json()
     #Ntype = str(req['Ntype'])
@@ -289,6 +291,6 @@ def cybexRelatedHandler(Ntype, data1, graph, user):
             status = insertRelatedAttributes(res, graph, data1,Ntype1)
 
         except:
-            return 1
+            return -1
 
-    return 0
+    return 1
