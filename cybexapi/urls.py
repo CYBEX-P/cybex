@@ -14,7 +14,7 @@ urlpatterns = [
     path('api/v1/enrich/<x>/', enrichNodePost.as_view()),
     path('api/v1/enrichURL', enrichURL.as_view()),
     path('api/v1/macroCybex', macroCybex.as_view()),
-    path('api/v1/macro', macro.as_view()),
+    path('api/v1/macro/<subroutine>/', macro.as_view()),
     path('api/v1/neo4j/wipe', wipe.as_view()),
     #post
     path('import_json', importJson.as_view()),
