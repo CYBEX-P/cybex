@@ -20,6 +20,7 @@ from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_sr
 from cybexapi.shodanSearch import shodan_lookup, insert_ports
 from cybexapi.import_json import import_json
 from cybexapi.delete_node import delete_node
+from cybexapi.positions import update_positions
 import json
 from cybexapi.wipe_db import wipeDB
 import pandas as pd
@@ -155,7 +156,7 @@ class delete(APIView):
             return Response({"Status": "Success"})
         else:
             return Response({"Status": "Failed"})
-# enrich_type, value, node_type,
+        
 
 class enrichNode(APIView):
     permission_classes = (IsAuthenticated, )
@@ -272,7 +273,7 @@ class macroCybex(APIView):
     def threadedLoop_cybexRelated(self, node, graph, current_user):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
-        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename" or nType == "Subnet" or nType == "password":
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
             print("--> Querying cybexRelated IOCs for", value)
             enrichLocalNode('cybexRelated', value, nType, graph, current_user)
             print("Done with", str(value))
@@ -280,7 +281,7 @@ class macroCybex(APIView):
     def threadedLoop_cybexCount(self, node, graph, current_user):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
-        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename" or nType == "Subnet" or nType == "password":
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
             print("--> Querying cybexCounts for ", value)
             enrichLocalNode('cybexCount', value, nType, graph, current_user)
             print("Done with", str(value))
@@ -502,6 +503,21 @@ class importJson(APIView):
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         responce = Response(import_json(graph,request.data))
         return(responce)
+
+class position(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    # Also remove this line, it was to bypass the CSRF
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    
+    def post(self, request, format=None):
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+
+        status = update_positions(request.data, graph)
+        return Response({"Status": "Success"})
+
 
 # class insertURL(APIView):
 #     permission_classes = (IsAuthenticated, )
