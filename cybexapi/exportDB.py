@@ -3,7 +3,7 @@ import os
 import json
 # TODO
 # Needs documentation
-def processExport(dataObject, visMode="colorAndSightings"):
+def processExport(dataObject):
     for x in dataObject["Neo4j"][0]:
         for key in x['nodes']:
             # print(x['nodes'])
@@ -28,12 +28,6 @@ def processExport(dataObject, visMode="colorAndSightings"):
                         threatLevel = 1
                     elif 0.5 <= ratioMal <= 1:
                         threatLevel = 2
-
-                    if visMode == "size":
-                        key['value'] = ratioMal
-            else:
-                if visMode == "size":
-                        key['value'] = 0
                     # else:
                     #     threatLevel = 0
             #key['label'] = bucket(key['label'][0])
@@ -48,8 +42,7 @@ def processExport(dataObject, visMode="colorAndSightings"):
             #     if (key['properties']['source'] == 'cybex'):
             #         key['color']['border'] = 'rgba(255,255,255,1)'
             #         #key['color']['background'] = 'rgba(255,255,255,1)'e
-            if visMode == "colorAndSightings":
-                key['value'] = sightings
+            key['value'] = sightings
             if key['label'] == 'IP':
                 key['image'] = '/static/SVG/DataAnalytics/svg_ip.svg'
                 key['color'] = threatColor(threatLevel)
@@ -154,15 +147,6 @@ def processExport(dataObject, visMode="colorAndSightings"):
             #     #key['shape'] = 'hexagon'
             #     key['color'] = 'rgba(255,255,255,1)'
             #     #key['color'] = 'rgba(151,252,158,1)',
-
-            # Just for user study -> invalidate above coloring and switch
-            # to default color for 'size' visMode
-            if visMode == "size":
-                key['color'] = 'rgba(151,194,252,1)'
-                # if threatLevel == -1:
-                #     key['value'] = 0
-                # else:
-                #     key['value'] = threatLevel
 
             # Change label to represent the actual node data, rather than node type
             # Original logic relied on label property, so this is a stopgap measure.

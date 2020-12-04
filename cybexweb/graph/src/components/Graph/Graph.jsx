@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, setState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { Network } from 'vis';
 import PropTypes from 'prop-types';
@@ -29,11 +29,7 @@ function InitializeGraph(data) {
       borderWidth: 4,
       color: 'rgba(151,194,252,1)',
       widthConstraint: 100,
-      font:{color:'white',strokeWidth:3,strokeColor:"black"},
-      scaling:{max:100},
-      // shapeProperties: {
-      //   interpolation: false    // 'true' for intensive zooming
-      // }
+      font:{color:'white',strokeWidth:3,strokeColor:"black"}
     },
     edges: {
       length: 200,
@@ -46,10 +42,6 @@ function InitializeGraph(data) {
     interaction: {
       hover: true,
       hoverConnectedEdges: false
-    },
-    physics: {
-      stabilization: false
-      // enabled: false
     }
   };
   const container = document.getElementById('mynetwork');
@@ -88,28 +80,7 @@ const Graph = ({ isLoading }) => {
   const [commentState,setCommentState] = useState(false);
   const [commentTextState, setCommentTextState] = useState('');
   const [pinnedCommentState,setPinnedCommentState] = useState(false);
-  const [pinnedCommentTextState, setPinnedCommentTextState] = useState({
-
-  });
-
-  // State vars introduced for user study
-  const [visMode,setVisMode] = useState("colorAndSightings");
-  // studySplash refers to whether canvas should be 'blocked' or not.
-  // During this state there is simply a 'start' button shown that
-  // begins the timer and mouse event tracker counter until user
-  // completes the task.
-  const [studySplash,setStudySplash] = useState(false);
-  const [taskTime,setTaskTime] = useState({minutes: 0,
-    seconds: 0});
-  const [inTask, setInTask] = useState(false);
-  const [mouseMotion,setMouseMotion] = useState({
-    drag: 0,
-    zoom: 0,
-    select: 0,
-    hover: 0
-  })
-  const [finalStats, setFinalStats] = useState(false)
-  const [timerObj, setTimerObj] = useState(null);
+  const [pinnedCommentTextState, setPinnedCommentTextState] = useState('');
 
   var zoomTimer;
 
@@ -174,14 +145,6 @@ const Graph = ({ isLoading }) => {
             percent += "% Malicious";
           }
         }
-        setMouseMotion(mouseMotion => {
-          return {
-            drag: mouseMotion.drag,
-            zoom: mouseMotion.zoom,
-            select: mouseMotion.select,
-            hover: mouseMotion.hover+1
-          }
-        })
         return setHoverText({
           // Set the hover text to the properties of the data
           text: JSON.stringify(nodeObj[0].properties),
@@ -255,41 +218,11 @@ const Graph = ({ isLoading }) => {
         type: JSON.stringify(nodeObj[0].properties.type),
       });
       setPinnedPos(320);
-      // Custom check just for study:
-      // If a node is 100% malicious, this was the correct node. This ends the task
-
-      // log mouse events:
-      setMouseMotion(mouseMotion => {
-        return {
-          drag: mouseMotion.drag,
-          zoom: mouseMotion.zoom,
-          select: mouseMotion.select+1,
-          hover: mouseMotion.hover
-        }
-      })
-      // setMouseMotion({
-      //   drag: mouseMotion.drag,
-      //   zoom: mouseMotion.zoom,
-      //   select: mouseMotion.select+1,
-      //   hover: mouseMotion.hover
-      // })
-      if ((nodeObj[0].properties.countMal/(nodeObj[0].properties.countMal+nodeObj[0].properties.count)) == 1)
-      {
-        finishTask();
-      }
     });
 
     // Set state when drag starts and ends. Used to determine whether to draw radial menu or not
     nw.on('dragStart', () => {
       setDragStart(true);
-      setMouseMotion(mouseMotion => {
-        return {
-          drag: mouseMotion.drag+1,
-          zoom: mouseMotion.zoom,
-          select: mouseMotion.select,
-          hover: mouseMotion.hover
-        }
-      })
     });
     nw.on('dragEnd', () => {
       setDragStart(false);
@@ -314,14 +247,6 @@ const Graph = ({ isLoading }) => {
       clearTimeout(zoomTimer);
       setRadialPosition(null);
       zoomTimer = setTimeout(function(){ setSelection(nw.getSelection()); }, 500);
-      setMouseMotion(mouseMotion => {
-        return {
-          drag: mouseMotion.drag,
-          zoom: mouseMotion.zoom+1,
-          select: mouseMotion.select,
-          hover: mouseMotion.hover
-        }
-      })
       
       // DEPRECATED - Remove in future release:
       // We just get rid of the selection and radial menu on zoom since there isn't a good way to tell
@@ -417,82 +342,6 @@ const Graph = ({ isLoading }) => {
     setPinnedPos(10);
   }
 
-  // function visModePre(event)
-  // {
-  //   visModeHandler(event,changeVisMode);
-  // }
-  function visModeHandler(event)
-  {
-    //let value = event.target.value;
-    setVisMode(event.target.value);
-  }
-
-  // function changeVisMode(mode)
-  // {
-  //   console.log(mode);
-  //   axios
-  //     .get('/api/v1/neo4j/export/'+mode)
-  //     .then(response => {
-  //       setNeo4jData(response.data);
-  //       setLoading(false);
-  //     })
-  //     .catch(() => {
-  //       alert('Error');
-  //       setLoading(false);
-  //     });
-  // }
-
-  function prepTask()
-  {
-    setStudySplash(true);
-    console.log("Task ready for particpant.")
-  }
-  function beginTask()
-  {
-    setStudySplash(false);
-    setInTask(true);
-    var sec = 0;
-    var seconds = 0;
-    var minutes = 0;
-    function pad ( val ) { return val > 9 ? val : "0" + val; }
-    var timer = setInterval( function(){
-        seconds=pad(++sec%60);
-        minutes=pad(parseInt(sec/60,10));
-        setTaskTime({
-          minutes: minutes,
-          seconds: seconds
-        })
-    }, 1000);
-    setTimerObj(timer);
-  }
-  function finishTask()
-  {
-    console.log("Task finished");
-    setFinalStats(true);
-    //clone taskTime to store as final time
-    // var finalMin = taskTime.minutes
-    // var finalSec = taskTime.seconds;
-    // clearInterval(timerObj);
-    // setTaskTime({
-    //   minutes: 0,
-    //   seconds: 0
-    // })
-    // setMouseMotion(mouseMotion => {
-      //   return {
-      //     drag: mouseMotion.drag,
-      //     zoom: mouseMotion.zoom,
-      //     select: mouseMotion.select+1,
-      //     hover: mouseMotion.hover
-      //   }
-      // })
-    // let finalTime = Object.assign({}, taskTime);
-    // let finalMotion = Object.assign({}, mouseMotion);
-    
-    
-    alert('Task complete. The study coordinator will now set up your next task. ');
-    setInTask(false)
-  }
-
   useEffect(() => {
     if (!dragStart) {
       return UpdatePositions();
@@ -535,36 +384,8 @@ const Graph = ({ isLoading }) => {
     return setRadialPosition(null);
   }, [selection]);
 
-  useEffect(() => {
-    console.log(visMode);
-    axios
-      .get('/api/v1/neo4j/export/'+visMode)
-      .then(response => {
-        setNeo4jData(response.data);
-        setLoading(false);
-      })
-      .catch(() => {
-        alert('Error');
-        setLoading(false);
-      });
-  }, [visMode]);
-
-  useEffect(() => {
-    clearInterval(timerObj);
-    console.log("\n----------------------------");
-    console.log("Task complete");
-    //console.log("Final time = ");
-    console.log(visMode)
-    console.log(taskTime);
-    console.log(mouseMotion);
-    // console.log(finalMin + ":" + finalSec);
-    // console.log(taskTime);
-    console.log("----------------------------\n");
-  }, [finalStats]);
-
   // HOC that returns the radial menu to use
   const RadialToRender = withNodeType(RadialMenu, selectedNodeType, setNeo4jData, config);
-  //console.log(visMode);
 
   return (
     <div style={{ display: 'grid', gridTemplateRows: '56px auto' }}>
@@ -581,108 +402,6 @@ const Graph = ({ isLoading }) => {
           backgroundColor: '#232323'
         }}
       />
-      {!inTask && (
-        <div 
-            style={{
-              backgroundColor: "#58a5f0",
-              color: "black",
-              borderRadius:'5px',
-              padding:'5px',
-              paddingBottom: '0px',
-              paddingTop: '10px',
-              boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)",
-              position: "absolute",
-              left: "10px",
-              top: "60px",
-              zIndex: 2
-            }} 
-            onClick={() => prepTask()}
-          >
-            <p>{visMode}</p>
-            <p>Begin Task</p>
-          </div>
-      )}
-      {inTask && (
-        <div 
-            style={{
-              backgroundColor: "#58a5f0",
-              color: "black",
-              borderRadius:'5px',
-              padding:'5px',
-              paddingBottom: '0px',
-              paddingTop: '10px',
-              boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)",
-              position: "absolute",
-              left: "10px",
-              top: "60px",
-              zIndex: 2
-            }} 
-          >
-            <p>{visMode}</p>
-            <p>Monitoring task...</p>
-            {/* <p>{taskTime.minutes}:{taskTime.seconds} </p> */}
-            {/* <p>{taskTime.minutes}:{taskTime.seconds} </p>
-            <p>Select: {mouseMotion.select}</p>
-            <p>Hover: {mouseMotion.hover}</p>
-            <p>Drag: {mouseMotion.drag}</p>
-            <p>Zoom: {mouseMotion.zoom}</p> */}
-          </div>
-      )}
-      {studySplash && ( 
-        <div style={{
-          gridRow: '2',
-          gridColumn: 1,
-          backgroundColor: 'black',
-          color: 'white',
-          zIndex: 1000,
-          display: 'grid',
-          textAlign: 'center',
-          paddingTop: '300px'
-        }}
-        onClick={() => beginTask()}>
-          <h2>Task: {visMode}</h2>
-          <img style={{
-              display: "block",
-              marginLeft: "auto",
-              marginRight: "auto",
-            }}
-            src={"/static/images/"+visMode+".png"} 
-            alt="Visualization mode diagram"
-            height="250"
-            width="250">
-          </img>
-          <h3>Click anywhere to begin task</h3>
-        </div>
-      )}
-      {finalStats && (
-        <div 
-          style={{
-            gridRow: '2',
-          gridColumn: 1,
-          backgroundColor: 'black',
-          color: 'white',
-          zIndex: 1000,
-          display: 'grid',
-          padding: '20px'
-          }} 
-        >
-        <div>
-          <h3>Task Statistics (Refresh page to try new task)</h3>
-          <p>{visMode}</p>
-          <p>{taskTime.minutes}:{taskTime.seconds} </p>
-          <p>Select: {mouseMotion.select}</p>
-          <p>Hover: {mouseMotion.hover}</p>
-          <p>Drag: {mouseMotion.drag}</p>
-          <p>Zoom: {mouseMotion.zoom}</p>
-        </div>
-
-        {/* <p>{taskTime.minutes}:{taskTime.seconds} </p>
-        <p>Select: {mouseMotion.select}</p>
-        <p>Hover: {mouseMotion.hover}</p>
-        <p>Drag: {mouseMotion.drag}</p>
-        <p>Zoom: {mouseMotion.zoom}</p> */}
-      </div>
-      )}
       {/* TODO: Turn filter box into seperate component */}
       {!filterState && ( 
         <div style={{
@@ -725,13 +444,6 @@ const Graph = ({ isLoading }) => {
           <h4 style={{textAlign:"center"}}>
             <b>Filters</b>
           </h4>
-          
-          <h5>Threat Display Mode</h5>
-          <select defaultValue = "colorAndSightings" onChange={visModeHandler} style={{color: "white",backgroundColor: "#232323",border:"none"}}>
-            <option value="colorAndSightings">Node Color (w/sightings)</option>
-            <option value="color">Node Color</option>
-            <option value="size">Node Size</option>
-          </select>
           <hr/>
           <h5>Time</h5>
           <div style={{color:"white",fontSize:"large"}}>

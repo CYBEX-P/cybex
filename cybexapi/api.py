@@ -129,20 +129,6 @@ class exportNeoDB(APIView):
         # print(p)
         return Response(p)
 
-# Special version of exportNeoDB just for user study
-class exportNeoDBMode(APIView):
-    permission_classes = (IsAuthenticated, )
-
-    def get(self, request, format=None, x="colorAndSightings"):
-        current_user = request.user
-        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
-                              current_user.graphdb.dbip, current_user.graphdb.dbport)
-        g = export(graph)
-        # print(g)
-        p = processExport(g,x)
-        # print(p)
-        return Response(p)
-
 class insert(APIView):
     permission_classes = (IsAuthenticated, )
 
@@ -283,7 +269,7 @@ class macroCybex(APIView):
     def threadedLoop_cybexRelated(self, node, graph, current_user):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
-        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename" or nType == "Subnet" or nType == "password":
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
             print("--> Querying cybexRelated IOCs for", value)
             enrichLocalNode('cybexRelated', value, nType, graph, current_user)
             print("Done with", str(value))
@@ -291,7 +277,7 @@ class macroCybex(APIView):
     def threadedLoop_cybexCount(self, node, graph, current_user):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
-        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename" or nType == "Subnet" or nType == "password":
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
             print("--> Querying cybexCounts for ", value)
             enrichLocalNode('cybexCount', value, nType, graph, current_user)
             print("Done with", str(value))
