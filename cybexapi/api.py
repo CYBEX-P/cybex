@@ -27,6 +27,7 @@ import pandas as pd
 import time
 import threading
 import requests
+import os
 
 # TODO
 # This needs more error checking and probably a more elegent check to see if the db is available
@@ -207,9 +208,9 @@ class macroCybex(APIView):
     # Author: Spencer Kase Rohlfing & (Someone else, sorry don't know who)
     def get(self, request, format=None):
         # start = time.time()
+
         current_user = request.user
-        print("current user:")
-        print(current_user)
+        print(f"current user: {current_user}")
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
 
