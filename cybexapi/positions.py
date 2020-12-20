@@ -8,6 +8,8 @@ def update_positions(data, graph):
             x_pos = node['x']
             y_pos = node['y']
 
+            # print(node)
+
             graph.run(f"MATCH (a) \
                 WHERE id(a) = {id_value} \
                 SET a.x = {x_pos} \
