@@ -8,6 +8,7 @@ const secondaryGrey = '#e0e0e0';
 
 const AppContainer = styled.div`
   height: 100vh;
+  height: -webkit-fill-available;
   width: 100%;
   display: grid;
   grid-template-columns: 36px minmax(100px, 300px) auto minmax(100px, 300px) 36px;
@@ -109,7 +110,7 @@ const ExpandedMenuBar = styled.div`
         display: grid;
         grid-column: 1 /span 2;
         grid-row: 2 /span 3;
-        height: 100%;
+        height: calc(100% - 56px);
         width: 100%;
         border-top-right-radius: 0px;
         border-bottom-right-radius: 16px;
@@ -124,7 +125,7 @@ const ExpandedMenuBar = styled.div`
       return `
         grid-template-columns: 50px auto;
         display: grid;
-        height: 100%;
+        height: calc(100% - 56px);
         width: 100%;
         border-top-left-radius: 0px;
         border-bottom-left-radius: 16px;

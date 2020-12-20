@@ -206,16 +206,25 @@ const App = props => {
                     style={{ display: 'inline' }}
                     onClick={() => {
                       setLoading(true);
+                      var timer = setInterval( function(){
+                        axios
+                          .get('/api/v1/neo4j/export')
+                          .then(({ data }) => {
+                            setNeo4jData(data);
+                          });
+                      }, 3000);
                       axios.get('/api/v1/macroCybex').then(() => {
                         axios
                           .get('/api/v1/neo4j/export')
                           .then(({ data }) => {
                             setNeo4jData(data);
                             setLoading(false);
+                            clearInterval(timer);
                           })
                           .catch(() => {
                             dispatchModal('Error');
                             setLoading(false);
+                            clearInterval(timer);
                           });
                       });
                       //setLoading(false);
