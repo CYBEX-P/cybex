@@ -194,7 +194,15 @@ def cybexCountHandler(Ntype, data1, graph, user):
         t.start()      
         while not valid:
             print("requesting...")
-            r = requests.post(url, headers=headers, data=data)
+            try:
+                # request timeout tuple is (connection timeout, read timeout)
+                r = requests.post(url, headers=headers, data=data, timeout=(3.05, 30))
+            except requests.exceptions.ConnectTimeout:
+                print("Couldn't connect to CYBEX, timed out.")
+                return -1
+            except requests.exceptions.ReadTimeout:
+                print("Timed out when attempting to read cybexCount")
+                return 0
             res = json.loads(r.text)
             if "status" not in res:
                 t.cancel()
@@ -228,7 +236,14 @@ def cybexCountHandler(Ntype, data1, graph, user):
         t = Timer(300.0, raise_timeout)
         t.start()
         while not valid:
-            rMal = requests.post(url, headers=headers, data=dataMal)
+            try:
+                rMal = requests.post(url, headers=headers, data=dataMal, timeout=(3.05, 30))
+            except requests.exceptions.ConnectTimeout:
+                print("Couldn't connect to CYBEX, timed out.")
+                return -1
+            except requests.exceptions.ReadTimeout:
+                print("Timed out when attempting to read cybexMaliciousCount")
+                return 0
             resMal = json.loads(rMal.text)
             # if resMal["status"] is not "processing":
             if "status" not in resMal:
@@ -247,6 +262,8 @@ def cybexCountHandler(Ntype, data1, graph, user):
     return status
 
 def cybexRelatedHandler(Ntype, data1, graph, user):
+    #TODO: Modify timeout/execption handling and returns
+    
     #graph = connect2graph()
     #req = request.get_json()
     #Ntype = str(req['Ntype'])
@@ -261,6 +278,7 @@ def cybexRelatedHandler(Ntype, data1, graph, user):
     #data = { Ntype1 : data1, "from" : "2019/8/30 00:00", "to" : "2019/12/5 6:00am", "tzname" : "US/Pacific" }
     count = 1
     r = None
+
 
     #TODO REPLACE below with real stop condition and/or max pagination
 
@@ -327,7 +345,14 @@ def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url):
     data = json.dumps(data) # data is jsonified request
     print(f"data: {data}")
 
-    r = requests.post(url, headers=headers, data=data)
+    try:
+        r = requests.post(url, headers=headers, data=data, timeout=(3.05, 10))
+    except requests.exceptions.ConnectTimeout:
+        print("Couldn't connect to CYBEX, timed out.")
+        return -1
+    except requests.exceptions.ReadTimeout:
+        print("Timed out when attempting to read from CYBEX")
+        return 0
     res = json.loads(r.text)
     print(f"res: {res}")
 
@@ -336,4 +361,4 @@ def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url):
         status = insertRelatedAttributes(res, graph, data1,Ntype1)
 
     except:
-        return 1
+        return -1
