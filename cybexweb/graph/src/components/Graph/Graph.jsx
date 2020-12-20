@@ -242,6 +242,7 @@ const Graph = ({ isLoading }) => {
     });
     nw.on('stabilized', () => {
       setSelection(nw.getSelection());
+      axios.post('/api/v1/position', nodes, {});
       setIsStabilized(true);
     });
 

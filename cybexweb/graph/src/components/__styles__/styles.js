@@ -110,7 +110,7 @@ const ExpandedMenuBar = styled.div`
         display: grid;
         grid-column: 1 /span 2;
         grid-row: 2 /span 3;
-        height: calc(100% - 56px);
+        height: 100%;
         width: 100%;
         border-top-right-radius: 0px;
         border-bottom-right-radius: 16px;
@@ -125,7 +125,7 @@ const ExpandedMenuBar = styled.div`
       return `
         grid-template-columns: 50px auto;
         display: grid;
-        height: calc(100% - 56px);
+        height: 100%;
         width: 100%;
         border-top-left-radius: 0px;
         border-bottom-left-radius: 16px;

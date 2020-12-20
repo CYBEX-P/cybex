@@ -173,7 +173,9 @@ def cybexCountHandler(Ntype, data1, graph, user):
     # data = {Ntype1: data1, "from": "2019/8/30 00:00",
     #         "to": "2020/3/1 6:00am", "tzname": "US/Pacific"}
     def raise_timeout():
-        raise requests.exceptions.Timeout("Count query timed out.")
+        #raise requests.exceptions.Timeout("Count query timed out.")
+        print("*****TIMED OUT*****")
+        return 0
 
     try:
         data = {
@@ -187,13 +189,13 @@ def cybexCountHandler(Ntype, data1, graph, user):
             }
         }
         data = json.dumps(data)
-        print("Fetching cybexCount...")
+        print("Fetching cybexCount for "+data1+"...")
         valid = False # Flag to be set when valid api response is returned
         api_timeout = False
-        t = Timer(300.0, raise_timeout)
+        t = Timer(30.0, raise_timeout)
         t.start()      
         while not valid:
-            print("requesting...")
+            print("requesting "+ data1 +"...")
             try:
                 # request timeout tuple is (connection timeout, read timeout)
                 r = requests.post(url, headers=headers, data=data, timeout=(3.05, 30))
@@ -230,10 +232,10 @@ def cybexCountHandler(Ntype, data1, graph, user):
             }
         }
         dataMal = json.dumps(dataMal)
-        print("Fetching cybexCountMalicious...")
+        print("Fetching cybexCountMalicious for "+data1+"...")
         valid = False # Flag to be set when valid api response is returned
         api_timeout = False
-        t = Timer(300.0, raise_timeout)
+        t = Timer(30.0, raise_timeout)
         t.start()
         while not valid:
             try:
@@ -325,7 +327,7 @@ def cybexRelatedHandler(Ntype, data1, graph, user):
     ## End of non-threaded version
 
 
-    return 0
+    return 1
 
 
 def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url):
