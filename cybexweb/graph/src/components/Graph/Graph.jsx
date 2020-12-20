@@ -43,9 +43,9 @@ function InitializeGraph(data) {
       hover: true,
       hoverConnectedEdges: false
     },
-    physics: {
-      stabilization: false,
-    }
+    // physics: {
+    //   stabilization: false,
+    // }
   };
   const container = document.getElementById('mynetwork');
   const nw = new Network(container, dataObject, options);
