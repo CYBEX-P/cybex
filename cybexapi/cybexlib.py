@@ -6,6 +6,7 @@ import requests
 from django.conf import settings
 from threading import Timer
 from cybexapi.shodanSearch import insert_ports
+import threading
 
 
 def pull_ip_src():
@@ -193,7 +194,15 @@ def cybexCountHandler(Ntype, data1, graph, user):
         t.start()      
         while not valid:
             print("requesting...")
-            r = requests.post(url, headers=headers, data=data)
+            try:
+                # request timeout tuple is (connection timeout, read timeout)
+                r = requests.post(url, headers=headers, data=data, timeout=(3.05, 30))
+            except requests.exceptions.ConnectTimeout:
+                print("Couldn't connect to CYBEX, timed out.")
+                return -1
+            except requests.exceptions.ReadTimeout:
+                print("Timed out when attempting to read cybexCount")
+                return 0
             res = json.loads(r.text)
             if "status" not in res:
                 t.cancel()
@@ -227,7 +236,14 @@ def cybexCountHandler(Ntype, data1, graph, user):
         t = Timer(300.0, raise_timeout)
         t.start()
         while not valid:
-            rMal = requests.post(url, headers=headers, data=dataMal)
+            try:
+                rMal = requests.post(url, headers=headers, data=dataMal, timeout=(3.05, 30))
+            except requests.exceptions.ConnectTimeout:
+                print("Couldn't connect to CYBEX, timed out.")
+                return -1
+            except requests.exceptions.ReadTimeout:
+                print("Timed out when attempting to read cybexMaliciousCount")
+                return 0
             resMal = json.loads(rMal.text)
             # if resMal["status"] is not "processing":
             if "status" not in resMal:
@@ -246,49 +262,103 @@ def cybexCountHandler(Ntype, data1, graph, user):
     return status
 
 def cybexRelatedHandler(Ntype, data1, graph, user):
+    #TODO: Modify timeout/execption handling and returns
+    
     #graph = connect2graph()
     #req = request.get_json()
     #Ntype = str(req['Ntype'])
     Ntype1 = replaceType(Ntype)
     #data1 = req['value']
     #print(req)
-
     #url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/related/attribute/summary"
     url = "https://cybex-api.cse.unr.edu:5000/query"
     user_token = user.profile.cybex_token
-    print(user)
+    # print(f"user: {user}")
     headers = {'content-type': 'application/json', 'Authorization' : 'Bearer ' + user_token}
     #data = { Ntype1 : data1, "from" : "2019/8/30 00:00", "to" : "2019/12/5 6:00am", "tzname" : "US/Pacific" }
     count = 1
     r = None
+
+
     #TODO REPLACE below with real stop condition and/or max pagination
-    while r != "[]" and count <= 10:
-        print(count)
-        data = {
-            "type": "related",
-            "data": {
-                "sub_type": Ntype1, # make sure ipv4 works for ip (replaceType())
-                "data": data1,
-                "return_type": "attribute",
-                "summary" : True,
-                "page": count
-            }
-        }
+
+    ## Start of threaded version
+    thread_list = []
+    for count in range(10):
+        thread = threading.Thread(target=threadedLoop_cybexRelatedHandler, args=(count, Ntype1, data1, graph, headers, url))
+        thread_list.append(thread)
+    for thread in thread_list:
+        thread.start()
+    for thread in thread_list:
+        thread.join()
+    ## End of threaded version
+
+    ## Start of non-threaded version
+    # while r != "[]" and count <= 10:
+    #     print(f"Count: {count}")
+    #     data = {
+    #         "type": "related",
+    #         "data": {
+    #             "sub_type": Ntype1, # make sure ipv4 works for ip (replaceType())
+    #             "data": data1,
+    #             "return_type": "attribute",
+    #             "summary" : True,
+    #             "page": count
+    #         }
+    #     }
         
 
-        data = json.dumps(data) # data is jsonified request
-        print(data)
+    #     data = json.dumps(data) # data is jsonified request
+    #     print(f"data: {data}")
 
-        r = requests.post(url, headers=headers, data=data)
-        res = json.loads(r.text)
-        print(res)
-        count += 1
+    #     r = requests.post(url, headers=headers, data=data)
+    #     res = json.loads(r.text)
+    #     print(f"res: {res}")
+    #     count += 1
 
-        try:
-            #status = insertRelated(str(res), graph, data1)
-            status = insertRelatedAttributes(res, graph, data1,Ntype1)
+    #     try:
+    #         #status = insertRelated(str(res), graph, data1)
+    #         status = insertRelatedAttributes(res, graph, data1,Ntype1)
 
-        except:
-            return 1
+    #     except:
+    #         return 1
+    ## End of non-threaded version
+
 
     return 0
+
+
+def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url):
+    print(f"Count: {count}")
+    data = {
+        "type": "related",
+        "data": {
+            "sub_type": Ntype1, # make sure ipv4 works for ip (replaceType())
+            "data": data1,
+            "return_type": "attribute",
+            "summary" : True,
+            "page": count
+        }
+    }
+    
+
+    data = json.dumps(data) # data is jsonified request
+    print(f"data: {data}")
+
+    try:
+        r = requests.post(url, headers=headers, data=data, timeout=(3.05, 10))
+    except requests.exceptions.ConnectTimeout:
+        print("Couldn't connect to CYBEX, timed out.")
+        return -1
+    except requests.exceptions.ReadTimeout:
+        print("Timed out when attempting to read from CYBEX")
+        return 0
+    res = json.loads(r.text)
+    print(f"res: {res}")
+
+    try:
+        #status = insertRelated(str(res), graph, data1)
+        status = insertRelatedAttributes(res, graph, data1,Ntype1)
+
+    except:
+        return -1

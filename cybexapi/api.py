@@ -221,6 +221,7 @@ class macroCybex(APIView):
             thread.start()
         for thread in thread_list:
             thread.join()
+        ## End of threaded version
 
         # Now that new related IOCs have been added, query cybexCount
         # This is done all all nodes including the newly added ones
@@ -481,7 +482,7 @@ class wipe(APIView):
         wipeDB(graph)
         return Response({"Status": "Neo4j DB full wipe complete!"})
 
-# Remove before release
+## Remove before release
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
@@ -490,22 +491,30 @@ class CsrfExemptSessionAuthentication(SessionAuthentication):
 class importJson(APIView):
     permission_classes = (IsAuthenticated, )
 
-    # Also remove this line, it was to bypass the CSRF
+    ## Also remove this line, it was to bypass the CSRF
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
+    # Description: Used to import a JSON file of the graph and loads the graph.
+    # Parameters: <object>request - The user request
+    # Returns: Response status
+    # Author: Spencer Kase Rohlfing
     def post(self, request, format=None):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         responce = Response(import_json(graph,request.data))
-        return(responce)
+        return (responce)
 
 class position(APIView):
     permission_classes = (IsAuthenticated, )
 
-    # Also remove this line, it was to bypass the CSRF
+    ## Also remove this line, it was to bypass the CSRF
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-    
+
+    # Description: Used to update the current positions of each node and stores it in the Neo4j database.
+    # Parameters: <object>request - The user request
+    # Returns: Response status
+    # Author: Spencer Kase Rohlfing
     def post(self, request, format=None):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,

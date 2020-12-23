@@ -1,6 +1,10 @@
-import json
-import os
 
+
+# Description: Used to actually search the Neo4j database for a node and delete the node
+#               from the database.
+# Parameters: <object>request - The user request
+# Returns: True
+# Author: Spencer Kase Rohlfing
 def delete_node(node_id, graph):
     # print(node_id)
 
