@@ -5,7 +5,6 @@ from cybexapi.api import exportNeoDB, insert, delete, enrichNode, enrichNodePost
 urlpatterns = [
     # View
     path('graph', views.GraphView.as_view(), name='graph'),
-
     path('api/v1/admin/config', views.getconfig.as_view()),
     path('api/v1/neo4j/export', exportNeoDB.as_view()),
     path('api/v1/neo4j/insert/<node_type>/<value>/', insert.as_view()),
@@ -16,7 +15,7 @@ urlpatterns = [
     path('api/v1/macroCybex', macroCybex.as_view()),
     path('api/v1/macro/<subroutine>/', macro.as_view()),
     path('api/v1/neo4j/wipe', wipe.as_view()),
-    #post
+    ##post
     path('import_json', importJson.as_view()),
     path('api/v1/position', position.as_view()),
     #path('api/v1/neo4j/insertURL', insertURL.as_view()), # using /insert now
