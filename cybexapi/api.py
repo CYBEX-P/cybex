@@ -6,7 +6,6 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.http import HttpResponse
 from rest_framework import status
-import pytz
 import os
 from datetime import datetime
 from django.conf import settings
@@ -21,12 +20,12 @@ from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_sr
 from cybexapi.shodanSearch import shodan_lookup, insert_ports
 from cybexapi.import_json import import_json
 from cybexapi.delete_node import delete_node
+from cybexapi.positions import update_positions
 import json
 from cybexapi.wipe_db import wipeDB
 import pandas as pd
 import time
 import threading
-import requests
 
 # TODO
 # This needs more error checking and probably a more elegent check to see if the db is available
@@ -156,7 +155,7 @@ class delete(APIView):
             return Response({"Status": "Success"})
         else:
             return Response({"Status": "Failed"})
-
+        
 
 class enrichNode(APIView):
     permission_classes = (IsAuthenticated, )
@@ -270,7 +269,7 @@ class macroCybex(APIView):
     def threadedLoop_cybexRelated(self, node, graph, current_user):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
-        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename" or nType == "Subnet" or nType == "password":
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
             print("--> Querying cybexRelated IOCs for", value)
             enrichLocalNode('cybexRelated', value, nType, graph, current_user)
             print("Done with", str(value))
@@ -278,7 +277,7 @@ class macroCybex(APIView):
     def threadedLoop_cybexCount(self, node, graph, current_user):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
-        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename" or nType == "Subnet" or nType == "password":
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
             print("--> Querying cybexCounts for ", value)
             enrichLocalNode('cybexCount', value, nType, graph, current_user)
             print("Done with", str(value))
@@ -294,9 +293,10 @@ class macro(APIView):
     #               To run the seralized version, comment out the threaded version and uncomment the non-threaded version.
     # Parameters: <object>request - The user request
     #             <object>graph - The current graph
+    #             <string>subroutine - which macro to run. If value is None then run all macros
     # Returns: Response status
     # Author: Spencer Kase Rohlfing & (Someone else, sorry don't know who)
-    def get(self, request, format=None, data=None):
+    def get(self, request, format=None, subroutine=None):
         # start = time.time()
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
@@ -305,10 +305,15 @@ class macro(APIView):
         data = processExport(export(graph))
         nodes = data["Neo4j"][0][0]["nodes"]
 
+        if(subroutine=='all'):
+            print("Running full phishing investigation macro")
+        else:
+            print(f"Running macro for subroutine: {subroutine}")
+    
         ## Start of threaded version
         thread_list = []
         for node in nodes:
-            thread = threading.Thread(target=self.threadedLoop, args=(node,graph))
+            thread = threading.Thread(target=self.threadedLoop, args=(node,graph,subroutine))
             thread_list.append(thread)
         for thread in thread_list:
             thread.start()
@@ -322,18 +327,18 @@ class macro(APIView):
         #     nType = node["properties"]["type"]
         #     print("--> Enriching", value)
 
-        #     if nType == "URL":
-        #         # deconstruct URL
+        #     if(nType == "URL" and (subroutine == 'url' or subroutine == 'all')):
+        #         ## deconstruct URL
         #         status = insert_domain(value, graph)
-        #         print(str(status))
+        #         # print(str(status))
 
-        #     elif nType == "Email":
-        #         # deconstruct Email
+        #     elif(nType == "Email" and (subroutine == 'email' or subroutine == 'all')):
+        #         ## deconstruct Email
         #         status = insert_domain_and_user(value, graph)
-        #         print(str(status))
+        #         # print(str(status))
 
-        #     elif nType == "Host":
-        #         # resolve IP, MX, nameservers
+        #     elif(nType == "Host" and (subroutine == 'host' or subroutine == 'all')):
+        #         ## resolve IP, MX, nameservers
         #         try:
         #             status1 = resolveHost(value, graph)
         #         except:
@@ -353,8 +358,8 @@ class macro(APIView):
         #         except:
         #             print("No registrar")
 
-        #     elif nType == "Domain":
-        #         # resolve IP, MX, nameservers
+        #     elif(nType == "Domain" and (subroutine == 'domain' or subroutine == 'all')):
+        #         ## resolve IP, MX, nameservers
         #         try:
         #             status1 = resolveHost(value, graph)
         #         except:
@@ -374,13 +379,13 @@ class macro(APIView):
         #         except:
         #             print("No registrar")
 
-        #     elif nType == "IP":
-        #         # enrich all + ports + netblock
+        #     elif(nType == "IP" and (subroutine == 'ip' or subroutine == 'all')):
+        #         ## enrich all + ports + netblock
         #         enrichLocalNode('asn', value, nType, graph)
         #         enrichLocalNode('gip', value, nType, graph)
         #         enrichLocalNode('whois', value, nType, graph)
         #         enrichLocalNode('hostname', value, nType, graph)
-        #         # enrich cybexp needed here
+        #         ## enrich cybexp needed here
         #         results = shodan_lookup(value)
         #         status1 = insert_ports(results, graph, value)
 
@@ -395,23 +400,23 @@ class macro(APIView):
         return Response({"Status": "All nodes were processed."})
         # return json.dumps(nodes)
 
-    def threadedLoop(self, node, graph):
+    def threadedLoop(self, node, graph, subroutine):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
         print("--> Enriching", value)
 
-        if nType == "URL":
-            # deconstruct URL
+        if(nType == "URL" and (subroutine == 'url' or subroutine == 'all')):
+            ## deconstruct URL
             status = insert_domain(value, graph)
-            print(str(status))
+            # print(str(status))
 
-        elif nType == "Email":
-            # deconstruct Email
+        elif(nType == "Email" and (subroutine == 'email' or subroutine == 'all')):
+            ## deconstruct Email
             status = insert_domain_and_user(value, graph)
-            print(str(status))
+            # print(str(status))
 
-        elif nType == "Host":
-            # resolve IP, MX, nameservers
+        elif(nType == "Host" and (subroutine == 'host' or subroutine == 'all')):
+            ## resolve IP, MX, nameservers
             try:
                 status1 = resolveHost(value, graph)
             except:
@@ -431,8 +436,8 @@ class macro(APIView):
             except:
                 print("No registrar")
 
-        elif nType == "Domain":
-            # resolve IP, MX, nameservers
+        elif(nType == "Domain" and (subroutine == 'domain' or subroutine == 'all')):
+            ## resolve IP, MX, nameservers
             try:
                 status1 = resolveHost(value, graph)
             except:
@@ -452,13 +457,13 @@ class macro(APIView):
             except:
                 print("No registrar")
 
-        elif nType == "IP":
-            # enrich all + ports + netblock
+        elif(nType == "IP" and (subroutine == 'ip' or subroutine == 'all')):
+            ## enrich all + ports + netblock
             enrichLocalNode('asn', value, nType, graph)
             enrichLocalNode('gip', value, nType, graph)
             enrichLocalNode('whois', value, nType, graph)
             enrichLocalNode('hostname', value, nType, graph)
-            # enrich cybexp needed here
+            ## enrich cybexp needed here
             results = shodan_lookup(value)
             status1 = insert_ports(results, graph, value)
 
@@ -494,6 +499,21 @@ class importJson(APIView):
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         responce = Response(import_json(graph,request.data))
         return(responce)
+
+class position(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    # Also remove this line, it was to bypass the CSRF
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    
+    def post(self, request, format=None):
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+
+        status = update_positions(request.data, graph)
+        return Response({"Status": "Success"})
+
 
 # class insertURL(APIView):
 #     permission_classes = (IsAuthenticated, )
