@@ -90,7 +90,7 @@ def insertCybexCount(numOccur, numMal, graph, value, nType):
 # Returns: 0 if successful
 # Author: Adam Cassell
 
-def insertRelatedAttributes(data, graph, value, originalType):
+def insertRelatedAttributes(data, graph, value, originalType, insertions_to_make):
     # iterate over all related attributes..
     for attr, val in data["data"].items():
         attr = bucket(attr)
@@ -118,7 +118,8 @@ def insertRelatedAttributes(data, graph, value, originalType):
                     if (ip_node != c_node):
                         rel = Relationship(ip_node, "CYBEX", c_node)
                         #rel['color'] = 'rgb(255,255,255)'
-                        graph.create(rel)
+                        #graph.create(rel)
+                        insertions_to_make[nodeData] = rel
                         print("Existing CybexRelated node linked")
                     else:
                         print("Related node is same as origin node. Skipped.")
@@ -126,7 +127,8 @@ def insertRelatedAttributes(data, graph, value, originalType):
                     graph.create(c)
                     rel = Relationship(ip_node, "CYBEX", c)
                     #rel['color'] = 'rgb(255,255,255)'
-                    graph.create(rel)
+                    #graph.create(rel)
+                    insertions_to_make[nodeData] = rel
                     print("New CybexRelated node created and linked")
 
     return 0
@@ -284,16 +286,22 @@ def cybexRelatedHandler(Ntype, data1, graph, user):
 
     #TODO REPLACE below with real stop condition and/or max pagination
 
+    # Hash table (dict) to solve multithreading insertion duplicate issue:
+    insertions_to_make = {}
+
     ## Start of threaded version
     thread_list = []
     for count in range(10):
-        thread = threading.Thread(target=threadedLoop_cybexRelatedHandler, args=(count, Ntype1, data1, graph, headers, url))
+        thread = threading.Thread(target=threadedLoop_cybexRelatedHandler, args=(count, Ntype1, data1, graph, headers, url, insertions_to_make))
         thread_list.append(thread)
     for thread in thread_list:
         thread.start()
     for thread in thread_list:
         thread.join()
     ## End of threaded version
+
+    for key, rel in insertions_to_make.items():
+        graph.create(rel)
 
     ## Start of non-threaded version
     # while r != "[]" and count <= 10:
@@ -330,7 +338,7 @@ def cybexRelatedHandler(Ntype, data1, graph, user):
     return 1
 
 
-def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url):
+def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url, insertions_to_make):
     print(f"Count: {count}")
     data = {
         "type": "related",
@@ -360,7 +368,7 @@ def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url):
 
     try:
         #status = insertRelated(str(res), graph, data1)
-        status = insertRelatedAttributes(res, graph, data1,Ntype1)
+        status = insertRelatedAttributes(res, graph, data1,Ntype1, insertions_to_make)
 
     except:
         return -1
