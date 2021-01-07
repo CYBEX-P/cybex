@@ -119,16 +119,17 @@ def insertRelatedAttributes(data, graph, value, originalType, insertions_to_make
                         rel = Relationship(ip_node, "CYBEX", c_node)
                         #rel['color'] = 'rgb(255,255,255)'
                         #graph.create(rel)
-                        insertions_to_make[nodeData] = rel
+                        insertions_to_make[nodeData+"_r"] = rel
                         print("Existing CybexRelated node linked")
                     else:
                         print("Related node is same as origin node. Skipped.")
                 else:
-                    graph.create(c)
+                    #graph.create(c)
+                    #insertions_to_make[str(nodeData)] = c
                     rel = Relationship(ip_node, "CYBEX", c)
                     #rel['color'] = 'rgb(255,255,255)'
                     #graph.create(rel)
-                    insertions_to_make[nodeData] = rel
+                    insertions_to_make[nodeData +"_r"] = rel
                     print("New CybexRelated node created and linked")
 
     return 0
@@ -299,6 +300,8 @@ def cybexRelatedHandler(Ntype, data1, graph, user):
     for thread in thread_list:
         thread.join()
     ## End of threaded version
+
+    print(insertions_to_make)
 
     for key, rel in insertions_to_make.items():
         graph.create(rel)
