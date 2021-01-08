@@ -168,7 +168,7 @@ const App = props => {
                       style={{ display: 'inline' }}
                       onClick={() => {
                         setLoading(true);
-                        axios.get('/api/v1/macro').then(() => {
+                        axios.get('/api/v1/macro/all').then(() => {
                           axios
                             .get('/api/v1/neo4j/export')
                             .then(({ data }) => {
@@ -206,16 +206,25 @@ const App = props => {
                     style={{ display: 'inline' }}
                     onClick={() => {
                       setLoading(true);
+                      // var timer = setInterval( function(){
+                      //   axios
+                      //     .get('/api/v1/neo4j/export')
+                      //     .then(({ data }) => {
+                      //       setNeo4jData(data);
+                      //     });
+                      // }, 3000);
                       axios.get('/api/v1/macroCybex').then(() => {
                         axios
                           .get('/api/v1/neo4j/export')
                           .then(({ data }) => {
                             setNeo4jData(data);
                             setLoading(false);
+                            // clearInterval(timer);
                           })
                           .catch(() => {
                             dispatchModal('Error');
                             setLoading(false);
+                            // clearInterval(timer);
                           });
                       });
                       //setLoading(false);
@@ -237,7 +246,7 @@ const App = props => {
                     />
                   </div>
                 </div>
-                {/* <hr></hr> 
+                <hr></hr> 
                 <h4>Subroutines</h4>
                 <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Enrich IPs
@@ -245,7 +254,7 @@ const App = props => {
                     style={{display:"inline"}}
                     onClick={() => {
                       setLoading(true);
-                      axios.get('/api/v1/macroIP')
+                      axios.get('api/v1/macro/ip')
                       .then(() => {
                         axios
                           .get('/api/v1/neo4j/export')
@@ -267,9 +276,9 @@ const App = props => {
                       color="" 
                       style={{marginLeft:"3%",float:'right'}}/>
                   </div>
-                  <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                  {/* <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                  </div>
+                  </div> */}
                 </div>
                 <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Deconstruct URLs
@@ -277,7 +286,7 @@ const App = props => {
                     style={{display:"inline"}}
                     onClick={() => {
                       setLoading(true);
-                      axios.get('/api/v1/macroURL')
+                      axios.get('api/v1/macro/url')
                       .then(() => {
                         axios
                           .get('/api/v1/neo4j/export')
@@ -299,9 +308,9 @@ const App = props => {
                       color="" 
                       style={{marginLeft:"3%",float:'right'}}/>
                   </div>
-                  <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                  {/* <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                  </div>
+                  </div> */}
                 </div>
                 <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Resolve Domains
@@ -309,7 +318,7 @@ const App = props => {
                     style={{display:"inline"}}
                     onClick={() => {
                       setLoading(true);
-                      axios.get('/api/v1/macroDomain')
+                      axios.get('api/v1/macro/domain')
                       .then(() => {
                         axios
                           .get('/api/v1/neo4j/export')
@@ -331,9 +340,9 @@ const App = props => {
                       color="" 
                       style={{marginLeft:"3%",float:'right'}}/>
                   </div>
-                  <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                  {/* <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                  </div>
+                  </div> */}
                 </div>
                 <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Resolve Hosts
@@ -341,7 +350,7 @@ const App = props => {
                     style={{display:"inline"}}
                     onClick={() => {
                       setLoading(true);
-                      axios.get('/api/v1/macroHost')
+                      axios.get('api/v1/macro/host')
                       .then(() => {
                         axios
                           .get('/api/v1/neo4j/export')
@@ -363,9 +372,9 @@ const App = props => {
                       color="" 
                       style={{marginLeft:"3%",float:'right'}}/>
                   </div>
-                  <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                  {/* <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                  </div>
+                  </div> */}
                 </div>
                 <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Deconstruct Emails
@@ -373,7 +382,7 @@ const App = props => {
                     style={{display:"inline"}}
                     onClick={() => {
                       setLoading(true);
-                      axios.get('/api/v1/macroEmail')
+                      axios.get('api/v1/macro/email')
                       .then(() => {
                         axios
                           .get('/api/v1/neo4j/export')
@@ -395,10 +404,10 @@ const App = props => {
                       color="" 
                       style={{marginLeft:"3%",float:'right'}}/>
                   </div>
-                  <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                  {/* <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
                   </div> */}
-                {/* </div> */}
+                </div>
                 {/* <div style={{backgroundColor:'white',padding: "5%", marginLeft: "20%", marginTop: "45%",marginBottom: "5%",borderRadius:'5px',boxShadow: "0px -2px 5px 0px rgba(31,30,31,1)"}}>
                   <h5 style={{textAlign:'center'}}>Macro 1 Details</h5>
                   <hr></hr>
@@ -513,6 +522,7 @@ const App = props => {
                     <hr />
                     <h6>Performs threat analysis on all supported IOC nodes.</h6>
                     <ul>
+                      <li>Adds related IOCs exposed by CYBEX event data</li>
                       <li>Determines IOC threat level</li>
                       <li>Scales IOC nodes according to relative number of sightings</li>
                     </ul>

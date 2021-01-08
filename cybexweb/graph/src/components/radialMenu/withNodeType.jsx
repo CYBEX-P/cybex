@@ -9,6 +9,8 @@ import axios from 'axios';
 import MenuContext from '../App/MenuContext';
 import Button from '../Button/Button';
 
+// Helper function to truncate strings (used for delete button text)
+const truncate = (input,numChar) => input.length > numChar ? `${input.substring(0, numChar)}...` : input;
 
 function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
   const { setLoading } = useContext(MenuContext);
@@ -27,6 +29,10 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
       axios
         .post(`/api/v1/enrich/${type}/`, {Ntype: `${nodeType.properties.type}`, value: `${nodeType.properties.data}`})
         .then(({ data }) => {
+          // Response is being passed back as serialized string. 
+          // Need to see if other request handlers need this change too.
+          // Change made here to ensure cybex request handling is robust.
+          data = JSON.parse(data);
           if (data['insert status'] > 0) {
             axios
               .get('/api/v1/neo4j/export')
@@ -97,11 +103,11 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
     }
   }
 
-  function deleteNode(type,value)
+  function deleteNode(id)
   {
     axios
         // replace below with actual node deletion api call
-        .get(`/api/v1/delete/${type}/${value}`)
+        .get(`/api/v1/delete/${id}`)
         .then(({ data }) => {
           if (data['insert status'] !== 0) {
             axios
@@ -181,9 +187,9 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
             bottom: "10px",
             zIndex: 100000
           }} 
-          onClick={() => deleteNode(nodeType.properties.type, nodeType.properties.data)}
+          onClick={() => deleteNode(nodeType.id)}
         >
-          <p>Delete {nodeType.properties.type}: {nodeType.properties.data}</p>
+          <p>Delete {nodeType.properties.type}: {truncate(nodeType.properties.data,32)}</p>
         </div>
       </div>
     );

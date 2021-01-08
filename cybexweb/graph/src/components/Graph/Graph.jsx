@@ -42,13 +42,18 @@ function InitializeGraph(data) {
     interaction: {
       hover: true,
       hoverConnectedEdges: false
-    }
+    },
+    // physics: {
+    //   stabilization: false,
+    // }
   };
   const container = document.getElementById('mynetwork');
   const nw = new Network(container, dataObject, options);
   return nw;
 }
 
+// Helper function to truncate strings (used for tooltips)
+const truncate = (input,numChar) => input.length > numChar ? `${input.substring(0, numChar)}...` : input;
 
 const Graph = ({ isLoading }) => {
   const { setLoading } = useContext(MenuContext);
@@ -97,6 +102,14 @@ const Graph = ({ isLoading }) => {
     return setRadialPosition(domPositions);
   }
 
+  // Used for converting to a json object
+  function objectToArray(obj) {
+    return Object.keys(obj).map(function (key) {
+      obj[key].id = key;
+      return obj[key];
+    });
+  }
+
   function AddEventListenersToNetwork(nw, data) {
     if (typeof data.Neo4j === 'undefined') {
       return false;
@@ -104,6 +117,11 @@ const Graph = ({ isLoading }) => {
     if (nw === null) {
       return false;
     }
+    
+    // Used for updating the positions of the current nodes
+    var nodes = objectToArray(network.getPositions());
+    axios.post('/api/v1/position', nodes, {});
+
     // hoverNode fires whenever the mouse hovers over a node
     nw.on('hoverNode', e => {
       if (typeof data.Neo4j !== 'undefined') {
@@ -211,6 +229,10 @@ const Graph = ({ isLoading }) => {
     });
     nw.on('dragEnd', () => {
       setDragStart(false);
+      
+      // Used for updating the positions of the current nodes
+      var nodes_pos = objectToArray(network.getPositions());
+      axios.post('/api/v1/position', nodes_pos, {});
     });
 
     // Similar to dragStart and dragEnd, but changes the selection state during stabilization
@@ -220,6 +242,7 @@ const Graph = ({ isLoading }) => {
     });
     nw.on('stabilized', () => {
       setSelection(nw.getSelection());
+      axios.post('/api/v1/position', nodes, {});
       setIsStabilized(true);
     });
 
@@ -591,7 +614,7 @@ const Graph = ({ isLoading }) => {
             <b>{hoverText.type.replace(/"/g,"")}</b>
           </h4>
           {/* <hr/> */}
-          <h6 style={{textAlign:"center"}}>{hoverText.data.replace(/"/g,"")}</h6>
+          <h6 style={{textAlign:"center"}}>{truncate(hoverText.data.replace(/"/g,""),32)}</h6>
           {hoverText.percentMal != "" && (
             <div style={{color:"white",fontSize:"large",textAlign:"center"}}>
             <FontAwesomeIcon size="1x" icon={faExclamationCircle} style={{marginRight:"3px"}}/>
