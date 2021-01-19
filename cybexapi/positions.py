@@ -1,6 +1,8 @@
-import json
-import os
 
+# Description: Used for writing position x & y to the Neo4j database.
+# Parameters: <object>graph - The current graph
+#             <json>data - the json data
+# Author: Spencer Kase Rohlfing
 def update_positions(data, graph):
     if(data != None):
         for node in data:

@@ -24,10 +24,11 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('cybexweb.urls')),
 
-    # The two below were used before 2fa was implemented.
+    ## The two below were used before 2fa was implemented.
     # path('admin/', admin.site.urls), 
     # path('', include('cybexapi.urls')),
 
+    ## The two below are used with 2fa and require that these sites must have you verified your 2fa
     path('admin/', decorator_include(multifactor_protected(factors=1), admin.site.urls)),
     path('', decorator_include(multifactor_protected(factors=1),'cybexapi.urls')),
 

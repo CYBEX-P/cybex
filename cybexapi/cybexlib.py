@@ -301,7 +301,7 @@ def cybexRelatedHandler(Ntype, data1, graph, user):
         thread.join()
     ## End of threaded version
 
-    print(insertions_to_make)
+    # print(insertions_to_make)
 
     for key, rel in insertions_to_make.items():
         graph.create(rel)
