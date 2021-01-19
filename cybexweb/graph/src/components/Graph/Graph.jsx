@@ -42,7 +42,10 @@ function InitializeGraph(data) {
     interaction: {
       hover: true,
       hoverConnectedEdges: false
-    }
+    },
+    // physics: {
+    //   stabilization: false,
+    // }
   };
   const container = document.getElementById('mynetwork');
   const nw = new Network(container, dataObject, options);
@@ -239,6 +242,7 @@ const Graph = ({ isLoading }) => {
     });
     nw.on('stabilized', () => {
       setSelection(nw.getSelection());
+      axios.post('/api/v1/position', nodes, {});
       setIsStabilized(true);
     });
 

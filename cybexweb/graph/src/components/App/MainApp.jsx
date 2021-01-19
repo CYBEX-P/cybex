@@ -206,16 +206,25 @@ const App = props => {
                     style={{ display: 'inline' }}
                     onClick={() => {
                       setLoading(true);
+                      // var timer = setInterval( function(){
+                      //   axios
+                      //     .get('/api/v1/neo4j/export')
+                      //     .then(({ data }) => {
+                      //       setNeo4jData(data);
+                      //     });
+                      // }, 3000);
                       axios.get('/api/v1/macroCybex').then(() => {
                         axios
                           .get('/api/v1/neo4j/export')
                           .then(({ data }) => {
                             setNeo4jData(data);
                             setLoading(false);
+                            // clearInterval(timer);
                           })
                           .catch(() => {
                             dispatchModal('Error');
                             setLoading(false);
+                            // clearInterval(timer);
                           });
                       });
                       //setLoading(false);
@@ -267,9 +276,9 @@ const App = props => {
                       color="" 
                       style={{marginLeft:"3%",float:'right'}}/>
                   </div>
-                  <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                  {/* <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                  </div>
+                  </div> */}
                 </div>
                 <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Deconstruct URLs
@@ -299,9 +308,9 @@ const App = props => {
                       color="" 
                       style={{marginLeft:"3%",float:'right'}}/>
                   </div>
-                  <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                  {/* <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                  </div>
+                  </div> */}
                 </div>
                 <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Resolve Domains
@@ -331,9 +340,9 @@ const App = props => {
                       color="" 
                       style={{marginLeft:"3%",float:'right'}}/>
                   </div>
-                  <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                  {/* <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                  </div>
+                  </div> */}
                 </div>
                 <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Resolve Hosts
@@ -363,9 +372,9 @@ const App = props => {
                       color="" 
                       style={{marginLeft:"3%",float:'right'}}/>
                   </div>
-                  <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                  {/* <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                  </div>
+                  </div> */}
                 </div>
                 <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
                   Deconstruct Emails
@@ -395,9 +404,9 @@ const App = props => {
                       color="" 
                       style={{marginLeft:"3%",float:'right'}}/>
                   </div>
-                  <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
+                  {/* <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
                     <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                  </div>
+                  </div> */}
                 </div>
                 {/* <div style={{backgroundColor:'white',padding: "5%", marginLeft: "20%", marginTop: "45%",marginBottom: "5%",borderRadius:'5px',boxShadow: "0px -2px 5px 0px rgba(31,30,31,1)"}}>
                   <h5 style={{textAlign:'center'}}>Macro 1 Details</h5>
