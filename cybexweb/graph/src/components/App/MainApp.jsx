@@ -109,36 +109,34 @@ const App = props => {
                 }}
               >
                 <div>
-                  <div>Organization ID:</div>
-                  <div>[placeholder]</div>
-                </div>
-                <div>
                   <div>Upload JSON:</div>
                   <input type="file" /> 
                 </div>
-                <div>
-                  <div>Timezone of data:</div>
-                  <div 
-                    className='select-wrapper'
-                    style={{
-                      color: 'black',
-                      width: '250px'
-                    }}
-                  >
-                    <TimezoneSelect
-                      value={selectedTimezone}
-                      onChange={setSelectedTimezone}
-                    />
+                <div style={{display:"flex", justifyContent:"space-between", width:"420px"}}>
+                  <div>
+                    <div>Timezone of data:</div>
+                    <div 
+                      className='select-wrapper'
+                      style={{
+                        color: 'black',
+                        width: '250px'
+                      }}
+                    >
+                      <TimezoneSelect
+                        value={selectedTimezone}
+                        onChange={setSelectedTimezone}
+                      />
+                    </div>
                   </div>
-                </div>
-                <div
-                  style={{ width: '150px' }}
-                >
-                  <div>Type:</div>
-                  <Select options={
-                    { value: 'placeholder', label: 'placeholder' }
-                  }></Select>
-                </div>
+                  <div
+                    style={{ width: '150px' }}
+                  >
+                    <div>Type:</div>
+                    <Select options={
+                      { value: 'placeholder', label: 'placeholder' }
+                    }></Select>
+                  </div>
+                </div>                
               </div>
               <div
                 style={{
@@ -159,18 +157,23 @@ const App = props => {
                   marginTop: "20px",
                   display: "flex",
                   justifyContent: "space-between",
-                  alignItems: "center",
                   flexWrap: "wrap",
-                  width: "350px"
+                  //width: "450px"
                 }}
               >
                 <div>
-                  <div>Name:</div>
-                  <input></input>
+                  <div>Organization ID:</div>
+                  <div>[placeholder]</div>
                 </div>
-                <Button width="90px" type="button">
-                  Submit
-                </Button>
+                <div style={{display:"flex", justifyContent:"space-between", alignItems: "flex-end", width:"280px"}}>
+                  <div>
+                    <div>Name:</div>
+                    <input></input>
+                  </div>
+                  <Button width="90px" type="button">
+                    Submit
+                  </Button>
+                </div>
               </div>
             </div>
             
