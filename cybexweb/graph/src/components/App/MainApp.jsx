@@ -5,6 +5,8 @@ import { faHome, faPlayCircle, faInfoCircle, faTimesCircle, faInfo } from '@fort
 import Canvas from '../../testdata/canvas.json';
 
 import { Container, Row } from 'reactstrap';
+import Select from 'react-select'
+import TimezoneSelect from 'react-timezone-select'
 
 import NavBar from '../navBar/navBar';
 import MenuBar from '../menuBar/menuBar';
@@ -23,6 +25,8 @@ import TrendsContext from './TrendsContext';
 
 const App = props => {
   const [isLoading, setLoading] = useState(false);
+  // Timezone state for use with data entry form
+  const [selectedTimezone, setSelectedTimezone] = useState({})
 
   const [isExpanded, dispatchExpand] = useReducer((_, action) => {
     if (action === 'left' || action === 'right' || action === 'bottom' || action === 'top') {
@@ -82,6 +86,94 @@ const App = props => {
                 Wipe DB
               </Button>
             </div>
+          </GraphModal>
+          <GraphModal title="Submit Event Data" contentLabel="Example Modal">
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-around",
+                //alignItems: "center",
+                height: "100%"
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                  backgroundColor: "rgba(33,33,33,1)",
+                  borderRadius: "10px",
+                  padding: "10px",
+                  marginTop: "20px"
+                }}
+              >
+                <div>
+                  <div>Organization ID:</div>
+                  <div>[placeholder]</div>
+                </div>
+                <div>
+                  <div>Upload JSON:</div>
+                  <input type="file" /> 
+                </div>
+                <div>
+                  <div>Timezone of data:</div>
+                  <div 
+                    className='select-wrapper'
+                    style={{
+                      color: 'black',
+                      width: '250px'
+                    }}
+                  >
+                    <TimezoneSelect
+                      value={selectedTimezone}
+                      onChange={setSelectedTimezone}
+                    />
+                  </div>
+                </div>
+                <div
+                  style={{ width: '150px' }}
+                >
+                  <div>Type:</div>
+                  <Select options={
+                    { value: 'placeholder', label: 'placeholder' }
+                  }></Select>
+                </div>
+              </div>
+              <div
+                style={{
+                  height: "50%",
+                  borderRadius: "10px",
+                  padding: "10px",
+                  backgroundColor: "rgba(33,33,33,1)",
+                  marginTop: "20px"
+                }}
+              >
+                Select a file to see a preview here...
+              </div>
+              <div 
+                style={{
+                  borderRadius: "10px",
+                  padding: "10px",
+                  backgroundColor: "rgba(33,33,33,1)",
+                  marginTop: "20px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  width: "350px"
+                }}
+              >
+                <div>
+                  <div>Name:</div>
+                  <input></input>
+                </div>
+                <Button width="90px" type="button">
+                  Submit
+                </Button>
+              </div>
+            </div>
+            
           </GraphModal>
           <GraphModal afterCloseFn={() => setError(null)} title="Error" contentLabel="Error">
             <div style={{ textAlign: 'center' }}>
@@ -547,7 +639,7 @@ const App = props => {
                 <InsertForm config={props.config} />
                 <Row />
                 <Row />
-                <Button width="100%" onClickFunction={() => dispatchModal('New Event Form')}>
+                <Button width="100%" onClickFunction={() => dispatchModal('Submit Event Data')}>
                   <div>New Event</div>
                 </Button>
               </div>

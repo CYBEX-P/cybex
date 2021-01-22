@@ -5,7 +5,7 @@ import ReactModal from 'react-modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ModalContext from '../App/ModalContext';
 import MenuContext from '../App/MenuContext';
-import { UnstyledButton, ModalContentStyle } from '../__styles__/styles';
+import { UnstyledButton, CenterModalStyle } from '../__styles__/styles';
 
 const TitleStyle = styled.div`
   grid-row: 1;
@@ -42,18 +42,36 @@ const GraphModal = ({ contentLabel, children, title, afterCloseFn }) => {
       isOpen={isShowingModal === title}
       onAfterOpen={() => dispatchExpand('none')}
       contentLabel={contentLabel}
-      style={{ overlay: { zIndex: 10 } }}
+      style={{ 
+        overlay: { 
+          zIndex: 4,
+          backgroundColor: 'rgba(0, 0, 0, 0)',
+          backdropFilter: "blur(20px)",
+          top: 56
+        },
+        content: {
+          background: "rgba(10, 10, 10, 0.95)",
+          color: "white",
+          //backdropFilter: "blur(30px)",
+          top: '10%',
+          left: '15%',
+          right: '15%',
+          bottom: '10%',
+          border: '1px solid #000',
+          borderRadius: "10px"
+        }
+      }}
       onAfterClose={afterCloseFn}
     >
-      <ModalContentStyle>
+      <CenterModalStyle>
         <TitleStyle>{title}</TitleStyle>
         <ExitStyle>
           <UnstyledButton onClick={() => dispatchModal(false)}>
-            <FontAwesomeIcon icon="times" size="2x" />
+            <FontAwesomeIcon icon="times" size="2x" color="white" />
           </UnstyledButton>
         </ExitStyle>
         <ContentStyle>{children}</ContentStyle>
-      </ModalContentStyle>
+      </CenterModalStyle>
     </ReactModal>
   );
 };
