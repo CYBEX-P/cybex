@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faPlayCircle, faInfoCircle, faTimesCircle, faInfo } from '@fortawesome/free-solid-svg-icons';
 import Canvas from '../../testdata/canvas.json';
 
-import { Container, Row } from 'reactstrap';
+import { Container, Row, Input} from 'reactstrap';
 import Select from 'react-select'
 import TimezoneSelect from 'react-timezone-select'
 
@@ -22,11 +22,11 @@ import EventInsertForm from '../EventInsertForm/EventInsertForm';
 import ImportJson from '../forms/InsertForm/ImportJson';
 import Trends from '../modal/Trends';
 import TrendsContext from './TrendsContext';
+import { Formik} from 'formik';
+import * as Yup from 'yup';
 
 const App = props => {
   const [isLoading, setLoading] = useState(false);
-  // Timezone state for use with data entry form
-  const [selectedTimezone, setSelectedTimezone] = useState({})
 
   const [isExpanded, dispatchExpand] = useReducer((_, action) => {
     if (action === 'left' || action === 'right' || action === 'bottom' || action === 'top') {
@@ -47,6 +47,10 @@ const App = props => {
   const [errorToDisplay, setError] = useState(null);
 
   const [macroDetails, setMacroDetails] = useState('none');
+  
+  // Timezone state for use with data entry form
+  const [selectedTimezone, setSelectedTimezone] = useState({})
+  const [uploadedFile, setUploadedFile] = useState(null)
 
   // Get data on first render
   useEffect(() => {
@@ -64,13 +68,14 @@ const App = props => {
       <ModalContext.Provider value={{ isShowingModal, dispatchModal, setError }}>
         <DataContext.Provider value={{ config: props.config, neo4jData, setNeo4jData }}>
           {/* Keep modals here */}
-          <GraphModal title="example" contentLabel="Example Modal">
+          {/* <GraphModal title="example" contentLabel="Example Modal">
             <div>Content will go here soon!</div>
-          </GraphModal>
+          </GraphModal> */}
           <GraphModal title="Neo4j Data" contentLabel="Neo4j Data">
             <div>{JSON.stringify(neo4jData)}</div>
           </GraphModal>
-          <GraphModal title="Database Management" contentLabel="Database Management">
+          {/* Deprecated Modal */}
+          {/* <GraphModal title="Database Management" contentLabel="Database Management">
             <div>
               <Button
                 width="128px"
@@ -86,97 +91,158 @@ const App = props => {
                 Wipe DB
               </Button>
             </div>
-          </GraphModal>
-          <GraphModal title="Submit Event Data" contentLabel="Example Modal">
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-around",
-                //alignItems: "center",
-                height: "100%"
+          </GraphModal> */}
+          <GraphModal title="Submit Event Data" contentLabel="Submit Event Data" afterCloseFn={() => setUploadedFile(null)}>
+            <Formik
+              initialValues={{ file: null, timezone: '' }}
+              validationSchema={Yup.object({
+                file: Yup.mixed()
+                  // .max(15, 'Must be 15 characters or less')
+                  .required('Required'),
+                timezone: Yup.string()
+                  // .max(20, 'Must be 20 characters or less')
+                  .required('Required'),
+              })}
+              onSubmit={(values, { setSubmitting }) => {
+                setTimeout(() => {
+                  alert(JSON.stringify(values, null, 2));
+                  setSubmitting(false);
+                }, 400);
               }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  flexWrap: "wrap",
-                  backgroundColor: "rgba(33,33,33,1)",
-                  borderRadius: "10px",
-                  padding: "10px",
-                  marginTop: "20px"
-                }}
-              >
-                <div>
-                  <div>Upload JSON:</div>
-                  <input type="file" /> 
-                </div>
-                <div style={{display:"flex", justifyContent:"space-between", width:"420px"}}>
-                  <div>
-                    <div>Timezone of data:</div>
-                    <div 
-                      className='select-wrapper'
+              {formik => (
+                <form style={{height:"100%"}} onSubmit={formik.handleSubmit}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      //alignItems: "center",
+                      height: "calc(80vh - 120px)",
+                      width: "calc(70vw - 45px)"
+                    }}
+                  >
+                    <div
                       style={{
-                        color: 'black',
-                        width: '250px'
+                        display: "flex",
+                        justifyContent: "space-between",
+                        flexWrap: "wrap",
+                        backgroundColor: "rgba(33,33,33,1)",
+                        borderRadius: "10px",
+                        padding: "10px",
+                        marginTop: "20px",
                       }}
                     >
-                      <TimezoneSelect
-                        value={selectedTimezone}
-                        onChange={setSelectedTimezone}
-                      />
+                      <div>
+                        <div>Upload JSON:</div>
+                        <Input id="file" name="file" type="file" onChange={(event) => {
+                          //alert(JSON.stringify(event));
+                          // Read file so that it can be immediately displayed to user
+                          let file = event.currentTarget.files[0];
+                          let reader = new FileReader();
+                          reader.readAsText(file);
+                          reader.onload = function() {
+                            setUploadedFile(reader.result);
+                          };
+                          reader.onerror = function() {
+                            console.log(reader.error);
+                            alert(reader.error);
+                          };
+                          formik.setFieldValue("file", event.currentTarget.files[0]);
+                        }}/>
+                        {formik.touched.file && formik.errors.file ? (
+                          <div style={{color:"red"}}>{formik.errors.file}</div>
+                        ) : null}
+                      </div>
+                      <div style={{display:"flex", justifyContent:"space-between", width:"420px"}}>
+                        <div>
+                          <div>Timezone of data:</div>
+                          <div 
+                            className='select-wrapper'
+                            style={{
+                              color: 'black',
+                              width: '250px'
+                            }}
+                          >
+                            <TimezoneSelect
+                              // id="timezone"
+                              name="timezone"
+                              onChange={ e => {
+                                setSelectedTimezone();
+                                formik.setFieldValue("timezone", e.value);
+                                //formik.handleChange();
+                              }}
+                              onBlur={formik.handleBlur}
+                              value={formik.values.timezone}
+                              //value={selectedTimezone}
+                              // onChange={setSelectedTimezone}
+                              //{...formik.getFieldProps('timezone')}
+                            />
+                            {formik.touched.timezone && formik.errors.timezone ? (
+                              <div style={{color:"red"}}>{formik.errors.timezone}</div>
+                            ) : null}
+                          </div>
+                        </div>
+                        <div
+                          style={{ width: '150px' }}
+                        >
+                          <div>Type:</div>
+                          <Select options={
+                            { value: 'placeholder', label: 'placeholder' }
+                          }></Select>
+                        </div>
+                      </div>                
+                    </div>
+                    <div
+                      style={{
+                        height: "60%",
+                        //width: "90%",
+                        borderRadius: "10px",
+                        padding: "10px",
+                        backgroundColor: "rgba(33,33,33,1)",
+                        marginTop: "20px",
+                        overflow: "auto",
+                        //width: "calc(70vw - 20px)"
+                      }}
+                    >
+                      {/* <p>{uploadedFile}</p> */}
+                      {uploadedFile && (
+                        <div>{uploadedFile}</div>
+                      )}
+                      {!uploadedFile && (
+                        <p>Select a file to see a preview here... </p>
+                      )}
+                                           
+                    </div>
+                    <div 
+                      style={{
+                        borderRadius: "10px",
+                        padding: "10px",
+                        backgroundColor: "rgba(33,33,33,1)",
+                        marginTop: "20px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      <div>
+                        <div>Organization ID:</div>
+                        <div>[placeholder]</div>
+                      </div>
+                      <div style={{display:"flex", justifyContent:"space-between", alignItems: "flex-end", width:"280px"}}>
+                        <div>
+                          <div>Name:</div>
+                          <input></input>
+                        </div>
+                        <Button width="90px" type="submit">
+                          Submit
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                  <div
-                    style={{ width: '150px' }}
-                  >
-                    <div>Type:</div>
-                    <Select options={
-                      { value: 'placeholder', label: 'placeholder' }
-                    }></Select>
-                  </div>
-                </div>                
-              </div>
-              <div
-                style={{
-                  height: "50%",
-                  borderRadius: "10px",
-                  padding: "10px",
-                  backgroundColor: "rgba(33,33,33,1)",
-                  marginTop: "20px"
-                }}
-              >
-                Select a file to see a preview here...
-              </div>
-              <div 
-                style={{
-                  borderRadius: "10px",
-                  padding: "10px",
-                  backgroundColor: "rgba(33,33,33,1)",
-                  marginTop: "20px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  flexWrap: "wrap",
-                  //width: "450px"
-                }}
-              >
-                <div>
-                  <div>Organization ID:</div>
-                  <div>[placeholder]</div>
-                </div>
-                <div style={{display:"flex", justifyContent:"space-between", alignItems: "flex-end", width:"280px"}}>
-                  <div>
-                    <div>Name:</div>
-                    <input></input>
-                  </div>
-                  <Button width="90px" type="button">
-                    Submit
-                  </Button>
-                </div>
-              </div>
-            </div>
-            
+                </form>   
+               )}   
+            </Formik>      
           </GraphModal>
           <GraphModal afterCloseFn={() => setError(null)} title="Error" contentLabel="Error">
             <div style={{ textAlign: 'center' }}>
@@ -186,8 +252,8 @@ const App = props => {
               <div style={{ color: '#ff4300' }}>{errorToDisplay}</div>
             </div>
           </GraphModal>
-
-          <GraphModal title="New Event Form">
+          {/* Deprecated Modal - Now using "Submit Event Data" */}
+          {/* <GraphModal title="New Event Form">
             <Container>
               <ModalContext.Consumer>
                 {dispatchModal => (
@@ -203,7 +269,7 @@ const App = props => {
                 )}
               </ModalContext.Consumer>
             </Container>
-          </GraphModal>
+          </GraphModal> */}
 
           <AppContainer>
             <ContentContainerStyle>
