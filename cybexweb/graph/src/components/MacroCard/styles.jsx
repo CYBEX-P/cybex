@@ -2,10 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
 
 // Theme colors
-const primaryBlue = '#0277bd';
-const primaryDarkBlue = '#004c8c';
 const primaryLightBlue = '#58a5f0';
-const secondaryGrey = '#e0e0e0';
 
 // Deprecated, currently unused
 // export const MacroButton = styled.button`
