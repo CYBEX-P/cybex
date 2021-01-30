@@ -21,11 +21,11 @@ export const Macros = ({ setLoading, setNeo4jData, dispatchModal, setMacroDetail
   };
 
   const subRoutineMapping = {
-    enrichIPs: 'ips',
-    deconstructURLs: 'urls',
-    resolveDomains: 'domains',
-    resolveHosts: 'hosts',
-    deconstructEmails: 'emails'
+    enrichIPs: 'ip',
+    deconstructUrLs: 'url',
+    resolveDomains: 'domain',
+    resolveHosts: 'host',
+    deconstructEmails: 'email'
   };
 
   // Mapping used to construct details content for each macro
@@ -70,6 +70,19 @@ export const Macros = ({ setLoading, setNeo4jData, dispatchModal, setMacroDetail
   // Retrieve data from the backend API from the MacroButton that was clicked
   const retrieveAPIData = actionParam => {
     setLoading(true);
+    // Depending on which macro is selected, build the appropriate url for 
+    // the api request. Standard lookups and associated subroutines follow
+    // the 'macro/<something> structure, where 'macro/all is the full
+    // 'Standard Lookups' macro. An example of an associated subroutine
+    // is macro/ip. Note that the cybex macro is seperate, and simply calls
+    // /macroCybex, with no variations currently available.
+    if (actionParam != "macroCybex") {
+      if (actionParam == "macro") {
+        actionParam += "/all";
+      } else {
+        actionParam = "macro/" + actionParam;
+      }
+    }
     axios.get(`/api/v1/${actionParam}`).then(() => {
       axios
         .get('/api/v1/neo4j/export')
@@ -126,7 +139,7 @@ export const Macros = ({ setLoading, setNeo4jData, dispatchModal, setMacroDetail
 
     // Check if the macroAction exists within the subroutineMapping
     for (const [key, _] of Object.entries(subRoutineMapping)) {
-      if (action === key[0]) {
+      if (action === key) {
         retrieveAPIData(subRoutineMapping[action]);
       }
     }
