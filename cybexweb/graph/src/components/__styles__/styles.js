@@ -8,6 +8,7 @@ const secondaryGrey = '#e0e0e0';
 
 const AppContainer = styled.div`
   height: 100vh;
+  height: -webkit-fill-available;
   width: 100%;
   display: grid;
   grid-template-columns: 36px minmax(100px, 300px) auto minmax(100px, 300px) 36px;

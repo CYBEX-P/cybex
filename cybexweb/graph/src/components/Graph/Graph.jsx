@@ -42,7 +42,10 @@ function InitializeGraph(data) {
     interaction: {
       hover: true,
       hoverConnectedEdges: false
-    }
+    },
+    // physics: {
+    //   stabilization: false,
+    // }
   };
   const container = document.getElementById('mynetwork');
   const nw = new Network(container, dataObject, options);
@@ -99,6 +102,14 @@ const Graph = ({ isLoading }) => {
     return setRadialPosition(domPositions);
   }
 
+  // Used for converting to a json object
+  function objectToArray(obj) {
+    return Object.keys(obj).map(function (key) {
+      obj[key].id = key;
+      return obj[key];
+    });
+  }
+
   function AddEventListenersToNetwork(nw, data) {
     if (typeof data.Neo4j === 'undefined') {
       return false;
@@ -106,6 +117,11 @@ const Graph = ({ isLoading }) => {
     if (nw === null) {
       return false;
     }
+    
+    // Used for updating the positions of the current nodes
+    var nodes = objectToArray(network.getPositions());
+    axios.post('/api/v1/position', nodes, {});
+
     // hoverNode fires whenever the mouse hovers over a node
     nw.on('hoverNode', e => {
       if (typeof data.Neo4j !== 'undefined') {
@@ -213,6 +229,10 @@ const Graph = ({ isLoading }) => {
     });
     nw.on('dragEnd', () => {
       setDragStart(false);
+      
+      // Used for updating the positions of the current nodes
+      var nodes_pos = objectToArray(network.getPositions());
+      axios.post('/api/v1/position', nodes_pos, {});
     });
 
     // Similar to dragStart and dragEnd, but changes the selection state during stabilization
@@ -222,6 +242,7 @@ const Graph = ({ isLoading }) => {
     });
     nw.on('stabilized', () => {
       setSelection(nw.getSelection());
+      axios.post('/api/v1/position', nodes, {});
       setIsStabilized(true);
     });
 
@@ -427,13 +448,6 @@ const Graph = ({ isLoading }) => {
           <h4 style={{textAlign:"center"}}>
             <b>Filters</b>
           </h4>
-          
-          <h5>Threat Display Mode</h5>
-          <select style={{color: "white",backgroundColor: "#232323",border:"none"}}>
-            <option value="colorAndSightings">Node Color (w/sightings)</option>
-            <option value="color">Node Color</option>
-            <option value="size">Node Size</option>
-          </select>
           <hr/>
           <h5>Time</h5>
           <div style={{color:"white",fontSize:"large"}}>
