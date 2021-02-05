@@ -28,7 +28,8 @@ import {
   faCalculator,
   faFileImport,
   faObjectGroup,
-  faMailBulk
+  faMailBulk,
+  faShieldAlt
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import App from './App';
@@ -61,7 +62,8 @@ library.add(
   faCalculator,
   faFileImport,
   faObjectGroup,
-  faMailBulk
+  faMailBulk,
+  faShieldAlt
 );
 
 let YAMLConfig = {};

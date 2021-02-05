@@ -28,21 +28,29 @@ class NewDropdown extends React.Component {
 
         <DropdownMenu>
           <DropdownItem>
-            <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/home">
+            <Link onClick={() => window.location.href = "/home"} className="nav-link text-dark" to="/home">
                 <FontAwesomeIcon fixedWidth size="lg" icon="home" color="#e0e0e0" />
                 <span style={{ paddingLeft: '12px' }}>Home</span>
             </Link>
           </DropdownItem>
+
           <DropdownItem>
-            <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/home">
+            <Link onClick={() => window.location.href = "https://cybexp-priv.ignaciochg.com/manual.html"} className="nav-link text-dark" to="graph">
+                <FontAwesomeIcon fixedWidth size="lg" icon="shield-alt" color="#e0e0e0" />
+                <span style={{ paddingLeft: '12px' }}>Privacy Preservation</span>
+            </Link>
+          </DropdownItem>
+
+          <DropdownItem>
+            <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/docs">
                 <FontAwesomeIcon fixedWidth size="lg" icon="info-circle" color="#e0e0e0" />
-                <span style={{ paddingLeft: '12px' }}>Tutorial</span>
+                <span style={{ paddingLeft: '12px' }}>Documentation</span>
             </Link>
           </DropdownItem>
           
           {!this.props.isSignedIn && (
             <DropdownItem>
-                <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/home">
+                <Link onClick={() => window.location.href = "/home"} className="nav-link text-dark" to="/home">
                     <FontAwesomeIcon fixedWidth size="lg" icon="user" color="#e0e0e0" />
                     <span style={{ paddingLeft: '12px' }}>Login</span>
                 </Link>
