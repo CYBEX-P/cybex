@@ -376,7 +376,44 @@ def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url, 
     except:
         return -1
 
-def send_to_cybex(data, graph, user):
-    # post request to backend goes here
-    print(data)
-    return 1
+# Description: Gets the CYBEX orgid of the current user
+# Parameters: <object>user - Object representing the user
+# Returns: Response status
+# Author: Adam Cassell
+def get_orgid(user):
+    # TODO: return result of user's orgid query instead of hardcode
+    return "test_org"
+    
+# Description: Posts user event data to CYBEX
+# Parameters:   <object>data - the request data
+#               <object>user - Object representing the user
+# Returns: Response status
+# Author: Adam Cassell
+def send_to_cybex(data, user):
+    # file is retreived from data object passed in from js
+    # this reads the file in binary mode, which is recommended
+    files = {'file':  data['file']}
+    data.pop('file', None) # take file key out of data dict
+    
+    # Code to retrieve user orgid will go below
+    # populate rest of data fields that don't come
+    # from user input:
+    data["orgid"] = get_orgid(user)
+    data["typetag"] = 'test_json'
+    data["name"] = 'frontend_input'
+
+    url = "https://cybex-api.cse.unr.edu:5000/raw"
+    user_token = user.profile.cybex_token
+    headers = {"Authorization": user_token}
+    with requests.post(url, files=files,
+                 headers=headers, data=data) as r:
+        print(r.text)
+        if r.status_code >= 400:
+            print((
+                f"error posting. "
+                f"status_code = '{r.status_code}', "
+                f"API response = '{r.content.decode()}'"))
+            raise Exception
+
+        r.close() # redundant?
+        return 1

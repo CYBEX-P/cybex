@@ -105,21 +105,19 @@ const App = props => {
               })}
               onSubmit={(values, { setSubmitting }) => {
                 setTimeout(() => {
-                  alert(JSON.stringify(values, null, 2));
-                  axios.post('/api/v1/dataEntry', values).then(({ response }) => {
-                    //setNeo4jData(data);
+                  let formData = new FormData();
+                  formData.append('timezone', values.timezone);
+                  formData.append('file', values.file);
+                  axios.post('/api/v1/dataEntry', formData, {
+                    headers: {
+                      'Content-Type': 'multipart/form-data'
+                    }
+                  }).then(({ response }) => {
                     dispatchModal('none');
+                  }).catch(() => {
+                    alert('Error submitting data:\n' + JSON.stringify(values, null, 2));
                   });
                   setSubmitting(false);
-                  // entire request authed with same token:
-                  // /raw post request
-                  // typetag: test_json hardcoded
-                  // name: human-readable name (i.e. 'frontend_input')
-                  // orgid: test_org (hardcode for time being)
-                  // timezone: 
-
-                  // file: (name doesn't matter?) use code from sent link
-                  // we will figure out who auths
                 }, 400);
               }}
             >
@@ -167,7 +165,7 @@ const App = props => {
                           <div style={{color:"red"}}>{formik.errors.file}</div>
                         ) : null}
                       </div>
-                      <div style={{display:"flex", justifyContent:"space-between", width:"420px"}}>
+                      <div style={{display:"flex", justifyContent:"space-between"}}>
                         <div>
                           <div>Timezone of data:</div>
                           <div 
@@ -196,14 +194,14 @@ const App = props => {
                             ) : null}
                           </div>
                         </div>
-                        <div
+                        {/* <div
                           style={{ width: '150px' }}
                         >
                           <div>Type:</div>
                           <Select options={
                             { value: 'placeholder', label: 'placeholder' }
                           }></Select>
-                        </div>
+                        </div> */}
                       </div>                
                     </div>
                     <div
@@ -236,13 +234,17 @@ const App = props => {
                         display: "flex",
                         justifyContent: "space-between",
                         flexWrap: "wrap",
+                        alignItems: "center"
                       }}
                     >
                       <div>
                         <div>Organization ID:</div>
-                        <div>[placeholder]</div>
+                        <div>[test_org]</div>
                       </div>
-                      <div style={{display:"flex", justifyContent:"space-between", alignItems: "flex-end", width:"280px"}}>
+                      <Button width="90px" type="submit">
+                          Submit
+                      </Button>
+                      {/* <div style={{display:"flex", justifyContent:"space-between", alignItems: "flex-end", width:"280px"}}>
                         <div>
                           <div>Name:</div>
                           <input></input>
@@ -250,7 +252,7 @@ const App = props => {
                         <Button width="90px" type="submit">
                           Submit
                         </Button>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </form>   
