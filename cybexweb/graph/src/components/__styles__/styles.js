@@ -187,13 +187,14 @@ const ContentContainerStyle = styled.div`
   grid-column: 1 / span 5;
 `;
 
-const ModalContentStyle = styled.div`
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-rows: 36px auto;
-  grid-template-columns: auto 36px;
-`;
+// Below is deprecated but kept for reference
+// const ModalContentStyle = styled.div`
+//   width: 100%;
+//   height: 100%;
+//   display: grid;
+//   grid-template-rows: 36px auto;
+//   grid-template-columns: auto 36px;
+// `;
 
 const StyledButtonChild = styled.div`
   ${props => (props.hasIcon && props.index === 0 ? 'flex-grow: 0' : 'flex-grow: 2')}
@@ -224,10 +225,18 @@ const TrendPanelStyle = styled.div`
   justify-content: flex-start;
 `;
 
+const CenterModalStyle = styled.div`
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 36px auto;
+  grid-template-columns: auto 36px;
+`;
+
 const TrendBoxStyle = styled.div`
   height: 100%;
   z-index: 6;
-  background-color: rgba(255, 255, 255,0.4);;
+  background-color: rgba(255, 255, 255,0.4);
   color: black;
   border-radius: 5px;
   display: flex;
@@ -254,10 +263,11 @@ export {
   MenuBarChildStyle,
   MenuBarIconStyle,
   ContentContainerStyle,
-  ModalContentStyle,
+  //ModalContentStyle,
   StyledButtonChild,
   GraphMenuInputStyle,
   TrendPanelStyle,
   TrendBoxStyle,
-  TrendRowStyle
+  TrendRowStyle,
+  CenterModalStyle
 };
