@@ -52,4 +52,7 @@ import json
 
 class HomeView(TemplateView):
     template_name = 'home.html'
+
+class DocsView(TemplateView):
+    template_name = 'docs.html'
     
