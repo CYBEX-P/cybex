@@ -375,3 +375,8 @@ def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url, 
 
     except:
         return -1
+
+def send_to_cybex(data, graph, user):
+    # post request to backend goes here
+    print(data)
+    return 1

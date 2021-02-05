@@ -16,7 +16,7 @@ from cybexapi.runner import insertNode, insertHostname
 from cybexapi.gip import asn_insert, ASN, geoip, geoip_insert
 from cybexapi.whoisXML import whois, insertWhois
 from cybexapi.enrichments import insert_domain_and_user, insert_netblock, insert_domain, resolveHost, getNameservers, getRegistrar, getMailServer
-from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_src
+from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_src, send_to_cybex
 from cybexapi.shodanSearch import shodan_lookup, insert_ports
 from cybexapi.import_json import import_json
 from cybexapi.delete_node import delete_node
@@ -524,6 +524,23 @@ class position(APIView):
         status = update_positions(request.data, graph)
         return Response({"Status": "Success"})
 
+class dataEntry(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    ## TODO: Also remove this line, it was to bypass the CSRF
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+
+    # Description: Used to send user event data to CYBEX
+    # Parameters: <object>request - The user request
+    # Returns: Response status
+    # Author: Adam Cassell
+    def post(self, request, format=None):
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+
+        status = send_to_cybex(request.data, graph, current_user)
+        return Response({"Status": "Success"})
 
 # class insertURL(APIView):
 #     permission_classes = (IsAuthenticated, )

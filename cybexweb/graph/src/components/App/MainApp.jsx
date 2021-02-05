@@ -106,7 +106,20 @@ const App = props => {
               onSubmit={(values, { setSubmitting }) => {
                 setTimeout(() => {
                   alert(JSON.stringify(values, null, 2));
+                  axios.post('/api/v1/dataEntry', values).then(({ response }) => {
+                    //setNeo4jData(data);
+                    dispatchModal('none');
+                  });
                   setSubmitting(false);
+                  // entire request authed with same token:
+                  // /raw post request
+                  // typetag: test_json hardcoded
+                  // name: human-readable name (i.e. 'frontend_input')
+                  // orgid: test_org (hardcode for time being)
+                  // timezone: 
+
+                  // file: (name doesn't matter?) use code from sent link
+                  // we will figure out who auths
                 }, 400);
               }}
             >
