@@ -1,6 +1,6 @@
 from django.urls import include, path
 # from .views import GraphView, HomeView
-from .views import HomeView, DocsView
+from .views import HomeView, DocsView, AboutView, PersonnelView
 from multifactor.urls import urlpatterns
 
 
@@ -11,6 +11,8 @@ urlpatterns = [
     # path('graph', GraphView.as_view(), name='graph'),
     path('home', HomeView.as_view(), name='home'),
     path('docs', DocsView.as_view(), name='docs'),
+    path('about', AboutView.as_view(), name='about'),
+    path('personnel', PersonnelView.as_view(), name='personnel'),
     path('', HomeView.as_view(), name='home'),
 
     # These are include if you don't want to use the whole multifactor.urls urlpatterns

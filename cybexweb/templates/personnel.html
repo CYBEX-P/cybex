@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<style>
+    .person-card{
+        width: 320px; 
+        background-color:white; 
+        padding:10px;
+        border-radius:5px;
+        font-size: smaller; 
+        margin: 10px 0px;
+    }
+    .person-photo{
+        width:100%;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+    .research-team{
+        width: 320px;
+    }
+    .person-card-container{
+        display: flex; 
+        justify-content: space-around; 
+        flex-wrap: wrap; 
+        padding:10px 0px;
+    }
+</style>
+
+<div class="jumbotron transparent">
+  <nav class="nav nav-pills nav-fill nav-custom">
+    <a class="nav-item nav-link" href="/home">Home</a>
+    <a class="nav-item nav-link" href="/about">About CYBEX</a>
+    <a class="nav-item nav-link active-custom" href="/personnel">Personnel</a>
+  </nav>
+  <div style="text-align: center;">
+    <hr class="my-4">
+    <h2>Project Personnel</h2>
+    <hr class="my-4">
+  </div>
+  <h4>Investigators</h4>
+  <div class="person-card-container">
+    <div class="person-card">
+        <img src="../static/images/sengupta.jpg" class="person-photo">
+        <h4>Shamik Sengupta</h4>
+        <p>Principal Investigator<br>Executive Director, UNR Cybersecurity Center</p>
+    </div>
+    <div class="person-card">
+        <img src="../static/images/nancy.jpg" class="person-photo">
+        <h4>Nancy LaTourrette</h4>
+        <p>Co-Principal Investigator<br>Deputy Director, UNR Cybersecurity Center</p>
+    </div>
+    <div class="person-card">
+        <img src="../static/images/stock_person.jpg" class="person-photo">
+        <h4>Jeff Springer</h4>
+        <p>Co-Principal Investigator<br>Chief Information Security Officer, UNR</p>
+    </div>
+  </div>
+  <h4>Research Team</h4>
+  <div class="person-card-container">
+    <div class="person-card research-team">
+        <h4>Farhan Sadique</h4>
+        <p>Graduate Research Assistant, UNR</p>
+    </div>
+    <div class="person-card research-team">
+        <h4>Ignacio Astaburuaga</h4>
+        <p>Graduate Research Assistant, UNR</p>
+    </div>
+    <div class="person-card research-team">
+        <h4>Adam Cassell</h4>
+        <p>Graduate Research Assistant, UNR</p>
+    </div>
+    <div class="person-card research-team">
+        <h4>Samuel Gerard</h4>
+        <p>Undergraduate Research Assistant, UNR</p>
+    </div>
+    <div class="person-card research-team">
+        <h4>Shahriar Badsha</h4>
+        <p>Assistant Professor, UNR</p>
+    </div>
+    <div class="person-card research-team">
+        <h4>Jay Thom</h4>
+        <p>Senior Information Security Engineer, UNR</p>
+    </div>
+  </div>
+  {% endblock %}
+</div>
+
