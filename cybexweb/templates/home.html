@@ -10,21 +10,18 @@
   </nav>
   <hr class="my-4">
   <div style="display:flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-    <div style="background-color:white; padding:10px;border-radius:5px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
-      <div style="display:flex; justify-content: flex-start; align-items: flex-end;">
+    <div class="floating-card">
+      <div style="display:flex; justify-content: flex-start; align-items: flex-end; flex-wrap: wrap;">
         <h1 class="display-4">CYBEX</h1>
-        <p class="lead">Cybersecurity Data Exchange
-      </div>
-      <div>
-
+        <p class="lead" style="white-space: nowrap;">Cyber Data Exchange</p>
       </div>
       <!-- <p>Next-generation cyber data exchange framework</p> -->
       <a class="btn btn-primary btn-lg" href="/graph" role="button">CTI Graph</a>
       <!-- <a class="btn btn-secondary btn-lg" href="/" role="button">About CYBEX</a> -->
-      <a class="btn btn-secondary btn-lg" href="/" role="button">User Guide</a>
+      <!-- <a class="btn btn-secondary btn-lg" href="/" role="button">Guide</a> -->
       <a class="btn btn-secondary btn-lg" href="/" role="button">Documentation</a>
     </div>
-    <div>
+    <div style="margin: 10px;">
       {% if user.is_authenticated %}
         <h5 class="text-primary">Welcome,</h5>
         <p>You are connected to CYBEX</p>
@@ -38,7 +35,7 @@
         <a class="btn btn-secondary btn-sm" href="/admin" role="button">Admin</a>
       {% endif %}
     </div>
-    <div style="padding: 5px;">
+    <div style="padding: 5px; margin: 10px 0px 0px 0px;">
       <h5>Latest Updates</h5>
       <ul>
         <li>Beta version 0.7 published</li>
