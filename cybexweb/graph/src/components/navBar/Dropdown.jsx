@@ -2,6 +2,8 @@ import React from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
+import GraphModal from '../modal/graphModal';
+import Graph from '../Graph/Graph';
 
 class NewDropdown extends React.Component {
   constructor(props) {
@@ -9,7 +11,8 @@ class NewDropdown extends React.Component {
 
     this.toggle = this.toggle.bind(this);
     this.state = {
-      dropdownOpen: false
+      dropdownOpen: false,
+      fileBrowserOpen: false,
     };
   }
 
@@ -19,82 +22,104 @@ class NewDropdown extends React.Component {
     }));
   }
 
+  browseFiles() {
+    this.setState(prevState => ({
+      fileBrowserOpen: !prevState.fileBrowserOpen
+    }));
+    // put filebox in middle
+  }
+
   render() {
     return (
-      <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-        <DropdownToggle caret>
-            <FontAwesomeIcon size="lg" icon="bars" color="#e0e0e0" />
-        </DropdownToggle>
+      <div>
+        <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+          <DropdownToggle caret>
+              <FontAwesomeIcon size="lg" icon="bars" color="#e0e0e0" />
+          </DropdownToggle>
 
-        <DropdownMenu>
-          <DropdownItem>
-            <Link onClick={() => window.location.href = "/home"} className="nav-link text-dark" to="/home">
-                <FontAwesomeIcon fixedWidth size="lg" icon="home" color="#e0e0e0" />
-                <span style={{ paddingLeft: '12px' }}>Home</span>
-            </Link>
-          </DropdownItem>
-
-          <DropdownItem>
-            <Link onClick={() => window.location.href = "https://cybexp-priv.ignaciochg.com/manual.html"} className="nav-link text-dark" to="graph">
-                <FontAwesomeIcon fixedWidth size="lg" icon="shield-alt" color="#e0e0e0" />
-                <span style={{ paddingLeft: '12px' }}>Privacy Preservation</span>
-            </Link>
-          </DropdownItem>
-
-          <DropdownItem>
-            <Link onClick={() => window.location.href ="/docs"} className="nav-link text-dark" to="/docs">
-                <FontAwesomeIcon fixedWidth size="lg" icon="info-circle" color="#e0e0e0" />
-                <span style={{ paddingLeft: '12px' }}>Documentation</span>
-            </Link>
-          </DropdownItem>
-          
-          {!this.props.isSignedIn && (
+          <DropdownMenu>
             <DropdownItem>
-                <Link onClick={() => window.location.href = "/home"} className="nav-link text-dark" to="/home">
-                    <FontAwesomeIcon fixedWidth size="lg" icon="user" color="#e0e0e0" />
-                    <span style={{ paddingLeft: '12px' }}>Login</span>
-                </Link>
+              <Link onClick={() => window.location.href = "/home"} className="nav-link text-dark" to="/home">
+                  <FontAwesomeIcon fixedWidth size="lg" icon="home" color="#e0e0e0" />
+                  <span style={{ paddingLeft: '12px' }}>Home</span>
+              </Link>
             </DropdownItem>
+
+            <DropdownItem>
+              <Link onClick={() => window.location.href = "https://cybexp-priv.ignaciochg.com/manual.html"} className="nav-link text-dark" to="graph">
+                  <FontAwesomeIcon fixedWidth size="lg" icon="shield-alt" color="#e0e0e0" />
+                  <span style={{ paddingLeft: '12px' }}>Privacy Preservation</span>
+              </Link>
+            </DropdownItem>
+
+            <DropdownItem>
+              <Link onClick={() => window.location.href ="/docs"} className="nav-link text-dark" to="/docs">
+                  <FontAwesomeIcon fixedWidth size="lg" icon="info-circle" color="#e0e0e0" />
+                  <span style={{ paddingLeft: '12px' }}>Documentation</span>
+              </Link>
+            </DropdownItem>
+
+            <DropdownItem>
+              <Link onClick={() => this.browseFiles()} className="nav-link text-dark" to="/graph"> 
+              {/* <Link onClick={() => window.location.href ="/static/honeypot/ssh-london/cowrie.json.16:40:00.gz"} className="nav-link text-dark" to="/graph"> */}
+                  <FontAwesomeIcon fixedWidth size="lg" icon="info-circle" color="#e0e0e0" />
+                  <span style={{ paddingLeft: '12px' }}>Honeypot Download</span>
+              </Link>
+            </DropdownItem>
+            
+            {!this.props.isSignedIn && (
+              <DropdownItem>
+                  <Link onClick={() => window.location.href = "/home"} className="nav-link text-dark" to="/home">
+                      <FontAwesomeIcon fixedWidth size="lg" icon="user" color="#e0e0e0" />
+                      <span style={{ paddingLeft: '12px' }}>Login</span>
+                  </Link>
+              </DropdownItem>
+            )}
+
+            {/* <DropdownItem disabled>Action (disabled)</DropdownItem> */}
+
+          {this.props.permissions && (
+              <>
+              <DropdownItem divider />
+              <DropdownItem header>Admin Functions</DropdownItem>
+
+              <DropdownItem>
+                  <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/register">
+                      <FontAwesomeIcon fixedWidth size="lg" icon="user-plus" color="#e0e0e0" />
+                      <span style={{ paddingLeft: '12px' }}>Register User</span>
+                  </Link>
+              </DropdownItem>
+
+              <DropdownItem>
+                  <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/find">
+                      <FontAwesomeIcon fixedWidth size="lg" icon="search" color="#e0e0e0" />
+                      <span style={{ paddingLeft: '12px' }}>Find User</span>
+                  </Link>
+              </DropdownItem>
+
+              <DropdownItem>
+                  <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/remove">
+                      <FontAwesomeIcon fixedWidth size="lg" icon="user-slash" color="#e0e0e0" />
+                      <span style={{ paddingLeft: '12px' }}>Remove User</span>
+                  </Link>
+              </DropdownItem>
+
+              <DropdownItem>
+                  <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/update">
+                      <FontAwesomeIcon fixedWidth size="lg" icon="pen" color="#e0e0e0" />
+                      <span style={{ paddingLeft: '12px' }}>Update User</span>
+                  </Link>
+              </DropdownItem>
+              </>
           )}
-
-          {/* <DropdownItem disabled>Action (disabled)</DropdownItem> */}
-
-        {this.props.permissions && (
-            <>
-            <DropdownItem divider />
-            <DropdownItem header>Admin Functions</DropdownItem>
-
-            <DropdownItem>
-                <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/register">
-                    <FontAwesomeIcon fixedWidth size="lg" icon="user-plus" color="#e0e0e0" />
-                    <span style={{ paddingLeft: '12px' }}>Register User</span>
-                </Link>
-            </DropdownItem>
-
-            <DropdownItem>
-                <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/find">
-                    <FontAwesomeIcon fixedWidth size="lg" icon="search" color="#e0e0e0" />
-                    <span style={{ paddingLeft: '12px' }}>Find User</span>
-                </Link>
-            </DropdownItem>
-
-            <DropdownItem>
-                <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/remove">
-                    <FontAwesomeIcon fixedWidth size="lg" icon="user-slash" color="#e0e0e0" />
-                    <span style={{ paddingLeft: '12px' }}>Remove User</span>
-                </Link>
-            </DropdownItem>
-
-            <DropdownItem>
-                <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/update">
-                    <FontAwesomeIcon fixedWidth size="lg" icon="pen" color="#e0e0e0" />
-                    <span style={{ paddingLeft: '12px' }}>Update User</span>
-                </Link>
-            </DropdownItem>
-            </>
+          </DropdownMenu>
+        </Dropdown>
+        {this.state.fileBrowserOpen && (
+          <div style={{width: "500px", height: "500px", backgroundColor: "black"}}>
+            test
+          </div>
         )}
-        </DropdownMenu>
-      </Dropdown>
+      </div>
     );
   }
 }
