@@ -42,7 +42,7 @@ class NewDropdown extends React.Component {
           </DropdownItem>
 
           <DropdownItem>
-            <Link onClick={() => this.props.dispatchExpand('none')} className="nav-link text-dark" to="/docs">
+            <Link onClick={() => window.location.href ="/docs"} className="nav-link text-dark" to="/docs">
                 <FontAwesomeIcon fixedWidth size="lg" icon="info-circle" color="#e0e0e0" />
                 <span style={{ paddingLeft: '12px' }}>Documentation</span>
             </Link>
