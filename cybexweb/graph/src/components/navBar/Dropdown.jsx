@@ -1,6 +1,8 @@
 import React from 'react';
+import axios from 'axios';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimesCircle} from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import GraphModal from '../modal/graphModal';
 import Graph from '../Graph/Graph';
@@ -13,6 +15,11 @@ class NewDropdown extends React.Component {
     this.state = {
       dropdownOpen: false,
       fileBrowserOpen: false,
+      directories: null,
+      //directories: ["dir1","dir2"],
+      files: null,
+      path: null
+      //files: ["file1","file2"]
     };
   }
 
@@ -22,10 +29,23 @@ class NewDropdown extends React.Component {
     }));
   }
 
-  browseFiles() {
+  toggleFileBrowser() {
     this.setState(prevState => ({
       fileBrowserOpen: !prevState.fileBrowserOpen
     }));
+  }
+  browseFiles(path,toggle=true) {
+    axios
+    .get(`api/v1/getContents/${path.replace('/',":)")}`)
+    .then(({ data }) => {
+      this.setState({files: data.files});
+      this.setState({directories: data.directories});
+      this.setState({path: path});
+    }); 
+    if (toggle==true) {
+      // toggle is true by default
+      this.toggleFileBrowser()
+    }
     // put filebox in middle
   }
 
@@ -60,7 +80,7 @@ class NewDropdown extends React.Component {
             </DropdownItem>
 
             <DropdownItem>
-              <Link onClick={() => this.browseFiles()} className="nav-link text-dark" to="/graph"> 
+              <Link onClick={() => this.browseFiles("SVG/")} className="nav-link text-dark" to="/graph"> 
               {/* <Link onClick={() => window.location.href ="/static/honeypot/ssh-london/cowrie.json.16:40:00.gz"} className="nav-link text-dark" to="/graph"> */}
                   <FontAwesomeIcon fixedWidth size="lg" icon="info-circle" color="#e0e0e0" />
                   <span style={{ paddingLeft: '12px' }}>Honeypot Download</span>
@@ -115,8 +135,37 @@ class NewDropdown extends React.Component {
           </DropdownMenu>
         </Dropdown>
         {this.state.fileBrowserOpen && (
-          <div style={{width: "500px", height: "500px", backgroundColor: "black"}}>
-            test
+          <div style={{position: "fixed", top: "60px", left: "10px", maxWidth: "50%", maxHeight: "500px", overflow: "auto", backgroundColor: "rgba(10, 10, 10, 0.95)", backdropFilter: "blur(20px)", color:"white", padding:"20px",borderRadius:"5px"}}>
+            <div onClick={() => this.setState({fileBrowserOpen: false})}>
+              <FontAwesomeIcon size="2x" icon={faTimesCircle} style={{ float: 'right' }} />
+            </div>
+            <h3>Honeypot Data Download</h3>
+            <h5>{this.state.path}</h5>
+            {this.state.path != null && this.state.path.split("/").length > 2 && (
+              <div onClick={() => this.browseFiles(this.state.path.substring(0, this.state.path.lastIndexOf('/', this.state.path.lastIndexOf('/')-1)+1),false)} style={{backgroundColor:"#0277bd",padding:"2px",marginBottom:"10px",borderRadius:"3px",display:"inline-block"}}>Back...</div>
+            )}
+            <div style={{display: "flex", justifyContent: "flexStart"}}>
+              {this.state.files != null && (
+                <div>
+                  <h5>Files:</h5>
+                  {Object.keys(this.state.files).map(file => (
+                    <div key={file} style={{ display: 'inline-block', margin: '10px', }}>
+                      <a href={"static/" + this.state.path + this.state.files[file]} download>{this.state.files[file]}</a>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {this.state.directories != null && (
+                <div>  
+                  <h5>Directories:</h5>
+                  {Object.keys(this.state.directories).map(directory => (
+                    <div key={directory} style={{ display: 'inline-block', margin: '10px' }}>
+                      <div onClick={() => this.browseFiles(this.state.path + this.state.directories[directory] +'/',false)}>{this.state.directories[directory]}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

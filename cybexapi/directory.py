@@ -8,7 +8,8 @@ from django.conf import settings
 # Returns: <dict>content_map - dictionary of root, subdirectories, and files
 # Author: Adam Cassell
 def get_contents(path):
-    path = 'cybexweb/static/' + path
+    path = 'cybexweb/static/' + path.replace(":)","/")
+    print(path)
     content_map = {
         "root": None,
         "directories": None,
