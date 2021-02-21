@@ -6,7 +6,7 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.http import HttpResponse
 from rest_framework import status
-import pytz
+import os
 from datetime import datetime
 from django.conf import settings
 from py2neo import Graph
@@ -16,18 +16,18 @@ from cybexapi.runner import insertNode, insertHostname
 from cybexapi.gip import asn_insert, ASN, geoip, geoip_insert
 from cybexapi.whoisXML import whois, insertWhois
 from cybexapi.enrichments import insert_domain_and_user, insert_netblock, insert_domain, resolveHost, getNameservers, getRegistrar, getMailServer
-from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_src
+from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_src, send_to_cybex
 from cybexapi.shodanSearch import shodan_lookup, insert_ports
 from cybexapi.import_json import import_json
 from cybexapi.delete_node import delete_node
 from cybexapi.positions import update_positions
+from cybexapi.directory import get_contents
 import json
 from cybexapi.wipe_db import wipeDB
 import pandas as pd
 import time
 import threading
-import requests
-import os
+
 
 # TODO
 # This needs more error checking and probably a more elegent check to see if the db is available
@@ -112,15 +112,14 @@ def enrichLocalNode(enrich_type, value, node_type, graph, user=None):
 
 # TODO
 # Move to library file
-def insertLocalNode(Ntype, data, graph):
-    status = insertNode(Ntype, data, graph)
+def insertLocalNode(node_type, value, graph):
+    status = insertNode(node_type, value, graph)
     return status
-
 
 class exportNeoDB(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, format=None):
+    def get(self, request):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
@@ -133,11 +132,12 @@ class exportNeoDB(APIView):
 class insert(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, format=None, x=None, y=None):
+    def get(self, request, node_type=None, value=None):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
-        status = insertLocalNode(x, y, graph)
+        status = insertLocalNode(node_type, value, graph)
+        
         if status == 1:
             return Response({"Status": "Success"})
         else:
@@ -162,32 +162,29 @@ class delete(APIView):
 class enrichNode(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, format=None, x=None, y=None, z=None):
+    def get(self, request, format=None, enrich_type=None, value=None, node_type=None):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         
-        print(x)
-        print(y)
-        print(z)
-        result = enrichLocalNode(x, y, z, graph)
+        result = enrichLocalNode(enrich_type, value, node_type, graph)
         return Response(result)
 
 class enrichNodePost(APIView):
     permission_classes = (IsAuthenticated, )
     
-    def post(self, request, x=None):
+    def post(self, request, format=None, enrich_type=None):
         current_user = request.user
         data = request.data
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
-        result = enrichLocalNode(x, data["value"], data["Ntype"], graph, current_user)
+        result = enrichLocalNode(enrich_type, data["value"], data["Ntype"], graph, current_user)
         return Response(result)
 
 class enrichURL(APIView):
     permission_classes = (IsAuthenticated, )
     
-    def post(self, request, x=None):
+    def post(self, request, format=None, enrich_type=None):
         current_user = request.user
         data = request.data
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
@@ -226,6 +223,7 @@ class macroCybex(APIView):
             thread.start()
         for thread in thread_list:
             thread.join()
+        ## End of threaded version
 
         # Now that new related IOCs have been added, query cybexCount
         # This is done all all nodes including the newly added ones
@@ -486,7 +484,7 @@ class wipe(APIView):
         wipeDB(graph)
         return Response({"Status": "Neo4j DB full wipe complete!"})
 
-# Remove before release
+## Remove before release
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
@@ -495,22 +493,30 @@ class CsrfExemptSessionAuthentication(SessionAuthentication):
 class importJson(APIView):
     permission_classes = (IsAuthenticated, )
 
-    # Also remove this line, it was to bypass the CSRF
+    ## Also remove this line, it was to bypass the CSRF
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
+    # Description: Used to import a JSON file of the graph and loads the graph.
+    # Parameters: <object>request - The user request
+    # Returns: Response status
+    # Author: Spencer Kase Rohlfing
     def post(self, request, format=None):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         responce = Response(import_json(graph,request.data))
-        return(responce)
+        return (responce)
 
 class position(APIView):
     permission_classes = (IsAuthenticated, )
 
-    # Also remove this line, it was to bypass the CSRF
+    ## Also remove this line, it was to bypass the CSRF
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-    
+
+    # Description: Used to update the current positions of each node and stores it in the Neo4j database.
+    # Parameters: <object>request - The user request
+    # Returns: Response status
+    # Author: Spencer Kase Rohlfing
     def post(self, request, format=None):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
@@ -519,6 +525,34 @@ class position(APIView):
         status = update_positions(request.data, graph)
         return Response({"Status": "Success"})
 
+class dataEntry(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    ## TODO: Also remove this line, it was to bypass the CSRF
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+
+    # Description: Used to send user event data to CYBEX
+    # Parameters: <object>request - The user request
+    # Returns: Response status
+    # Author: Adam Cassell
+    def post(self, request, format=None):
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+
+        status = send_to_cybex(request.data, current_user)
+        return Response({"Status": "Success"})
+
+class getContents(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, path=None):
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+        
+        result = get_contents(path)
+        return Response(result)
 
 # class insertURL(APIView):
 #     permission_classes = (IsAuthenticated, )

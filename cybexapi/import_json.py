@@ -1,10 +1,14 @@
 import json
-import os
 from cybexapi.wipe_db import wipeDB
 from django.conf import settings
 
+# Description: Used to read the JSON value into python JSON
+# Parameters: <object>graph - The current graph
+#             <json>data - the json data
+# Returns: the json values
+# Author: Spencer Kase Rohlfing
 def import_json(graph, data):
-    wipeDB(graph) # clear graph before importing
+    wipeDB(graph) ## clear graph before importing
     values = data['file'].read()
     values = json.loads(values)
     # print(values)
@@ -12,6 +16,12 @@ def import_json(graph, data):
     print("Imported entire graph")
     return values
 
+# Description: Used to write the values to the data. First it parses the information
+#               then creates the nodes in the database. Then it creates the relationship
+#               between nodes if there were any.
+# Parameters: <object>graph - The current graph
+#             <json>data - the json data
+# Author: Spencer Kase Rohlfing
 def writeToDB(graph,json):
     nodes = json['Neo4j'][0][0]['nodes']
     # print(nodes)
@@ -20,7 +30,7 @@ def writeToDB(graph,json):
         data_type = node['properties']['type']
         data_properties = node['properties']
 
-        # Used double {{ }} b/c of how formatting works in Python
+        ## Used double {{ }} b/c of how formatting works in Python
         id_response = graph.run(f"CREATE (n:{data_type} \
             {{ data: '{data}'}}) \
             RETURN ID(n)").data()
@@ -28,14 +38,14 @@ def writeToDB(graph,json):
 
         id_value = id_response[0]['ID(n)']
         nodes[index]['updated_id'] = id_value
-        # print(nodes) # Has new element 'updated_id
+        # print(nodes) ## Has new element 'updated_id
 
-        # Comparing if the length is greater than 2 means that there is more values besides 'data' & 'type'
+        ## Comparing if the length is greater than 2 means that there is more values besides 'data' & 'type'
         if(len(data_properties) > 2):
             for key, value in data_properties.items():
-                # Don't do anything if the key is data or type
+                ## Don't do anything if the key is data or type
                 if isinstance(value,str):
-                    # Add quotes to string so Neo4j recognizes it as string. 
+                    ## Add quotes to string so Neo4j recognizes it as string. 
                     value = f"\"{value}\""
 
                 if(key != 'data' and key != 'type'): 

@@ -106,7 +106,6 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
   function deleteNode(id)
   {
     axios
-        // replace below with actual node deletion api call
         .get(`/api/v1/delete/${id}`)
         .then(({ data }) => {
           if (data['insert status'] !== 0) {

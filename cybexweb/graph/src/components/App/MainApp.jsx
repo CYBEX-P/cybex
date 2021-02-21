@@ -4,7 +4,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faPlayCircle, faInfoCircle, faTimesCircle, faInfo } from '@fortawesome/free-solid-svg-icons';
 import Canvas from '../../testdata/canvas.json';
 
-import { Container, Row } from 'reactstrap';
+import { Container, Row, Input} from 'reactstrap';
+import Select from 'react-select'
+import TimezoneSelect from 'react-timezone-select'
 
 import NavBar from '../navBar/navBar';
 import MenuBar from '../menuBar/menuBar';
@@ -20,6 +22,10 @@ import EventInsertForm from '../EventInsertForm/EventInsertForm';
 import ImportJson from '../forms/InsertForm/ImportJson';
 import Trends from '../modal/Trends';
 import TrendsContext from './TrendsContext';
+import { Macros, MacroCardContainer, MacroCardSubContainer, MacroCardText, MacroDetailsCard} from '../MacroCard';
+
+import { Formik} from 'formik';
+import * as Yup from 'yup';
 
 const App = props => {
   const [isLoading, setLoading] = useState(false);
@@ -43,6 +49,10 @@ const App = props => {
   const [errorToDisplay, setError] = useState(null);
 
   const [macroDetails, setMacroDetails] = useState('none');
+  
+  // Timezone state for use with data entry form
+  const [selectedTimezone, setSelectedTimezone] = useState({})
+  const [uploadedFile, setUploadedFile] = useState(null)
 
   // Get data on first render
   useEffect(() => {
@@ -60,13 +70,14 @@ const App = props => {
       <ModalContext.Provider value={{ isShowingModal, dispatchModal, setError }}>
         <DataContext.Provider value={{ config: props.config, neo4jData, setNeo4jData }}>
           {/* Keep modals here */}
-          <GraphModal title="example" contentLabel="Example Modal">
+          {/* <GraphModal title="example" contentLabel="Example Modal">
             <div>Content will go here soon!</div>
-          </GraphModal>
+          </GraphModal> */}
           <GraphModal title="Neo4j Data" contentLabel="Neo4j Data">
             <div>{JSON.stringify(neo4jData)}</div>
           </GraphModal>
-          <GraphModal title="Database Management" contentLabel="Database Management">
+          {/* Deprecated Modal */}
+          {/* <GraphModal title="Database Management" contentLabel="Database Management">
             <div>
               <Button
                 width="128px"
@@ -82,6 +93,173 @@ const App = props => {
                 Wipe DB
               </Button>
             </div>
+          </GraphModal> */}
+          <GraphModal title="Submit Event Data" contentLabel="Submit Event Data" afterCloseFn={() => setUploadedFile(null)}>
+            <Formik
+              initialValues={{ file: null, timezone: '' }}
+              validationSchema={Yup.object({
+                file: Yup.mixed()
+                  // .max(15, 'Must be 15 characters or less')
+                  .required('Required'),
+                timezone: Yup.string()
+                  // .max(20, 'Must be 20 characters or less')
+                  .required('Required'),
+              })}
+              onSubmit={(values, { setSubmitting }) => {
+                setTimeout(() => {
+                  let formData = new FormData();
+                  formData.append('timezone', values.timezone);
+                  formData.append('file', values.file);
+                  axios.post('/api/v1/dataEntry', formData, {
+                    headers: {
+                      'Content-Type': 'multipart/form-data'
+                    }
+                  }).then(({ response }) => {
+                    dispatchModal('none');
+                  }).catch(() => {
+                    alert('Error submitting data:\n' + JSON.stringify(values, null, 2));
+                  });
+                  setSubmitting(false);
+                }, 400);
+              }}
+            >
+              {formik => (
+                <form style={{height:"100%"}} onSubmit={formik.handleSubmit}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      //alignItems: "center",
+                      height: "calc(80vh - 120px)",
+                      width: "calc(70vw - 45px)"
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        flexWrap: "wrap",
+                        backgroundColor: "rgba(33,33,33,1)",
+                        borderRadius: "10px",
+                        padding: "10px",
+                        marginTop: "20px",
+                      }}
+                    >
+                      <div>
+                        <div>Upload JSON:</div>
+                        <Input id="file" name="file" type="file" onChange={(event) => {
+                          //alert(JSON.stringify(event));
+                          // Read file so that it can be immediately displayed to user
+                          let file = event.currentTarget.files[0];
+                          let reader = new FileReader();
+                          reader.readAsText(file);
+                          reader.onload = function() {
+                            setUploadedFile(reader.result);
+                          };
+                          reader.onerror = function() {
+                            console.log(reader.error);
+                            alert(reader.error);
+                          };
+                          formik.setFieldValue("file", event.currentTarget.files[0]);
+                        }}/>
+                        {formik.touched.file && formik.errors.file ? (
+                          <div style={{color:"red"}}>{formik.errors.file}</div>
+                        ) : null}
+                      </div>
+                      <div style={{display:"flex", justifyContent:"space-between"}}>
+                        <div>
+                          <div>Timezone of data:</div>
+                          <div 
+                            className='select-wrapper'
+                            style={{
+                              color: 'black',
+                              width: '250px'
+                            }}
+                          >
+                            <TimezoneSelect
+                              // id="timezone"
+                              name="timezone"
+                              onChange={ e => {
+                                setSelectedTimezone();
+                                formik.setFieldValue("timezone", e.value);
+                                //formik.handleChange();
+                              }}
+                              onBlur={formik.handleBlur}
+                              value={formik.values.timezone}
+                              //value={selectedTimezone}
+                              // onChange={setSelectedTimezone}
+                              //{...formik.getFieldProps('timezone')}
+                            />
+                            {formik.touched.timezone && formik.errors.timezone ? (
+                              <div style={{color:"red"}}>{formik.errors.timezone}</div>
+                            ) : null}
+                          </div>
+                        </div>
+                        {/* <div
+                          style={{ width: '150px' }}
+                        >
+                          <div>Type:</div>
+                          <Select options={
+                            { value: 'placeholder', label: 'placeholder' }
+                          }></Select>
+                        </div> */}
+                      </div>                
+                    </div>
+                    <div
+                      style={{
+                        height: "60%",
+                        //width: "90%",
+                        borderRadius: "10px",
+                        padding: "10px",
+                        backgroundColor: "rgba(33,33,33,1)",
+                        marginTop: "20px",
+                        overflow: "auto",
+                        //width: "calc(70vw - 20px)"
+                      }}
+                    >
+                      {/* <p>{uploadedFile}</p> */}
+                      {uploadedFile && (
+                        <div>{uploadedFile}</div>
+                      )}
+                      {!uploadedFile && (
+                        <p>Select a file to see a preview here... </p>
+                      )}
+                                           
+                    </div>
+                    <div 
+                      style={{
+                        borderRadius: "10px",
+                        padding: "10px",
+                        backgroundColor: "rgba(33,33,33,1)",
+                        marginTop: "20px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        flexWrap: "wrap",
+                        alignItems: "center"
+                      }}
+                    >
+                      <div>
+                        <div>Organization ID:</div>
+                        <div>[test_org]</div>
+                      </div>
+                      <Button width="90px" type="submit">
+                          Submit
+                      </Button>
+                      {/* <div style={{display:"flex", justifyContent:"space-between", alignItems: "flex-end", width:"280px"}}>
+                        <div>
+                          <div>Name:</div>
+                          <input></input>
+                        </div>
+                        <Button width="90px" type="submit">
+                          Submit
+                        </Button>
+                      </div> */}
+                    </div>
+                  </div>
+                </form>   
+               )}   
+            </Formik>      
           </GraphModal>
           <GraphModal afterCloseFn={() => setError(null)} title="Error" contentLabel="Error">
             <div style={{ textAlign: 'center' }}>
@@ -91,8 +269,8 @@ const App = props => {
               <div style={{ color: '#ff4300' }}>{errorToDisplay}</div>
             </div>
           </GraphModal>
-
-          <GraphModal title="New Event Form">
+          {/* Deprecated Modal - Now using "Submit Event Data" */}
+          {/* <GraphModal title="New Event Form">
             <Container>
               <ModalContext.Consumer>
                 {dispatchModal => (
@@ -108,7 +286,7 @@ const App = props => {
                 )}
               </ModalContext.Consumer>
             </Container>
-          </GraphModal>
+          </GraphModal> */}
 
           <AppContainer>
             <ContentContainerStyle>
@@ -122,410 +300,37 @@ const App = props => {
               <Trends title = "Trends"/>
             </TrendsContext.Provider> */}
             <MenuBar side="left" icon="search">
-              <h3 style={{paddingLeft: "0%", paddingRight: "25%", marginLeft: "30%", marginTop: "5%",color:"white"}}>Macros</h3>
-              {/* <hr style={{marginLeft: "0%"}}/> */}
-              <div style={{padding: "5%"}}>
-              <hr></hr> 
-              {/* <h4>Automations</h4>
-              <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "#0277bd",color: "white", borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
-                Threat Search
-                <div 
-                  style={{display:"inline"}}
-                  onClick={() => {
-                    setLoading(true);
-                    axios.get('/api/v1/macroEmail')
-                    .then(() => {
-                      axios
-                        .get('/api/v1/neo4j/export')
-                        .then(({ data }) => {
-                          setNeo4jData(data);
-                          setLoading(false);
-                        })
-                        .catch(() => {
-                          dispatchModal('Error');
-                          setLoading(false);
-                        });
-                      })
-                      //setLoading(false);
-                    }}
-                >
-                  <FontAwesomeIcon 
-                    size="lg" 
-                    icon={faPlayCircle} 
-                    color="" 
-                    style={{marginLeft:"3%",float:'right'}}/>
-                </div>
-                <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
-                  <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                </div>
-              </div>
-              <hr></hr>  */}
-              <h4>Investigation Patterns</h4>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft:'5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
-                  Phishing Investigation
-                  <div style={{ display: 'inline' }}>
-                    <div
-                      style={{ display: 'inline' }}
-                      onClick={() => {
-                        setLoading(true);
-                        axios.get('/api/v1/macro/all').then(() => {
-                          axios
-                            .get('/api/v1/neo4j/export')
-                            .then(({ data }) => {
-                              setNeo4jData(data);
-                              setLoading(false);
-                            })
-                            .catch(() => {
-                              dispatchModal('Error');
-                              setLoading(false);
-                            });
-                        });
-                        //setLoading(false);
-                      }}
-                    >
-                      <FontAwesomeIcon
-                        size="lg"
-                        icon={faPlayCircle}
-                        color=""
-                        style={{ marginLeft: '3%', float: 'right' }}
-                      />
-                    </div>
-                    <div style={{ display: 'inline' }} onClick={() => setMacroDetails('macro1')}>
-                      <FontAwesomeIcon
-                        size="lg"
-                        icon={faInfoCircle}
-                        color={macroDetails == 'macro1' && '#0277bd'}
-                        style={{ marginLeft: '3%', float: 'right' }}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
-                  CYBEX-P Analysis
-                  <div
-                    style={{ display: 'inline' }}
-                    onClick={() => {
-                      setLoading(true);
-                      // var timer = setInterval( function(){
-                      //   axios
-                      //     .get('/api/v1/neo4j/export')
-                      //     .then(({ data }) => {
-                      //       setNeo4jData(data);
-                      //     });
-                      // }, 3000);
-                      axios.get('/api/v1/macroCybex').then(() => {
-                        axios
-                          .get('/api/v1/neo4j/export')
-                          .then(({ data }) => {
-                            setNeo4jData(data);
-                            setLoading(false);
-                            // clearInterval(timer);
-                          })
-                          .catch(() => {
-                            dispatchModal('Error');
-                            setLoading(false);
-                            // clearInterval(timer);
-                          });
-                      });
-                      //setLoading(false);
-                    }}
-                  >
-                    <FontAwesomeIcon
-                      size="lg"
-                      icon={faPlayCircle}
-                      color=""
-                      style={{ marginLeft: '3%', float: 'right' }}
-                    />
-                  </div>
-                  <div style={{ display: 'inline' }} onClick={() => setMacroDetails('macro2')}>
-                    <FontAwesomeIcon
-                      size="lg"
-                      icon={faInfoCircle}
-                      color={macroDetails == 'macro2' && '#0277bd'}
-                      style={{ marginLeft: '3%', float: 'right' }}
-                    />
-                  </div>
-                </div>
-                <hr></hr> 
-                <h4>Subroutines</h4>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
-                  Enrich IPs
-                  <div 
-                    style={{display:"inline"}}
-                    onClick={() => {
-                      setLoading(true);
-                      axios.get('api/v1/macro/ip')
-                      .then(() => {
-                        axios
-                          .get('/api/v1/neo4j/export')
-                          .then(({ data }) => {
-                            setNeo4jData(data);
-                            setLoading(false);
-                          })
-                          .catch(() => {
-                            dispatchModal('Error');
-                            setLoading(false);
-                          });
-                        })
-                        //setLoading(false);
-                      }}
-                  >
-                    <FontAwesomeIcon 
-                      size="lg" 
-                      icon={faPlayCircle} 
-                      color="" 
-                      style={{marginLeft:"3%",float:'right'}}/>
-                  </div>
-                  {/* <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
-                    <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                  </div> */}
-                </div>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
-                  Deconstruct URLs
-                  <div 
-                    style={{display:"inline"}}
-                    onClick={() => {
-                      setLoading(true);
-                      axios.get('api/v1/macro/url')
-                      .then(() => {
-                        axios
-                          .get('/api/v1/neo4j/export')
-                          .then(({ data }) => {
-                            setNeo4jData(data);
-                            setLoading(false);
-                          })
-                          .catch(() => {
-                            dispatchModal('Error');
-                            setLoading(false);
-                          });
-                        })
-                        //setLoading(false);
-                      }}
-                  >
-                    <FontAwesomeIcon 
-                      size="lg" 
-                      icon={faPlayCircle} 
-                      color="" 
-                      style={{marginLeft:"3%",float:'right'}}/>
-                  </div>
-                  {/* <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
-                    <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                  </div> */}
-                </div>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
-                  Resolve Domains
-                  <div 
-                    style={{display:"inline"}}
-                    onClick={() => {
-                      setLoading(true);
-                      axios.get('api/v1/macro/domain')
-                      .then(() => {
-                        axios
-                          .get('/api/v1/neo4j/export')
-                          .then(({ data }) => {
-                            setNeo4jData(data);
-                            setLoading(false);
-                          })
-                          .catch(() => {
-                            dispatchModal('Error');
-                            setLoading(false);
-                          });
-                        })
-                        //setLoading(false);
-                      }}
-                  >
-                    <FontAwesomeIcon 
-                      size="lg" 
-                      icon={faPlayCircle} 
-                      color="" 
-                      style={{marginLeft:"3%",float:'right'}}/>
-                  </div>
-                  {/* <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
-                    <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                  </div> */}
-                </div>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
-                  Resolve Hosts
-                  <div 
-                    style={{display:"inline"}}
-                    onClick={() => {
-                      setLoading(true);
-                      axios.get('api/v1/macro/host')
-                      .then(() => {
-                        axios
-                          .get('/api/v1/neo4j/export')
-                          .then(({ data }) => {
-                            setNeo4jData(data);
-                            setLoading(false);
-                          })
-                          .catch(() => {
-                            dispatchModal('Error');
-                            setLoading(false);
-                          });
-                        })
-                        //setLoading(false);
-                      }}
-                  >
-                    <FontAwesomeIcon 
-                      size="lg" 
-                      icon={faPlayCircle} 
-                      color="" 
-                      style={{marginLeft:"3%",float:'right'}}/>
-                  </div>
-                  {/* <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
-                    <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                  </div> */}
-                </div>
-                <div style={{marginLeft: "0%", marginTop: "5%", backgroundColor: "white",color: "black",borderRadius:'5px',padding:'5px',paddingLeft: '5%',boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"}}>
-                  Deconstruct Emails
-                  <div 
-                    style={{display:"inline"}}
-                    onClick={() => {
-                      setLoading(true);
-                      axios.get('api/v1/macro/email')
-                      .then(() => {
-                        axios
-                          .get('/api/v1/neo4j/export')
-                          .then(({ data }) => {
-                            setNeo4jData(data);
-                            setLoading(false);
-                          })
-                          .catch(() => {
-                            dispatchModal('Error');
-                            setLoading(false);
-                          });
-                        })
-                        //setLoading(false);
-                      }}
-                  >
-                    <FontAwesomeIcon 
-                      size="lg" 
-                      icon={faPlayCircle} 
-                      color="" 
-                      style={{marginLeft:"3%",float:'right'}}/>
-                  </div>
-                  {/* <div style={{display:"inline"}} onClick={() => setMacroDetails('macro2')}>
-                    <FontAwesomeIcon size="lg" icon={faInfoCircle} color={macroDetails == "macro2" && "#0277bd"} style={{marginLeft:"3%",float:'right'}}/>
-                  </div> */}
-                </div>
-                {/* <div style={{backgroundColor:'white',padding: "5%", marginLeft: "20%", marginTop: "45%",marginBottom: "5%",borderRadius:'5px',boxShadow: "0px -2px 5px 0px rgba(31,30,31,1)"}}>
-                  <h5 style={{textAlign:'center'}}>Macro 1 Details</h5>
-                  <hr></hr>
-                  <div style={{height:'20vh',overflow:'auto'}}>
-                    <h6>URL</h6>
-                    <ul>
-                      <li>Deconstruct URL</li>
-                    </ul>
-                  </div>
-                </div> */}
-                {macroDetails == 'macro1' && (
-                  <div
-                    style={{
-                      position: 'fixed',
-                      height: '90%',
-                      width: '300px',
-                      top: '10%',
-                      left: '340px',
-                      padding: '10px',
-                      backgroundColor: 'rgba(0,0,0,0.95)',
-                      backdropFilter: 'blur(30px)',
-                      color: 'white',
-                      borderRadius: '15px',
-                      border: 'solid',
-                      borderColor: '#0277bd',
-                      overflow: 'auto'
-                    }}
-                    // style={{
-                    //   position: "fixed",
-                    //   minHeight:"25%",
-                    //   width: '40%',
-                    //   top:'56px',
-                    //   left: "334px",
-                    //   padding: '10px',
-                    //   backgroundColor:"black",
-                    //   color:"white",
-                    //   opacity:'0.95',
-                    //   borderRadius:'15px',
-                    //   border:'solid',
-                    //   borderColor:'#0277bd'
-                    // }}
-                  >
-                    <div onClick={() => setMacroDetails('none')}>
-                      <FontAwesomeIcon size="2x" icon={faTimesCircle} style={{ float: 'right' }} />
-                    </div>
-                    <FontAwesomeIcon size="2x" icon={faInfoCircle} style={{ float: 'left', color: '#0277bd' }} />
-                    <h4 style={{ textAlign: 'center' }}>Phishing Macro Details</h4>
-                    <hr />
-                    <div style={{ display: 'inline-block', margin: '10px' }}>
-                      <h6>URL</h6>
-                      <ul>
-                        <li>Deconstruct URL</li>
-                      </ul>
-                    </div>
-                    <div style={{ display: 'inline-block', margin: '10px' }}>
-                      <h6>Email</h6>
-                      <ul>
-                        <li>Deconstruct Email</li>
-                      </ul>
-                    </div>
-                    <div style={{ display: 'inline-block', margin: '10px' }}>
-                      <h6>Host</h6>
-                      <ul>
-                        <li>Resolve IP</li>
-                        <li>Resolve MX</li>
-                        <li>Resolve Nameservers</li>
-                      </ul>
-                    </div>
-                    <div style={{ display: 'inline-block', margin: '10px' }}>
-                      <h6>Domain</h6>
-                      <ul>
-                        <li>Resolve IP</li>
-                        <li>Resolve MX</li>
-                        <li>Resolve Nameservers</li>
-                      </ul>
-                    </div>
-                    <div style={{ display: 'inline-block', margin: '10px' }}>
-                      <h6>IP</h6>
-                      <ul>
-                        <li>Enrich ASN</li>
-                        <li>Enrich GIP</li>
-                        <li>Enrich WHOIS</li>
-                        <li>Enrich Hostname</li>
-                        <li>Return Ports</li>
-                        <li>Return Netblock</li>
-                      </ul>
-                    </div>
-                  </div>
-                )}
-                {macroDetails == 'macro2' && (
-                  <div
-                    style={{
-                      position: 'fixed',
-                      minHeight: '25%',
-                      width: '300px',
-                      top: '10%',
-                      left: '340px',
-                      padding: '10px',
-                      backgroundColor: 'rgba(0,0,0,0.95)',
-                      color: 'white',
-                      borderRadius: '15px',
-                      border: 'solid',
-                      borderColor: '#0277bd',
-                      backdropFilter: 'blur(10px)'
-                    }}
-                  >
-                    <div onClick={() => setMacroDetails('none')}>
-                      <FontAwesomeIcon size="2x" icon={faTimesCircle} style={{ float: 'right' }} />
-                    </div>
-                    <FontAwesomeIcon size="2x" icon={faInfoCircle} style={{ float: 'left', color: '#0277bd' }} />
-                    <h4 style={{ textAlign: 'center' }}>CYBEX-P Macro Details</h4>
-                    <hr />
-                    <h6>Performs threat analysis on all supported IOC nodes.</h6>
-                    <ul>
-                      <li>Adds related IOCs exposed by CYBEX event data</li>
-                      <li>Determines IOC threat level</li>
-                      <li>Scales IOC nodes according to relative number of sightings</li>
-                    </ul>
+              <MacroCardText>Macros</MacroCardText>
+              <hr />
+              <div style={{ padding: '5%' }}>
+                {/* <MacroCardText>Investigation Patterns</MacroCardText> */}
+                <Macros
+                  setLoading={setLoading}
+                  setNeo4jData={setNeo4jData}
+                  dispatchModal={dispatchModal}
+                  setMacroDetails={setMacroDetails}
+                />
+                { macroDetails != 'none' && (
+                  <div>
+                    <MacroDetailsCard>
+                      <div onClick={() => setMacroDetails('none')}>
+                        <FontAwesomeIcon size="2x" icon={faTimesCircle} style={{ float: 'right' }} />
+                      </div>
+                      <FontAwesomeIcon size="2x" icon={faInfoCircle} style={{ float: 'left', color: '#0277bd' }} />
+                      <h4 style={{ textAlign: 'center' }}>{macroDetails.macro}</h4>
+                      <hr />
+                      {/* Dynamically renders list of details based on selected macroDetails */}
+                      {Object.keys(macroDetails.details).map(action => (
+                        <div key={action} style={{ display: 'inline-block', margin: '10px' }}>
+                          <h6>{macroDetails.details[action].headerText}</h6>
+                          <ul>
+                          {macroDetails.details[action].listItems.map(listItem => (  
+                            <li key={listItem}>{listItem}</li>
+                          ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </MacroDetailsCard>
                   </div>
                 )}
               </div>
@@ -547,7 +352,7 @@ const App = props => {
                 <InsertForm config={props.config} />
                 <Row />
                 <Row />
-                <Button width="100%" onClickFunction={() => dispatchModal('New Event Form')}>
+                <Button width="100%" onClickFunction={() => dispatchModal('Submit Event Data')}>
                   <div>New Event</div>
                 </Button>
               </div>
@@ -590,9 +395,10 @@ const App = props => {
                 <div style={{ gridColumn: 2 }}>
                   <ImportJson />
                 </div>
-                <div style={{ gridColumn: 3}}>
-                  <div style={{width: "55%",float: "right"}}>
-                    {/* <Button
+                <div style={{ gridColumn: 3 }}>
+                  <div style={{ width: '55%', float: 'right' }}>
+                    {
+                      /* <Button
                         width="100%"
                         hasIcon
                         onClickFunction={() => {
@@ -602,20 +408,21 @@ const App = props => {
                         <FontAwesomeIcon size="lg" icon="server" />
                         More...
                     </Button> */
-                    <Button
-                      type="button"
-                      onClickFunction={() => {
-                        axios.get('/api/v1/neo4j/wipe').then(() => {
-                          axios.get('/api/v1/neo4j/export').then(({ data }) => {
-                            setNeo4jData(data);
+                      <Button
+                        type="button"
+                        onClickFunction={() => {
+                          axios.get('/api/v1/neo4j/wipe').then(() => {
+                            axios.get('/api/v1/neo4j/export').then(({ data }) => {
+                              setNeo4jData(data);
+                            });
                           });
-                        });
-                      }}
-                      width="100%"
-                    >
-                      Wipe DB
-                    </Button>}
-                  </div>          
+                        }}
+                        width="100%"
+                      >
+                        Wipe DB
+                      </Button>
+                    }
+                  </div>
                 </div>
               </div>
             </MenuBar>
