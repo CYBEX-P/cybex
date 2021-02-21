@@ -26,7 +26,7 @@ SECRET_KEY = os.getenv('SECRET_KEY','9143289qrweqiuystupiddevkeyqweri32123412341
 WHOIS_KEY = os.getenv('WHOIS_KEY','')
 SHODAN_KEY = os.getenv('SHODAN_KEY','')
 TAHOE_KEY = os.getenv('TAHOE_KEY','')
-DEBUG = False # Use False for deployment
+DEBUG = True # Use False for deployment
 USE_MYSQL = False
 
 ALLOWED_HOSTS =  ['localhost', '127.0.0.1']

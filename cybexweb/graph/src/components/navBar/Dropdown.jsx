@@ -79,7 +79,7 @@ class NewDropdown extends React.Component {
             </DropdownItem>
 
             <DropdownItem>
-              <Link onClick={() => this.browseFiles("honeypot/")} className="nav-link text-dark" to="/graph"> 
+              <Link onClick={() => this.browseFiles("SVG/")} className="nav-link text-dark" to="/graph"> 
               {/* <Link onClick={() => window.location.href ="/static/honeypot/ssh-london/cowrie.json.16:40:00.gz"} className="nav-link text-dark" to="/graph"> */}
                   <FontAwesomeIcon fixedWidth size="lg" icon="server" color="#e0e0e0" />
                   <span style={{ paddingLeft: '12px' }}>Honeypot Download</span>
@@ -150,7 +150,7 @@ class NewDropdown extends React.Component {
                   <h5>Files:</h5>
                   {Object.keys(this.state.files).map(file => (
                     <div key={file} style={{ display: 'inline-block', margin: '10px', }}>
-                      <a href={"static/" + this.state.path + this.state.files[file]} download>{this.state.files[file]}</a>
+                      <a href={"../static/" + this.state.path + this.state.files[file]} download>{this.state.files[file]}</a>
                     </div>
                   ))}
                 </div>
