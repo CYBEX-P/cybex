@@ -14,12 +14,11 @@ class NewDropdown extends React.Component {
     this.toggle = this.toggle.bind(this);
     this.state = {
       dropdownOpen: false,
+      // The following state variables are only for file download browser
       fileBrowserOpen: false,
       directories: null,
-      //directories: ["dir1","dir2"],
       files: null,
       path: null
-      //files: ["file1","file2"]
     };
   }
 
@@ -28,7 +27,7 @@ class NewDropdown extends React.Component {
       dropdownOpen: !prevState.dropdownOpen
     }));
   }
-
+  //The following functions are only for file download browser
   toggleFileBrowser() {
     this.setState(prevState => ({
       fileBrowserOpen: !prevState.fileBrowserOpen
@@ -82,7 +81,7 @@ class NewDropdown extends React.Component {
             <DropdownItem>
               <Link onClick={() => this.browseFiles("SVG/")} className="nav-link text-dark" to="/graph"> 
               {/* <Link onClick={() => window.location.href ="/static/honeypot/ssh-london/cowrie.json.16:40:00.gz"} className="nav-link text-dark" to="/graph"> */}
-                  <FontAwesomeIcon fixedWidth size="lg" icon="info-circle" color="#e0e0e0" />
+                  <FontAwesomeIcon fixedWidth size="lg" icon="server" color="#e0e0e0" />
                   <span style={{ paddingLeft: '12px' }}>Honeypot Download</span>
               </Link>
             </DropdownItem>
@@ -134,8 +133,9 @@ class NewDropdown extends React.Component {
           )}
           </DropdownMenu>
         </Dropdown>
+        {/* conditionally renders file browser for honeypot download */}
         {this.state.fileBrowserOpen && (
-          <div style={{position: "fixed", top: "60px", left: "10px", maxWidth: "50%", maxHeight: "500px", overflow: "auto", backgroundColor: "rgba(10, 10, 10, 0.95)", backdropFilter: "blur(20px)", color:"white", padding:"20px",borderRadius:"5px"}}>
+          <div style={{position: "fixed", top: "64px", left: "10px", maxWidth: "50%", maxHeight: "500px", overflow: "auto", backgroundColor: "rgba(10, 10, 10, 0.95)", backdropFilter: "blur(20px)", color:"white", padding:"20px",borderRadius:"5px"}}>
             <div onClick={() => this.setState({fileBrowserOpen: false})}>
               <FontAwesomeIcon size="2x" icon={faTimesCircle} style={{ float: 'right' }} />
             </div>
