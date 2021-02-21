@@ -79,7 +79,7 @@ class NewDropdown extends React.Component {
             </DropdownItem>
 
             <DropdownItem>
-              <Link onClick={() => this.browseFiles("honeypot/")} className="nav-link text-dark" to="/graph"> 
+              <Link onClick={() => this.browseFiles("SVG/")} className="nav-link text-dark" to="/graph"> 
               {/* <Link onClick={() => window.location.href ="/static/honeypot/ssh-london/cowrie.json.16:40:00.gz"} className="nav-link text-dark" to="/graph"> */}
                   <FontAwesomeIcon fixedWidth size="lg" icon="server" color="#e0e0e0" />
                   <span style={{ paddingLeft: '12px' }}>Honeypot Download</span>
