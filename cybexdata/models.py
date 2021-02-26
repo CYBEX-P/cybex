@@ -8,6 +8,7 @@ import json
 import inspect
 
 # User._meta.get_field('email').blank = False
+# Random change that doesn't matter
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     orgid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name='Organization ID')
