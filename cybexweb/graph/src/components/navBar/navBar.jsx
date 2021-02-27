@@ -4,14 +4,18 @@ import { NavBarStyle } from '../__styles__/styles';
 import MenuContext from '../App/MenuContext';
 import NewDropdown from './Dropdown';
 import Trends from '../modal/Trends';
+import AdminPage from '../modal/AdminPage';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartBar, faProjectDiagram } from '@fortawesome/free-solid-svg-icons';
+import { faChartBar, faProjectDiagram, faUsersCog } from '@fortawesome/free-solid-svg-icons';
 
 const NavBar = (props) => {
   const { isExpanded, dispatchExpand } = useContext(MenuContext);
   
   const [trendState,setTrendState] = useState(false);
+
+  // States for admin page
+  const [adminPageState, setAdminPageState] = useState(false);
 
   return (
     <>
@@ -33,6 +37,48 @@ const NavBar = (props) => {
             <FontAwesomeIcon size="lg" icon="user" color="#e0e0e0" />
           </a>
       </UnstyledButton>*/}
+		
+			{/* Admin Page */}
+			{!adminPageState && (
+				<button
+					style={{
+						float:"right",
+						marginRight:"1%",
+						borderRadius:"4px",
+						borderColor:"#6c757d",
+						backgroundColor:"#6c757d",
+						color:"white",
+						padding:"7px 18px"
+					}}
+					onClick={() => setAdminPageState(true)}
+				>
+				<FontAwesomeIcon size="lg" icon={faUsersCog}/>
+			</button>
+			)}
+
+
+			{adminPageState && (
+				<button
+					style={{
+						float:"right",
+						marginRight:"1%",
+						borderRadius:"4px",
+						borderColor:"#6c757d",
+						backgroundColor:"#6c757d",
+						color:"white",
+						padding:"7px 18px"
+					}}
+					onClick={() => setAdminPageState(false)}
+				>
+				<FontAwesomeIcon size="lg" icon={faUsersCog}/>
+			</button>
+			)}
+
+			{adminPageState && (
+				<AdminPage/>
+			)}
+
+
       {!trendState && (
         <button 
           style={{
