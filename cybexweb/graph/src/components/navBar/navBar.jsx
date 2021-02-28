@@ -17,24 +17,36 @@ const NavBar = (props) => {
   // States for admin page
   const [adminPageState, setAdminPageState] = useState(false);
 	const [userAdminStatus, setUserAdminStatus] = useState(false);
-	// Hardcoded values for current existing admins, and current user
-	const adminList = [
+
+	// Hardcoded values for current existing users, and current user
+	const userList = [
 		{
-			user: "Josh",
+			name: "Josh",
 			organization: "UNR",
 			admin: true
 		},
 		{
-			user: "Jack",
-			organization: "Bank of America",
+			name: "Jack",
+			organization: "UNR",
+			admin: false
+		},
+		{
+			// Adding Jim to the UNR organization
+			name: "Jim",
+			organization: "",
+			admin: false 
+		},
+		{
+			// Adding John to the UNR organization
+			name: "John",
+			organization: "",
 			admin: false
 		}
 	];
-
-	const currentUser = adminList[0];
+	const currentUser = userList[0];
 	
 	// Checking if user is an admin, only runs once
-	useEffect(() =>  {
+	useEffect(() => {
 		if (currentUser.admin === true) {
 			setUserAdminStatus(true);
 		} else {
@@ -151,7 +163,7 @@ const NavBar = (props) => {
       )}
 
 			{adminPageState && (
-				<AdminPage />
+				<AdminPage currentUser={currentUser} userList={userList}/>
 			)}
 
 
