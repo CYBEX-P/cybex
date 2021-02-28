@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 
 import { NavBarStyle } from '../__styles__/styles';
 import MenuContext from '../App/MenuContext';
@@ -16,6 +16,32 @@ const NavBar = (props) => {
 
   // States for admin page
   const [adminPageState, setAdminPageState] = useState(false);
+	const [userAdminStatus, setUserAdminStatus] = useState(false);
+	// Hardcoded values for current existing admins, and current user
+	const adminList = [
+		{
+			user: "Josh",
+			organization: "UNR",
+			admin: true
+		},
+		{
+			user: "Jack",
+			organization: "Bank of America",
+			admin: false
+		}
+	];
+
+	const currentUser = adminList[0];
+	
+	// Checking if user is an admin, only runs once
+	useEffect(() =>  {
+		if (currentUser.admin === true) {
+			setUserAdminStatus(true);
+		} else {
+			setUserAdminStatus(false);
+		}
+	}, [])
+
 
   return (
     <>
@@ -39,7 +65,7 @@ const NavBar = (props) => {
       </UnstyledButton>*/}
 		
 			{/* Admin Page */}
-			{!adminPageState && (
+			{(!adminPageState && userAdminStatus) && (
 				<button
 					style={{
 						float:"right",
@@ -57,7 +83,7 @@ const NavBar = (props) => {
 			)}
 
 
-			{adminPageState && (
+			{(adminPageState && userAdminStatus) && (
 				<button
 					style={{
 						float:"right",
@@ -74,11 +100,7 @@ const NavBar = (props) => {
 			</button>
 			)}
 
-			{adminPageState && (
-				<AdminPage/>
-			)}
-
-
+			
       {!trendState && (
         <button 
           style={{
@@ -127,9 +149,16 @@ const NavBar = (props) => {
         
         </div>
       )}
+
+			{adminPageState && (
+				<AdminPage />
+			)}
+
+
       {trendState && (
         <Trends title = "Trends"/>
       )}
+
     </>
   );
 };
