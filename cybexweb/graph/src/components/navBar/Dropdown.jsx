@@ -4,6 +4,7 @@ import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle} from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import PrivacyInfo from '../modal/PrivacyInfo'
 import GraphModal from '../modal/graphModal';
 import Graph from '../Graph/Graph';
 
@@ -18,7 +19,7 @@ class NewDropdown extends React.Component {
       fileBrowserOpen: false,
       directories: null,
       files: null,
-      path: null
+      path: null,
     };
   }
 
@@ -65,7 +66,7 @@ class NewDropdown extends React.Component {
             </DropdownItem>
 
             <DropdownItem>
-              <Link onClick={() => window.location.href = "https://cybexp-priv.ignaciochg.com/manual.html"} className="nav-link text-dark" to="graph">
+              <Link onClick={() => this.props.setPrivacyInfoState(!this.props.privacyInfoState)} className="nav-link text-dark" to="graph">
                   <FontAwesomeIcon fixedWidth size="lg" icon="shield-alt" color="#e0e0e0" />
                   <span style={{ paddingLeft: '12px' }}>Privacy Preservation</span>
               </Link>

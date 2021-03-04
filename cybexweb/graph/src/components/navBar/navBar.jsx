@@ -4,6 +4,7 @@ import { NavBarStyle } from '../__styles__/styles';
 import MenuContext from '../App/MenuContext';
 import NewDropdown from './Dropdown';
 import Trends from '../modal/Trends';
+import PrivacyInfo from '../modal/PrivacyInfo';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartBar, faProjectDiagram } from '@fortawesome/free-solid-svg-icons';
@@ -11,13 +12,16 @@ import { faChartBar, faProjectDiagram } from '@fortawesome/free-solid-svg-icons'
 const NavBar = (props) => {
   const { isExpanded, dispatchExpand } = useContext(MenuContext);
   
+  // The following handle states for full-screen UIs driven by
+  // navbar states. NavBar is parent of Trends and PrivacyInfoState
   const [trendState,setTrendState] = useState(false);
+  const [privacyInfoState,setPrivacyInfoState] = useState(false);
 
   return (
     <>
       <NavBarStyle>
         <div style={{marginLeft: "1%"}}> 
-          <NewDropdown permissions={props.permissions} dispatchExpand={dispatchExpand} isSignedIn={props.isSignedIn}/>
+          <NewDropdown permissions={props.permissions} dispatchExpand={dispatchExpand} isSignedIn={props.isSignedIn} privacyInfoState={privacyInfoState} setPrivacyInfoState={setPrivacyInfoState}/>
           <div style={{position: "absolute", left: "8%", top: "5px"}}>
             <div>Beta Version 0.7.5</div>
             <div>Build 2021-02-15</div>
@@ -83,6 +87,10 @@ const NavBar = (props) => {
       )}
       {trendState && (
         <Trends title = "Trends"/>
+      )}
+      {/* conditionally renders privacy preservation instruction screen */}
+      {privacyInfoState && (
+        <PrivacyInfo setPrivacyInfoState={setPrivacyInfoState}></PrivacyInfo>
       )}
     </>
   );
