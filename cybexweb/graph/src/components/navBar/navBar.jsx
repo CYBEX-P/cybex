@@ -19,26 +19,30 @@ const NavBar = (props) => {
 	const [userAdminStatus, setUserAdminStatus] = useState(false);
 
 	// Hardcoded values for current existing users, and current user
+	// each user has unique id, will probably change when connecting backend
 	const userList = [
 		{
-			name: "Josh",
+			name: "Josh Plateros",
+			userID: 192,
 			organization: "UNR",
 			admin: true
 		},
 		{
-			name: "Jack",
+			name: "Jack White",
+			userID: 2039,
 			organization: "UNR",
 			admin: false
 		},
 		{
-			// Adding Jim to the UNR organization
-			name: "Jim",
-			organization: "",
+			name: "Jim Brown",
+			userID: 109,
+			organization: "UNR",
 			admin: false 
 		},
 		{
 			// Adding John to the UNR organization
-			name: "John",
+			name: "John Black",
+			userID: 104,
 			organization: "",
 			admin: false
 		}
