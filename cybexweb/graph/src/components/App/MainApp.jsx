@@ -287,7 +287,6 @@ const App = props => {
               </ModalContext.Consumer>
             </Container>
           </GraphModal> */}
-
           <AppContainer>
             <ContentContainerStyle>
               <Graph isLoading={isLoading} />

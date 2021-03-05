@@ -399,6 +399,7 @@ const Graph = ({ isLoading }) => {
         style={{
           width: '100%',
           height: '100vh',
+          //height: '-webkit-fill-available',
           gridRow: '1 / span 2',
           gridColumn: 1,
           zIndex: 2,
