@@ -116,14 +116,19 @@ const AdminPage = (props) => {
 			return <div> No other users in organization! </div>;
 		} else {
 			return (
-				<div>
+				<div style={{position: "relative"}}>
 					<select name="currentUsers" 
 									multiple
 									value={usersToBeRemoved}
 									onChange={populateRemoveUsers}>
 						{organizationUsers.map((user, index) => <option style={{width: "200px"}} value={user.userID}>{user.name}</option>)}
 					</select>
-					<button style={{float: "left"}}
+					<button style={{
+										float: "right",
+										marginLeft: "20px",
+										marginTop: "27px"
+									}}
+
 									onClick={removeUsersFromOrganization}>
 					Remove Users
 					</button>
