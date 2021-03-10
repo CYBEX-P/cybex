@@ -1,6 +1,8 @@
 from django.urls import include, path
 from . import views
 from cybexapi.api import exportNeoDB, insert, delete, enrichNode, enrichNodePost, enrichURL, macroCybex, macro, wipe, start, startFile, importJson, position, dataEntry, getContents#, insertURL
+from rest_framework.schemas import get_schema_view
+from django.views.generic import TemplateView
 
 urlpatterns = [
     # View
@@ -28,4 +30,12 @@ urlpatterns = [
     path('isSignedIn', views.isSignedIn.as_view()),
     path('isAdmin', views.isAdmin.as_view()),
 
+    path('openapi/', get_schema_view(
+        title="CYBEX-P Portal API Doc",
+        description="Documentation for the CYBEX-P Portal API. This is solely for the frontend web application and is seperate from the backend CYBEX-P API."
+    ), name='openapi-schema'),
+    path('portalapi/', TemplateView.as_view(
+        template_name='apiportal.html',
+        extra_context={'schema_url':'openapi-schema'}
+    ), name='swagger-ui'),
 ]

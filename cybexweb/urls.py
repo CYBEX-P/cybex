@@ -14,6 +14,7 @@ urlpatterns = [
     path('about', AboutView.as_view(), name='about'),
     path('personnel', PersonnelView.as_view(), name='personnel'),
     path('', HomeView.as_view(), name='home'),
+    
 
     # These are include if you don't want to use the whole multifactor.urls urlpatterns
     # path('totp/new/', totp.Create.as_view(), name="totp_start"),
