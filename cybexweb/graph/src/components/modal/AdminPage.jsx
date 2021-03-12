@@ -5,7 +5,7 @@ import { TrendPanelStyle, AdminPageStyle } from '../__styles__/styles';
 const AdminPage = (props) => {
 
 	// Destructuring Props
-	const { currentUser, userList } = props;
+	const { currentUser, allOrgsUsers, allACLsUsers } = props;
 
 	// Keep track of what is being added to text box
 	const [currMemberAdd, setMemberAdd] = useState("");
@@ -25,13 +25,108 @@ const AdminPage = (props) => {
 	// Used for getting current user in organization to be removed
 	const [usersToBeRemoved, setUsersToBeRemoved] = useState([]);
 
+	// Used for knowing which ACL or Org user wants to edit, NEED TO SET THIS
+	// NEED TO GET CURRENT USERS FIRST ORG AS DEFAULT STATE, REPLACE GROUP NAME WITH FIRST ORG
+	const [editedList, setEditedList] = useState("");
+	const [userList, setUserList] = useState([]);
+	
+	// Flip between showing org list or acl list
+	const [orgState, setOrgState] = useState("org");
+
+	// List to hold all users in both ACLs and Orgs
+	const allUsersInOrgsACLs = allOrgsUsers.concat(allACLsUsers);
+
+
 	// Update text box when user enters text
 	const onMemberAddChange = (event) => {
 		setMemberAdd(event.target.value);
 	}
 
-	// Handle current select user to be removed from organization
+	
+	// Setting default org on first render
+	useEffect(() => {
+		const firstOrg = currentUser.organization[0];
+		setEditedList(firstOrg);
+	}, []);
+
+	useEffect(() => {
+		// DONT FORGET TO DO ACL TOOOOOO!
+		const allUsers = allUsersInOrgsACLs.filter(x => x.groupName === editedList);
+		// Setting users everytime editedList is changed
+		console.log(allUsers);
+		setUserList(allUsers);
+	}, [editedList]);
+
+	// Change default list when changing to org or acl
+	useEffect(() => {
+		const firstACL = currentUser.ACL[0];
+		const firstOrg = currentUser.organization[0];
+		if (orgState === 'acl') {
+			setEditedList(firstACL);
+		} else if (orgState === 'org') {
+			setEditedList(firstOrg);
+		}
+	}, [orgState]);
+
+
+	// Set org or acl
+	const onChangeOrgACLHandler = (e) => {
+		// NEED TO HANDLE TYPE FOR ORG AND ACL
+		setEditedList(e.target.value);
+	}
+
+	const onChangeType = (e) => {
+		if (e.target.value === 'org') {
+			setOrgState("org");
+		} else if (e.target.value === 'acl') {
+			setOrgState("acl");
+		}
+	}
+
+	const displayUsersOrgsACLs = () => {
+		// Can maybe combine all ACLs and Orgs into one list
+		if (orgState === 'org') {
+			return (
+				<div>
+					
+				<select name="currentOrgs" 
+										value={editedList}
+										onChange={onChangeOrgACLHandler}>
+							{currentUser.organization.map((org, index) => <option style={{width: "200px"}} value={org}>{org}</option>)}
+				</select>
+				</div>
+
+			);
+		} else if (orgState === "acl") {
+			return (
+				<div>
+					<select name="currentACls"
+									value={editedList}
+									onChange={onChangeOrgACLHandler}>
+						{currentUser.ACL.map((ACL, index) => <option style={{width: "200px"}} value={ACL}>{ACL}</option>)}
+					</select>
+				</div>
+			);
+		};
+	};
+
+	const changeListType = () => {
+		return (
+			<div>
+				<select name="listType"
+					value={orgState}
+					onChange={onChangeType}>
+				<option value="org">ORG</option>
+				<option value="acl">ACL</option>
+				</select>
+			</div>
+		);
+	}
+		
 	const checkExistingUser = () => {
+		
+		// Get list of users where all match value of editedList (decide if should check ACL or org list)
+		//
 		setAddRemoveStatus(!addRemoveStatus);
 		for (let i = 0; i < userList.length; i++) {
 			// If user is admin
@@ -111,17 +206,18 @@ const AdminPage = (props) => {
 
 		const returnCurrentUsersList = () => {
 		// Get only users from same organization
-		const organizationUsers = userList.filter(user => user.organization === currentUser.organization&& user !== currentUser);
+		const organizationUsers = {userList};
 		if (organizationUsers.length === 0) {
 			return <div> No other users in organization! </div>;
 		} else {
+			console.log(({userList}));
 			return (
 				<div style={{position: "relative"}}>
 					<select name="currentUsers" 
 									multiple
 									value={usersToBeRemoved}
 									onChange={populateRemoveUsers}>
-						{organizationUsers.map((user, index) => <option style={{width: "200px"}} value={user.userID}>{user.name}</option>)}
+						{userList.map((user, index) => <option style={{width: "200px"}} value={user.name}>{user.name}</option>)}
 					</select>
 					<button style={{
 										float: "right",
@@ -164,9 +260,20 @@ const AdminPage = (props) => {
 				<AdminPageStyle>
 					<div style={{padding: "100px", color: "black"}}> 
 						<div style={{fontSize: "large", marginBottom: "80px"}}>
-							Welcome {currentUser.name}, admin of {currentUser.organization}
+							{/* THIS IS WHERE WE SELECT WHICH ORG OR ACL */}
+							Welcome {currentUser.name}, admin of {editedList}
+						<br />
+						<br />
+						<label style={{fontWeight: "bold"}}> Change List Type </label>
+							<div style={{display: "inline-block", marginLeft: "20px"}}>
+								{changeListType()}
+							</div>
+						<br />
+						<br />
+						<label style={{fontWeight: "bold"}}> Select Org/ACL</label>
+							{displayUsersOrgsACLs()}
 						</div>
-						<label style={{fontWeight: "bold"}}> Add User To {currentUser.organization} </label>
+						<label style={{fontWeight: "bold"}}> Add User To {editedList} </label>
 						<div style={{marginBottom: "10px"}} >
 						<input
 							type="text"
@@ -181,7 +288,7 @@ const AdminPage = (props) => {
 							{activeSearch && userStatusResult()}
 						</div>
 						<div style={{marginTop: "55px"}}>
-							<label style={{fontWeight: "bold"}}> Remove User From {currentUser.organization} </label>
+							<label style={{fontWeight: "bold"}}> Remove User From {editedList} </label>
 						</div>
 						<div>
 							{returnCurrentUsersList()}
