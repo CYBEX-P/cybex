@@ -85,15 +85,23 @@ class NewDropdown extends React.Component {
                   <span style={{ paddingLeft: '12px' }}>Honeypot Download</span>
               </Link>
             </DropdownItem>
-            
-            {!this.props.isSignedIn && (
+
+            <DropdownItem>
+                  {/* <Link onClick={() => window.location.href = "/home"} className="nav-link text-dark" to="/home"> */}
+                  <Link onClick={() => this.props.dispatchModal('User Profile')} className="nav-link text-dark" to="/graph">
+                      <FontAwesomeIcon fixedWidth size="lg" icon="user" color="#e0e0e0" />
+                      <span style={{ paddingLeft: '12px' }}>Login</span>
+                  </Link>
+              </DropdownItem>
+
+            {/* {!this.props.isSignedIn && (
               <DropdownItem>
                   <Link onClick={() => window.location.href = "/home"} className="nav-link text-dark" to="/home">
                       <FontAwesomeIcon fixedWidth size="lg" icon="user" color="#e0e0e0" />
                       <span style={{ paddingLeft: '12px' }}>Login</span>
                   </Link>
               </DropdownItem>
-            )}
+            )} */}
 
             {/* <DropdownItem disabled>Action (disabled)</DropdownItem> */}
 
