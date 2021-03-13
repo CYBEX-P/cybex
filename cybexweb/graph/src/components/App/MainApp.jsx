@@ -53,6 +53,8 @@ const App = props => {
   const [errorToDisplay, setError] = useState(null);
 
   const [macroDetails, setMacroDetails] = useState('none');
+
+  const [userProfile, setUserProfile] = useState(null);
   
   // Timezone state for use with data entry form
   const [selectedTimezone, setSelectedTimezone] = useState({})
@@ -67,6 +69,11 @@ const App = props => {
         setNeo4jData(data);
       });
     }
+    // retrieve current user's information on render:
+    axios.get('/api/v1/user_info').then(({ data }) => {
+      setUserProfile(data);
+    });
+
   }, []);
 
   return (
@@ -265,6 +272,26 @@ const App = props => {
                )}   
             </Formik>      
           </GraphModal>
+          {/* Modal to display user profile */}
+            <GraphModal afterCloseFn={() => setError(null)} title="User Profile" contentLabel="User Profile">
+              <div style={{ textAlign: 'center' }}>
+                <FontAwesomeIcon icon="user" size="10x" />
+                <br />
+                {userProfile != null && (
+                  <div>
+                    {userProfile.name}
+                    {userProfile.email}
+                    {userProfile.hash}
+                    {userProfile.org}
+                  </div>
+                )}
+                {userProfile == null && (
+                  <div>Error retrieving user profile.</div>
+                )}
+                <div style={{ color: '#ff4300' }}>{errorToDisplay}</div>
+              </div>
+            </GraphModal>
+
           <GraphModal afterCloseFn={() => setError(null)} title="Error" contentLabel="Error">
             <div style={{ textAlign: 'center' }}>
               <FontAwesomeIcon icon="meh" size="10x" />
@@ -296,7 +323,9 @@ const App = props => {
             <ContentContainerStyle>
               <Graph isLoading={isLoading} setFromDate={setFromDate} setToDate={setToDate} setTimezone={setTimezone} />
             </ContentContainerStyle>
-            <NavBar />
+            <NavBar 
+              dispatchModal={dispatchModal}
+            />
             {/* Below TrendsContext component should be used if we move from state to context for trends panel.
              At the moment, the trends component gets placed into the navbar, and is rendered dependent on a state within the navbar component.
             To more properly treat Trends as an independent component, context can be used in future reworking of the Trend panel logic */}
