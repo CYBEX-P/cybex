@@ -90,7 +90,7 @@ class NewDropdown extends React.Component {
                   {/* <Link onClick={() => window.location.href = "/home"} className="nav-link text-dark" to="/home"> */}
                   <Link onClick={() => this.props.dispatchModal('User Profile')} className="nav-link text-dark" to="/graph">
                       <FontAwesomeIcon fixedWidth size="lg" icon="user" color="#e0e0e0" />
-                      <span style={{ paddingLeft: '12px' }}>Login</span>
+                      <span style={{ paddingLeft: '12px' }}>User Profile</span>
                   </Link>
               </DropdownItem>
 
