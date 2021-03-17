@@ -584,8 +584,11 @@ class orgInfo(APIView):
     '''API for returning various information about the given organization'''
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, org_hash=None):
-        '''Implements get method for orgInfo API
+    ## TODO: Also remove this line, it was to bypass the CSRF
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+
+    def post(self, request, org_hash=None):
+        '''Implements post method for orgInfo API
 
         Args:
             request (rest_framework.request.Request): The request object
@@ -603,6 +606,36 @@ class orgInfo(APIView):
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         
         result = org_info(current_user, org_hash, return_type)
+        return Response(result)
+
+class orgAddRemoveUser(APIView):
+    '''API for adding or removing user from given organization'''
+    permission_classes = (IsAuthenticated, )
+
+    ## TODO: Also remove this line, it was to bypass the CSRF
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+
+    def post(self, request, org_hash=None, users=None, list_type=None, action=None):
+        '''Implements post method for orgInfo API
+
+        Args:
+            request (rest_framework.request.Request): The request object
+            org_hash (string): unique hash for the org
+            users (list of str): list of user hashes to be added or removed
+            list_type (string): "admin","user", or "acl". The list to which the
+                given users should be added or removed from.
+            action (string): "add" or remove". The action to perform for the 
+                given users.
+
+        Returns:
+            Response (rest_framework.response.Response): API response
+
+        '''
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+        
+        result = org_add_remove(current_user, org_hash, users, list_type, action)
         return Response(result)
 
 # class insertURL(APIView):
