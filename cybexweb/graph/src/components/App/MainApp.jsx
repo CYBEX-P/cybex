@@ -66,7 +66,8 @@ const App = props => {
       });
     }
     // retrieve current user's information on render:
-    axios.get('/api/v1/user_info').then(({ data }) => {
+    const params = {'info_to_return': 'info'}
+    axios.get('/api/v1/user_management/currentUserInfo', params).then(({ data }) => {
       setUserProfile(data);
     });
 
