@@ -1,6 +1,6 @@
 from django.urls import include, path
 from . import views
-from cybexapi.api import exportNeoDB, insert, delete, enrichNode, enrichNodePost, enrichURL, macroCybex, macro, wipe, start, startFile, importJson, position, dataEntry, getContents, currentUserInfo#, insertURL
+from cybexapi.api import exportNeoDB, insert, delete, enrichNode, enrichNodePost, enrichURL, macroCybex, macro, wipe, start, startFile, importJson, position, dataEntry, getContents, currentUserInfo, orgInfo#, insertURL
 
 urlpatterns = [
     # View
@@ -16,7 +16,8 @@ urlpatterns = [
     path('api/v1/macro/<subroutine>/', macro.as_view()),
     path('api/v1/neo4j/wipe', wipe.as_view()),
     path('api/v1/getContents/<path>/', getContents.as_view()),
-    path('api/v1/currentUserInfo/<info_to_return>/'), currentUserInfo.as_view()),
+    path('api/v1/userManagement/currentUserInfo/<info_to_return>/', currentUserInfo.as_view()),
+    path('api/v1/userManagement/orgInfo/<org_hash>/<return_type/', currentUserInfo.as_view()),
     ##post
     path('import_json', importJson.as_view()),
     path('api/v1/position', position.as_view()),
