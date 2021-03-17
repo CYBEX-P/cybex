@@ -22,6 +22,7 @@ from cybexapi.import_json import import_json
 from cybexapi.delete_node import delete_node
 from cybexapi.positions import update_positions
 from cybexapi.directory import get_contents
+from cybexapi.user_management import user_info
 import json
 from cybexapi.wipe_db import wipeDB
 import pandas as pd
@@ -552,6 +553,32 @@ class getContents(APIView):
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         
         result = get_contents(path)
+        return Response(result)
+
+class currentUserInfo(APIView):
+    '''API for returning various information about the requesting user'''
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, info_to_return=None):
+        '''Implements get method for currentUser API
+
+        Args:
+            request (): The request object
+            info_to_return (string): "orgs_all" for all orgs user belongs to,
+                "orgs_admin" for all orgs user is admin of, or "info" for user
+                info object containing user hash, username, email, and all
+                orgs to to which user belongs and is admin of
+
+        Returns:
+            Response (): API response
+
+        '''
+        print(type(request))
+        current_user = request.user
+        graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
+                              current_user.graphdb.dbip, current_user.graphdb.dbport)
+        
+        result = user_info(current_user, info_to_return)
         return Response(result)
 
 # class insertURL(APIView):
