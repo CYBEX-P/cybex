@@ -22,25 +22,17 @@ const NavBar = (props) => {
 	// Have current users orgs and acls
 	// Need to think of using API calls to populate org/ACL list
 	const [currentUsersOrgs, setCurrentUsersOrgs] = useState([]);
-	const [currentUsersACLs, setCurrentUsersACLs] = useState([]);
 	
 	// Holds all orgs and acls users that current user is admin of, might need to find more elegant way for this
 	const [allOrgsUsers, setAllOrgsUsers] = useState([]);
-	const [allACLsUsers, setAllACLsUsers] = useState([]);
-
-	// Hardcoded values for current existing users, and current user
-	// each user has unique id, will probably change when connecting backend
 
 	const currentUser = {
 		name: "ADMIN HASH",
-		organization: currentUsersOrgs,
-		ACL: currentUsersACLs,
+		organization: currentUsersOrgs
 	};
 
 	// Get user list of users of multiple orgs, and multiple acls from API calls
-	// Make a list of objects, if doesn't work use React hook for it		
 	
-	// Lists returned from API calls
 
 	// Pass in parameter (string for ex, for the current user, such as a token)
 	const getOrgsACLs = () =>  {
@@ -51,69 +43,36 @@ const NavBar = (props) => {
 		
 	// });
 		
-		// Populate OrgsList and ACLsList from API call (these will be hashes)
+
+
+		// Rename
+		const orgsObj = {
+			info_to_return: "orgs_admin",
+
+		}
+
+		// axios.get('/api/v1/user_management_currentUserInfo', orgsObj)
+		// 			.then(response => {
+		// 				setCurrentUsersOrgs(response.data)
+		// 			})
+		//			.catch(error => {
+		//				console.log(error);
+		//			})
+		
 		const OrgsList = ['UNR1', 'UNR2'];	
 		setCurrentUsersOrgs(OrgsList);
 
-
-		const ACLsList = ['ACL1', 'ACl2'];
-		setCurrentUsersACLs(ACLsList);
-	};
-	const getUsersInOrg = (orgId, userToken) => {
-		// Take in org-id and user token
-		
-		// Iterate and populate list for each org and acl user is admin of	
-		currentUsersOrgs.forEach(function (org) {
-
-			// usersInOrg will be populated here based on orgId
-			const usersInOrg = populateUsers(orgId);
-			
-			usersInOrg.forEach(function (user, index) {
-				const userObj = {
-					name: user,
-					groupName: org,
-				};
-				allOrgsUsers.push(userObj);
-			});
-		});
-
-	}
-
-	// Can maybe put this function and the org function together
-	const getUsersInACL = (ACLId, userToken) => {
-		// This list will be populated by API call
-		// Get users unique token through API?
-		currentUsersACLs.forEach(function (ACL) {
-
-			// usersInACL will be populated here
-			const usersInACL = populateUsers(ACLId);
-			
-			usersInACL.forEach(function (user, index) {
-				const userObj = {
-					name: user,
-					groupName: ACL,
-				};
-				allACLsUsers.push(userObj);	
-			});
-		});
-	}
-
-	// Used to populate lists of users of org or acl, based on org id or acl id
-	const populateUsers = (id) => {
-		// Do API call per ACL or org
-		// Iterate through list of hashes
-		const users = []
-		// 5 users for example, will replace this part with API call
-		for (let i = 0; i < 5; i++) {
-			let r = Math.random().toString(36).substring(7);
-			users.push(r);
-		}
-		return users;
-	}
 	
+	};
+	
+	
+
+
 	
 	
 	// Populating current users orgs and acls
+	// Can change this so when current edited list is updated, update list to send back to adminPage
+	// Can maybe set users list here v so it renders once
 	useEffect(() => {
 		getOrgsACLs();
 	}, [])
@@ -122,8 +81,6 @@ const NavBar = (props) => {
 	useEffect(() => {
 		
 		// Get users of orgs and acls that user is admin of
-		getUsersInOrg();
-		getUsersInACL();
 
 		if (currentUser.organization.length > 0 === true) {
 			setUserAdminStatus(true);
@@ -131,6 +88,7 @@ const NavBar = (props) => {
 			setUserAdminStatus(false);
 		}
 	}, [currentUsersOrgs])
+
 	
   return (
     <>
@@ -240,7 +198,7 @@ const NavBar = (props) => {
       )}
 
 			{adminPageState && (
-				<AdminPage currentUser={currentUser} allOrgsUsers={allOrgsUsers} allACLsUsers={allACLsUsers}/>
+				<AdminPage currentUser={currentUser} />
 			)}
 
 
