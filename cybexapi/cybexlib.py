@@ -2,6 +2,7 @@ from py2neo import Graph, Node, Relationship
 from cybexapi.exportDB import bucket
 from cybexapi.api import *
 import json
+import ast
 import requests
 from django.conf import settings
 from threading import Timer
@@ -386,28 +387,66 @@ def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url, 
 # Returns: Response status
 # Author: Adam Cassell
 def send_to_cybex(data, user):
+    """Posts user event data to CYBEX
+
+    Args:
+        data (dict): The request data
+        user (models.User): The reqesting user
+
+    Returns:
+        int: 1 if successful
+    
+    Raises:
+        TypeError: If any lines of submitted file are invalid JSON, or if 
+            schema validation fails according to the configured requirements.
+        Exception: If response status >= 400 upon attempting to post data.
+
+    """
     # file is retreived from data object passed in from js
     # this reads the file in binary mode, which is recommended
 
     # These lines first decode file in default utf-8 from binary
     # in order to perform string validation on submitted file.
     file_contents = data['file']
-    file_json = json.loads(file_contents.read().decode())
-    print(file_json)
-    required_keys = ["eventid","timestamp","session","src_port","message",
-        "system","isError","src_ip","dst_port","dst_ip","sensor"]
-    # Check if json passes validation. If so, submit to system.
-    if dictionary_validator(file_json,required_keys):
-        files = {'file':  data['file']}
-        data.pop('file', None) # take file key out of data dict
-        
-        # Code to retrieve user orgid will go below
-        # populate rest of data fields that don't come
-        # from user input:
-        data["orgid"] = 'test_org'
-        data["typetag"] = 'test_json'
-        data["name"] = 'frontend_input'
+    file_string = file_contents.read().decode()
+    left_count = file_string.count('{')
+    right_count = file_string.count('}')
 
+    if left_count > 1 and right_count > 1:
+        entries = file_string.splitlines()
+    else:
+        entries = [file_string]
+    for entry in entries:
+        #print(entry)
+        try:
+            entry = json.loads(entry)
+        except json.decoder.JSONDecodeError as err:
+            print(f"Invalid JSON: {err}") # in case json is invalid
+            raise TypeError("The supplied file did not pass validation. "
+                + "JSON on one or more lines is invalid.")
+
+    # First, validate all entries:
+    # NOTE: Requiring all of the following fields failed on real-world cowrie
+    #   output. The less strict key requirement below is max that passes.
+    # required_keys = ["eventid","timestamp","session","src_port","message",
+    #     "system","isError","src_ip","dst_port","dst_ip","sensor"]
+    required_keys = ["eventid","timestamp","session","message",
+        "src_ip","sensor"]
+    for entry in entries:
+        if not dictionary_validator(entry,required_keys):
+            raise TypeError("The supplied file did not pass validation. "
+                + " Ensure that the contents match a supported CYBEX-P schema.") 
+
+    # If all entries are valid, then submit all entries individually...
+
+    # Code to retrieve user orgid will go below
+    # populate rest of data fields that don't come from user input:
+    data.pop('file', None) # take file key out of data dict
+    data["orgid"] = 'test_org'
+    data["typetag"] = 'test_json'
+    data["name"] = 'frontend_input'
+    for entry in entries:
+        files = {'file': bytes(entry, 'utf-8')}
         url = "https://cybex-api.cse.unr.edu:5000/raw"
         user_token = user.profile.cybex_token
         headers = {"Authorization": user_token}
@@ -421,13 +460,11 @@ def send_to_cybex(data, user):
                     f"API response = '{r.content.decode()}'"))
                 raise Exception
 
-            r.close() # redundant?
+            r.close()
             return 1
-    else:
-        raise TypeError("The supplied file did not pass validation. "
-            + " Ensure that the contents match a supported CYBEX-P schema.") 
 
 def check_key(key,dictionary):
+    """Returns whether key is in dictionary"""
     if key not in dictionary:
         print(key + " not found in dictionary")
         return False
@@ -435,6 +472,7 @@ def check_key(key,dictionary):
         return True
 
 def dictionary_validator(dictionary,required_keys):
+    """Returns whether dictionary has all required keys"""
     # The following only passes the file if in strict cowrie format
     for key in required_keys:
         if not check_key(key, dictionary):
