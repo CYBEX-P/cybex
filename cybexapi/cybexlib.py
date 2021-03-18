@@ -381,13 +381,12 @@ def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url, 
 # Functions for data upload to CYBEX-P from web app, including validation:
 ##############################################################################
     
-# Description: Posts user event data to CYBEX
-# Parameters:   <object>data - the request data
-#               <object>user - Object representing the user
-# Returns: Response status
 # Author: Adam Cassell
 def send_to_cybex(data, user):
-    """Posts user event data to CYBEX
+    """Validates user event file uploads and posts to CYBEX.
+
+    Note that the file is validated against the schema defined within
+    the body of this function. Modify required_keys to customize.
 
     Args:
         data (dict): The request data
