@@ -114,10 +114,13 @@ const App = props => {
                     headers: {
                       'Content-Type': 'multipart/form-data'
                     }
-                  }).then(({ response }) => {
+                  }).then(() => {
                     dispatchModal('none');
-                  }).catch(() => {
-                    alert('Error submitting data:\n' + JSON.stringify(values, null, 2));
+                  }).catch((error ) => {
+                    alert('Error submitting data:\n' + 
+                      JSON.stringify(values, null, 2) + "\n" + "Status Code " 
+                      +error.response.status + "\n" + 
+                      JSON.stringify(error.response.data));
                   });
                   setSubmitting(false);
                 }, 400);

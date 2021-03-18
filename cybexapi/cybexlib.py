@@ -376,13 +376,9 @@ def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url, 
     except:
         return -1
 
-# Description: Gets the CYBEX orgid of the current user
-# Parameters: <object>user - Object representing the user
-# Returns: Response status
-# Author: Adam Cassell
-def get_orgid(user):
-    # TODO: return result of user's orgid query instead of hardcode
-    return "test_org"
+##############################################################################
+# Functions for data upload to CYBEX-P from web app, including validation:
+##############################################################################
     
 # Description: Posts user event data to CYBEX
 # Parameters:   <object>data - the request data
@@ -392,28 +388,55 @@ def get_orgid(user):
 def send_to_cybex(data, user):
     # file is retreived from data object passed in from js
     # this reads the file in binary mode, which is recommended
-    files = {'file':  data['file']}
-    data.pop('file', None) # take file key out of data dict
-    
-    # Code to retrieve user orgid will go below
-    # populate rest of data fields that don't come
-    # from user input:
-    data["orgid"] = get_orgid(user)
-    data["typetag"] = 'test_json'
-    data["name"] = 'frontend_input'
 
-    url = "https://cybex-api.cse.unr.edu:5000/raw"
-    user_token = user.profile.cybex_token
-    headers = {"Authorization": user_token}
-    with requests.post(url, files=files,
-                 headers=headers, data=data) as r:
-        print(r.text)
-        if r.status_code >= 400:
-            print((
-                f"error posting. "
-                f"status_code = '{r.status_code}', "
-                f"API response = '{r.content.decode()}'"))
-            raise Exception
+    # These lines first decode file in default utf-8 from binary
+    # in order to perform string validation on submitted file.
+    file_contents = data['file']
+    file_json = json.loads(file_contents.read().decode())
+    print(file_json)
+    required_keys = ["eventid","timestamp","session","src_port","message",
+        "system","isError","src_ip","dst_port","dst_ip","sensor"]
+    # Check if json passes validation. If so, submit to system.
+    if dictionary_validator(file_json,required_keys):
+        files = {'file':  data['file']}
+        data.pop('file', None) # take file key out of data dict
+        
+        # Code to retrieve user orgid will go below
+        # populate rest of data fields that don't come
+        # from user input:
+        data["orgid"] = 'test_org'
+        data["typetag"] = 'test_json'
+        data["name"] = 'frontend_input'
 
-        r.close() # redundant?
-        return 1
+        url = "https://cybex-api.cse.unr.edu:5000/raw"
+        user_token = user.profile.cybex_token
+        headers = {"Authorization": user_token}
+        with requests.post(url, files=files,
+                    headers=headers, data=data) as r:
+            print(r.text)
+            if r.status_code >= 400:
+                print((
+                    f"error posting. "
+                    f"status_code = '{r.status_code}', "
+                    f"API response = '{r.content.decode()}'"))
+                raise Exception
+
+            r.close() # redundant?
+            return 1
+    else:
+        raise TypeError("The supplied file did not pass validation. "
+            + " Ensure that the contents match a supported CYBEX-P schema.") 
+
+def check_key(key,dictionary):
+    if key not in dictionary:
+        print(key + " not found in dictionary")
+        return False
+    else:
+        return True
+
+def dictionary_validator(dictionary,required_keys):
+    # The following only passes the file if in strict cowrie format
+    for key in required_keys:
+        if not check_key(key, dictionary):
+            return False
+    return True

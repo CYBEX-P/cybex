@@ -539,8 +539,10 @@ class dataEntry(APIView):
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
-
-        status = send_to_cybex(request.data, current_user)
+        try:
+            status = send_to_cybex(request.data, current_user)
+        except TypeError as e:
+            return Response({"error": str(e)},status=400)
         return Response({"Status": "Success"})
 
 class getContents(APIView):
