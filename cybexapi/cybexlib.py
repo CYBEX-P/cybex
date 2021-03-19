@@ -441,7 +441,7 @@ def send_to_cybex(data, user):
     # Code to retrieve user orgid will go below
     # populate rest of data fields that don't come from user input:
     data.pop('file', None) # take file key out of data dict
-    data["orgid"] = 'test_org'
+    # data["orgid"] = 'test_org' # Now passed in by user
     data["typetag"] = 'test_json'
     data["name"] = 'frontend_input'
     for entry in entries:
