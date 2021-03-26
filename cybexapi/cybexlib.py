@@ -267,118 +267,120 @@ def cybexCountHandler(Ntype, data1, graph, user):
     # return jsonify({"insert status" : status})
     return status
 
-def cybexRelatedHandler(Ntype, data1, graph, user):
+def cybexRelatedHandler(ntype, data, graph, user, num_pages = 10):
+    """Queries CYBEX for related IOCs and inserts them into the graph
+
+    Takes the given IOC data and queries CYBEX for all related IOCs (as 
+    captured in related CYBEX event data). The returned IOCs are then 
+    processed and inserted into the graph.
+
+    Note that the order and results of the pages varies for each query.
+    There is also sometimes duplicate data across different pages, but
+    this is handled immediately and duplicates are removed. Future work
+    may be done to order the pages that are returned by the underlying
+    CYBEX query, such as ordering the pages in order of their contents'
+    threatRank.
+
+    Args:
+        ntype (string): The IOC type of the originating node
+        data: The data value of the originating node
+        graph (py2neo.database.Graph): The graph object for the current graph
+        user (django.contrib.auth.models.User): The current user making the 
+            request
+        num_pages (int): The desired number of response pages. CYBEX often
+            has large numbers of pages that can be returned for a given piece
+            of data. This value serves to cap the number of pages the query
+            waits for before processing and adding data to the graph. Defaults
+            to 10.
+
+    Returns:
+        1 if successful
+
+    """
+
     #TODO: Modify timeout/execption handling and returns
-    
-    #graph = connect2graph()
-    #req = request.get_json()
-    #Ntype = str(req['Ntype'])
-    Ntype1 = replaceType(Ntype)
-    #data1 = req['value']
-    #print(req)
-    #url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/related/attribute/summary"
+    # process the IOC type to ensure it matches the string the backend expects
+    ntype_processed = replaceType(ntype)
+    # The url to be used for the query to the CYBEX API
     url = "https://cybex-api.cse.unr.edu:5000/query"
+    # Retrieve the token of the current user. This is stored in the django
+    # user profile model and is created by the backend upon user creation.
+    # The token is required for authenticating the request
     user_token = user.profile.cybex_token
-    # print(f"user: {user}")
     headers = {'content-type': 'application/json', 'Authorization' : 'Bearer ' + user_token}
-    #data = { Ntype1 : data1, "from" : "2019/8/30 00:00", "to" : "2019/12/5 6:00am", "tzname" : "US/Pacific" }
+    # Initialize page count for iterating through response pages. Each page is
+    # queried independently.
     count = 1
     r = None
 
-
-    #TODO REPLACE below with real stop condition and/or max pagination
-
-    # Hash table (dict) to solve multithreading insertion duplicate issue:
+    # Hash table (dict) to solve multithreading insertion duplicate issue.
+    # The results of each response page are stored here, excluding duplicates
     insertions_to_make = {}
 
-    ## Start of threaded version
+    ## Start of multithreading
+    # Starts individual threads for querying each page of related IOC data
     thread_list = []
-    for count in range(10):
-        thread = threading.Thread(target=threadedLoop_cybexRelatedHandler, args=(count, Ntype1, data1, graph, headers, url, insertions_to_make))
+     #NOTE: Perhaphs replace below with more advanced stop condition
+     # Currently is based on defined num_pages page limit
+    for count in range(num_pages):
+        thread = threading.Thread(target=threadedLoop_cybexRelatedHandler, args=(count, ntype_processed, data, graph, headers, url, insertions_to_make))
         thread_list.append(thread)
     for thread in thread_list:
         thread.start()
     for thread in thread_list:
         thread.join()
-    ## End of threaded version
+    ## End of multithreading
 
-    # print(insertions_to_make)
-
+    # Iterate through all entries now populated in insertions_to_make dict
+    # and create each relationship. This inserts each item into graph database
     for key, rel in insertions_to_make.items():
         graph.create(rel)
-
-    ## Start of non-threaded version
-    # while r != "[]" and count <= 10:
-    #     print(f"Count: {count}")
-    #     data = {
-    #         "type": "related",
-    #         "data": {
-    #             "sub_type": Ntype1, # make sure ipv4 works for ip (replaceType())
-    #             "data": data1,
-    #             "return_type": "attribute",
-    #             "summary" : True,
-    #             "page": count
-    #         }
-    #     }
-        
-
-    #     data = json.dumps(data) # data is jsonified request
-    #     print(f"data: {data}")
-
-    #     r = requests.post(url, headers=headers, data=data)
-    #     res = json.loads(r.text)
-    #     print(f"res: {res}")
-    #     count += 1
-
-    #     try:
-    #         #status = insertRelated(str(res), graph, data1)
-    #         status = insertRelatedAttributes(res, graph, data1,Ntype1)
-
-    #     except:
-    #         return 1
-    ## End of non-threaded version
-
 
     return 1
 
 
-def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url, insertions_to_make):
+def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, headers, url, insertions_to_make):
+    """Helper function for cybexRelatedHandler. Executes cybexRelated requests
+
+    This function sends and receives a single page for a single cybexRelated
+    query. It then calls insertRelatedAttributes() to insert the response 
+    data into the neo4j graph database. Only meant to be called by 
+    cybexRelatedHandler().
+
+    """
     print(f"Page count: {count}")
-    data = {
-        "type": "related",
+    # construct the data object to be passed to post request
+    payload = {
+        "type": "related", # specify we want to return related IOC data
         "data": {
-            "sub_type": Ntype1, # make sure ipv4 works for ip (replaceType())
-            "data": data1,
+            "sub_type": ntype_processed,
+            "data": data,
             "return_type": "attribute",
             "summary" : True,
             "page": count
         }
     }
-    
+    #TODO: make sure ipv4 works for ip (replaceType())
 
-    data = json.dumps(data) # data is jsonified request
-    print(f"data: {data}")
+    payload = json.dumps(payload) # data is jsonified request
+    print(f"data: {payload}")
 
     try:
-        #r = requests.post(url, headers=headers, data=data, timeout=(3.05, 10))
-        with requests.post(url, headers=headers, data=data, timeout=(3.05, 10)) as r:
+        with requests.post(url, headers=headers, data=payload, timeout=(3.05, 10)) as r:
             res = json.loads(r.text)
             print(f"res: {res}")
+            try:
+                # Use response data to now insert nodes into graph database
+                status = insertRelatedAttributes(res, graph, data, ntype_processed, insertions_to_make)
+            except TypeError as e:
+                print("Error inserting " + data + " into the graph:\n",e)
     except requests.exceptions.ConnectTimeout:
         print("Couldn't connect to CYBEX, timed out.")
         return -1
     except requests.exceptions.ReadTimeout:
         print("Timed out when attempting to read from CYBEX")
         return 0
-    # res = json.loads(r.text)
-    # print(f"res: {res}")
 
-    try:
-        #status = insertRelated(str(res), graph, data1)
-        status = insertRelatedAttributes(res, graph, data1,Ntype1, insertions_to_make)
-
-    except:
-        return -1
 
 # Description: Gets the CYBEX orgid of the current user
 # Parameters: <object>user - Object representing the user
