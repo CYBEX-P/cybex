@@ -70,6 +70,7 @@ const AdminPage = (props) => {
 		populateAllLists();
 
 		// This cleans allOrgsUsers list (so it doesn't keep adding up)
+		// Might move to top of this useEffect
 		setAllOrgsUsers([]);
 	}, [addRemoveStatus]);
 
@@ -252,8 +253,8 @@ const AdminPage = (props) => {
 					break;
 				} else {
 					// User isn't in organization yet
-					console.log(userList);
-					console.log(currMemberAdd)
+					// console.log(userList);
+					// console.log(currMemberAdd)
 					setUserStatus(1);
 					setSaveChangesStatus(true);
 					addUserToOrganization(currMemberAdd);
@@ -287,7 +288,7 @@ const AdminPage = (props) => {
 		// 			.then((response => {
 		// 						console.log(response);
 		// 			});
-		console.log(JSONObjectTest);
+		// console.log(JSONObjectTest);
 	}
 	
 	// Remove all selected users from org
