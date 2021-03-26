@@ -232,14 +232,14 @@ class macroCybex(APIView):
         nodes = data["Neo4j"][0][0]["nodes"]
         
         ## Start of threaded version part 2
-        thread_list = []
-        for node in nodes:
-            thread = threading.Thread(target=self.threadedLoop_cybexCount, args=(node,graph,current_user))
-            thread_list.append(thread)
-        for thread in thread_list:
-            thread.start()
-        for thread in thread_list:
-            thread.join()
+        # thread_list = []
+        # for node in nodes:
+        #     thread = threading.Thread(target=self.threadedLoop_cybexCount, args=(node,graph,current_user))
+        #     thread_list.append(thread)
+        # for thread in thread_list:
+        #     thread.start()
+        # for thread in thread_list:
+        #     thread.join()
         ## End of threaded version
 
         ## Start of non-threaded version

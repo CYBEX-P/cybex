@@ -23,42 +23,43 @@ def pull_ip_src():
     return ip_list
 
 
-def insertCybex(data, graph, value):
+# Deprecated
+# def insertCybex(data, graph, value):
 
-    c = Node("CybexCount", data=data)
-    ip_node = graph.nodes.match(data=value).first()
-    c_node = graph.nodes.match("CybexCount", data=data).first()
+#     c = Node("CybexCount", data=data)
+#     ip_node = graph.nodes.match(data=value).first()
+#     c_node = graph.nodes.match("CybexCount", data=data).first()
 
-    if(c_node):
-        rel = Relationship(ip_node, "HAS_OCCURED", c_node)
-        graph.create(rel)
-        print("Existing CybexCount node linked")
-    else:
-        graph.create(c)
-        rel = Relationship(ip_node, "HAS_OCCURED", c)
-        graph.create(rel)
-        print("New CybexCount node created and linked")
+#     if(c_node):
+#         rel = Relationship(ip_node, "HAS_OCCURED", c_node)
+#         graph.create(rel)
+#         print("Existing CybexCount node linked")
+#     else:
+#         graph.create(c)
+#         rel = Relationship(ip_node, "HAS_OCCURED", c)
+#         graph.create(rel)
+#         print("New CybexCount node created and linked")
 
-    return 1
+#     return 1
 
 
-def insertRelated(data, graph, value):
+# def insertRelated(data, graph, value):
 
-    c = Node("CybexRelated", data=data)
-    ip_node = graph.nodes.match(data=value).first()
-    c_node = graph.nodes.match("CybexRelated", data=data).first()
+#     c = Node("CybexRelated", data=data)
+#     ip_node = graph.nodes.match(data=value).first()
+#     c_node = graph.nodes.match("CybexRelated", data=data).first()
 
-    if(c_node):
-        rel = Relationship(ip_node, "HAS_OCCURED", c_node)
-        graph.create(rel)
-        print("Existing CybexRelated node linked")
-    else:
-        graph.create(c)
-        rel = Relationship(ip_node, "HAS_OCCURED", c)
-        graph.create(rel)
-        print("New CybexRelated node created and linked")
+#     if(c_node):
+#         rel = Relationship(ip_node, "HAS_OCCURED", c_node)
+#         graph.create(rel)
+#         print("Existing CybexRelated node linked")
+#     else:
+#         graph.create(c)
+#         rel = Relationship(ip_node, "HAS_OCCURED", c)
+#         graph.create(rel)
+#         print("New CybexRelated node created and linked")
 
-    return 1
+#     return 1
 
 # Description: Adds Cybex Count and Malicious Count to node data
 # Parameters: <int>numOccur - Cybex Count query response
@@ -342,7 +343,7 @@ def cybexRelatedHandler(Ntype, data1, graph, user):
 
 
 def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url, insertions_to_make):
-    print(f"Count: {count}")
+    print(f"Page count: {count}")
     data = {
         "type": "related",
         "data": {
@@ -359,15 +360,18 @@ def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url, 
     print(f"data: {data}")
 
     try:
-        r = requests.post(url, headers=headers, data=data, timeout=(3.05, 10))
+        #r = requests.post(url, headers=headers, data=data, timeout=(3.05, 10))
+        with requests.post(url, headers=headers, data=data, timeout=(3.05, 10)) as r:
+            res = json.loads(r.text)
+            print(f"res: {res}")
     except requests.exceptions.ConnectTimeout:
         print("Couldn't connect to CYBEX, timed out.")
         return -1
     except requests.exceptions.ReadTimeout:
         print("Timed out when attempting to read from CYBEX")
         return 0
-    res = json.loads(r.text)
-    print(f"res: {res}")
+    # res = json.loads(r.text)
+    # print(f"res: {res}")
 
     try:
         #status = insertRelated(str(res), graph, data1)
