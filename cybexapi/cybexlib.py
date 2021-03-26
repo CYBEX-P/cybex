@@ -92,8 +92,24 @@ def insertCybexCount(numOccur, numMal, graph, value, nType):
 # Author: Adam Cassell
 
 def insertRelatedAttributes(data, graph, value, originalType, insertions_to_make):
+    """Adds related attributes queried from CYBEX to insertions_to_make dict
+
+    Args:
+        data (string): JSON response string from the Related Attribute Summary API call
+        graph (py2neo.database.Graph): The graph object for the current graph
+        value (string): JSON data for the originating node 
+        originalType (string): IOC type of originating node
+        insertions_to_make (dict): dictionary with each key representing each
+            node to add to graph. Each value is the Relationship object
+            that will be later processed to insert the relationship into the
+            neo4j graph
+
+    Returns:
+        0 if successful
+    """
     # iterate over all related attributes..
     for attr, val in data["data"].items():
+        # format IOC type labels to be most human-readable
         attr = bucket(attr)
         originalType = bucket(originalType)
         valString = ""
@@ -104,32 +120,36 @@ def insertRelatedAttributes(data, graph, value, originalType, insertions_to_make
                 # Special case for ports. Group them together.
                 insert_ports(val,graph,value)
         else:
-            for each in val:
-                #     valString = valString + str(each) + ','
-                # valString = valString[:-1] # remove trailing comma
-                # #nodeData = attr + ": " + valString # currently only using value
-                # nodeData = valString
-                nodeData = each
+            for nodeData in val:
+                # Create a temporary node with the given data for comparsions
                 c = Node(attr, data=nodeData)
                 c["source"] = "cybex"
-                ip_node = graph.nodes.match(data=value).first()
+                # Get the existing node from which this query originates
+                original_node = graph.nodes.match(data=value).first()
+                # see if a node already exists with the new data
                 c_node = graph.nodes.match(attr, data=nodeData).first()
-
+                
+                # if c_node is true, an existing node matched the given data
                 if(c_node):
-                    if (ip_node != c_node):
-                        rel = Relationship(ip_node, "CYBEX", c_node)
-                        #rel['color'] = 'rgb(255,255,255)'
-                        #graph.create(rel)
+                    # if the new node is different from the originating node..
+                    if (original_node != c_node):
+                        # create relationshop object from originating node to
+                        # the matching existing node 
+                        rel = Relationship(original_node, "CYBEX", c_node)
+                        # Add relationship object to key of dict that
+                        # corresponds to the appropriate node. Note that the
+                        # key is the data value of the node, represented as a
+                        # string, with an '_r' appended. This is done to cast
+                        # all node values as strings for easy indexing of dict
                         insertions_to_make[nodeData+"_r"] = rel
                         print("Existing CybexRelated node linked")
                     else:
                         print("Related node is same as origin node. Skipped.")
                 else:
-                    #graph.create(c)
-                    #insertions_to_make[str(nodeData)] = c
-                    rel = Relationship(ip_node, "CYBEX", c)
-                    #rel['color'] = 'rgb(255,255,255)'
-                    #graph.create(rel)
+                    # no existing node with given data is found...
+                    # create relationship object from originating node to the
+                    # newly created node
+                    rel = Relationship(original_node, "CYBEX", c)
                     insertions_to_make[nodeData +"_r"] = rel
                     print("New CybexRelated node created and linked")
 
