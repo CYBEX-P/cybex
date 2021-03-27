@@ -9,6 +9,7 @@ import MenuContext from '../App/MenuContext';
 import RadialMenu from '../radialMenu/radialMenu';
 import withNodeType from '../radialMenu/withNodeType';
 import Trends from '../modal/Trends';
+import GraphFilter from './GraphFilter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle, faArrowRight,faTimesCircle, faFilter, faMapPin, faCircleNotch, faDotCircle, faCommentDollar, faCommentDots, faArrowCircleUp } from '@fortawesome/free-solid-svg-icons';
 
@@ -78,7 +79,11 @@ const Graph = ({ isLoading }) => {
 
   const [network, setNetwork] = useState(null);
 
-  const [filterState,setFilterState] = useState(false);
+
+  // const [filterState,setFilterState] = useState(false);
+	const [fromDate, setFromDate] = useState('');
+	const [toDate, setToDate] = useState('');
+	const [timezone, setTimezone] = useState('');
 
   const [commentState,setCommentState] = useState(false);
   const [commentTextState, setCommentTextState] = useState('');
@@ -388,8 +393,23 @@ const Graph = ({ isLoading }) => {
     return setRadialPosition(null);
   }, [selection]);
 
+
+	// Used for filter dates (maybe remove or adjust)
+	useEffect(() => {
+		console.log(fromDate);
+	}, [fromDate]);
+
+	useEffect(() => {
+		console.log(toDate);
+	}, [toDate]);
+
+	useEffect(() => {
+		console.log(timezone);
+	}, [timezone]);
+
   // HOC that returns the radial menu to use
   const RadialToRender = withNodeType(RadialMenu, selectedNodeType, setNeo4jData, config);
+
 
   return (
     <div style={{ display: 'grid', gridTemplateRows: '56px auto' }}>
@@ -407,7 +427,8 @@ const Graph = ({ isLoading }) => {
         }}
       />
       {/* TODO: Turn filter box into seperate component */}
-      {!filterState && ( 
+		<GraphFilter setFromDate={setFromDate} setToDate={setToDate} setTimezone={setTimezone}/>
+			{/* {!filterState && ( 
         <div style={{
           position:"absolute",
           right:"1%",
@@ -541,6 +562,7 @@ const Graph = ({ isLoading }) => {
           </select>	
         </div>
       )}
+			*/}
       {isLoading && (
         <div style={{
           display:"flex",
