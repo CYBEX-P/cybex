@@ -67,6 +67,10 @@ const IconDiv = styled.div`
 `;
 
 const RadialMenu = ({ position, icons, onClickFunctions, scale, titles }) => {
+
+	// Used to check if radial menu should have no options (will hide radial menu)
+	const [emptyState, setEmptyState] = useState(false);
+
   const [onClickFunctionsState] = useState(() => {
     const arrayToReturn = onClickFunctions;
     while (arrayToReturn.length < 8) {
@@ -79,6 +83,9 @@ const RadialMenu = ({ position, icons, onClickFunctions, scale, titles }) => {
     while (arrayToReturn.length < 8) {
       arrayToReturn.push('');
     }
+		// Set as empty state if first element has "none"
+		if (arrayToReturn[0] === "none")
+			setEmptyState(true);
     return arrayToReturn;
   });
   const [iconState] = useState(() => {
@@ -122,6 +129,7 @@ const RadialMenu = ({ position, icons, onClickFunctions, scale, titles }) => {
   });
   return (
     <div>
+		{!emptyState && (		
       <MenuSVG
         position={position}
         scale={scale}
@@ -195,6 +203,7 @@ const RadialMenu = ({ position, icons, onClickFunctions, scale, titles }) => {
           <title>{titleState[7]}</title>
         </Path>
       </MenuSVG>
+			)};
       {iconState.lengh !== 0 &&
         iconState.map(icon => {
           return (
