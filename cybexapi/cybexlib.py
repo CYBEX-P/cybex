@@ -179,23 +179,16 @@ def replaceType(value):
 # Use django.settings to get keys and move URLS to settings as well.
 
 
-def cybexCountHandler(Ntype, data1, graph, user):
+def cybexCountHandler(Ntype, data1, graph, user,event):
     # graph = connect2graph()
     Ntype1 = replaceType(Ntype)
 
-    # test_url = "http://cybex-api.cse.unr.edu:5000/hello"
-    # test_r = requests.get(test_url)
-    # print(test_r.text)
-
     # First, query total count
-    #url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count"
-    #url = "http://localhost:5001/query"
     url = "https://cybex-api.cse.unr.edu:5000/query"
     user_token = user.profile.cybex_token
     headers = {'content-type': 'application/json',
                'Authorization': 'Bearer ' + user_token}
-    # data = {Ntype1: data1, "from": "2019/8/30 00:00",
-    #         "to": "2020/3/1 6:00am", "tzname": "US/Pacific"}
+
     def raise_timeout():
         #raise requests.exceptions.Timeout("Count query timed out.")
         print("*****TIMED OUT*****")
@@ -216,10 +209,12 @@ def cybexCountHandler(Ntype, data1, graph, user):
         print("Fetching cybexCount for "+data1+"...")
         valid = False # Flag to be set when valid api response is returned
         api_timeout = False
-        t = Timer(30.0, raise_timeout)
-        t.start()      
+        # t = Timer(30.0, raise_timeout)
+        # t.start()
+        count = 1      
         while not valid:
-            print("requesting "+ data1 +"...")
+            print("attempt " + str(count)+ ": requesting cybexCount "+ data1 +"...")
+            count +=1
             try:
                 # request timeout tuple is (connection timeout, read timeout)
                 r = requests.post(url, headers=headers, data=data, timeout=(3.05, 30))
@@ -229,14 +224,21 @@ def cybexCountHandler(Ntype, data1, graph, user):
             except requests.exceptions.ReadTimeout:
                 print("Timed out when attempting to read cybexCount")
                 return 0
-            res = json.loads(r.text)
-            if "status" not in res:
-                t.cancel()
-                valid = True
+            try:
+                res = json.loads(r.text)
+                if "data" in res:
+                    # t.cancel()
+                    valid = True
+                else:
+                    event.wait(5)
+            except json.decoder.JSONDecodeError as e:
+                print("Could not decode JSON in response for " + data1,e)
+                print(res)
 
         # Handle situation where timeout occurs on query:
-        if r.status_code == 504:
-            raise_timeout()
+        # if r.status_code == 504:
+        #     raise_timeout()
+
         # Next, query malicious count
         #urlMal = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count/malicious"
         #urlMal = "http://localhost:5001/query"
@@ -259,9 +261,12 @@ def cybexCountHandler(Ntype, data1, graph, user):
         print("Fetching cybexCountMalicious for "+data1+"...")
         valid = False # Flag to be set when valid api response is returned
         api_timeout = False
-        t = Timer(30.0, raise_timeout)
-        t.start()
+        # t = Timer(30.0, raise_timeout)
+        # t.start()
+        count = 1
         while not valid:
+            print("attempt " + str(count)+ ": requesting cybexMaliciousCount "+ data1 +"...")
+            count+=1
             try:
                 rMal = requests.post(url, headers=headers, data=dataMal, timeout=(3.05, 30))
             except requests.exceptions.ConnectTimeout:
@@ -270,11 +275,19 @@ def cybexCountHandler(Ntype, data1, graph, user):
             except requests.exceptions.ReadTimeout:
                 print("Timed out when attempting to read cybexMaliciousCount")
                 return 0
-            resMal = json.loads(rMal.text)
-            # if resMal["status"] is not "processing":
-            if "status" not in resMal:
-                t.cancel()
-                valid = True
+            try:
+                print(rMal.text)
+                resMal = json.loads(rMal.text)
+                # if resMal["status"] is not "processing":
+                if "data" in resMal:
+                    # t.cancel()
+                    valid = True
+                else:
+                    event.wait(5)
+            except json.decoder.JSONDecodeError as e:
+                print("Could not decode JSON in response for " + data1,e)
+                print(resMal)
+                print(rMal.text)
 
     except requests.exceptions.Timeout as e:
         print(e)
@@ -386,19 +399,22 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
     print(f"data: {payload}")
 
     try:
-        with requests.post(url, headers=headers, data=payload, timeout=(3.05, 10)) as r:
-            res = json.loads(r.text)
-            print(f"res: {res}")
+        with requests.post(url, headers=headers, data=payload, timeout=(3.05, 20)) as r:
             try:
+                res = json.loads(r.text)
+                print(f"res: {res}")
                 # Use response data to now insert nodes into graph database
-                status = insertRelatedAttributes(res, graph, data, ntype_processed, insertions_to_make)
+                if "data" in res:
+                    status = insertRelatedAttributes(res, graph, data, ntype_processed, insertions_to_make)
+                else: # Report response not ready yet or doesn't exist for this page
+                    print("Unable to get report response for page " + str(count) + " for " + str(data))
             except TypeError as e:
                 print("Error inserting " + data + " into the graph:\n",e)
     except requests.exceptions.ConnectTimeout:
         print("Couldn't connect to CYBEX, timed out.")
         return -1
     except requests.exceptions.ReadTimeout:
-        print("Timed out when attempting to read from CYBEX")
+        print("Timed out when attempting to read from CYBEX for " + data + " page " + str(count))
         return 0
 
 
