@@ -24,7 +24,7 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
   axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
 
   function EnrichIPbyType(type) {
-    setLoading(true);
+    setLoading("Enriching " + type);
     if (type === "cybexCount" || type === "cybexRelated"){
       axios
         .post(`/api/v1/enrich/${type}/`, {Ntype: `${nodeType.properties.type}`, value: `${nodeType.properties.data}`})

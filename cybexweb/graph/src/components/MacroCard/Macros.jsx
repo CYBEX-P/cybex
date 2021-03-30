@@ -69,7 +69,6 @@ export const Macros = ({ setLoading, setNeo4jData, dispatchModal, setMacroDetail
 
   // Retrieve data from the backend API from the MacroButton that was clicked
   const retrieveAPIData = actionParam => {
-    setLoading(true);
     // Depending on which macro is selected, build the appropriate url for 
     // the api request. Standard lookups and associated subroutines follow
     // the 'macro/<something> structure, where 'macro/all is the full
@@ -82,19 +81,54 @@ export const Macros = ({ setLoading, setNeo4jData, dispatchModal, setMacroDetail
       } else {
         actionParam = "macro/" + actionParam;
       }
+      setLoading("Querying lookups: " + actionParam);
+      axios.get(`/api/v1/${actionParam}`).then(() => {
+        axios
+          .get('/api/v1/neo4j/export')
+          .then(({ data }) => {
+            setNeo4jData(data);
+            setLoading(false);
+          })
+          .catch(() => {
+            dispatchModal('Error');
+            setLoading(false);
+          });
+      });
     }
-    axios.get(`/api/v1/${actionParam}`).then(() => {
-      axios
-        .get('/api/v1/neo4j/export')
-        .then(({ data }) => {
-          setNeo4jData(data);
-          setLoading(false);
-        })
-        .catch(() => {
-          dispatchModal('Error');
-          setLoading(false);
-        });
-    });
+    else {
+      setLoading("Querying related IOCs...");
+      axios.get(`/api/v1/macroCybex/related`).then(() => {
+        axios
+          .get('/api/v1/neo4j/export')
+          .then(({ data }) => {
+            setNeo4jData(data);
+            // setLoading(false);
+            setLoading("Querying threat data for all IOCs...");
+            axios
+              .get('/api/v1/macroCybex/count')
+              .then(() => {
+                axios
+                  .get('/api/v1/neo4j/export')
+                  .then(({ data }) => {
+                    setNeo4jData(data);
+                    setLoading(false);
+                  })
+                  .catch(() => {
+                    dispatchModal('Error');
+                    setLoading(false);
+                  });
+              })
+              .catch(() => {
+                dispatchModal('Error');
+                setLoading(false);
+              });
+          })
+          .catch(() => {
+            dispatchModal('Error');
+            setLoading(false);
+          });
+      });
+    }
   };
 
   // handleInfoClick should pop open a modal corresponding to the aproppriate help text

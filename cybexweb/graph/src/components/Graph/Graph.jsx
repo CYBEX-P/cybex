@@ -294,7 +294,7 @@ const Graph = ({ isLoading }) => {
     if (currentCommentText != '')
     {
       resetCards();
-      setLoading(true);
+      setLoading("Adding comment");
       axios
         .post(`/api/v1/enrich/comment`, {Ntype: `${nodeObj.properties.type}`, value: `${nodeObj.properties.data}`, comment: `${currentCommentText}`})
         .then(({ data }) => {
@@ -573,7 +573,12 @@ const Graph = ({ isLoading }) => {
               alignItems: "center"
               }}
           >
-            <div style={{fontSize: '20px', color: 'white',opacity: 1}}>Querying CYBEX</div>
+            <div style={{fontSize: '20px', color: 'white',opacity: 1}}>
+              {isLoading}
+              {isLoading.includes("threat data") &&(
+                <h6><br></br>This operation may take several minutes depending<br></br>on graph size and underlying data of each node.</h6>
+              )}
+            </div>
             <div
               style={{
                 marginLeft: '15px',
@@ -870,7 +875,7 @@ const Graph = ({ isLoading }) => {
 };
 
 Graph.propTypes = {
-  isLoading: PropTypes.bool.isRequired
+  isLoading: PropTypes.string.isRequired
 };
 
 export default Graph;
