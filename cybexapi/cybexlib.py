@@ -1,3 +1,22 @@
+"""Functions for sending/receiving data from the CYBEX backend.
+
+This module provides three categories of functions for interfacing with the 
+CYBEX backend. The first is a set of functions for requesting data on related
+IOCs and threat data for IOCs. To return related IOCs, use 
+cybexRelatedHandler(). threadedLoop_cybexRelatedHandler() and 
+insertRelatedAttributes() are associated helper functions. To return threat
+data about an IOC, use cybexCountHandler(). insertCybexCount() is an 
+associated helper function.
+
+The second category of functions handles submitting event data to the CYBEX
+backend.
+
+The third category of functions handles CYBEX administrative information, such
+as getting user, organization, admin, and ACL information. Functions are
+provided for making changes to the above administrative properties.
+
+"""
+
 from py2neo import Graph, Node, Relationship
 from cybexapi.exportDB import bucket
 from cybexapi.api import *
@@ -23,7 +42,7 @@ import threading
 #     return ip_list
 
 def insertCybexCount(num_benign, num_mal, graph, value, ntype):
-    """Adds Cybex Count and Malicious Count to node data
+    """Adds Cybex Count and Malicious Count to node data.
 
     Args:
         num_benign (int): Number of sightings in benign CYBEX event contexts
@@ -47,7 +66,7 @@ def insertCybexCount(num_benign, num_mal, graph, value, ntype):
     return 1
 
 def insertRelatedAttributes(data, graph, value, original_type, insertions_to_make):
-    """Adds related attributes queried from CYBEX to insertions_to_make dict
+    """Adds related attributes queried from CYBEX to insertions_to_make dict.
 
     Args:
         data (string): JSON response string from the Related Attribute Summary API call
@@ -112,6 +131,7 @@ def insertRelatedAttributes(data, graph, value, original_type, insertions_to_mak
 
 
 def replaceType(value):
+    """Format IOC types to match the strings the backend expects."""
     if value == "Email":
         return "email_addr"
     elif value == "Host":
@@ -128,7 +148,7 @@ def replaceType(value):
 # TODO
 # Use django.settings to get keys and move URLS to settings as well.
 def cybexCountHandler(ntype, data, graph, user, event):
-    """Queries CYBEX for benign and malicious counts of the given IOC
+    """Queries CYBEX for benign and malicious counts of the given IOC.
 
     Args:
         ntype (string): The IOC type of the originating node
@@ -142,8 +162,8 @@ def cybexCountHandler(ntype, data, graph, user, event):
     Returns:
         int: 1 if successful
     """
+    # process the IOC type to ensure it matches the string the backend expects
     ntype_processed = replaceType(ntype)
-
     # First, query count (sightings in benign contexts)...
 
     # The url to be used for the query to the CYBEX API
@@ -256,7 +276,7 @@ def cybexCountHandler(ntype, data, graph, user, event):
     return status
 
 def cybexRelatedHandler(ntype, data, graph, user, num_pages = 10):
-    """Queries CYBEX for related IOCs and inserts them into the graph
+    """Queries CYBEX for related IOCs and inserts them into the graph.
 
     Takes the given IOC data and queries CYBEX for all related IOCs (as 
     captured in related CYBEX event data). The returned IOCs are then 
@@ -328,7 +348,7 @@ def cybexRelatedHandler(ntype, data, graph, user, num_pages = 10):
 
 
 def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, headers, url, insertions_to_make):
-    """Helper function for cybexRelatedHandler. Executes cybexRelated requests
+    """Helper function for cybexRelatedHandler. Handles cybexRelated requests.
 
     This function sends and receives a single page for a single cybexRelated
     query. It then calls insertRelatedAttributes() to insert the response 
