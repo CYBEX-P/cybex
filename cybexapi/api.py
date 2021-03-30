@@ -16,7 +16,7 @@ from cybexapi.runner import insertNode, insertHostname
 from cybexapi.gip import asn_insert, ASN, geoip, geoip_insert
 from cybexapi.whoisXML import whois, insertWhois
 from cybexapi.enrichments import insert_domain_and_user, insert_netblock, insert_domain, resolveHost, getNameservers, getRegistrar, getMailServer
-from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_src, send_to_cybex
+from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, send_to_cybex #,pull_ip_src,
 from cybexapi.shodanSearch import shodan_lookup, insert_ports
 from cybexapi.import_json import import_json
 from cybexapi.delete_node import delete_node
@@ -233,6 +233,10 @@ class macroCybex(APIView):
         nodes = data["Neo4j"][0][0]["nodes"]
         
         if query == "count" or query == "both":
+            # Event object is passed in to all threads in order to enable
+            # thread-specific, non-blocking wait() functionality. This is
+            # used within cybexCountHandler to limit repeated request
+            # load on server
             event = threading.Event()
             ## Start of threaded version part 2
             thread_list = []

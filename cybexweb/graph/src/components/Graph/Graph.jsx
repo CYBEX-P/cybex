@@ -575,6 +575,9 @@ const Graph = ({ isLoading }) => {
           >
             <div style={{fontSize: '20px', color: 'white',opacity: 1}}>
               {isLoading}
+              {isLoading.includes("threat data") &&(
+                <h6><br></br>This operation may take several minutes depending<br></br>on graph size and underlying data of each node.</h6>
+              )}
             </div>
             <div
               style={{
