@@ -56,7 +56,7 @@ function InitializeGraph(data) {
 // Helper function to truncate strings (used for tooltips)
 const truncate = (input,numChar) => input.length > numChar ? `${input.substring(0, numChar)}...` : input;
 
-const Graph = ({ isLoading }) => {
+const Graph = ({ isLoading, setFromDate, setToDate, setTimezone }) => {
   const { setLoading } = useContext(MenuContext);
   const { neo4jData, setNeo4jData, config } = useContext(NetworkContext);
 
@@ -78,12 +78,6 @@ const Graph = ({ isLoading }) => {
   const [eventListenersAdded, setEventListenersAdded] = useState(false);
 
   const [network, setNetwork] = useState(null);
-
-
-  // const [filterState,setFilterState] = useState(false);
-	const [fromDate, setFromDate] = useState('');
-	const [toDate, setToDate] = useState('');
-	const [timezone, setTimezone] = useState('');
 
   const [commentState,setCommentState] = useState(false);
   const [commentTextState, setCommentTextState] = useState('');
@@ -393,19 +387,6 @@ const Graph = ({ isLoading }) => {
     return setRadialPosition(null);
   }, [selection]);
 
-
-	// Used for filter dates (maybe remove or adjust)
-	useEffect(() => {
-		console.log(fromDate);
-	}, [fromDate]);
-
-	useEffect(() => {
-		console.log(toDate);
-	}, [toDate]);
-
-	useEffect(() => {
-		console.log(timezone);
-	}, [timezone]);
 
   // HOC that returns the radial menu to use
   const RadialToRender = withNodeType(RadialMenu, selectedNodeType, setNeo4jData, config);

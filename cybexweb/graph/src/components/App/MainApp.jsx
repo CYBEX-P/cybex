@@ -28,7 +28,11 @@ import { Formik} from 'formik';
 import * as Yup from 'yup';
 
 const App = props => {
-  const [isLoading, setLoading] = useState(false);
+	const [fromDate, setFromDate] = useState('');
+	const [toDate, setToDate] = useState('');
+	const [timezone, setTimezone] = useState('');
+	
+	const [isLoading, setLoading] = useState(false);
 
   const [isExpanded, dispatchExpand] = useReducer((_, action) => {
     if (action === 'left' || action === 'right' || action === 'bottom' || action === 'top') {
@@ -290,7 +294,7 @@ const App = props => {
 
           <AppContainer>
             <ContentContainerStyle>
-              <Graph isLoading={isLoading} />
+              <Graph isLoading={isLoading} setFromDate={setFromDate} setToDate={setToDate} setTimezone={setTimezone} />
             </ContentContainerStyle>
             <NavBar />
             {/* Below TrendsContext component should be used if we move from state to context for trends panel.
