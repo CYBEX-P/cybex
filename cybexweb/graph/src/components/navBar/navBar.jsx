@@ -19,8 +19,8 @@ const NavBar = (props) => {
         <div style={{marginLeft: "1%"}}> 
           <NewDropdown permissions={props.permissions} dispatchExpand={dispatchExpand} isSignedIn={props.isSignedIn}/>
           <div style={{position: "absolute", left: "8%", top: "5px"}}>
-            <div>Beta Version 0.7.5</div>
-            <div>Build 2021-02-15</div>
+            <div>Beta Version 0.8.0</div>
+            <div>Build 2021-03-15</div>
           </div>
         </div>
         
