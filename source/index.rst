@@ -3,14 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to cybex_web_app's documentation!
-=========================================
+Welcome to the CYBEX-P Web App documentation!
+=====================================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-
-
+   
+   README
 
 Indices and tables
 ==================
