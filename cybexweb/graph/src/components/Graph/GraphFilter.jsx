@@ -10,9 +10,9 @@ const GraphFilter = (props) => {
 	const [filterState, setFilterState] = useState(false);
 	const [selectedTimezone, setSelectedTimezone] = useState('');
 
-	// Get yesterdays date
+	// Get ~one year ago's date (default fromDate)
 	let previousDate = new Date();
-	previousDate.setDate(previousDate.getDate() - 1);
+	previousDate.setDate(previousDate.getDate() - 365);
 
 	const [toDate, setToDate] = useState(new Date());
 	const [fromDate, setFromDate] = useState(previousDate);
