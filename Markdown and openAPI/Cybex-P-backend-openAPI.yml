@@ -1,0 +1,245 @@
+openapi: 3.0.0
+servers: []
+info:
+  description: This is a list of available routes exposed from the Cybex-P backend API Module. The Cybex-P API module is the gateway between the frontend web application/input modules and the backend Archive/Analytics modules.
+  version: "1.0.0"
+  title: Simple Inventory API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: Cybex-P Query
+    description: Operations for handling Report calls to the backend
+  - name: Cybex-P Post
+    description: Operations for the posting of data to the backend
+  - name: Cybex-P Resource
+    description: Resource operations are meant to handle miscellaneous task such as token authentication, system configurations, and appending of new users and organization
+  - name: Cybex-P Ping
+    description: Pinging protocols
+paths:
+  /query:
+    get:
+      tags:
+        - Cybex-P Query
+      summary: Makes an API report request to the backend
+      operationId: query
+      description: 'When called, a Cybex-P TDQL report request is made to the backend to check on the status of data that was provided by the user.'
+      parameters: 
+      - in: query
+        name: 'Idnt_backend'
+        schema:
+          type: string
+        description: 'Identity of the backend database where the API call is being made to'
+      responses:
+        '201':
+          description: 'The report request is done processing and is ready to be returned to the user.'
+        '202':
+          description: 'The report request has been accepted. However, the data is still currently being processed. Proceed to query again at a later time.'
+        '401':
+          description: 'Unauthorized report request due to an invalid token.'
+        '400':
+          description: 'Bad request. The formatting of the query is invalid.'
+        '500': 
+          description: 'Internal error. The server is potentially down or another internal error is present'
+  /raw:
+    post:
+      tags: 
+        - Cybex-P Post
+      summary: Post collected threat data and any user input to the raw module
+      operationId: raw
+      description: 'data that is called in with this URL are sent to the Cybex-P raw module to be validated for mandatory itypes and parsed into data that will be sent to the cache data lake.'
+      parameters: []
+      
+      responses:
+        '201':
+          description: 'Succesful POST request. The file(s) has been uploaded successfully.'
+        '400':
+          description: 'Bad request. Inalid input, Incomplete input, or invalid raw input'
+        '500': 
+          description: 'Internal error. The Server itself has an error or the Cacde data lake is down'
+  /ping:
+    put:
+      tags:
+        - Cybex-P Ping
+      summary: Simple ping to the specified identity backend
+      operationId: ping
+      description: 'A ping function to check up on the backend'
+      parameters: []
+      responses:
+        '200':
+          description: 'Ping to the backend was successfully made. The backend is alive and running'
+  /TestToken:
+    put:
+      tags: 
+        - Cybex-P Resource
+      summary: Token validation endpoint
+      operationId: token testing
+      parameters: 
+      - in: query
+        name: 'Idnt_backend'
+        schema:
+          type: string
+        description: 'Identity of the backend database where the API call is being made to'
+      responses:
+        '200':
+          description: 'User token is valid'
+        '401':
+          description: 'Unauthorized. The provided token is invalid'
+          
+  /GetMyHash:
+    get:
+      tags:
+      -  Cybex-P Resource
+      summary: foo
+      
+      responses:
+        '400':
+          description: 'foo'
+  /Login:
+    post:
+      tags:
+      -  Cybex-P Resource
+      summary: foo      
+      responses:
+        '400':
+          description: 'foo'
+    
+  /AddUser:
+    post:
+      tags:
+      -  Cybex-P Resource
+      summary: foo      
+      responses:
+        '400':
+          description: 'foo'    
+  /AddOrg:
+    post:
+      tags:
+      -  Cybex-P Resource
+      summary: foo      
+      responses:
+        '400':
+          description: 'foo'
+  
+  /AddConfig:
+    post:
+      tags:
+      -  Cybex-P Resource
+      summary: foo      
+      responses:
+        '400':
+          description: 'foo'
+  
+  /ChangeOrgACL:
+    patch:
+      tags:
+      -  Cybex-P Resource
+      summary: foo      
+      responses:
+        '400':
+          description: 'foo'
+  
+        
+    
+
+#   /inventory:
+#     get:
+#       tags:
+#         - developers
+#       summary: searches inventory
+#       operationId: searchInventory
+#       description: |
+#         By passing in the appropriate options, you can search for
+#         available inventory in the system
+#       parameters:
+#         - in: query
+#           name: searchString
+#           description: pass an optional search string for looking up inventory
+#           required: false
+#           schema:
+#             type: string
+#         - in: query
+#           name: skip
+#           description: number of records to skip for pagination
+#           schema:
+#             type: integer
+#             format: int32
+#             minimum: 0
+#         - in: query
+#           name: limit
+#           description: maximum number of records to return
+#           schema:
+#             type: integer
+#             format: int32
+#             minimum: 0
+#             maximum: 50
+#       responses:
+#         '200':
+#           description: search results matching criteria
+#           content:
+#             application/json:
+#               schema:
+#                 type: array
+#                 items:
+#                   $ref: '#/components/schemas/InventoryItem'
+#         '400':
+#           description: bad input parameter
+#     post:
+#       tags:
+#         - admins
+#       summary: adds an inventory item
+#       operationId: addInventory
+#       description: Adds an item to the system
+#       responses:
+#         '201':
+#           description: item created
+#         '400':
+#           description: 'invalid input, object invalid'
+#         '409':
+#           description: an existing item already exists
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               $ref: '#/components/schemas/InventoryItem'
+#         description: Inventory item to add
+# components:
+#   schemas:
+#     InventoryItem:
+#       type: object
+#       required:
+#         - id
+#         - name
+#         - manufacturer
+#         - releaseDate
+#       properties:
+#         id:
+#           type: string
+#           format: uuid
+#           example: d290f1ee-6c54-4b01-90e6-d701748f0851
+#         name:
+#           type: string
+#           example: Widget Adapter
+#         releaseDate:
+#           type: string
+#           format: date-time
+#           example: '2016-08-29T09:12:33.001Z'
+#         manufacturer:
+#           $ref: '#/components/schemas/Manufacturer'
+#     Manufacturer:
+#       required:
+#         - name
+#       properties:
+#         name:
+#           type: string
+#           example: ACME Corporation
+#         homePage:
+#           type: string
+#           format: url
+#           example: 'https://www.acme-corp.com'
+#         phone:
+#           type: string
+#           example: 408-867-5309
+#       type: object
