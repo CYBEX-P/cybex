@@ -1,14 +1,6 @@
 cybexapi package
 ================
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   cybexapi.migrations
-
 Submodules
 ----------
 
