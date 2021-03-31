@@ -26,7 +26,7 @@ the Cybex-P `API` (not to be confused with `Cybex-P API Module`, which is the en
 The following calls can be made to `Cybex-P API`:
 |URL/Routes                |TYPE	| FUNCTION                         |
 |----------------|-------------------------------|-----------------------------|
-|`/ping`|GET            |Utility call to ping the backend            |
+|`/ping`|PUT            |Utility call to ping the backend            |
 |`/query`|GET           |When called, checks the status of the previously provided data set and returns it if available            |
 |`/raw`          |POST|Call the `raw` module and proceeds to parse and prepare the inputted data to be sent to the cache data lake|
 |`/test/token`          |POST|Call the `resource` module and validate the provided token|
@@ -34,7 +34,7 @@ The following calls can be made to `Cybex-P API`:
 |`\login`          |POST|Take the provided and POST data and authenticate the login instance|
 |`/add/user`          |POST|Register a new user|
 |`/add/org`          |POST|Register a new organization|
-|`/change/org/acl`          |POST|Adjust and modify an organizations Access Control List|
+|`/change/org/acl`          |PATCH|Adjust and modify an organizations Access Control List|
 
 
 ## Views

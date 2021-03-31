@@ -58,7 +58,7 @@ Of the current the current six plugins that are present in the respository, four
 	- foo
 - `websocket`
 	- foo
-# Module setup and execution
+# Module Execution Process
 - foo
 
 
