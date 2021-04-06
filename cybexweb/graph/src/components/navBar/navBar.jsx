@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 
 import { NavBarStyle } from '../__styles__/styles';
 import MenuContext from '../App/MenuContext';
@@ -10,9 +10,18 @@ import { faChartBar, faProjectDiagram } from '@fortawesome/free-solid-svg-icons'
 
 const NavBar = (props) => {
   const { isExpanded, dispatchExpand } = useContext(MenuContext);
-  
-  const [trendState,setTrendState] = useState(false);
 
+	const [trendState,setTrendState] = useState(false);
+		
+	const [IPs, setIPs] = useState([]);
+
+	// This should update IPs everytime props.ipData
+	// is changed from MainApp.jsx
+	useEffect(() => {
+		setIPs(props.ipData);
+	}, [props.ipData]);
+
+		
   return (
     <>
       <NavBarStyle>

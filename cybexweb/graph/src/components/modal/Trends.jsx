@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartBar } from '@fortawesome/free-solid-svg-icons';
+import { faGlobeAmericas } from '@fortawesome/free-solid-svg-icons';
 
 import TrendsContext from '../App/TrendsContext';
 import TrendBox from './TrendBox';
@@ -9,6 +10,7 @@ import { TrendPanelStyle } from '../__styles__/styles';
 import TrendRow from './TrendRow';
 
 const Trends = (props) => {
+	const [mapViewState, setMapViewState] = useState(false);
     // const trendDisplay = useContext(TrendsContext); // Only used if Trends panel toggle is context-driven
     return (
         /* Below is only used if Trends panel toggle becomes context-driven. 
@@ -29,7 +31,23 @@ const Trends = (props) => {
         // </div>
         <div>
             <TrendPanelStyle>
-                <div style ={{padding: "1%",textAlign: "center", fontSize: "2em"}}>{props.title}</div>
+                <div style ={{padding: "1%",textAlign: "center", fontSize: "2em"}}>{props.title}
+									<button 
+										style={{
+											float:"right",
+											marginRight:"3%",
+											borderRadius:"4px",
+											borderColor:"#6c757d",
+											backgroundColor:"#6c757d",
+											color:"white",
+											padding:"5px 12px"
+										}}
+										onClick={() => setMapViewState(true)}
+									>
+									<FontAwesomeIcon size="sm" icon={faGlobeAmericas}/>
+									</button>
+								</div>
+
                 <TrendRow>
                     <TrendBox title = "Waiting on MongoDB trends to go here" url = "http://cybexp1.acs.unr.edu/mongodb-charts-rxzhv/embed/charts?id=0d62d774-8aed-4ec2-a679-101f3c6fefa6&tenant=b83cdb1d-7ae9-4d7b-be7d-7932f473a41e" size = "large"></TrendBox>
                 </TrendRow>
