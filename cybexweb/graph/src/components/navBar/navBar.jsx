@@ -27,7 +27,7 @@ const NavBar = (props) => {
 	const [allOrgsUsers, setAllOrgsUsers] = useState([]);
 
 	const currentUser = {
-		name: "ADMIN HASH",
+		name: "ADMIN",
 		organization: currentUsersOrgs
 	};
 

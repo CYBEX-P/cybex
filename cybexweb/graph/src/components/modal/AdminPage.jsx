@@ -430,18 +430,17 @@ const AdminPage = (props) => {
 			<TrendPanelStyle>
 				<AdminPageStyle>
 					<div style={{padding: "100px", color: "black"}}> 
-						<div style={{fontSize: "large", marginBottom: "80px"}}>
+						<div style={{fontSize: "large", marginBottom: "70px"}}>
 							Welcome {currentUser.name}, admin of {currentOrg}
 						<br />
+						<br />
+						<label style={{fontWeight: "bold"}}> Select Org</label>
+							{displayUsersOrgs()}
 						<br />
 						<label style={{fontWeight: "bold"}}> Change List Type </label>
 							<div style={{display: "inline-block", marginLeft: "20px"}}>
 								{changeListType()}
 							</div>
-						<br />
-						<br />
-						<label style={{fontWeight: "bold"}}> Select Org</label>
-							{displayUsersOrgs()}
 						</div>
 						<label style={{fontWeight: "bold"}}> Add User To {currentOrg} {currentListName()} List </label>
 						<div style={{marginBottom: "10px"}} >
