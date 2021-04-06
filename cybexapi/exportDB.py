@@ -158,7 +158,8 @@ def processExport(dataObject):
 
     for x in dataObject["Neo4j"][1]:
         for key in x['edges']:
-            if key['type'] == 'CYBEX':
+            if "CYBEX" in key['type']:
+            #if key['type'] == 'CYBEX':
                 key['dashes'] = 'true'
                 #key['arrows'] = 'to;from'
                 key['width'] = 0.5

@@ -264,12 +264,35 @@ const Graph = ({ isLoading, setFromDate, setToDate, setTimezone }) => {
     {
       if (typeof data.Neo4j !== 'undefined') {
         var edgeObj = data.Neo4j[1][0].edges.filter(properties => properties.id === e.edge);
+        var edgeType = edgeObj[0].type; // Describes the relationship this edge represents
+        var edgeLabel = JSON.stringify(edgeType) // The label to be rendered for this edge
+        if (edgeType.includes("CYBEX")) {
+          //****TODO: change above .includes back to "CYBEX:" with colon
+          let edgeType = "CYBEX:password=attribute,login_credentials=object,ssh=event,file_download=event,file=object,hash=attribute"; // for testing
+          var edgeTypeArr = edgeType.split(':'); // only care about string after 'CYBEX:'
+          var event_items = edgeTypeArr[1].split(',');
+          event_items.forEach((item, index) => {
+            var itemArr = item.split('=');
+            // itemArr[0] is item description, itemArr[1] is item type
+            // replace item type with the associated color that will show in
+            // this item tag's background (i.e. color driven by item type)
+            if (itemArr[1] == "attribute") {
+              itemArr[1] = "#8F4DA3" // purple
+            } else if (itemArr[1] == "object") {
+              itemArr[1] = "#4DA38F" // blue-green
+            } else if (itemArr[1] == "event") {
+              itemArr[1] = "#A38F4D" // gold
+            }
+            // replace item string with modified item array
+            event_items[index] = itemArr
+          });
+          // event_items now fully modified, this array becomes the 'edgeType'...
+          edgeLabel = event_items
+        } 
         setHoverTextEdge({
-          // Set the select text to the properties of the data
-          data: JSON.stringify(edgeObj[0].type),
+          data: edgeLabel, // is either string or array for special cybexRelated case
           x: e.event.clientX,
           y: e.event.clientY,
-          //label: JSON.stringify(nodeObj[0].label),
         });
       }
     });
@@ -497,22 +520,36 @@ const Graph = ({ isLoading, setFromDate, setToDate, setTimezone }) => {
         </div>
       )}
       {hoverTextEdge && (
-        <div
-          style={{
-                position: 'absolute',
-                zIndex: 1000,
-                top: hoverTextEdge.y,
-                left: hoverTextEdge.x,
-                // backgroundColor: '#111', // Used for classic Card styling only.
-                pointerEvents: 'none',
-                backgroundColor: "black",
-                color: "white",
-                opacity: "0.85",
-                borderRadius: "10px",
-                padding: "10px",
-                boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"
-              }}>
-          <h6 style={{textAlign:"center"}}>{hoverTextEdge.data.replace(/"/g,"")}</h6>
+        <div style={{
+          position: 'absolute',
+          zIndex: 1000,
+          top: hoverTextEdge.y,
+          left: hoverTextEdge.x,
+          // backgroundColor: '#111', // Used for classic Card styling only.
+          pointerEvents: 'none',
+          backgroundColor: "black",
+          color: "white",
+          opacity: "0.85",
+          borderRadius: "10px",
+          padding: "10px",
+          boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"
+        }}>
+          {Array.isArray(hoverTextEdge.data) && (
+            <div>
+              <h6 style={{textAlign:"center"}}>Has CYBEX Relationship:</h6>
+              {/* &#8249; */}-
+              {hoverTextEdge.data.map(item => (
+                // Creates colored tags with item description (item[0]). item[1] is the color
+                <div style={{display: "inline-block"}}>
+                  <div style={{backgroundColor: item[1],borderRadius:"3px",display: "inline-block", padding:"2px"}}>{item[0]}</div>-
+                </div>                      
+              ))}
+              {/* &#8250; */}
+            </div>
+          )}
+          {!Array.isArray(hoverTextEdge.data) && (
+            <h6 style={{textAlign:"center"}}>{hoverTextEdge.data.replace(/"/g,"")}</h6>
+          )}
         </div>
       )}
       {/* TODO: Turn selectText box into seperate component */}
