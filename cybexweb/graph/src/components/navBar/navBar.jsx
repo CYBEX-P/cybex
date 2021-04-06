@@ -19,75 +19,95 @@ const NavBar = (props) => {
   const [adminPageState, setAdminPageState] = useState(false);
 	const [userAdminStatus, setUserAdminStatus] = useState(false);
 
-	// Have current users orgs and acls
-	// Need to think of using API calls to populate org/ACL list
-	const [currentUsersOrgs, setCurrentUsersOrgs] = useState([]);
+	// The current user, an object retrieved from API that has info about the user
+	const [currentUser, setCurrentUser] = useState({});
 	
-	// Holds all orgs and acls users that current user is admin of, might need to find more elegant way for this
-	const [allOrgsUsers, setAllOrgsUsers] = useState([]);
+		
+	// Setting the current user, probably will be used to get the current
+	// user's hash for future API calls (delete and add require user hash)
+	const setCurrentUserData = () => {
 
-	const currentUser = {
-		name: "ADMIN",
-		organization: currentUsersOrgs
-	};
 
-	// Get user list of users of multiple orgs, and multiple acls from API calls
+	//	axios.get('/api/v1/user_management/user/info/self')
+	//		.then(response => {
+				// Set users info in state
+	//				setCurrentUser(response.data);
+	//			})
+	//			.catch(error => {
+	//				console.log(error);
+	//			})
+		
+		
+		
+		// Get user's orgs from API call
+		const usersOrgs = getOrgs();
+		// Parse JSON returned from API call if needed
+		
+			const currentUserHardCoded = {
+				name: "ADMIN",
+				hash: "currentAdminHash",
+				organization: usersOrgs
+			};
+
+		setCurrentUser(currentUserHardCoded);
+		
+	}
 	
-
-	// Pass in parameter (string for ex, for the current user, such as a token)
-	const getOrgsACLs = () =>  {
-		// Make API call
-		// axios.get('/get/user/admin/orgs').then(({ orgs }) => {
-		// Return list of org name hashes (org names for now)
-		// Current user	(pass in name)
-		
-	// });
-		
-
-
+	// Uses API to get org names
+	// Can just place all in setCurrentUserData if wanted to
+	const getOrgs = () =>  {
+		// Another way is we can delete usersOrgs below and just do setCurrentUsersOrgs(response.data) in API
+		// call
+		//
+		const usersOrgs = {};
+	
 		// Rename
-		const orgsObj = {
-			info_to_return: "orgs_admin",
+		// const orgsObj = {
+		//	info_to_return: "orgs_admin",
 
-		}
-
-		// axios.get('/api/v1/user_management_currentUserInfo', orgsObj)
+		//}
+	
+		//
+		// DOUBLE CHECK IF NEEDED /api/v1/
+		// axios.get('/api/v1/user_management/orgs/admin_of')
 		// 			.then(response => {
-		// 				setCurrentUsersOrgs(response.data)
+		//
+		// 			// Double check keys in response.data to set correctly 
+		//
+		// 			//setCurrentUsersOrgs(response.data)
+		// 			usersOrgs = response.data;
 		// 			})
 		//			.catch(error => {
 		//				console.log(error);
 		//			})
 		
+		// HARD CODED VALUES FOR NOW
 		const OrgsList = ['UNR1', 'UNR2'];	
-		setCurrentUsersOrgs(OrgsList);
-
+		// setCurrentUsersOrgs(OrgsList);
+		//
+		// Optimally return the JSON object from API call
+		return OrgsList;
 	
 	};
 	
 	
-
-
 	
-	
-	// Populating current users orgs and acls
-	// Can change this so when current edited list is updated, update list to send back to adminPage
-	// Can maybe set users list here v so it renders once
+	// Populating current users orgs 
 	useEffect(() => {
-		getOrgsACLs();
+		setCurrentUserData();
 	}, [])
 
 	// Show admin button if current users orgs list > 0
 	useEffect(() => {
-		
-		// Get users of orgs and acls that user is admin of
-
-		if (currentUser.organization.length > 0 === true) {
-			setUserAdminStatus(true);
-		} else {
-			setUserAdminStatus(false);
+		// Get users of orgs that user is admin of
+		if (Object.keys(currentUser).length > 0) {	
+			if (currentUser.organization.length > 0 === true) {
+				setUserAdminStatus(true);
+			} else {
+				setUserAdminStatus(false);
+			}
 		}
-	}, [currentUsersOrgs])
+	}, [currentUser])
 
 	
   return (

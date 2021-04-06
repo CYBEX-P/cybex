@@ -10,7 +10,9 @@ const AdminPage = (props) => {
 	// Keep track of what is being added to text box
 	const [currMemberAdd, setMemberAdd] = useState("");
 	// Status when adding user (if succesful or user already exists in list)
-	const [userStatus, setUserStatus] = useState(0);
+	const [addUserStatus, setAddUserStatus] = useState(0);
+	// Status when removing user (if succesful or user already exists in list)
+	const [removeUserStatus, setRemoveUserStatus] = useState(0);
 
 	// Prevents showing user doesn't exist before searching for a user to add.
 	const [activeSearch, setActiveSearch] = useState(false);
@@ -58,7 +60,10 @@ const AdminPage = (props) => {
 	// Changes when we switch orgs or different list types
 	useEffect(() => {
 		 // updateUsersInOrg();
-		 populateAllLists();
+		populateAllLists();
+
+		// Used to reset add/remove status messages from API calls
+		setActiveSearch(false);
 	}, [currentOrg, listType]);
 
 	// Used when a user has been removed or added to a list
@@ -95,13 +100,18 @@ const AdminPage = (props) => {
 			//
 			//const orgInfo = {
 			//	org_hash: orgId,
-			//	return_type: all
+			//	return_type: "all"
 			
 			//}
-			 
+				
+			// OLD 
 			// axios.post('/api/v1/user_management/org_info', orgInfo)
+			//
+			// NEW (April 4)
+			// axios.post('/org/info')
 			//		 .then(response => {
-			
+							
+							// DOUBLE CHECK RESPONSE DATA TO ENSURE WE ARE SETTING THE RIGHT INFORMATION
 		//				allUsers.push(response.data);
 			
 		//	 			})
@@ -128,8 +138,8 @@ const AdminPage = (props) => {
 	}
 
 	// Update text box when user enters text
-	const onMemberAddChange = (event) => {
-		setMemberAdd(event.target.value);
+	const onMemberAddChange = (e) => {
+		setMemberAdd(e.target.value);
 	}
 
 	// Handles changing org when user picks a different org
@@ -142,7 +152,6 @@ const AdminPage = (props) => {
 	const populateUsers = (allUsers, type) => {
 		const users = []
 		
-		// PUT API CALL HERE
 		// if (type === "users") {
 		// 	for (let i = 0; i < allUsers.userLists.length; i++) {
 		// 		users.push(allUsers.userLists[i]);
@@ -160,7 +169,8 @@ const AdminPage = (props) => {
 		//return users;
 		//
 		
-		
+	
+		// Hardcoded random names
 		for (let i = 0; i < 5; i++) {
 			let r = Math.random().toString(36).substring(7);
 			users.push(r);
@@ -238,58 +248,64 @@ const AdminPage = (props) => {
 	}
 	
 	// Check user and compare with different conditions
-	// Will implement deeper when using API calls
+	// Pass in status code from axios call
 	const checkExistingUser = () => {
+
+		const addObj = {
+			org: currentOrg,
+			user: currentUser.hash,
+			list_type: listType,
+			action: "add"
+		}
+		
+		// Set error status here from response
+		const errorStatus = 0;
+		// axios.post('/api/v1/user_management/org/add/user', addObj)
+		// 			.then((response => {
+		// 						console.log(response);
+		// 			});
+		// 			.catch(error => {
+		//
+		// 			// This can probably be changed to setAddUserStatus(error);
+		// 			// But wanted to double check "error" is a number
+		// 				errorStatus = error;
+		// 			})
+
+		
+		// This will probably be used to get the status from the API call
+		// This might be deleted just because the API can probably handle everything
+		// Meaning I can probably set error status in above and just delete everything
+		// below, unless it's really needed
 		for (let i = 0; i < userList.length; i++) {
-			// If user is admin
-			if (currMemberAdd === currentUser.name) {
-				setUserStatus(0);
-				break;
-			}
-			else {
 				// If user is already in organization
-				if (userList[i] == currMemberAdd) {
-					setUserStatus(3);
-					break;
-				} else {
-					// User isn't in organization yet
-					// console.log(userList);
-					// console.log(currMemberAdd)
-					setUserStatus(1);
-					setSaveChangesStatus(true);
-					addUserToOrganization(currMemberAdd);
-					break;
-				} 
-					// Might take out depending on API (checks if user is in CYBEX database)
-					// setUserStatus(2);
-					// break;
+			if (errorStatus === 400) {
+				setAddUserStatus(400);
+				break;
+			} else {
+				// Can add user
+				setAddUserStatus(201);
+				// setSaveChangesStatus(true);
+				// addUserToOrganization(currMemberAdd);
+				break;
 			} 
 		}
+
 		// Prevents doing checkExistingUser if we haven't added anyone yet
 		setActiveSearch(true);
 		// Reset text box
 		setMemberAdd("")
-	}
-	
-	// Add user to org, change status to rerender component
-	const addUserToOrganization = (user) => {
-		userList.push(user);
+
 		setAddRemoveStatus(!addRemoveStatus);
-
-		const JSONObjectTest = {
-			org: currentOrg,
-			user: user,
-			list_type: listType,
-			action: "add"
-
-		}
-
-		// axios.post('/api/v1/user_management/org_add_remove', JSONObjectTest)
-		// 			.then((response => {
-		// 						console.log(response);
-		// 			});
-		// console.log(JSONObjectTest);
 	}
+
+
+	// Add user to org, change status to rerender component
+	// API call used to be called here, can maybe delete whole function
+	// and just do API call above
+	//const addUserToOrganization = (user) => {
+	//	userList.push(user);
+	//	setAddRemoveStatus(!addRemoveStatus);
+	//}
 	
 	// Remove all selected users from org
 	const removeUsersFromOrganization = (user) => {
@@ -300,38 +316,29 @@ const AdminPage = (props) => {
 				
 		// const usersRemoveObj = {
 		// 
-		// 		org: currentOrg,
+		// 		org_hash: currentOrg,
 		// 		user: usersToBeRemoved,
-		// 		list_type: listType,
-		// 		action: "remove"
+		// 		del_from: listType
 		
 		//  }
 		//
+		//  OLD
 		//  axios.post('/api/v1/user_management/org_add_remove', usersRemoveObj)
+		//
+		//  NEW
+		//  axios.post('/api/v1/user_management/org/del/user', usersRemoveObj)
 		//  		 .then((response => {
 		//  		 			console.log(response);
 		//  		 			}, (error) => {
+		//  		 			// SET ERROR STATUS HERE
+		//  		 			// setRemoveUserStatus
 		//  		 			console.log(error);
 		//  		 	});
 		//  		 
-		if (usersToBeRemoved.length > 0)
-		for (let j = 0;j < usersToBeRemoved.length; j++) {
-			for (let i = 0; i < userList.length; i++) {
-				if (usersToBeRemoved[j] == userList[i]) {
-					setSaveChangesStatus(true);
-					userList.splice(i, 1);
-					}
-				}
-		}
-		// Test when doing API call to remove users
-		
-		const JSONObjTest = {
-			org: currentOrg,
-			user: usersToBeRemoved,
-			remove_from: listType 
-		}
-
-		// console.log(JSONObjTest);
+		// Plugging in 201 for now until API is put in
+		setActiveSearch(true);
+		setRemoveUserStatus(201);
+	
 		setAddRemoveStatus(!addRemoveStatus);
 	}
 	
@@ -344,6 +351,7 @@ const AdminPage = (props) => {
 	}
 
 	// Confirm changes made, need to implement with backend still
+	// Only here if necessary
 	const confirmChanges = () => {
 		if (saveChangesStatus)
 			return (
@@ -388,24 +396,42 @@ const AdminPage = (props) => {
 	}
 	
 	// Returns output based on userStatus
-	const userStatusResult = () => {
-		switch(userStatus) {
-			case 0: 
+	const addUserStatusResult = () => {
+		switch(addUserStatus) {
+				// Not sure about the other 400 status (if missing key)
+			case 99999: 
 				return <div>Cannot add admin to organization!</div>
 				break;
-			case 1:
+			case 201:
 				return <div>User added to organization!</div>
 				break;
-			case 2:
-				return <div>User doesn't exist in database!</div>
+			case 500:
+				return <div>Server error!</div>
 				break;
-			case 3:
+			case 400:
 				return <div>User is already in your organization!</div>
-				setActiveSearch(false);
 				break;
 			default:
 				return null;
 		}
+	}
+
+	const removeUserStatusResult = () => {
+		const currentList = currentListName();
+		switch(removeUserStatus) {
+			case 201:
+				return <div>User(s) successfully removed from {currentList} list</div>
+				break;
+			case 400:
+				return <div>User(s) does not exist in {currentList} list</div>
+				break;
+			case 500:
+				return <div>Server error!</div>
+				break;
+			default:
+				return null;
+		}
+
 	}
 
 	// Used for styling, find optimal way later
@@ -455,7 +481,7 @@ const AdminPage = (props) => {
 							> 
 								Add User 
 							</button>
-							{activeSearch && userStatusResult()}
+							{activeSearch && addUserStatusResult()}
 						</div>
 						<div style={{marginTop: "55px"}}>
 							<label style={{fontWeight: "bold"}}> Remove User From {currentOrg} {currentListName()} List </label>
@@ -464,6 +490,7 @@ const AdminPage = (props) => {
 							{returnCurrentUsersList()}
 						</div>
 						<div style={{marginTop: "50px"}}>
+							{activeSearch && removeUserStatusResult()}
 							{/* {confirmChanges()} */}
 						</div>
 					</div>
