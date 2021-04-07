@@ -373,7 +373,7 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
         "data": {
             "sub_type": ntype_processed,
             "data": data,
-            "return_type": "attribute",
+            #"return_type": "attribute",
             "summary" : True,
             "event_graph": True,
             "page": count

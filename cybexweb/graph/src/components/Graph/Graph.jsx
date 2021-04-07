@@ -266,9 +266,10 @@ const Graph = ({ isLoading, setFromDate, setToDate, setTimezone }) => {
         var edgeObj = data.Neo4j[1][0].edges.filter(properties => properties.id === e.edge);
         var edgeType = edgeObj[0].type; // Describes the relationship this edge represents
         var edgeLabel = JSON.stringify(edgeType) // The label to be rendered for this edge
-        if (edgeType.includes("CYBEX")) {
-          //****TODO: change above .includes back to "CYBEX:" with colon
-          let edgeType = "CYBEX:password=attribute,login_credentials=object,ssh=event,file_download=event,file=object,hash=attribute"; // for testing
+        // If edgeType is cybexRelated, render special event data stored in relationship.
+        // Otherwise, render the relationship data as a simple string upon hover tooltip
+        if (edgeType.includes("CYBEX:")) {
+          //let edgeType = "CYBEX:password=attribute,login_credentials=object,ssh=event,file_download=event,file=object,hash=attribute"; // for testing
           var edgeTypeArr = edgeType.split(':'); // only care about string after 'CYBEX:'
           var event_items = edgeTypeArr[1].split(',');
           event_items.forEach((item, index) => {
