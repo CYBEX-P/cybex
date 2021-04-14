@@ -17,8 +17,8 @@ urlpatterns = [
     path('api/v1/neo4j/wipe', wipe.as_view()),
     path('api/v1/getContents/<path>/', getContents.as_view()),
     path('api/v1/user_management/currentUserInfo/<info_to_return>/', currentUserInfo.as_view()),
-    path('api/v1/user_management/org_info/<org_hash>/<return_type>/', orgInfo.as_view()),
-    path('api/v1/user_management/org_add_remove/<org_hash>/<users>/<list_type>/<action>/', orgAddRemoveUser.as_view()),
+    path('api/v1/user_management/org_info', orgInfo.as_view()),
+    path('api/v1/user_management/org_add_remove', orgAddRemoveUser.as_view()),
 
     ##post
     path('import_json', importJson.as_view()),
