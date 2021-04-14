@@ -565,9 +565,8 @@ class currentUserInfo(APIView):
         Args:
             request (rest_framework.request.Request): The request object
             info_to_return (string): "user_of" for all orgs user belongs to,
-                "admin_of" for all orgs user is admin of, or "complete_info" for user
-                info object containing user hash, username, email, and all
-                orgs to to which user belongs and is admin of
+                "admin_of" for all orgs user is admin of, or "basic_info" for user
+                info object containing user hash, username, email
 
         Returns:
             Response (rest_framework.response.Response): API response
