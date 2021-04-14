@@ -16,7 +16,7 @@ from cybexapi.runner import insertNode, insertHostname
 from cybexapi.gip import asn_insert, ASN, geoip, geoip_insert
 from cybexapi.whoisXML import whois, insertWhois
 from cybexapi.enrichments import insert_domain_and_user, insert_netblock, insert_domain, resolveHost, getNameservers, getRegistrar, getMailServer
-from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, pull_ip_src, send_to_cybex
+from cybexapi.cybexlib import cybexCountHandler, cybexRelatedHandler, send_to_cybex #,pull_ip_src,
 from cybexapi.shodanSearch import shodan_lookup, insert_ports
 from cybexapi.import_json import import_json
 from cybexapi.delete_node import delete_node
@@ -40,7 +40,7 @@ def connect2graph(user, passw, addr, bolt_port):
 
 # TODO
 # Move to library file
-def enrichLocalNode(enrich_type, value, node_type, graph, user=None):
+def enrichLocalNode(enrich_type, value, node_type, graph, user=None,event=None):
 
     if(enrich_type == "asn"):
         a_results = ASN(value)
@@ -94,7 +94,7 @@ def enrichLocalNode(enrich_type, value, node_type, graph, user=None):
 
     elif enrich_type == "cybexCount":
             #status = insertCybexCount(value, graph)
-            status = cybexCountHandler(node_type,value, graph, user)
+            status = cybexCountHandler(node_type,value, graph, user, event)
             return json.dumps({"insert status" : status})
 
     elif enrich_type == "cybexRelated":
@@ -204,7 +204,7 @@ class macroCybex(APIView):
     #             <object>graph - The current graph
     # Returns: Response status
     # Author: Spencer Kase Rohlfing & (Someone else, sorry don't know who)
-    def get(self, request, format=None):
+    def get(self, request, query):
         # start = time.time()
 
         current_user = request.user
@@ -215,16 +215,17 @@ class macroCybex(APIView):
         data = processExport(export(graph))
         nodes = data["Neo4j"][0][0]["nodes"]
 
-        ## Start of threaded version part 1
-        thread_list = []
-        for node in nodes:
-            thread = threading.Thread(target=self.threadedLoop_cybexRelated, args=(node,graph,current_user))
-            thread_list.append(thread)
-        for thread in thread_list:
-            thread.start()
-        for thread in thread_list:
-            thread.join()
-        ## End of threaded version
+        if query == "related" or query == "both":
+            ## Start of threaded version part 1
+            thread_list = []
+            for node in nodes:
+                thread = threading.Thread(target=self.threadedLoop_cybexRelated, args=(node,graph,current_user))
+                thread_list.append(thread)
+            for thread in thread_list:
+                thread.start()
+            for thread in thread_list:
+                thread.join()
+            ## End of threaded version
 
         # Now that new related IOCs have been added, query cybexCount
         # This is done all all nodes including the newly added ones
@@ -232,16 +233,22 @@ class macroCybex(APIView):
         data = processExport(export(graph))
         nodes = data["Neo4j"][0][0]["nodes"]
         
-        ## Start of threaded version part 2
-        thread_list = []
-        for node in nodes:
-            thread = threading.Thread(target=self.threadedLoop_cybexCount, args=(node,graph,current_user))
-            thread_list.append(thread)
-        for thread in thread_list:
-            thread.start()
-        for thread in thread_list:
-            thread.join()
-        ## End of threaded version
+        if query == "count" or query == "both":
+            # Event object is passed in to all threads in order to enable
+            # thread-specific, non-blocking wait() functionality. This is
+            # used within cybexCountHandler to limit repeated request
+            # load on server
+            event = threading.Event()
+            ## Start of threaded version part 2
+            thread_list = []
+            for node in nodes:
+                thread = threading.Thread(target=self.threadedLoop_cybexCount, args=(node,graph,current_user,event))
+                thread_list.append(thread)
+            for thread in thread_list:
+                thread.start()
+            for thread in thread_list:
+                thread.join()
+            ## End of threaded version
 
         ## Start of non-threaded version
         # for node in nodes:
@@ -273,17 +280,17 @@ class macroCybex(APIView):
     def threadedLoop_cybexRelated(self, node, graph, current_user):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
-        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename" or nType== "sha256" or nType== "Email" or nType== "email_addr" or nType== "subject" or nType== "body":
             print("--> Querying cybexRelated IOCs for", value)
             enrichLocalNode('cybexRelated', value, nType, graph, current_user)
             print("Done with", str(value))
 
-    def threadedLoop_cybexCount(self, node, graph, current_user):
+    def threadedLoop_cybexCount(self, node, graph, current_user,event):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
-        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
+        if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename" or nType== "sha256" or nType== "Email" or nType== "email_addr" or nType== "subject" or nType== "body":
             print("--> Querying cybexCounts for ", value)
-            enrichLocalNode('cybexCount', value, nType, graph, current_user)
+            enrichLocalNode('cybexCount', value, nType, graph, current_user,event)
             print("Done with", str(value))
 
 # TODO
