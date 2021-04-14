@@ -2,6 +2,12 @@
 # Cybex-P API Module
 
 The `Cybex-P API Module` is the gateway for all data that travels in and out of Cybex-P during collection and posting. Cybex-P API is combintation of two sub-modules; the *Data Input sub-module* and the *Report Publishing sub-module*. The *Data Input sub-module* deals with the parsing of posted raw data and transferring of it to the backend. The *Report Publishing sub-module* deals with the handling of report request and the returning of any available ports to the user. In addition to being the gateway to the Cybex-P services, The API module also works as another checkpoint of additional privacy preservation  in which the data gets further encrypted. 
+```mermaid
+graph LR
+A[Cybex-P Input] --> B
+B(Cybex-P API) --> C
+C(Cybex-P Cache Data Lake)
+```
 
 # Cybex-P API Repositories
 the `Cybex-P API Module` and it's sub-modules is comprised of the following three modules.
@@ -15,7 +21,7 @@ the `Cybex-P API Module` and it's sub-modules is comprised of the following thre
  - `Resources`
 	 - Token validation
 	 - User authentication
-	 - appending of new users and organiztion 
+	 - Appending of new users and organiztion 
 	 - Configurations
 	 - Access control Lists
 
@@ -26,7 +32,7 @@ the Cybex-P `API` (not to be confused with `Cybex-P API Module`, which is the en
 The following calls can be made to `Cybex-P API`:
 |URL/Routes                |TYPE	| FUNCTION                         |
 |----------------|-------------------------------|-----------------------------|
-|`/ping`|PUT            |Utility call to ping the backend            |
+|`/ping`|PUT |Utility call to ping the backend            |
 |`/query`|GET           |When called, checks the status of the previously provided data set and returns it if available            |
 |`/raw`          |POST|Call the `raw` module and proceeds to parse and prepare the inputted data to be sent to the cache data lake|
 |`/test/token`          |POST|Call the `resource` module and validate the provided token|
@@ -80,5 +86,3 @@ The following are *decorator functions* used across multiple modules of the `Cyb
 >- ***exception_handler()*** - This decorator function is in tandem with almost all other functions and API endpoint calls in the API module. the exception handler signals on any errors such as a bad HTTP request, Invalid input, and if the backend is currently down and/or not working properly.
 > - ***early_return()*** - Utility dectorator used by other decorators as a way to early return from any function call if a decorator calls for an early return.
 > - ***get_org_object()*** - checks to see if the key `org_hash` is present within the argument `request_data`. If it fails, then a response code 400 is returned. This decorator will pull *'org_hash'* from *request_data["org_hash"]* and place the org tahoe object under *org_object*.
-
-

@@ -1,5 +1,5 @@
 ﻿# Cybex-P Input Module
-The `Cybex-P Input Module` is reponsible for the collection of threat data provided from user input and to populate it to the `Cybex-P API Module`. the The Input module is located Inside the collector server and partially in between the The frontend client and `Cybex-P API Module`.  Users can manually post threat data through the frontend web client or let handling be done automatically via the connector server to the collector.
+The `Cybex-P Input Module` is reponsible for the collection of threat data provided from user input and to populate it into the `Cybex-P API Module`. The Input module is located Inside the collector servers and in between the The frontend client and `Cybex-P API Module`.  Users can manually post threat data through the frontend web client or let handling be done automatically via the connector server to the collector.
 
 Examples of automatic data collection include:
 > - Calling an API
@@ -11,7 +11,7 @@ Examples of automatic data collection include:
 The following flow chart is a smaller scale summarization of the flow of data to the `Cybex-P API Module` via the `Cybex-P Input Module`:
 
 ```mermaid
-graph LR
+graph TD
 A[Automatically Collected Data] --> E((Connector Server)) --> F((Collector Server)) --> D 
 B[User webapp Inputted Data] --> G((Frontend Server))
 G --> D[Cybex-P API Module]
@@ -27,12 +27,11 @@ The `Cybex-P Input Module`   is a python websocket-based module that is compromi
 	- Socket Management, configuration status, 
 - `input`
 	- System Input call and execution
-
-running and executing configts, API configuration, plugin configurations
+	- running and executing config, API configuration, plugin configurations
 
 Of the current the current six plugins that are present in the respository, four of the plugins are open source threat intelligence platforms while the other two plugins are entities that are fully native to the `Cybex-P Input Module`. The  ***plugins*** themselves are comprosed of the following services:
 - `common`
-	- Cybex Source Fetching, Exponential backoff, Cybex Sources
+	- Cybex Source Fetching, Exponential backoff, Cybex Sources. Common plugin module used by the other modules
 - `misp_api`
 	-  MISP api with python wrapper. Malware information sharing platform; Open source threat intelligence 
 - `misp_file`
@@ -43,22 +42,38 @@ Of the current the current six plugins that are present in the respository, four
 	- phishing intelligence platform
 - `websocket`
 	- Lomond websocket plugin
+
+Below is a general diagram of how threat data is handled by the various plugins in the `Cybex-P Input Module`: 
+```mermaid
+graph
+A[Threat data] --> B((Common:<br> Base Cybex <br> source fetcher)) --> H[Cybex-P API Module]
+A[Threat data] --> C((misp_api:<br> MISP threat<br> intelligence API)) --> H[Cybex-P API Module]
+A[Threat data] --> D((misp_file:<br> MISP file input)) --> H[Cybex-P API Module]
+A[Threat data] --> E((openphish:<br> Phishing intel <br> patform)) --> H[Cybex-P API Module]
+A[Threat data] --> F((phishtank:<br> Community <br> phishing intel <br> platform)) --> H[Cybex-P API Module]
+A[Threat data] --> G((websocket:<br> Cybex-P General <br>websocket)) --> H[Cybex-P API Module]
+
+```
+
 # Plugins
 
 - `Common`
-	- As it's name states, `common` is a module that contains cybex plugin utility that is used by the other plugins within the `Cybex-P Input Module`. 
+	- As it's name states, `common` is a module that contains common utility and functions that is used by the other plugins within the `Cybex-P Input Module`.  The following are classes utilized by the other plugins to handle data:
+	> - CybexSource()
+	> - CybexSourceFectcher()
+
+	- ***CybexSource()*** is `common`'s class that is responsible for validating input configuration and posting Cybex-P ***events*** to the `Cybex-P API Module`. All modules within the `Cybex-P Input Module` inherit this class due to the responsibility of posting data to the api being on this module. 
+	- ***CybexSourceFetch()*** is an additional class in `common` that serves to handle the rate of input from input sources provided by ***CybexSource()***. It executes signal events in multiple threads and executes the signals in those threads based on certain conditions.
 
 - `misp_api`
-	- foo
+	- Malware Information Share Platform (or MISP) is an open-source platform that provides information on the threat levels and malicious capabilities of threat data provided to it. `misp_api` is a Cybex-P integration of the platform which utilizes the projects API endpoint to populate Cybex-P's backend with additional data on any provided threat attribute. The project is integrated into the `Cybex-P Input Module` by a python wrapper of the platform. The plugin works by simply taking the provided threat data and posting it to the platforms endpoint; the response data, provided it isn't an error, proceeds to get posted to the `Cybex-P API Module`.
 - `misp_file`
-	- foo
+	-  This plugin acts as a direct input of MISP data. Users who have files available that come from MISP can be inputted through this plugin and easily populated to the `Cybex-P API Module`.
 - `openphish`
-	- the openphish plugin
+	- the openphish plugin is a Cybex-P input plugin that actively retrieves URL sources from the openphish platform for the Cybex-P backend. Openphish is a phishing intelligence source that consistently gets updated with URLs that have been flagged as phishing links. This data is populated to the backend of Cybex-P and used as additional attribute data that is correlated to other threat data and sources that is provided to the backend. 
 - `phishtank`
-	- foo
+	- like openphish, phishtank is another phishing intelligence platform that offers a community-based phish verification system and users get to vote if the URL should be flagged as a phish. like openphish, phishtank calls are consistently made and data is returned, compressed, in either .bz2 or .gz extension. The data then gets decompressed and comes out in the form a list of records from phishtank. All provided records get posted to the `Cybex-P API Module`.
 - `websocket`
-	- foo
-# Module Execution Process
+	- the websocket plugin is a general purpose plugin with no specific specification directly attached to it. This plugin is used for all other miscellaneous forms of threat data collection. This plugin establishes a connection to the `Cybex-P API Module` using lomond websocket protocol ws. Use it to connect to the log stash socket module.  The log stash provides information on threat data.
+# Module setup and execution
 - foo
-
-
