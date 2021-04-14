@@ -70,14 +70,14 @@ const App = props => {
       });
 
       // retrieve current user's information on render:
-      let user_info = null;
-      const params_info = {'info_to_return': 'basic_info'};
-      axios.get('/api/v1/user_management/currentUserInfo', params_info).then(({ data }) => {
-        // setUserProfile(data);
-        user_info = data;
+      let user_info = {};
+      //const params_info = {'info_to_return': 'basic_info'};
+      axios.get('/api/v1/user_management/currentUserInfo/basic_info').then(({ data }) => {
+        user_info.email_addr = data.result.data.email_addr;
+        user_info.name = data.result.data.name;
+        user_info.hash = data.result._hash;
         // retrieve the orgs the current user belongs to:
-        const params_orgs = {'info_to_return': 'user_of'}
-        axios.get('/api/v1/user_management/currentUserInfo', params_orgs).then(({ data }) => {
+        axios.get('/api/v1/user_management/currentUserInfo/user_of').then(({ data }) => {
           user_info.orgs = data.result.toString();
           setUserProfile(user_info);
         });
@@ -289,10 +289,14 @@ const App = props => {
                 <br />
                 {userProfile != null && (
                   <div>
-                    {userProfile.name}
-                    {userProfile.email_addr}
-                    {userProfile._hash}
-                    {userProfile.orgs}
+                    <div style={{ marginTop:'5px' }}><b>{userProfile.name}</b></div>
+                    <div style={{display: "flex", justifyContent: "center"}}>
+                      <div style={{textAlign: 'left', marginTop:'30px' }}>
+                        <div>Email:&nbsp;{userProfile.email_addr}</div>
+                        <div>Unique Identifier:&nbsp;{userProfile.hash}</div>
+                        <div>Organizations:&nbsp;{userProfile.orgs}</div>
+                      </div>
+                    </div>
                   </div>
                 )}
                 {userProfile == null && (
