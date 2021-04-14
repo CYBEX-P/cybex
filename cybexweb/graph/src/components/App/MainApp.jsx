@@ -68,12 +68,21 @@ const App = props => {
       axios.get('/api/v1/neo4j/export').then(({ data }) => {
         setNeo4jData(data);
       });
+
+      // retrieve current user's information on render:
+      let user_info = null;
+      const params_info = {'info_to_return': 'basic_info'};
+      axios.get('/api/v1/user_management/currentUserInfo', params_info).then(({ data }) => {
+        // setUserProfile(data);
+        user_info = data;
+        // retrieve the orgs the current user belongs to:
+        const params_orgs = {'info_to_return': 'user_of'}
+        axios.get('/api/v1/user_management/currentUserInfo', params_orgs).then(({ data }) => {
+          user_info.orgs = data.result.toString();
+          setUserProfile(user_info);
+        });
+      });
     }
-    // retrieve current user's information on render:
-    const params = {'info_to_return': 'info'}
-    axios.get('/api/v1/user_management/currentUserInfo', params).then(({ data }) => {
-      setUserProfile(data);
-    });
 
   }, []);
 
@@ -281,9 +290,9 @@ const App = props => {
                 {userProfile != null && (
                   <div>
                     {userProfile.name}
-                    {userProfile.email}
-                    {userProfile.hash}
-                    {userProfile.org}
+                    {userProfile.email_addr}
+                    {userProfile._hash}
+                    {userProfile.orgs}
                   </div>
                 )}
                 {userProfile == null && (
