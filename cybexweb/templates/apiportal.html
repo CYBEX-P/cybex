@@ -1,6 +1,7 @@
 <!-- Renders SwaggerUI documentation page for CYBEX-P Portal API -->
 
 <!DOCTYPE html>
+{% load static %}
 <html>
   <head>
     <title>Swagger</title>
@@ -13,7 +14,7 @@
     <script src="//unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"></script>
     <script>
     const ui = SwaggerUIBundle({
-        url: "{% url schema_url %}",
+        url: "{% static 'openapi-schema.yml' %}",
         dom_id: '#swagger-ui',
         presets: [
           SwaggerUIBundle.presets.apis,

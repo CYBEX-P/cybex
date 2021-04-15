@@ -622,7 +622,7 @@ class orgAddRemoveUser(APIView):
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def post(self, request, org_hash=None, users=None, list_type=None, action=None):
-        '''Implements post method for orgInfo API
+        '''Implements post method for orgAddRemoveUser API
 
         Args:
             request (rest_framework.request.Request): The request object

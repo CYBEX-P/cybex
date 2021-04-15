@@ -34,10 +34,11 @@ urlpatterns = [
     path('isSignedIn', views.isSignedIn.as_view()),
     path('isAdmin', views.isAdmin.as_view()),
 
-    path('openapi/', get_schema_view(
-        title="CYBEX-P Portal API Doc",
-        description="Documentation for the CYBEX-P Portal API. This is solely for the frontend web application and is seperate from the backend CYBEX-P API."
-    ), name='openapi-schema'),
+    # path('openapi/', get_schema_view(
+    #     title="CYBEX-P Portal API Doc",
+    #     description="Documentation for the CYBEX-P Portal API. This is solely for the frontend web application and is seperate from the backend CYBEX-P API.",
+    #     version ="1.0.0",
+    # ), name='openapi-schema'),
     path('portalapi/', TemplateView.as_view(
         template_name='apiportal.html',
         extra_context={'schema_url':'openapi-schema'}
