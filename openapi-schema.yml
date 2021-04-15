@@ -102,18 +102,22 @@ paths:
           description: ''
       tags:
       - api
-  /api/v1/macroCybex:
+  /api/v1/macroCybex/{query}/:
     get:
-      operationId: listmacroCybexs
+      operationId: retrievemacroCybex
       description: ''
-      parameters: []
+      parameters:
+      - name: query
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
       responses:
         '200':
           content:
             application/json:
-              schema:
-                type: array
-                items: {}
+              schema: {}
           description: ''
       tags:
       - api
@@ -157,6 +161,25 @@ paths:
       description: ''
       parameters:
       - name: path
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: ''
+      tags:
+      - api
+  /api/v1/user_management/currentUserInfo/{info_to_return}/:
+    get:
+      operationId: retrievecurrentUserInfo
+      description: Implements get method for currentUser API
+      parameters:
+      - name: info_to_return
         in: path
         required: true
         description: ''
@@ -231,6 +254,48 @@ paths:
     post:
       operationId: createenrichURL
       description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: {}
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema: {}
+          description: ''
+      tags:
+      - api
+  /api/v1/user_management/org_info:
+    post:
+      operationId: createorgInfo
+      description: Implements post method for orgInfo API
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: {}
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema: {}
+          description: ''
+      tags:
+      - api
+  /api/v1/user_management/org_add_remove:
+    post:
+      operationId: createorgAddRemoveUser
+      description: Implements post method for orgInfo API
       parameters: []
       requestBody:
         content:

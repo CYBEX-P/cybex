@@ -593,7 +593,7 @@ class orgInfo(APIView):
     ## TODO: Also remove this line, it was to bypass the CSRF
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
-    def post(self, request, org_hash=None):
+    def post(self, request, org_hash=None, return_type=None):
         '''Implements post method for orgInfo API
 
         Args:
