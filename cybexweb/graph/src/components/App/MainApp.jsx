@@ -53,6 +53,8 @@ const App = props => {
   const [errorToDisplay, setError] = useState(null);
 
   const [macroDetails, setMacroDetails] = useState('none');
+
+  const [userProfile, setUserProfile] = useState(null);
   
   // Timezone state for use with data entry form
   const [selectedTimezone, setSelectedTimezone] = useState({})
@@ -66,7 +68,22 @@ const App = props => {
       axios.get('/api/v1/neo4j/export').then(({ data }) => {
         setNeo4jData(data);
       });
+
+      // retrieve current user's information on render:
+      let user_info = {};
+      //const params_info = {'info_to_return': 'basic_info'};
+      axios.get('/api/v1/user_management/currentUserInfo/basic_info').then(({ data }) => {
+        user_info.email_addr = data.result.data.email_addr;
+        user_info.name = data.result.data.name;
+        user_info.hash = data.result._hash;
+        // retrieve the orgs the current user belongs to:
+        axios.get('/api/v1/user_management/currentUserInfo/user_of').then(({ data }) => {
+          user_info.orgs = data.result.toString();
+          setUserProfile(user_info);
+        });
+      });
     }
+
   }, []);
 
   return (
@@ -265,6 +282,30 @@ const App = props => {
                )}   
             </Formik>      
           </GraphModal>
+          {/* Modal to display user profile */}
+            <GraphModal afterCloseFn={() => setError(null)} title="User Profile" contentLabel="User Profile">
+              <div style={{ textAlign: 'center' }}>
+                <FontAwesomeIcon icon="user" size="10x" />
+                <br />
+                {userProfile != null && (
+                  <div>
+                    <div style={{ marginTop:'5px' }}><b>{userProfile.name}</b></div>
+                    <div style={{display: "flex", justifyContent: "center"}}>
+                      <div style={{textAlign: 'left', marginTop:'30px' }}>
+                        <div>Email:&nbsp;{userProfile.email_addr}</div>
+                        <div>Unique Identifier:&nbsp;{userProfile.hash}</div>
+                        <div>Organizations:&nbsp;{userProfile.orgs}</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {userProfile == null && (
+                  <div>Error retrieving user profile.</div>
+                )}
+                <div style={{ color: '#ff4300' }}>{errorToDisplay}</div>
+              </div>
+            </GraphModal>
+
           <GraphModal afterCloseFn={() => setError(null)} title="Error" contentLabel="Error">
             <div style={{ textAlign: 'center' }}>
               <FontAwesomeIcon icon="meh" size="10x" />
@@ -296,7 +337,9 @@ const App = props => {
             <ContentContainerStyle>
               <Graph isLoading={isLoading} setFromDate={setFromDate} setToDate={setToDate} setTimezone={setTimezone} />
             </ContentContainerStyle>
-            <NavBar />
+            <NavBar 
+              dispatchModal={dispatchModal}
+            />
             {/* Below TrendsContext component should be used if we move from state to context for trends panel.
              At the moment, the trends component gets placed into the navbar, and is rendered dependent on a state within the navbar component.
             To more properly treat Trends as an independent component, context can be used in future reworking of the Trend panel logic */}
