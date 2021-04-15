@@ -28,6 +28,7 @@ const NavBar = (props) => {
 	const setCurrentUserData = () => {
 
 
+		// Need to get name of current user, hash (probably) and the organizations user is admin of
 	//	axios.get('/api/v1/user_management/user/info/self')
 	//		.then(response => {
 				// Set users info in state
@@ -41,14 +42,19 @@ const NavBar = (props) => {
 		
 		// Get user's orgs from API call
 		const usersOrgs = getOrgs();
-		// Parse JSON returned from API call if needed
 		
 			const currentUserHardCoded = {
 				name: "ADMIN",
 				hash: "currentAdminHash",
 				organization: usersOrgs
 			};
-
+	
+		// Testing to make sure object is correct
+		// currentUserHardCoded.organization.forEach(x => {
+	//		console.log(x.orgname[0]);
+	//	 })
+		// console.log(currentUserHardCoded.organization[0].orgname[0]);
+			//
 		setCurrentUser(currentUserHardCoded);
 		
 	}
@@ -56,36 +62,52 @@ const NavBar = (props) => {
 	// Uses API to get org names
 	// Can just place all in setCurrentUserData if wanted to
 	const getOrgs = () =>  {
-		// Another way is we can delete usersOrgs below and just do setCurrentUsersOrgs(response.data) in API
-		// call
-		//
-		const usersOrgs = {};
 	
-		// Rename
-		// const orgsObj = {
-		//	info_to_return: "orgs_admin",
-
-		//}
-	
+		const OrgsList = [];
 		//
-		// DOUBLE CHECK IF NEEDED /api/v1/
 		// axios.get('/api/v1/user_management/orgs/admin_of')
 		// 			.then(response => {
 		//
-		// 			// Double check keys in response.data to set correctly 
-		//
-		// 			//setCurrentUsersOrgs(response.data)
-		// 			usersOrgs = response.data;
+						//response.result.forEach(x => {
+						// OrgsList.push(x.data);
+						//})
+		// 			
 		// 			})
 		//			.catch(error => {
 		//				console.log(error);
 		//			})
 		
 		// HARD CODED VALUES FOR NOW
-		const OrgsList = ['UNR1', 'UNR2'];	
-		// setCurrentUsersOrgs(OrgsList);
-		//
-		// Optimally return the JSON object from API call
+		// const OrgsListHC = ['UNR1', 'UNR2'];	
+
+		const testResponse = {
+			"result": [
+				{
+					"data": {
+						"orgname": [
+							"testOrg"
+						],
+						"name": [
+							"Test Org 1"
+						]
+					}
+				},
+				{
+					"data": {
+						"orgname": [
+							"testOrg2"
+						],
+						"name": [
+							"Test Org 2"
+						]
+					}
+				}
+			]
+		}
+		
+		testResponse.result.forEach(x => {
+			OrgsList.push(x.data);
+		})
 		return OrgsList;
 	
 	};
@@ -100,6 +122,7 @@ const NavBar = (props) => {
 	// Show admin button if current users orgs list > 0
 	useEffect(() => {
 		// Get users of orgs that user is admin of
+		// This is to ensure currentUser isn't null on first render
 		if (Object.keys(currentUser).length > 0) {	
 			if (currentUser.organization.length > 0 === true) {
 				setUserAdminStatus(true);

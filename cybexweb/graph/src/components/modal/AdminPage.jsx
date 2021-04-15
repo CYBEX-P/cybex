@@ -29,7 +29,7 @@ const AdminPage = (props) => {
 	const [usersToBeRemoved, setUsersToBeRemoved] = useState([]);
 
 	// Used to know which org we are currently editing, set to first organization
-	const [currentOrg, setCurrentOrg] = useState(currentUser.organization[0]);
+	const [currentOrg, setCurrentOrg] = useState(currentUser.organization[0].name[0]);
 
 	// Current users we are observing (Org's ACL users, Org's users, etc).
 	const [userList, setUserList] = useState([]);
@@ -96,10 +96,12 @@ const AdminPage = (props) => {
 		currentUser.organization.forEach(function (orgId) {
 			// Used for API call
 			const allUsers = [];	
-
-			//
+			
+			// Getting the orgname from the user's organizations (hash, not readable)	
+			// console.log(orgId.orgname[0]);
+			
 			//const orgInfo = {
-			//	org_hash: orgId,
+			//	org_hash: orgId.orgname[0],
 			//	return_type: "all"
 			
 			//}
@@ -127,13 +129,15 @@ const AdminPage = (props) => {
 			const usersInAdmin = populateUsers(allUsers, "admin");
 
 			const orgObj = {
-				orgName: orgId,
+				orgName: orgId.name[0],
 				orgUsers: usersInOrg,
 				aclUsers: usersInACL,
 				adminUsers: usersInAdmin
 			}
 			allOrgsUsers.push(orgObj);
+
 		});
+
 
 	}
 
@@ -175,6 +179,7 @@ const AdminPage = (props) => {
 			let r = Math.random().toString(36).substring(7);
 			users.push(r);
 		}
+		// console.log(users)
 		return users;
 	}
 
@@ -220,12 +225,18 @@ const AdminPage = (props) => {
 
 	// Used to display all orgs that user is admin of
 	const displayUsersOrgs = () => {
+
+		const currentOrgsList = [];
+
+
+
+
 		return (
 			<div>
 			<select name="currentOrgs" 
 									value={currentOrg}
 									onChange={onChangeOrgHandler}>
-						{currentUser.organization.map((org, index) => <option style={{width: "200px"}} value={org}>{org}</option>)}
+						{Object.keys(currentUser.organization).map((org, index) => <option style={{width: "200px"}} value={currentUser.organization[org].name[0]}>{currentUser.organization[org].name[0]}</option>)}
 			</select>
 			</div>
 
@@ -369,6 +380,7 @@ const AdminPage = (props) => {
 
 		const returnCurrentUsersList = () => {
 		// Get only users from same organization
+		console.log(userList);
 		if (userList === 0) {
 			return <div> No other users in organization! </div>;
 		} else {
