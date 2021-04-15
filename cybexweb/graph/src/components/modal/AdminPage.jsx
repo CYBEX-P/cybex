@@ -261,13 +261,17 @@ const AdminPage = (props) => {
 	// Check user and compare with different conditions
 	// Pass in status code from axios call
 	const checkExistingUser = () => {
-
+	
+		// This is where we add the user
 		const addObj = {
 			org: currentOrg,
-			user: currentUser.hash,
+			user: currMemberAdd,
 			list_type: listType,
 			action: "add"
 		}
+
+		// user: should take in a user's hash (multiple users at once?) 
+		// When adding a user, the admin should be entering the user's hash
 		
 		// Set error status here from response
 		const errorStatus = 0;
@@ -480,7 +484,7 @@ const AdminPage = (props) => {
 								{changeListType()}
 							</div>
 						</div>
-						<label style={{fontWeight: "bold"}}> Add User To {currentOrg} {currentListName()} List </label>
+						<label style={{fontWeight: "bold"}}> Add User (User's Hash) To {currentOrg} {currentListName()} List </label>
 						<div style={{marginBottom: "10px"}} >
 						<input
 							type="text"
