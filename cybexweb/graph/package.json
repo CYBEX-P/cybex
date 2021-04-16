@@ -24,6 +24,7 @@
     "http-proxy-middleware": "^1.2.0",
     "jwt-decode": "^2.2.0",
     "node-sass": "^4.1.4",
+    "moment": "^2.29.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.2",
     "react-bootstrap": "^1.5.2",

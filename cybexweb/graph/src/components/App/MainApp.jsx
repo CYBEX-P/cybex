@@ -422,6 +422,9 @@ const App = props => {
                   setNeo4jData={setNeo4jData}
                   dispatchModal={dispatchModal}
                   setMacroDetails={setMacroDetails}
+                  fromDate={fromDate}
+                  toDate={toDate}
+                  timezone={timezone}
                 />
                 { macroDetails != 'none' && (
                   <div>

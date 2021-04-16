@@ -4,6 +4,7 @@ import { faFilter, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import TimezoneSelect from 'react-timezone-select';
 import DatePicker from 'react-datepicker';
+import moment from 'moment';
 
 
 const GraphFilter = (props) => {
@@ -26,7 +27,7 @@ const GraphFilter = (props) => {
 					showMonthDropdown
 					showYearDropdown
 					dropdownMode="select"
-					placeholderText="Click to select a date"/>
+					placeholderText="Click to select a date"/>				
 		</div>
 	}
 	const displayDatePickerTo = () => {
@@ -56,13 +57,15 @@ const GraphFilter = (props) => {
 
 	
 	const setFromDateHelper = (date) => {
+		console.log(date);
 		setFromDate(date);
-		props.setFromDate(date);
+		props.setFromDate(moment(date).format('YYYY-MM-DD hh:mma'));
 	}
 
 	const setToDateHelper = (date) => {
+		//date = moment(date).format('yyyy/MM/dd hh:mma');
 		setToDate(date);
-		props.setToDate(date);
+		props.setToDate(moment(date).format('YYYY-MM-DD hh:mma'));
 	}
 
 	const setTimezoneHelper = (e) => {

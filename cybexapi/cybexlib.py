@@ -29,6 +29,7 @@ from cybexapi.shodanSearch import insert_ports
 import threading
 import time
 import random
+from dateutil.parser import parse
 
 # deprecated, testing if still being used..
 # def pull_ip_src():
@@ -160,7 +161,7 @@ def replaceType(value):
 
 # TODO
 # Use django.settings to get keys and move URLS to settings as well.
-def cybexCountHandler(ntype, data, graph, user, event):
+def cybexCountHandler(ntype, data, graph, user, event, from_date, to_date, timezone):
     """Queries CYBEX for benign and malicious counts of the given IOC.
 
     Args:
@@ -188,6 +189,10 @@ def cybexCountHandler(ntype, data, graph, user, event):
     headers = {'content-type': 'application/json',
                'Authorization': 'Bearer ' + user_token}
 
+    # Format dates
+    from_date = from_date.replace("-","/")
+    to_date = to_date.replace("-","/")
+
     # construct the data object to be passed to post request
     payload = {
         "type": "count", #specify that we want count data
@@ -196,7 +201,9 @@ def cybexCountHandler(ntype, data, graph, user, event):
             "data": data,
             "category": "benign",
             "context": "all",
-            "last": "1Y"
+            "from": from_date, 
+            "to": to_date,
+            "tzname": "US/Pacific"
         }
     }
     payload = json.dumps(payload)
@@ -250,7 +257,9 @@ def cybexCountHandler(ntype, data, graph, user, event):
             "data": data,
             "category": "malicious",
             "context": "all",
-            "last": "1Y"
+            "from": from_date, 
+            "to": to_date,
+            "tzname": "US/Pacific"
         }
     }
     payloadMal = json.dumps(payloadMal)
@@ -288,7 +297,7 @@ def cybexCountHandler(ntype, data, graph, user, event):
     # return jsonify({"insert status" : status})
     return status
 
-def cybexRelatedHandler(ntype, data, graph, user, num_pages = 10):
+def cybexRelatedHandler(ntype, data, graph, user, from_date, to_date, timezone, num_pages = 10):
     """Queries CYBEX for related IOCs and inserts them into the graph.
 
     Takes the given IOC data and queries CYBEX for all related IOCs (as 
@@ -343,8 +352,11 @@ def cybexRelatedHandler(ntype, data, graph, user, num_pages = 10):
     thread_list = []
      #NOTE: Perhaphs replace below with more advanced stop condition
      # Currently is based on defined num_pages page limit
+
     for count in range(num_pages):
-        thread = threading.Thread(target=threadedLoop_cybexRelatedHandler, args=(count, ntype_processed, data, graph, headers, url, insertions_to_make))
+        thread = threading.Thread(target=threadedLoop_cybexRelatedHandler, 
+            args=(count, ntype_processed, data, graph, headers, url, 
+            insertions_to_make, from_date, to_date, timezone))
         thread_list.append(thread)
     for thread in thread_list:
         thread.start()
@@ -362,7 +374,7 @@ def cybexRelatedHandler(ntype, data, graph, user, num_pages = 10):
     return 1
 
 
-def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, headers, url, insertions_to_make):
+def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, headers, url, insertions_to_make, from_date, to_date, timezone):
     """Helper function for cybexRelatedHandler. Handles cybexRelated requests.
 
     This function sends and receives a single page for a single cybexRelated
@@ -372,6 +384,11 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
 
     """
     print(f"Page count: {count}")
+
+    # Format dates
+    from_date = from_date.replace("-","/")
+    to_date = to_date.replace("-","/")
+
     # construct the data object to be passed to post request
     payload = {
         "type": "related", # specify we want to return related IOC data
@@ -382,6 +399,9 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
             "summary" : True,
             "summary_graph": True,
             "page": count
+            "from": from_date, 
+            "to": to_date,
+            "tzname": "US/Pacific"
         }
     }
     #TODO: make sure ipv4 works for ip (replaceType())
