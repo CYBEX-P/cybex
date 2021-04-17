@@ -192,6 +192,7 @@ def cybexCountHandler(ntype, data, graph, user, event, from_date, to_date, timez
     # Format dates
     from_date = from_date.replace("-","/")
     to_date = to_date.replace("-","/")
+    timezone= timezone.replace("-","/")
 
     # construct the data object to be passed to post request
     payload = {
@@ -203,7 +204,7 @@ def cybexCountHandler(ntype, data, graph, user, event, from_date, to_date, timez
             "context": "all",
             "from": from_date, 
             "to": to_date,
-            "tzname": "US/Pacific"
+            "tzname": timezone
         }
     }
     payload = json.dumps(payload)
@@ -259,7 +260,7 @@ def cybexCountHandler(ntype, data, graph, user, event, from_date, to_date, timez
             "context": "all",
             "from": from_date, 
             "to": to_date,
-            "tzname": "US/Pacific"
+            "tzname": timezone
         }
     }
     payloadMal = json.dumps(payloadMal)
@@ -388,6 +389,7 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
     # Format dates
     from_date = from_date.replace("-","/")
     to_date = to_date.replace("-","/")
+    timezone= timezone.replace("-","/")
 
     # construct the data object to be passed to post request
     payload = {
@@ -401,7 +403,7 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
             "page": count
             "from": from_date, 
             "to": to_date,
-            "tzname": "US/Pacific"
+            "tzname": timezone
         }
     }
     #TODO: make sure ipv4 works for ip (replaceType())

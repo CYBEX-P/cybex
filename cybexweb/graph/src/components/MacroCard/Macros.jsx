@@ -99,9 +99,12 @@ export const Macros = ({ setLoading, setNeo4jData, dispatchModal, setMacroDetail
     }
     else {
       setLoading("Querying related IOCs...");
-      console.log("fromDate: ");
-      console.log(fromDate);
-      axios.get(`/api/v1/macroCybex/related/${fromDate}/${toDate}/test`).then(() => {
+      console.log(timezone)
+      if (timezone == ''){
+        // Default to user's (clientside) local timezone string if not selected
+        timezone = Intl.DateTimeFormat().resolvedOptions().timeZone.replace("/","-");
+      }
+      axios.get(`/api/v1/macroCybex/related/${fromDate}/${toDate}/${timezone}`).then(() => {
         axios
           .get('/api/v1/neo4j/export')
           .then(({ data }) => {
@@ -109,7 +112,7 @@ export const Macros = ({ setLoading, setNeo4jData, dispatchModal, setMacroDetail
             // setLoading(false);
             setLoading("Querying threat data for all IOCs...");
             axios
-              .get(`/api/v1/macroCybex/count/${fromDate}/${toDate}/test`)
+              .get(`/api/v1/macroCybex/count/${fromDate}/${toDate}/${timezone}`)
               .then(() => {
                 axios
                   .get('/api/v1/neo4j/export')

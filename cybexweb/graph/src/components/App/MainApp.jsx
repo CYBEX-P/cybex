@@ -397,7 +397,7 @@ const App = props => {
 
           <AppContainer>
             <ContentContainerStyle>
-              <Graph isLoading={isLoading} setFromDate={setFromDate} setToDate={setToDate} setTimezone={setTimezone} />
+              <Graph isLoading={isLoading} setFromDate={setFromDate} setToDate={setToDate} setTimezone={setTimezone} fromDate={fromDate} toDate={toDate} timezone={timezone}/>
             </ContentContainerStyle>
 
             <NavBar 

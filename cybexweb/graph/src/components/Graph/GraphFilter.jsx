@@ -17,6 +17,11 @@ const GraphFilter = (props) => {
 
 	const [toDate, setToDate] = useState(new Date());
 	const [fromDate, setFromDate] = useState(previousDate);
+	// Also set upstream states passed in as props. This is 
+	// So that MainApp.jsx can use these formatted dates in
+	// CYBEX queries
+	props.setToDate(moment(toDate).format('YYYY-MM-DD hh:mma'));
+	props.setFromDate(moment(fromDate).format('YYYY-MM-DD hh:mma'));
 	
 	const displayDatePickerFrom = () => {
 		return <div>
@@ -71,8 +76,8 @@ const GraphFilter = (props) => {
 	const setTimezoneHelper = (e) => {
 		// e is the timezone object (used to display the same timezone if user exits filter button)
 		setSelectedTimezone(e);
-		// gives the labal of the timezone back to the Graph.jsx page
-		props.setTimezone(e.label);
+		// gives url-freindly value of the timezone back to the Graph.jsx page
+		props.setTimezone(e.value.replace("/","-"));
 	}
 
 	

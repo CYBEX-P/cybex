@@ -132,9 +132,6 @@ def enrichLocalNode(enrich_type, value, node_type, graph, user=None,event=None, 
 
     elif enrich_type == "cybexRelated":
         #status = insertCybexCount(value, graph)
-        print("yeee:")
-        print(from_date)
-        print(to_date)
         status = cybexRelatedHandler(node_type,value, graph, user, from_date, to_date, timezone)
         return json.dumps({"insert status" : status})
 
@@ -298,9 +295,17 @@ class enrichNodePost(APIView):
         #      for the given org
         current_user = request.user
         data = request.data
+        print(data)
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
-        result = enrichLocalNode(enrich_type, data["value"], data["Ntype"], graph, current_user)
+        # If is a cybex enrichment, need to pass in date range and timezone from filter
+        if enrich_type == "cybexCount" or enrich_type == "cybexRelated":
+            result = enrichLocalNode(enrich_type, data["value"], 
+                data["Ntype"], graph, user=current_user, 
+                from_date=data["fromDate"], to_date=data["toDate"], 
+                timezone=data["timezone"])
+        else:
+            result = enrichLocalNode(enrich_type, data["value"], data["Ntype"], graph, current_user)
         return Response(result)
 
 class enrichURL(APIView):
