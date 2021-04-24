@@ -20,119 +20,45 @@ const NavBar = (props) => {
 	const [userAdminStatus, setUserAdminStatus] = useState(false);
 
 	// The current user, an object retrieved from API that has info about the user
-	const [currentUser, setCurrentUser] = useState({});
-	
-		
-	// Setting the current user, probably will be used to get the current
-	// user's hash for future API calls (delete and add require user hash)
-	const setCurrentUserData = () => {
+	const [currentUser, setCurrentUser] = useState(null);
 
+	const [currentUsersOrgs, setCurrentUsersOrgs] = useState(null);
 
-		// Need to get name of current user, hash (probably) and the organizations user is admin of
-	//	axios.get('/api/v1/user_management/user/info/self')
-	//		.then(response => {
-				// Set users info in state
-	//				setCurrentUser(response.data);
-	//			})
-	//			.catch(error => {
-	//				console.log(error);
-	//			})
-		
-		
-		
-		// Get user's orgs from API call
-		const usersOrgs = getOrgs();
-		
-			const currentUserHardCoded = {
-				name: "ADMIN",
-				hash: "currentAdminHash",
-				organization: usersOrgs
-			};
 	
-		// Testing to make sure object is correct
-		// currentUserHardCoded.organization.forEach(x => {
-	//		console.log(x.orgname[0]);
-	//	 })
-		// console.log(currentUserHardCoded.organization[0].orgname[0]);
-			//
-		setCurrentUser(currentUserHardCoded);
-		
-	}
-	
-	// Uses API to get org names
-	// Can just place all in setCurrentUserData if wanted to
-	const getOrgs = () =>  {
-	
+	useEffect(() => {
 		const OrgsList = [];
-		//
-		// axios.get('/api/v1/user_management/orgs/admin_of')
-		// 			.then(response => {
-		//
-						//response.result.forEach(x => {
-						// OrgsList.push(x.data);
-						//})
-		// 			
-		// 			})
-		//			.catch(error => {
-		//				console.log(error);
-		//			})
-		
-		// HARD CODED VALUES FOR NOW
-		// const OrgsListHC = ['UNR1', 'UNR2'];	
-
-		const testResponse = {
-			"result": [
-				{
-					"data": {
-						"orgname": [
-							"testOrg"
-						],
-						"name": [
-							"Test Org 1"
-						]
-					}
-				},
-				{
-					"data": {
-						"orgname": [
-							"testOrg2"
-						],
-						"name": [
-							"Test Org 2"
-						]
-					}
-				}
-			]
-		}
-		
-		testResponse.result.forEach(x => {
-			OrgsList.push(x.data);
-		})
-		return OrgsList;
-	
-	};
-	
-	
-	
-	// Populating current users orgs 
-	useEffect(() => {
-		setCurrentUserData();
-	}, [])
-
-	// Show admin button if current users orgs list > 0
-	useEffect(() => {
-		// Get users of orgs that user is admin of
-		// This is to ensure currentUser isn't null on first render
-		if (Object.keys(currentUser).length > 0) {	
-			if (currentUser.organization.length > 0 === true) {
+		// API call to get user's orgs user is admin of
+		axios.get('/api/v1/user_management/currentUserInfo/admin_of').then(({ data }) => {
+			data.result.forEach(x => {
+				// Adding hash to object
+				x.data.hash = x._hash;
+				OrgsList.push(x.data);
+			});
+			// Setting current users orgs
+			setCurrentUsersOrgs(OrgsList);
+			console.log(OrgsList);
+			
+			// If user is admin of > 0 orgs, display admin page button
+			if (OrgsList.length > 0) {
 				setUserAdminStatus(true);
 			} else {
 				setUserAdminStatus(false);
 			}
-		}
-	}, [currentUser])
-
+		});
+	}, [])
 	
+	// Setting the user information needed for Admin Page
+	useEffect(() => {
+		if (props.userProfile != null) {
+			const user = {
+					name: props.userProfile.name[0],
+					hash: props.userProfile.hash,
+					organization: currentUsersOrgs 
+				};
+			setCurrentUser(user);
+		}
+	}, [props.userProfile])
+
   return (
     <>
       <NavBarStyle>

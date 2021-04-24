@@ -339,6 +339,7 @@ const App = props => {
             </ContentContainerStyle>
             <NavBar 
               dispatchModal={dispatchModal}
+							userProfile={userProfile}
             />
             {/* Below TrendsContext component should be used if we move from state to context for trends panel.
              At the moment, the trends component gets placed into the navbar, and is rendered dependent on a state within the navbar component.
