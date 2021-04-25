@@ -28,7 +28,7 @@ def org_info(user,org_hash,return_type):
     data = {'org_hash': org_hash, 'return_type': return_type}
     url = "https://cybex-api.cse.unr.edu:5000/org_info"
     r = requests.post(url, headers=headers, data=data)
-    return r.json()
+    return r
 
 def org_add_remove(user,org_hash,users,list_type,action):
     user_token = user.profile.cybex_token
