@@ -22,7 +22,7 @@ from cybexapi.import_json import import_json
 from cybexapi.delete_node import delete_node
 from cybexapi.positions import update_positions
 from cybexapi.directory import get_contents
-from cybexapi.user_management import user_info, org_info
+from cybexapi.user_management import user_info, org_info, org_add_remove
 import json
 from cybexapi.wipe_db import wipeDB
 import pandas as pd
@@ -593,25 +593,27 @@ class orgInfo(APIView):
     ## TODO: Also remove this line, it was to bypass the CSRF
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
-    def post(self, request, org_hash=None, return_type=None):
+    def post(self, request):
         '''Implements post method for orgInfo API
 
         Args:
             request (rest_framework.request.Request): The request object
-            org_hash (string): unique hash for the org
-            return_type (string): "admin","user","acl", or "all". Specifies
-                whether to return the chosen individual list or all lists
-                for the given org
 
         Returns:
             Response (rest_framework.response.Response): API response
 
         '''
         current_user = request.user
+        data = request.data
+        # Request data is json with the following keys:
+        #   org_hash (string): unique hash for the org
+        #   return_type (string): "admin","user","acl", or "all". Specifies
+        #      whether to return the chosen individual list or all lists
+        #      for the given org
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         
-        result = org_info(current_user, org_hash, return_type)
+        result = org_info(current_user, data["org_hash"], data["return_type"])
         return Response(result)
 
 class orgAddRemoveUser(APIView):
@@ -626,22 +628,24 @@ class orgAddRemoveUser(APIView):
 
         Args:
             request (rest_framework.request.Request): The request object
-            org_hash (string): unique hash for the org
-            users (list of str): list of user hashes to be added or removed
-            list_type (string): "admin","user", or "acl". The list to which the
-                given users should be added or removed from.
-            action (string): "add" or remove". The action to perform for the 
-                given users.
 
         Returns:
             Response (rest_framework.response.Response): API response
 
         '''
         current_user = request.user
+        data = request.data
+        # Request data is json with the follwing keys:
+            # org_hash (string): unique hash for the org
+            # users (list of str): list of user hashes to be added or removed
+            # list_type (string): "admin","user", or "acl". The list to which the
+            #     given users should be added or removed from.
+            # action (string): "add" or remove". The action to perform for the 
+            #     given users.
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         
-        result = org_add_remove(current_user, org_hash, users, list_type, action)
+        result = org_add_remove(current_user, data["org_hash"], data["users"], data["list_type"], data["action"])
         return Response(result)
 
 # class insertURL(APIView):
