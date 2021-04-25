@@ -82,6 +82,7 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config, fromD
         }
       });
     }
+    // May be deprecated...
     else if (type === "pdns"){
       axios
         .post(`/api/v1/enrichPDNS`, {value: `${nodeType.properties.data}`})
