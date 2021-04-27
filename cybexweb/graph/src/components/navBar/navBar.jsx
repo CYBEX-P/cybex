@@ -81,7 +81,7 @@ const NavBar = (props) => {
       </UnstyledButton>*/}
 		
 			{/* Admin Page */}
-			{(!adminPageState && userAdminStatus) && (
+			{(!adminPageState && userAdminStatus && (props.userProfile != null)) && (
 				<button
 					style={{
 						float:"right",
@@ -99,7 +99,7 @@ const NavBar = (props) => {
 			)}
 
 
-			{(adminPageState && userAdminStatus) && (
+			{(adminPageState && userAdminStatus && (props.userProfile != null)) && (
 				<button
 					style={{
 						float:"right",

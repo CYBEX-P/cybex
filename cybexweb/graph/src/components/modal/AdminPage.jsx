@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 
 import { TrendPanelStyle, AdminPageStyle } from '../__styles__/styles';
 
@@ -24,12 +25,11 @@ const AdminPage = (props) => {
 	// Will save changes if state is set to true
 	const [saveChanges, setSaveChanges] = useState(false);
 	
-
 	// Used for getting current user/s in list to be removed
 	const [usersToBeRemoved, setUsersToBeRemoved] = useState([]);
 
 	// Used to know which org we are currently editing, set to first organization
-	const [currentOrg, setCurrentOrg] = useState(currentUser.organization[0].name[0]);
+	const [currentOrg, setCurrentOrg] = useState(currentUser.organization[0]);
 
 	// Current users we are observing (Org's ACL users, Org's users, etc).
 	const [userList, setUserList] = useState([]);
@@ -39,11 +39,11 @@ const AdminPage = (props) => {
 	
 	const [allOrgsUsers, setAllOrgsUsers] = useState([]);
 	const allOrgsUsersRef = useRef([]);
+	
+	// Returns an error screen, mainly using this for org_info if it doesn't return anything (500 server error)
+	const [breakingError, setBreakingError] = useState(false);
 
 	// TODO: 
-	// KEEP IN MIND OF JSON FORMAT WHEN DOING API CALL (object contains user name, hash... etc)
-	// That means removal or adding is by doing user.id to API call, and display name with user.name
-	// Believe this only effects userList
 	// If issues happen with useRef, delete it and just uncomment updateUsersInOrg() below (change in filter function below for populateAllLists)
 
 
@@ -55,7 +55,6 @@ const AdminPage = (props) => {
 		populateAllLists();
 	}, []);
 
-
 	// Used to change current list of users depending on list type 
 	// Changes when we switch orgs or different list types
 	useEffect(() => {
@@ -66,13 +65,12 @@ const AdminPage = (props) => {
 		setActiveSearch(false);
 	}, [currentOrg, listType]);
 
+
 	// Used when a user has been removed or added to a list
 	// Grabs all users for the org through API calls through updateUserInOrg()
 	// Updates our current lists through populatAllUsers()
 	useEffect(() => {
 		updateUsersInOrg();
-		allOrgsUsersRef.current = allOrgsUsers;
-		populateAllLists();
 
 		// This cleans allOrgsUsers list (so it doesn't keep adding up)
 		// Might move to top of this useEffect
@@ -92,41 +90,143 @@ const AdminPage = (props) => {
 
 	// Populate all lists for all orgs (used everytime any list is changed)
 	const updateUsersInOrg = () => {
-		// OrgId is the org hash for each org
+		// OrgId is each org
 		currentUser.organization.forEach(function (orgId) {
-			// Used for API call
+
 			const allUsers = [];	
+			// Use this for API call
+			// const allUsers = {};
 			
-			// Getting the orgname from the user's organizations (hash, not readable)	
-			// console.log(orgId.orgname[0]);
+			const orgInfo = {
+				org_hash: orgId.hash,
+				return_type: "all"
 			
-			//const orgInfo = {
-			//	org_hash: orgId.orgname[0],
-			//	return_type: "all"
+			}
 			
-			//}
-				
-			// OLD 
 			// axios.post('/api/v1/user_management/org_info', orgInfo)
-			//
-			// NEW (April 4)
-			// axios.post('/org/info')
-			//		 .then(response => {
-							
-							// DOUBLE CHECK RESPONSE DATA TO ENSURE WE ARE SETTING THE RIGHT INFORMATION
-		//				allUsers.push(response.data);
+			//		 .then(({response}) => {
+			//			allUsers.push(response.data);
 			
 		//	 			})
-			//			.catch(error  => {
-			//				console.log(error)
-			//			});
-			//	
-			//
-			
+		//				.catch(error  => {
+		//					console.log(error)
+			//				// Error screen 
+			//				setBreakingError(true);
+		//				});
+			//		  .finally(() => {
+			//      // Maybe put stuff here
+			//		  }
+
+
+
+			const testJSON = 
+			{
+				  "result": {
+						    "admin": [
+									      {
+													        "itype": "object",
+													        "data": {
+																		          "name": [
+																								            "TestAdmin2"
+																								          ],
+																		          "email_addr": [
+																		            "testEmail3@gmail.com"
+																		          ]
+																		        },
+													        "_cref": [
+																		          "2e02b41b55a5a330f8edd40da4739cbe62564571ea44beb61eabaf690e94ff50",
+																		          "3f6f035cdb002ae8fc758a710c5294f437510bb0c3cf52b42687a22cc479e80a"
+																		        ],
+													        "_ref": [
+																		          "2e02b41b55a5a330f8edd40da4739cbe62564571ea44beb61eabaf690e94ff50",
+																		          "3f6f035cdb002ae8fc758a710c5294f437510bb0c3cf52b42687a22cc479e80a"
+																		        ],
+													        "sub_type": "cybexp_user",
+													        "_hash": "d230f54cb1c772c05abfa50f17e64f16b6a884c914f0122223fe9ddc98dc2941"
+													      }
+									    ],
+						    "user": [
+									      {
+													        "itype": "object",
+													        "data": {
+																		          "name": [
+																								            "TestAdmin2"
+																								          ],
+																		          "email_addr": [
+																								            "testEmail3@gmail.com"
+																								          ]
+																		        },
+													        "_cref": [
+																		          "2e02b41b55a5a330f8edd40da4739cbe62564571ea44beb61eabaf690e94ff50",
+																		          "3f6f035cdb002ae8fc758a710c5294f437510bb0c3cf52b42687a22cc479e80a"
+																		        ],
+													        "_ref": [
+																		          "2e02b41b55a5a330f8edd40da4739cbe62564571ea44beb61eabaf690e94ff50",
+																		          "3f6f035cdb002ae8fc758a710c5294f437510bb0c3cf52b42687a22cc479e80a"
+																		        ],
+													        "sub_type": "cybexp_user",
+													        "_hash": "d230f54cb1c772c05abfa50f17e64f16b6a884c914f0122223fe9ddc98dc2941"
+													      },
+									      {
+													        "itype": "object",
+													        "data": {
+																		          "email_addr": [
+																								            "testEmail2@gmail.com"
+																								          ],
+																		          "name": [
+																								            "TestUser"
+																								          ]
+																		        },
+													        "_cref": [
+																		          "261fe929d11bf0a3231099d7801db19ae13302cefdfd5980e5262c454a19d5f2",
+																		          "e2a79b12544674b0f45e1dd452d9be36c811be9141360000163233d2cd632109"
+																		        ],
+													        "_ref": [
+																		          "261fe929d11bf0a3231099d7801db19ae13302cefdfd5980e5262c454a19d5f2",
+																		          "e2a79b12544674b0f45e1dd452d9be36c811be9141360000163233d2cd632109"
+																		        ],
+													        "sub_type": "cybexp_user",
+													        "_hash": "143c48f5be9c0c24e9f2606065c34b8b366d804aa2d8ed406fe25ad5e6ab89a3"
+													      },
+									      {
+													        "itype": "object",
+													        "data": {
+																		          "name": [
+																								            "TestUser2"
+																								          ],
+																		          "email_addr": [
+																								            "TestEmail1223@gmail.com"
+																								          ]
+																		        },
+													        "_cref": [
+																		          "042dd6b97333e50167fb4207dbc36de2f2b9bfdba027361e29f16a8eb02c33a2",
+																		          "518a6492b778bd351fb590a3b6b5a46aa51f817b6b8a30c0638c78982d67c49b"
+																		        ],
+													        "_ref": [
+																		          "042dd6b97333e50167fb4207dbc36de2f2b9bfdba027361e29f16a8eb02c33a2",
+																		          "518a6492b778bd351fb590a3b6b5a46aa51f817b6b8a30c0638c78982d67c49b"
+																		        ],
+													        "sub_type": "cybexp_user",
+													        "_hash": "13fbe0450636d636812a6ca01e2d351d74ca7d55708afaae800519223b7586dc"
+													      }
+									    ],
+						    "acl": [
+									      "d230f54cb1c772c05abfa50f17e64f16b6a884c914f0122223fe9ddc98dc2941",
+									      "143c48f5be9c0c24e9f2606065c34b8b366d804aa2d8ed406fe25ad5e6ab89a3",
+									      "13fbe0450636d636812a6ca01e2d351d74ca7d55708afaae800519223b7586dc"
+									    ]
+						  },
+					  "message": "See result."
+			}
+
+						
 			// Extracts all users from each individual list from particular org
-			const usersInOrg = populateUsers(allUsers, "users");
-			const usersInACL = populateUsers(allUsers, "acl");
-			const usersInAdmin = populateUsers(allUsers, "admin");
+			
+			// SHOULD PROBABLY PUT THIS ALL IN API CALL? MIGHT RETURN NULL I THINK
+			// Probably in the .finally()
+			const usersInOrg = populateUsers(testJSON, "users");
+			const usersInACL = populateUsers(testJSON, "acl");
+			const usersInAdmin = populateUsers(testJSON, "admin");
 
 			const orgObj = {
 				orgName: orgId.name[0],
@@ -137,6 +237,10 @@ const AdminPage = (props) => {
 			allOrgsUsers.push(orgObj);
 
 		});
+
+	// MIGHT MOVE ALL TO updateUsersInOrg IN API CALL
+		allOrgsUsersRef.current = allOrgsUsers;
+		populateAllLists();
 
 
 	}
@@ -156,38 +260,30 @@ const AdminPage = (props) => {
 	const populateUsers = (allUsers, type) => {
 		const users = []
 		
-		// if (type === "users") {
-		// 	for (let i = 0; i < allUsers.userLists.length; i++) {
-		// 		users.push(allUsers.userLists[i]);
-		// 	}
-		// } else if (type === "acl") {
-		//	for (let i = 0; i < allUsers.aclLists.length; i++) {
-		//		users.push(allUsers.aclLists[i]);
-		//	}
-		// } else if (type === "admin") {
-		//  for (let i = 0; i < allUsers.adminLists.length; i++) {
-		//		users.push(allUsers.adminLists[i]);
-		//  }
-		// }
-		//
-		//return users;
-		//
+		if (type === "users") {
+			allUsers.result.user.forEach(x => {
+				users.push(x);
+			})
+		} else if (type === "acl") {
+		 	allUsers.result.acl.forEach(x => {
+				users.push(x);
+		 	})
+		} else if (type === "admin") {
+			allUsers.result.admin.forEach(x => {
+				users.push(x);
+			})
+		}
+		
+		return users;
 		
 	
-		// Hardcoded random names
-		for (let i = 0; i < 5; i++) {
-			let r = Math.random().toString(36).substring(7);
-			users.push(r);
-		}
-		// console.log(users)
-		return users;
 	}
 
 
 	// Get all users from user list, admin list, acl list, from org
 	// Grabs imformation from updated lists
 	const populateAllLists = () => {
-		const allUsers = allOrgsUsersRef.current.filter(x => x.orgName === currentOrg);
+		const allUsers = allOrgsUsersRef.current.filter(x => x.orgName === currentOrg.name[0]);
 			let specificUsers = [];
 			if (listType === "user") {
 				if (allUsers.length > 0) {
@@ -208,8 +304,8 @@ const AdminPage = (props) => {
 					}
 				}
 			}
-		setUserList(specificUsers);
 
+		setUserList(specificUsers);
 	};
 
 	// Handles changing list type when user selects different list type
@@ -225,21 +321,14 @@ const AdminPage = (props) => {
 
 	// Used to display all orgs that user is admin of
 	const displayUsersOrgs = () => {
-
-		const currentOrgsList = [];
-
-
-
-
 		return (
 			<div>
 			<select name="currentOrgs" 
-									value={currentOrg}
+									value={currentOrg.name[0]}
 									onChange={onChangeOrgHandler}>
 						{Object.keys(currentUser.organization).map((org, index) => <option style={{width: "200px"}} value={currentUser.organization[org].name[0]}>{currentUser.organization[org].name[0]}</option>)}
 			</select>
 			</div>
-
 		);
 	};
 
@@ -258,103 +347,77 @@ const AdminPage = (props) => {
 		);
 	}
 	
-	// Check user and compare with different conditions
+	// THIS IS THE ADDING FUNCTION (probably changing name
 	// Pass in status code from axios call
-	const checkExistingUser = () => {
-	
+	const addUser = () => {
 		// This is where we add the user
 		const addObj = {
-			org: currentOrg,
-			user: currMemberAdd,
+			org_hash: currentOrg.hash,
+			users: currMemberAdd,
 			list_type: listType,
 			action: "add"
 		}
 
-		// user: should take in a user's hash (multiple users at once?) 
-		// When adding a user, the admin should be entering the user's hash
-		
-		// Set error status here from response
-		const errorStatus = 0;
-		// axios.post('/api/v1/user_management/org/add/user', addObj)
-		// 			.then((response => {
-		// 						console.log(response);
-		// 			});
-		// 			.catch(error => {
-		//
-		// 			// This can probably be changed to setAddUserStatus(error);
-		// 			// But wanted to double check "error" is a number
-		// 				errorStatus = error;
-		// 			})
+		console.log(addObj);
 
 		
-		// This will probably be used to get the status from the API call
-		// This might be deleted just because the API can probably handle everything
-		// Meaning I can probably set error status in above and just delete everything
-		// below, unless it's really needed
-		for (let i = 0; i < userList.length; i++) {
-				// If user is already in organization
-			if (errorStatus === 400) {
-				setAddUserStatus(400);
-				break;
-			} else {
-				// Can add user
-				setAddUserStatus(201);
-				// setSaveChangesStatus(true);
-				// addUserToOrganization(currMemberAdd);
-				break;
-			} 
-		}
-
-		// Prevents doing checkExistingUser if we haven't added anyone yet
-		setActiveSearch(true);
-		// Reset text box
-		setMemberAdd("")
-
-		setAddRemoveStatus(!addRemoveStatus);
+		axios.post('/api/v1/user_management/org_add_remove', addObj)
+		 			.then(({data}) => {
+		 					console.log(data);
+							setAddUserStatus(201);
+		 			})
+		 			.catch(error => {
+						console.log(error);
+		
+						// setAddUserStatus(400);
+		 			})
+					.finally(() => {
+						// Prevents doing addUser if we haven't added anyone yet
+						setActiveSearch(true);
+						// Reset text box
+						setMemberAdd("")
+						setAddRemoveStatus(!addRemoveStatus);
+					});
 	}
 
 
-	// Add user to org, change status to rerender component
-	// API call used to be called here, can maybe delete whole function
-	// and just do API call above
-	//const addUserToOrganization = (user) => {
-	//	userList.push(user);
-	//	setAddRemoveStatus(!addRemoveStatus);
-	//}
 	
 	// Remove all selected users from org
-	const removeUsersFromOrganization = (user) => {
+	const removeUsersFromOrganization = () => {
 
 		// Add confirmation here
 		// confirmUserRemoval(user);
-		
 				
-		// const usersRemoveObj = {
-		// 
-		// 		org_hash: currentOrg,
-		// 		user: usersToBeRemoved,
-		// 		del_from: listType
+		const usersRemoveObj = {
+		 
+		 		org_hash: currentOrg.hash,
+		 		users: usersToBeRemoved,
+				list_type: listType,
+		 		action: "remove"
 		
-		//  }
-		//
-		//  OLD
-		//  axios.post('/api/v1/user_management/org_add_remove', usersRemoveObj)
-		//
-		//  NEW
-		//  axios.post('/api/v1/user_management/org/del/user', usersRemoveObj)
-		//  		 .then((response => {
-		//  		 			console.log(response);
-		//  		 			}, (error) => {
-		//  		 			// SET ERROR STATUS HERE
-		//  		 			// setRemoveUserStatus
-		//  		 			console.log(error);
-		//  		 	});
-		//  		 
-		// Plugging in 201 for now until API is put in
-		setActiveSearch(true);
-		setRemoveUserStatus(201);
-	
-		setAddRemoveStatus(!addRemoveStatus);
+		}
+
+		console.log(usersRemoveObj);
+
+		axios.post('/api/v1/user_management/org_add_remove', usersRemoveObj)
+		  .then(({data}) => {
+		  	console.log(data);
+			  })
+			.catch(error => {
+				console.log(error);
+				// SET ERROR STATUS HERE
+				// setRemoveUserStatus
+			})
+			.finally(() => {
+				// PUT IN API CALL?
+				setActiveSearch(true);
+
+				// Fix this user status
+				setRemoveUserStatus(201);
+				setAddRemoveStatus(!addRemoveStatus);
+			})
+
+
 	}
 	
 	// Handles selected users
@@ -381,13 +444,34 @@ const AdminPage = (props) => {
 			);
 
 	}
-
-		const returnCurrentUsersList = () => {
-		// Get only users from same organization
-		console.log(userList);
+	
+	const returnCurrentUsersList = () => {
+	// Get only users from same organization
 		if (userList === 0) {
 			return <div> No other users in organization! </div>;
-		} else {
+			// This is for user/admin lists, typeof is too make sure current userList is not the ACL list	
+		} else if (listType != "acl" && typeof userList[0] !== 'string') {
+			return (
+				<div style={{position: "relative"}}>
+					<select name="currentUsers" 
+									multiple
+									value={usersToBeRemoved}
+									onChange={populateRemoveUsers}>                                
+						{userList.map((user, index) => <option style={{width: "200px"}} value={user._hash}>{user.data.name[0]}</option>)}
+					</select>
+					<button style={{
+										float: "right",
+										marginLeft: "20px",
+										marginTop: "27px"
+									}}
+
+									onClick={removeUsersFromOrganization}>
+					Remove Users
+					</button>
+				</div>
+			);
+		} else if (listType === "acl" && typeof userList[0] === 'string') {
+			// For ACL (we only get hashes from API)
 			return (
 				<div style={{position: "relative"}}>
 					<select name="currentUsers" 
@@ -408,9 +492,8 @@ const AdminPage = (props) => {
 				</div>
 			);
 		}
-
 	}
-	
+
 	// Returns output based on userStatus
 	const addUserStatusResult = () => {
 		switch(addUserStatus) {
@@ -466,54 +549,69 @@ const AdminPage = (props) => {
 				return "";
 		}
 	}
-	
-	return (
-		<div> 
-			<TrendPanelStyle>
-				<AdminPageStyle>
-					<div style={{padding: "100px", color: "black"}}> 
-						<div style={{fontSize: "large", marginBottom: "70px"}}>
-							Welcome {currentUser.name}, admin of {currentOrg}
-						<br />
-						<br />
-						<label style={{fontWeight: "bold"}}> Select Org</label>
-							{displayUsersOrgs()}
-						<br />
-						<label style={{fontWeight: "bold"}}> Change List Type </label>
-							<div style={{display: "inline-block", marginLeft: "20px"}}>
-								{changeListType()}
+	if (breakingError != true) {
+		return (
+			<div> 
+				<TrendPanelStyle>
+					<AdminPageStyle>
+						<div style={{padding: "100px", color: "black"}}> 
+							<div style={{fontSize: "large", marginBottom: "70px"}}>
+								Welcome {currentUser.name}, admin of {currentOrg.name[0]}
+							<br />
+							<br />
+							<label style={{fontWeight: "bold"}}> Select Org</label>
+								{displayUsersOrgs()}
+							<br />
+							<label style={{fontWeight: "bold"}}> Change List Type </label>
+								<div style={{display: "inline-block", marginLeft: "20px"}}>
+									{changeListType()}
+								</div>
+							</div>
+							<label style={{fontWeight: "bold"}}> Add User (User's Hash) To {currentOrg.name[0]} {currentListName()} List </label>
+							<div style={{marginBottom: "10px"}} >
+							<input
+								type="text"
+								value={currMemberAdd}
+								onChange={onMemberAddChange}
+								required
+							/>
+								<button style={{marginLeft: "5px"}}
+									onClick={addUser}
+								> 
+									Add User 
+								</button>
+								{activeSearch && addUserStatusResult()}
+							</div>
+							<div style={{marginTop: "55px"}}>
+								<label style={{fontWeight: "bold"}}> Remove User From {currentOrg.name[0]} {currentListName()} List </label>
+							</div>
+							<div>
+								{returnCurrentUsersList()}
+							</div>
+							<div style={{marginTop: "50px"}}>
+								{activeSearch && removeUserStatusResult()}
+								{/* {confirmChanges()} */}
 							</div>
 						</div>
-						<label style={{fontWeight: "bold"}}> Add User (User's Hash) To {currentOrg} {currentListName()} List </label>
-						<div style={{marginBottom: "10px"}} >
-						<input
-							type="text"
-							value={currMemberAdd}
-							onChange={onMemberAddChange}
-							required
-						/>
-							<button style={{marginLeft: "5px"}}
-								onClick={checkExistingUser}
-							> 
-								Add User 
-							</button>
-							{activeSearch && addUserStatusResult()}
+					</AdminPageStyle>
+				</TrendPanelStyle>
+			</div>
+		);
+	} else {
+		return (
+			<div>
+				<TrendPanelStyle>
+					<AdminPageStyle>
+						<div style={{padding: "100px", color: "black"}}>
+							<div style={{fontSize: "large", marginBottom: "70px", textAlign: "center"}}>
+								Error loading organization information!
+							</div>
 						</div>
-						<div style={{marginTop: "55px"}}>
-							<label style={{fontWeight: "bold"}}> Remove User From {currentOrg} {currentListName()} List </label>
-						</div>
-						<div>
-							{returnCurrentUsersList()}
-						</div>
-						<div style={{marginTop: "50px"}}>
-							{activeSearch && removeUserStatusResult()}
-							{/* {confirmChanges()} */}
-						</div>
-					</div>
-				</AdminPageStyle>
-			</TrendPanelStyle>
-		</div>
-	);
+					</AdminPageStyle>
+				</TrendPanelStyle>
+			</div>
+		);
+	}
 };
 
 export default AdminPage;
