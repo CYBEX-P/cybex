@@ -91,7 +91,7 @@ const NavBar = (props) => {
         </div>
       )}
       {trendState && (
-        <Trends title = "Trends"/>
+        <Trends title = "Trends" IPs={IPs}/>
       )}
     </>
   );

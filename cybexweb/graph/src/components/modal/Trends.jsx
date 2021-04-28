@@ -2,8 +2,7 @@ import React, { useContext, useState } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartBar } from '@fortawesome/free-solid-svg-icons';
-import { faGlobeAmericas } from '@fortawesome/free-solid-svg-icons';
-
+import { faGlobeAmericas, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import TrendsContext from '../App/TrendsContext';
 import TrendBox from './TrendBox';
 import { TrendPanelStyle } from '../__styles__/styles';
@@ -11,6 +10,8 @@ import TrendRow from './TrendRow';
 
 const Trends = (props) => {
 	const [mapViewState, setMapViewState] = useState(false);
+
+	console.log(props.IPs);
 
     // const trendDisplay = useContext(TrendsContext); // Only used if Trends panel toggle is context-driven
     return (
@@ -80,15 +81,16 @@ const Trends = (props) => {
 										}}
 										onClick={() => setMapViewState(false)}
 									>
-									<FontAwesomeIcon size="sm" icon={faChartBar}/>
+									<FontAwesomeIcon size="sm" icon={faChartLine}/>
 									</button>
 								</div>
 							</div>
 							
 
 							<TrendRow>
-								<TrendBox>
+								<TrendBox size = "large" type="IP" IPs={props.IPs}>
 									{/* PUT SENIOR PROJECT STUFF HERE */}
+									{/* <SeniorProject IPs={props.IPs} */}
 								</TrendBox>
 							</TrendRow>
 
