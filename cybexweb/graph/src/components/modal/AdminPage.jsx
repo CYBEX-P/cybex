@@ -43,15 +43,12 @@ const AdminPage = (props) => {
 	// Returns an error screen, mainly using this for org_info if it doesn't return anything (500 server error)
 	const [breakingError, setBreakingError] = useState(false);
 
-	// TODO: 
-	// If issues happen with useRef, delete it and just uncomment updateUsersInOrg() below (change in filter function below for populateAllLists)
-
 
 	// Grab initial list from API calls through updateUsersInOrg()
 	// Update our current, local, lists through populateAllUsers()
 	useEffect(() => {
 		updateUsersInOrg();
-		allOrgsUsersRef.current = allOrgsUsers;
+		// allOrgsUsersRef.current = allOrgsUsers;
 		populateAllLists();
 	}, []);
 
@@ -93,156 +90,44 @@ const AdminPage = (props) => {
 		// OrgId is each org
 		currentUser.organization.forEach(function (orgId) {
 
-			const allUsers = [];	
-			// Use this for API call
-			// const allUsers = {};
-			
+			let allUsers = [];	
+
 			const orgInfo = {
 				org_hash: orgId.hash,
 				return_type: "all"
 			
 			}
+
+			axios.post('/api/v1/user_management/org_info', orgInfo)
+					 .then(response => {
+						 allUsers.push(response.data.result);
+
+
+						// Extracts all users from each individual list from particular org
+						const usersInOrg = populateUsers(allUsers[0], "users");
+						const usersInACL = populateUsers(allUsers[0], "acl");
+						const usersInAdmin = populateUsers(allUsers[0], "admin");
+
+						const orgObj = {
+							orgName: orgId.name[0],
+							orgUsers: usersInOrg,
+							aclUsers: usersInACL,
+							adminUsers: usersInAdmin
+						}
+						allOrgsUsers.push(orgObj);
+
+						// MIGHT MOVE ALL TO updateUsersInOrg IN API CALL
+						allOrgsUsersRef.current = allOrgsUsers;
+						populateAllLists();
 			
-			// axios.post('/api/v1/user_management/org_info', orgInfo)
-			//		 .then(({response}) => {
-			//			allUsers.push(response.data);
-			
-		//	 			})
-		//				.catch(error  => {
-		//					console.log(error)
-			//				// Error screen 
-			//				setBreakingError(true);
-		//				});
-			//		  .finally(() => {
-			//      // Maybe put stuff here
-			//		  }
+			 			})
+						.catch(error  => {
+							console.log(error)
 
-
-
-			const testJSON = 
-			{
-				  "result": {
-						    "admin": [
-									      {
-													        "itype": "object",
-													        "data": {
-																		          "name": [
-																								            "TestAdmin2"
-																								          ],
-																		          "email_addr": [
-																		            "testEmail3@gmail.com"
-																		          ]
-																		        },
-													        "_cref": [
-																		          "2e02b41b55a5a330f8edd40da4739cbe62564571ea44beb61eabaf690e94ff50",
-																		          "3f6f035cdb002ae8fc758a710c5294f437510bb0c3cf52b42687a22cc479e80a"
-																		        ],
-													        "_ref": [
-																		          "2e02b41b55a5a330f8edd40da4739cbe62564571ea44beb61eabaf690e94ff50",
-																		          "3f6f035cdb002ae8fc758a710c5294f437510bb0c3cf52b42687a22cc479e80a"
-																		        ],
-													        "sub_type": "cybexp_user",
-													        "_hash": "d230f54cb1c772c05abfa50f17e64f16b6a884c914f0122223fe9ddc98dc2941"
-													      }
-									    ],
-						    "user": [
-									      {
-													        "itype": "object",
-													        "data": {
-																		          "name": [
-																								            "TestAdmin2"
-																								          ],
-																		          "email_addr": [
-																								            "testEmail3@gmail.com"
-																								          ]
-																		        },
-													        "_cref": [
-																		          "2e02b41b55a5a330f8edd40da4739cbe62564571ea44beb61eabaf690e94ff50",
-																		          "3f6f035cdb002ae8fc758a710c5294f437510bb0c3cf52b42687a22cc479e80a"
-																		        ],
-													        "_ref": [
-																		          "2e02b41b55a5a330f8edd40da4739cbe62564571ea44beb61eabaf690e94ff50",
-																		          "3f6f035cdb002ae8fc758a710c5294f437510bb0c3cf52b42687a22cc479e80a"
-																		        ],
-													        "sub_type": "cybexp_user",
-													        "_hash": "d230f54cb1c772c05abfa50f17e64f16b6a884c914f0122223fe9ddc98dc2941"
-													      },
-									      {
-													        "itype": "object",
-													        "data": {
-																		          "email_addr": [
-																								            "testEmail2@gmail.com"
-																								          ],
-																		          "name": [
-																								            "TestUser"
-																								          ]
-																		        },
-													        "_cref": [
-																		          "261fe929d11bf0a3231099d7801db19ae13302cefdfd5980e5262c454a19d5f2",
-																		          "e2a79b12544674b0f45e1dd452d9be36c811be9141360000163233d2cd632109"
-																		        ],
-													        "_ref": [
-																		          "261fe929d11bf0a3231099d7801db19ae13302cefdfd5980e5262c454a19d5f2",
-																		          "e2a79b12544674b0f45e1dd452d9be36c811be9141360000163233d2cd632109"
-																		        ],
-													        "sub_type": "cybexp_user",
-													        "_hash": "143c48f5be9c0c24e9f2606065c34b8b366d804aa2d8ed406fe25ad5e6ab89a3"
-													      },
-									      {
-													        "itype": "object",
-													        "data": {
-																		          "name": [
-																								            "TestUser2"
-																								          ],
-																		          "email_addr": [
-																								            "TestEmail1223@gmail.com"
-																								          ]
-																		        },
-													        "_cref": [
-																		          "042dd6b97333e50167fb4207dbc36de2f2b9bfdba027361e29f16a8eb02c33a2",
-																		          "518a6492b778bd351fb590a3b6b5a46aa51f817b6b8a30c0638c78982d67c49b"
-																		        ],
-													        "_ref": [
-																		          "042dd6b97333e50167fb4207dbc36de2f2b9bfdba027361e29f16a8eb02c33a2",
-																		          "518a6492b778bd351fb590a3b6b5a46aa51f817b6b8a30c0638c78982d67c49b"
-																		        ],
-													        "sub_type": "cybexp_user",
-													        "_hash": "13fbe0450636d636812a6ca01e2d351d74ca7d55708afaae800519223b7586dc"
-													      }
-									    ],
-						    "acl": [
-									      "d230f54cb1c772c05abfa50f17e64f16b6a884c914f0122223fe9ddc98dc2941",
-									      "143c48f5be9c0c24e9f2606065c34b8b366d804aa2d8ed406fe25ad5e6ab89a3",
-									      "13fbe0450636d636812a6ca01e2d351d74ca7d55708afaae800519223b7586dc"
-									    ]
-						  },
-					  "message": "See result."
-			}
-
-						
-			// Extracts all users from each individual list from particular org
-			
-			// SHOULD PROBABLY PUT THIS ALL IN API CALL? MIGHT RETURN NULL I THINK
-			// Probably in the .finally()
-			const usersInOrg = populateUsers(testJSON, "users");
-			const usersInACL = populateUsers(testJSON, "acl");
-			const usersInAdmin = populateUsers(testJSON, "admin");
-
-			const orgObj = {
-				orgName: orgId.name[0],
-				orgUsers: usersInOrg,
-				aclUsers: usersInACL,
-				adminUsers: usersInAdmin
-			}
-			allOrgsUsers.push(orgObj);
-
+							// Error screen 
+							setBreakingError(true);
+						});
 		});
-
-	// MIGHT MOVE ALL TO updateUsersInOrg IN API CALL
-		allOrgsUsersRef.current = allOrgsUsers;
-		populateAllLists();
-
-
 	}
 
 	// Update text box when user enters text
@@ -252,26 +137,32 @@ const AdminPage = (props) => {
 
 	// Handles changing org when user picks a different org
 	const onChangeOrgHandler = (e) => {
-		setCurrentOrg(e.target.value);
+		currentUser.organization.forEach(x => {
+			if (x.name[0] === e.target.value) {
+				setCurrentOrg(x);	
+			}
+		});
 	}
 
 
-
+	
+	// After getting all org information from org_info, we use this to populate each individual list with users
 	const populateUsers = (allUsers, type) => {
 		const users = []
-		
-		if (type === "users") {
-			allUsers.result.user.forEach(x => {
-				users.push(x);
-			})
-		} else if (type === "acl") {
-		 	allUsers.result.acl.forEach(x => {
-				users.push(x);
-		 	})
-		} else if (type === "admin") {
-			allUsers.result.admin.forEach(x => {
-				users.push(x);
-			})
+		if (allUsers != null) {
+			if (type === "users") {
+				allUsers.user.forEach(x => {
+					users.push(x);
+				})
+			} else if (type === "acl") {
+				allUsers.acl.forEach(x => {
+					users.push(x);
+				})
+			} else if (type === "admin") {
+				allUsers.admin.forEach(x => {
+					users.push(x);
+				})
+			}
 		}
 		
 		return users;
@@ -280,11 +171,12 @@ const AdminPage = (props) => {
 	}
 
 
-	// Get all users from user list, admin list, acl list, from org
+	// Get all users from user list, admin list, acl list, from org (information came from populateUsers() function)
 	// Grabs imformation from updated lists
 	const populateAllLists = () => {
 		const allUsers = allOrgsUsersRef.current.filter(x => x.orgName === currentOrg.name[0]);
-			let specificUsers = [];
+		let specificUsers = [];
+		if (allUsers != null) {
 			if (listType === "user") {
 				if (allUsers.length > 0) {
 					for (let i = 0; i < allUsers[0].orgUsers.length; i++) {
@@ -304,7 +196,8 @@ const AdminPage = (props) => {
 					}
 				}
 			}
-
+		}
+	
 		setUserList(specificUsers);
 	};
 
@@ -324,7 +217,6 @@ const AdminPage = (props) => {
 		return (
 			<div>
 			<select name="currentOrgs" 
-									value={currentOrg.name[0]}
 									onChange={onChangeOrgHandler}>
 						{Object.keys(currentUser.organization).map((org, index) => <option style={{width: "200px"}} value={currentUser.organization[org].name[0]}>{currentUser.organization[org].name[0]}</option>)}
 			</select>
@@ -347,8 +239,6 @@ const AdminPage = (props) => {
 		);
 	}
 	
-	// THIS IS THE ADDING FUNCTION (probably changing name
-	// Pass in status code from axios call
 	const addUser = () => {
 		// This is where we add the user
 		const addObj = {
@@ -358,13 +248,15 @@ const AdminPage = (props) => {
 			action: "add"
 		}
 
-		console.log(addObj);
 
 		
 		axios.post('/api/v1/user_management/org_add_remove', addObj)
 		 			.then(({data}) => {
-		 					console.log(data);
+						if (data.message.includes("Invalid user hash")) {
+							setAddUserStatus(405);
+						} else {
 							setAddUserStatus(201);
+						}
 		 			})
 		 			.catch(error => {
 						console.log(error);
@@ -397,23 +289,20 @@ const AdminPage = (props) => {
 		
 		}
 
-		console.log(usersRemoveObj);
 
 		axios.post('/api/v1/user_management/org_add_remove', usersRemoveObj)
 		  .then(({data}) => {
-		  	console.log(data);
-			  })
+				if (data.message.includes("500")) {
+					setRemoveUserStatus(500);
+				} else {
+					setRemoveUserStatus(201);
+				}
+			})
 			.catch(error => {
 				console.log(error);
-				// SET ERROR STATUS HERE
-				// setRemoveUserStatus
 			})
 			.finally(() => {
-				// PUT IN API CALL?
 				setActiveSearch(true);
-
-				// Fix this user status
-				setRemoveUserStatus(201);
 				setAddRemoveStatus(!addRemoveStatus);
 			})
 
@@ -449,7 +338,7 @@ const AdminPage = (props) => {
 	// Get only users from same organization
 		if (userList === 0) {
 			return <div> No other users in organization! </div>;
-			// This is for user/admin lists, typeof is too make sure current userList is not the ACL list	
+			// This is for user/admin lists, typeof is to make sure current userList is not the ACL list	
 		} else if (listType != "acl" && typeof userList[0] !== 'string') {
 			return (
 				<div style={{position: "relative"}}>
@@ -496,19 +385,26 @@ const AdminPage = (props) => {
 
 	// Returns output based on userStatus
 	const addUserStatusResult = () => {
+		const currentList = currentListName();
 		switch(addUserStatus) {
 				// Not sure about the other 400 status (if missing key)
+				// Can configure all of these later
 			case 99999: 
-				return <div>Cannot add admin to organization!</div>
+				return <div>Cannot add admin to {currentList} list!</div>
 				break;
 			case 201:
-				return <div>User added to organization!</div>
+				return <div>User added to {currentOrg.name[0]}'s {currentList} list!</div>
 				break;
 			case 500:
 				return <div>Server error!</div>
 				break;
 			case 400:
 				return <div>User is already in your organization!</div>
+				break;
+				// Not sure if documented, but setting random number of 405
+				// To handle wrong hashes
+			case 405:
+				return <div>Invalid user hash!</div>
 				break;
 			default:
 				return null;
@@ -519,7 +415,7 @@ const AdminPage = (props) => {
 		const currentList = currentListName();
 		switch(removeUserStatus) {
 			case 201:
-				return <div>User(s) successfully removed from {currentList} list</div>
+				return <div>User(s) successfully removed from {currentOrg.name[0]}'s {currentList} list</div>
 				break;
 			case 400:
 				return <div>User(s) does not exist in {currentList} list</div>
