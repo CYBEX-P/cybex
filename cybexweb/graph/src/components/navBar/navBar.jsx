@@ -19,77 +19,46 @@ const NavBar = (props) => {
   const [adminPageState, setAdminPageState] = useState(false);
 	const [userAdminStatus, setUserAdminStatus] = useState(false);
 
-	// Have current users orgs and acls
-	// Need to think of using API calls to populate org/ACL list
-	const [currentUsersOrgs, setCurrentUsersOrgs] = useState([]);
-	
-	// Holds all orgs and acls users that current user is admin of, might need to find more elegant way for this
-	const [allOrgsUsers, setAllOrgsUsers] = useState([]);
+	// The current user, an object retrieved from API that has info about the user
+	const [currentUser, setCurrentUser] = useState(null);
 
-	const currentUser = {
-		name: "ADMIN",
-		organization: currentUsersOrgs
-	};
-
-	// Get user list of users of multiple orgs, and multiple acls from API calls
-	
-
-	// Pass in parameter (string for ex, for the current user, such as a token)
-	const getOrgsACLs = () =>  {
-		// Make API call
-		// axios.get('/get/user/admin/orgs').then(({ orgs }) => {
-		// Return list of org name hashes (org names for now)
-		// Current user	(pass in name)
-		
-	// });
-		
-
-
-		// Rename
-		const orgsObj = {
-			info_to_return: "orgs_admin",
-
-		}
-
-		// axios.get('/api/v1/user_management_currentUserInfo', orgsObj)
-		// 			.then(response => {
-		// 				setCurrentUsersOrgs(response.data)
-		// 			})
-		//			.catch(error => {
-		//				console.log(error);
-		//			})
-		
-		const OrgsList = ['UNR1', 'UNR2'];	
-		setCurrentUsersOrgs(OrgsList);
+	const [currentUsersOrgs, setCurrentUsersOrgs] = useState(null);
 
 	
-	};
-	
-	
-
-
-	
-	
-	// Populating current users orgs and acls
-	// Can change this so when current edited list is updated, update list to send back to adminPage
-	// Can maybe set users list here v so it renders once
 	useEffect(() => {
-		getOrgsACLs();
+		const OrgsList = [];
+		// API call to get user's orgs user is admin of
+		axios.get('/api/v1/user_management/currentUserInfo/admin_of').then(({ data }) => {
+			data.result.forEach(x => {
+				// Adding hash to object
+				x.data.hash = x._hash;
+				OrgsList.push(x.data);
+			});
+			// Setting current users orgs
+			setCurrentUsersOrgs(OrgsList);
+			console.log(OrgsList);
+			
+			// If user is admin of > 0 orgs, display admin page button
+			if (OrgsList.length > 0) {
+				setUserAdminStatus(true);
+			} else {
+				setUserAdminStatus(false);
+			}
+		});
 	}, [])
-
-	// Show admin button if current users orgs list > 0
-	useEffect(() => {
-		
-		// Get users of orgs and acls that user is admin of
-
-		if (currentUser.organization.length > 0 === true) {
-			setUserAdminStatus(true);
-		} else {
-			setUserAdminStatus(false);
-		}
-	}, [currentUsersOrgs])
-
 	
+	// Setting the user information needed for Admin Page
+	useEffect(() => {
+		if (props.userProfile != null) {
+			const user = {
+					name: props.userProfile.name[0],
+					hash: props.userProfile.hash,
+					organization: currentUsersOrgs 
+				};
+			setCurrentUser(user);
+		}
+	}, [props.userProfile])
+
   return (
     <>
       <NavBarStyle>
@@ -112,7 +81,7 @@ const NavBar = (props) => {
       </UnstyledButton>*/}
 		
 			{/* Admin Page */}
-			{(!adminPageState && userAdminStatus) && (
+			{(!adminPageState && userAdminStatus && (props.userProfile != null)) && (
 				<button
 					style={{
 						float:"right",
@@ -130,7 +99,7 @@ const NavBar = (props) => {
 			)}
 
 
-			{(adminPageState && userAdminStatus) && (
+			{(adminPageState && userAdminStatus && (props.userProfile != null)) && (
 				<button
 					style={{
 						float:"right",
