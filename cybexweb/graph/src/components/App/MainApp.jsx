@@ -76,9 +76,15 @@ const App = props => {
         user_info.email_addr = data.result.data.email_addr;
         user_info.name = data.result.data.name;
         user_info.hash = data.result._hash;
-        // retrieve the orgs the current user belongs to:
         axios.get('/api/v1/user_management/currentUserInfo/user_of').then(({ data }) => {
-          user_info.orgs = data.result.toString();
+          // retrieve the orgs the current user belongs to:
+          let org_string = "No orgs found for this user."
+          if (Array.isArray(data.result) && data.result.length) {
+            // make sure data.result exists, is an array, and is nonempty
+            org_string = ''
+            data.result.forEach(org => org_string += org.data.orgname + ', ')
+          }
+          user_info.orgs = org_string;
           setUserProfile(user_info);
         });
       });
