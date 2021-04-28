@@ -465,7 +465,12 @@ const App = props => {
                   paddingTop: '20px'
                 }}
               >
-                <InsertForm config={props.config} />
+                <InsertForm config={props.config} fromDate={fromDate} toDate={toDate} timezone={timezone} />
+                <Row />
+                <Row />
+                <Button width="100%" onClickFunction={() => dispatchModal('Submit Event Data')}>
+                  <div>New Event</div>
+                </Button>
               </div>
             </MenuBar>
             <MenuBar side="bottom" icon="list">
