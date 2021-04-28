@@ -88,49 +88,77 @@ paths:
         '401':
           description: 'Unauthorized. The provided token is invalid'
           
-  /GetMyHash:
+  /Create/Org:
+    post:
+      tags:
+      -  Cybex-P Resource
+      summary: Register a new organization in Cybex-P
+      operationId: Register org
+      parameters: []
+      responses:
+        '400':
+          description: 'Bad request. The user who made the request is not an admin, the organization already exist, or a potential key error when trying to pull data from the request media.'
+        '401':
+          description: 'Attribute error, a request was made with a request attribute that is not a Cybex-P admin user'
+        '201':
+          description: 'Organization was successfully created in Cybex-P'
+  /Create/User:
+    post:
+      tags:
+      - Cybex-P Resource
+      summary: Register a new user
+      responses:
+        '400':
+          description: 'Bad request.The provided double validation for the password of the new user are not matching, the user already exist, or possible key error.'
+        '401':
+          description: 'Attribute error, the user context provided is not a Cybex-P admin and cannot create the user.'
+        '201':
+          description: 'the new user was successfully created in Cybex-P'
+  /org/add/user:
+    post:
+      tags:
+      -  Cybex-P Resource
+      summary: Register a new user under an organization
+      description: 'Add a new user or admin user under an organization in Cybex-P or add a new user to an access control list'
+      responses:
+        '400':
+          description: 'Invalid org hash, the organization potentially does not exist; Key error; An invalid string is attempted to being added to the organization, or the user already exist in the provided organization or ACL'
+        '401':
+          description: 'a request was made by a user that is not an admin of the organization'
+        '201':
+          description: 'The user was successfully added to the access control list or organization.'
+    
+  /org/info:
     get:
       tags:
       -  Cybex-P Resource
-      summary: foo
-      
+      summary: Pull Organization information
+      description: 'gets the admin and users of an organization and provides it to the client frontend'
       responses:
         '400':
-          description: 'foo'
-  /Login:
+          description: 'Invalid org hash, organization potentially does not exist. Invalid requested return type of the request media.'
+        '401':
+          description: 'a request was made by a user that is not an admin of the orgnization.'
+        '201':
+          description: 'a result was successfully extracted, see the result.'
+  /org/del/user:
     post:
       tags:
       -  Cybex-P Resource
-      summary: foo      
+      summary: Delete a user from an organization
+      description: 'delete a user from an organization or access control list'
       responses:
         '400':
-          description: 'foo'
-    
-  /AddUser:
-    post:
-      tags:
-      -  Cybex-P Resource
-      summary: foo      
-      responses:
-        '400':
-          description: 'foo'    
-  /AddOrg:
-    post:
-      tags:
-      -  Cybex-P Resource
-      summary: foo      
-      responses:
-        '400':
-          description: 'foo'
+          description: 'Key error. Invalid org hash, '
   
-  /AddConfig:
+  /org/del/use:
     post:
       tags:
       -  Cybex-P Resource
       summary: foo      
       responses:
         '400':
-          description: 'foo'
+          description: ''
   
   /ChangeOrgACL:
     patch:
@@ -140,106 +168,3 @@ paths:
       responses:
         '400':
           description: 'foo'
-  
-        
-    
-
-#   /inventory:
-#     get:
-#       tags:
-#         - developers
-#       summary: searches inventory
-#       operationId: searchInventory
-#       description: |
-#         By passing in the appropriate options, you can search for
-#         available inventory in the system
-#       parameters:
-#         - in: query
-#           name: searchString
-#           description: pass an optional search string for looking up inventory
-#           required: false
-#           schema:
-#             type: string
-#         - in: query
-#           name: skip
-#           description: number of records to skip for pagination
-#           schema:
-#             type: integer
-#             format: int32
-#             minimum: 0
-#         - in: query
-#           name: limit
-#           description: maximum number of records to return
-#           schema:
-#             type: integer
-#             format: int32
-#             minimum: 0
-#             maximum: 50
-#       responses:
-#         '200':
-#           description: search results matching criteria
-#           content:
-#             application/json:
-#               schema:
-#                 type: array
-#                 items:
-#                   $ref: '#/components/schemas/InventoryItem'
-#         '400':
-#           description: bad input parameter
-#     post:
-#       tags:
-#         - admins
-#       summary: adds an inventory item
-#       operationId: addInventory
-#       description: Adds an item to the system
-#       responses:
-#         '201':
-#           description: item created
-#         '400':
-#           description: 'invalid input, object invalid'
-#         '409':
-#           description: an existing item already exists
-#       requestBody:
-#         content:
-#           application/json:
-#             schema:
-#               $ref: '#/components/schemas/InventoryItem'
-#         description: Inventory item to add
-# components:
-#   schemas:
-#     InventoryItem:
-#       type: object
-#       required:
-#         - id
-#         - name
-#         - manufacturer
-#         - releaseDate
-#       properties:
-#         id:
-#           type: string
-#           format: uuid
-#           example: d290f1ee-6c54-4b01-90e6-d701748f0851
-#         name:
-#           type: string
-#           example: Widget Adapter
-#         releaseDate:
-#           type: string
-#           format: date-time
-#           example: '2016-08-29T09:12:33.001Z'
-#         manufacturer:
-#           $ref: '#/components/schemas/Manufacturer'
-#     Manufacturer:
-#       required:
-#         - name
-#       properties:
-#         name:
-#           type: string
-#           example: ACME Corporation
-#         homePage:
-#           type: string
-#           format: url
-#           example: 'https://www.acme-corp.com'
-#         phone:
-#           type: string
-#           example: 408-867-5309
-#       type: object
