@@ -1,4 +1,53 @@
-﻿**Key Functions:**
+﻿# Cybex-P Analytics Module
+The `Cybex-P Analytics Module`, also known as the *Analytics Cluster*,  is responsible for changing and adjusting data that is provided to users at the frontend web client. It works on data that was archived to the Archive database and has various functionality to transform, enrich, correlate, and analyze threat data. 
+
+```mermaid
+graph LR
+A(Analytical Cluster)
+B(Archive Dababase)
+A --send back analysed threat data--> B
+B --Pull Newly parsed TAHOE objects of threat data--> A
+```
+
+The module works by the concept of *filtering*; threat data that is freshly processed from the Archive database is procedurely ran through various filters. When passed through these filters, a new piece of data is created. A single piece of data can be ran through multiple filters with each filter outputting a new piece of data. A simple example is extracting source/destination IP and the port it passed through.
+
+
+The flow chart below represents a simplified version on how *filtering* is integrated and how data passing through the same filter is a powerful notion capitlized by `Cybex-P` in how correlation of data operates:
+```mermaid
+graph LR
+
+d0(Threat Data 01) 
+d0 --> f1
+d0 --> f2
+d00(Threat Data 02)
+d00 --> f3
+f1[Filter 1]
+f2[Filter 2]
+f3[Filter 3]
+f4[Filter 4]
+f1 --> d1((New Data 1)) 
+f2 --> d2((New Data 2)) --> f4
+f3 --> d3((New Data 3)) --> f4
+
+f4 --> d5((New Data of 2 and 3: Correlation))
+```
+
+# Cybex-P Analytics Repositories
+- `analytics [Source Code]`
+	- Main module  responsible for executing and maintaining the entirety of the Analytics Cluster.
+- `Filters`:
+	- Various filters that threat data is ran through
+		- ***Cowrie***
+		- ***OpenPhishFeed***
+		- ***PhishTankFeed***
+		- ***email***
+		- ***sighting***
+
+# analytics
+
+The analytics file is the main source code that is reponsible for running and maintaining the analytics cluster. 
+
+**Key Functions:**
 > - ***infinite_worker(q)***
 > - ***analytics()***
 
@@ -30,4 +79,64 @@
 	 ------ n_failed_attempts = 0
 
 # Filters
-Foo
+The `Cybex-P Analytics Module` has various filters; along with those filters are Event IDs in the source code that extract, label, and source each piece of threat data into specific categories of a filter. 
+
+A an example of a filter event ID will look like - 
+> - `ExampleEventID:`
+	> 	- Type: Example ID
+		> 		- This part of the example is where what type of information is extracted and stored is located
+-	***Cowrie***
+	-	
+	Cowrie is a piece of open source software that can be used in any environment to emulate a UNIX system or SSH/Telnet Proxy; under the hood of the the system, it is a honeypot for gathering malicious SSH connections. The *Cowrie filter* itself processes the SSH login information provided by the cowrie system. 	
+	
+	Event IDs of the cowrie filter include:
+	
+	-	`ClientKex`:
+		-	Type: SSH
+			-	Crpytographic client key exchange. Extract the key exchange information from a piece of threat data.
+	- `ClientSize`:
+		- Type: SSH
+			- Height and Width of the threat data
+	-	`ClientVar`:
+		-	Type: SSH
+			-	Client environment of the SSH attempt
+	- `ClienVersion`:
+		-	Type: SSH
+			- Information on the client version of the SSH attempt
+	- `CommandInput`:
+		- Type: Shell Command
+			- Records of the shell input and flags that were activated with the SSH attempt
+	-	`DirectTcpIpData`:
+		-	Type: Network Traffic
+			- Information on the hostname, source, url, port number, and destination of a piece of threat data.
+	-	`DirectTcpIpRequest`:
+		-	Type: Network Traffic
+			-	Extra appended information on the source and port of a TCP request.
+	-	`LoginFailed`:
+		-	Type: SSH
+			-	Record on a failed login attempt. Logs information on the username and password.
+	-	`LoginSuccess`:
+		-	Type: SSH
+			-	Record on a successful login attempt. Logs information on the username and password.
+	-	`SessionClosed`:
+		-	Type: Cybex-P Session Info
+			- Logging and closing of a Cybex-P cowrie session
+	-	`SessionConnect`:
+		-	Type: Cybex-P Session Info
+			-	Logging and executation of a Cybex-P cowrie
+	-	`SessionFileDownload`:
+		-	Type: File Download
+			-	Information on a download of Cybex-P session information
+
+- ***openphish***
+	- 
+	The openphish filter deals with phishing intelligence and the identification any phishing URLs. It is derived from the openphish platform, a fully automated self-contained platform meant for large-scale phishing URL identification. The openphish filter has a single event ID:
+		
+	- `OpenPhish_Community`:
+		- Type: Sighting
+			-  Data that is passed through the openphish filter is compared to recent or previous URLs provided from the openphish platform. Whether a correlation is found or not, the the data gets updated and stored to help the malicious scoring system to judge the source.
+- ***phishtank***
+	- 
+	 phishtank is another phishing intelligence platform that helps to provide the latest information on any URLs identified as phishing links. Unlike openphish, the phishtank platform is a collaborative community-based platform in which a large majority of phishing identification is done by the open community. Just like openphish, the phishtank filter pulls the information from the platform and is correlated against raw threat data.
+	
+	- foo

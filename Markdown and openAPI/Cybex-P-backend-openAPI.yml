@@ -142,7 +142,7 @@ paths:
         '201':
           description: 'a result was successfully extracted, see the result.'
   /org/del/user:
-    post:
+    delete:
       tags:
       -  Cybex-P Resource
       summary: Delete a user from an organization
@@ -151,20 +151,33 @@ paths:
         '400':
           description: 'Key error. Invalid org hash, '
   
-  /org/del/use:
-    post:
+  /org/admins_of:
+    get:
       tags:
       -  Cybex-P Resource
-      summary: foo      
+      summary: Get the information of the current admins of an organization      
       responses:
         '400':
-          description: ''
-  
-  /ChangeOrgACL:
-    patch:
+          description: 'Invalid token/authentication'
+        '200':
+          description: 'Successful authentication, see the result of admins of an organization provided from the endpoint'
+  /orgs/user_of:
+    get:
       tags:
-      -  Cybex-P Resource
-      summary: foo      
+      - Cybex-P Resource
+      summary: Get information of all the users under an organization
       responses:
         '400':
-          description: 'foo'
+          description: 'Invalid token/authentication'
+        '200':
+          description: 'Successful authentication, see the provided result of users of an organization provided from the endpoint'
+  /user/info/self:
+    get:
+      tags:
+      - Cybex-P Resource
+      summary: Get information on the current sessions user
+      responses:
+        '400':  
+          description: 'Invalid token/authentication'
+        '200':
+          description: 'Successful authentication, see the provided result of users of an organization provided from the endpoint'
