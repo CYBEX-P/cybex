@@ -1,5 +1,4 @@
-﻿
-# Cybex-P API Module
+﻿# Cybex-P API Module
 
 The `Cybex-P API Module` is the gateway for all data that travels in and out of Cybex-P during collection and posting. Cybex-P API is combintation of two sub-modules; the *Data Input sub-module* and the *Report Publishing sub-module*. The *Data Input sub-module* deals with the parsing of posted raw data and transferring of it to the backend. The *Report Publishing sub-module* deals with the handling of report request and the returning of any available ports to the user. In addition to being the gateway to the Cybex-P services, The API module also works as another checkpoint of additional privacy preservation  in which the data gets further encrypted. 
 ```mermaid
@@ -35,12 +34,14 @@ The following calls can be made to `Cybex-P API`:
 |`/ping`|PUT |Utility call to ping the backend            |
 |`/query`|GET           |When called, checks the status of the previously provided data set and returns it if available            |
 |`/raw`          |POST|Call the `raw` module and proceeds to parse and prepare the inputted data to be sent to the cache data lake|
-|`/test/token`          |POST|Call the `resource` module and validate the provided token|
-|`/get/my/hash`          |GET|Provide that authentication is valid, returns the user_object.hash of the caller.|
-|`\login`          |POST|Take the provided and POST data and authenticate the login instance|
-|`/add/user`          |POST|Register a new user|
-|`/add/org`          |POST|Register a new organization|
-|`/change/org/acl`          |PATCH|Adjust and modify an organizations Access Control List|
+|`Create/Org`          |POST|Register a new organization in Cybex-P|
+|`/Create/User`          |POST|Register a new user|
+|`/org/add/user`          |POST|Register a new user under an organization|
+|`/org/info`			|GET|Pull Organization information|
+|`/org/del/user`			|DELETE|Delete a user from an organization|
+|`/org/admins_of`			|GET|Get the information of the current admins of an organization|
+|`/orgs/user_of`			|GET|Get the information of all users under an organization|
+|`/user/info/self`			|GET|Get information on the current sessions user|
 
 
 ## Views
@@ -86,3 +87,6 @@ The following are *decorator functions* used across multiple modules of the `Cyb
 >- ***exception_handler()*** - This decorator function is in tandem with almost all other functions and API endpoint calls in the API module. the exception handler signals on any errors such as a bad HTTP request, Invalid input, and if the backend is currently down and/or not working properly.
 > - ***early_return()*** - Utility dectorator used by other decorators as a way to early return from any function call if a decorator calls for an early return.
 > - ***get_org_object()*** - checks to see if the key `org_hash` is present within the argument `request_data`. If it fails, then a response code 400 is returned. This decorator will pull *'org_hash'* from *request_data["org_hash"]* and place the org tahoe object under *org_object*.
+
+# Miscellaneous 
+foo
