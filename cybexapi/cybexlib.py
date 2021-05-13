@@ -402,7 +402,7 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
                         print("Unable to get report response for page " + str(count) + " for " + str(data))
                 except TypeError as e:
                     print("Error inserting " + data + " into the graph:\n",e)
-                worked = 0
+                retry_count = 0
         except requests.exceptions.ConnectTimeout:
             retry_count -= 1
             print(f"Retry count: {retry_count} Couldn't connect to CYBEX, timed out.")
