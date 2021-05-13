@@ -123,7 +123,7 @@ const App = props => {
           </GraphModal> */}
           <GraphModal title="Submit Event Data" contentLabel="Submit Event Data" afterCloseFn={() => setUploadedFile(null)}>
             <Formik
-              initialValues={{ file: null, timezone: '' }}
+              initialValues={{ file: null, timezone: '', orgid: '' }}
               validationSchema={Yup.object({
                 file: Yup.mixed()
                   // .max(15, 'Must be 15 characters or less')
@@ -131,20 +131,26 @@ const App = props => {
                 timezone: Yup.string()
                   // .max(20, 'Must be 20 characters or less')
                   .required('Required'),
+                orgid: Yup.string()
+                .required('Required'),
               })}
               onSubmit={(values, { setSubmitting }) => {
                 setTimeout(() => {
                   let formData = new FormData();
                   formData.append('timezone', values.timezone);
                   formData.append('file', values.file);
+                  formData.append('orgid', values.orgid);
                   axios.post('/api/v1/dataEntry', formData, {
                     headers: {
                       'Content-Type': 'multipart/form-data'
                     }
-                  }).then(({ response }) => {
+                  }).then(() => {
                     dispatchModal('none');
-                  }).catch(() => {
-                    alert('Error submitting data:\n' + JSON.stringify(values, null, 2));
+                  }).catch((error ) => {
+                    alert('Error submitting data:\n' + 
+                      JSON.stringify(values, null, 2) + "\n" + "Status Code " 
+                      +error.response.status + "\n" + 
+                      JSON.stringify(error.response.data));
                   });
                   setSubmitting(false);
                 }, 400);
@@ -250,7 +256,15 @@ const App = props => {
                         <div>{uploadedFile}</div>
                       )}
                       {!uploadedFile && (
-                        <p>Select a file to see a preview here... </p>
+                        <div>     
+                          <h4>Instructions:</h4>
+                          <p><i>Select a file to see a preview here.</i></p>
+                          <p>Supported formats currently include:</p>
+                          <ul>
+                            <li>Cowrie Log Files</li>
+                          </ul>
+                          <p>Specify the timezone from which the data was captured. Next, verify that the correct organization is selected (i.e. is the one you wish to submit from). Finally, click submit. The submitted data will be validated against the supported formats listed above. If the file passes validation, it will be processed and contributed to CYBEX-P.</p>
+                        </div>
                       )}
                                            
                     </div>
@@ -266,9 +280,24 @@ const App = props => {
                         alignItems: "center"
                       }}
                     >
-                      <div>
-                        <div>Organization ID:</div>
-                        <div>[test_org]</div>
+                      <div style={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+                        <div>Organization:</div>
+                        <div style={{ color: 'black', width: '150px', marginLeft: '10px'}}>
+                          <Select 
+                            // defaultValue={{ label: 'test_org', value: 'test_org' }}
+                            menuPlacement="top" 
+                            options = {[
+                              { value: 'test_org', label: 'test_org' },
+                              { value: 'test_org2', label: 'test_org2' }
+                            ]}
+                            onChange={ e => {
+                              formik.setFieldValue("orgid", e.value);
+                            }}
+                          />
+                          {formik.touched.orgid && formik.errors.orgid ? (
+                              <div style={{color:"red"}}>{formik.errors.orgid}</div>
+                            ) : null}
+                        </div>
                       </div>
                       <Button width="90px" type="submit">
                           Submit
