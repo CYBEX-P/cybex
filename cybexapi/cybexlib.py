@@ -26,6 +26,8 @@ from django.conf import settings
 from threading import Timer
 from cybexapi.shodanSearch import insert_ports
 import threading
+import time
+import random
 
 # deprecated, testing if still being used..
 # def pull_ip_src():
@@ -345,6 +347,8 @@ def cybexRelatedHandler(ntype, data, graph, user, num_pages = 10):
         thread_list.append(thread)
     for thread in thread_list:
         thread.start()
+        # thread.start()
+        # time.sleep(2)
     for thread in thread_list:
         thread.join()
     ## End of multithreading
@@ -384,24 +388,31 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
     payload = json.dumps(payload) # data is jsonified request
     print(f"data: {payload}")
 
-    try:
-        with requests.post(url, headers=headers, data=payload, timeout=(3.05, 20)) as r:
-            try:
-                res = json.loads(r.text)
-                print(f"res: {res}")
-                # Use response data to now insert nodes into graph database
-                if "data" in res:
-                    status = insertRelatedAttributes(res, graph, data, ntype_processed, insertions_to_make)
-                else: # Report response not ready yet or doesn't exist for this page
-                    print("Unable to get report response for page " + str(count) + " for " + str(data))
-            except TypeError as e:
-                print("Error inserting " + data + " into the graph:\n",e)
-    except requests.exceptions.ConnectTimeout:
-        print("Couldn't connect to CYBEX, timed out.")
-        return -1
-    except requests.exceptions.ReadTimeout:
-        print("Timed out when attempting to read from CYBEX for " + data + " page " + str(count))
-        return 0
+    retry_count = 3 # sets number of allowable timeouts before call stops retrying.
+    while retry_count >= 1:
+        try:
+            with requests.post(url, headers=headers, data=payload, timeout=(3.05, 20)) as r:
+                try:
+                    res = json.loads(r.text)
+                    print(f"res: {res}")
+                    # Use response data to now insert nodes into graph database
+                    if "data" in res:
+                        status = insertRelatedAttributes(res, graph, data, ntype_processed, insertions_to_make)
+                    else: # Report response not ready yet or doesn't exist for this page
+                        print("Unable to get report response for page " + str(count) + " for " + str(data))
+                except TypeError as e:
+                    print("Error inserting " + data + " into the graph:\n",e)
+                worked = 0
+        except requests.exceptions.ConnectTimeout:
+            retry_count -= 1
+            print(f"Retry count: {retry_count} Couldn't connect to CYBEX, timed out.")
+            time.sleep(random.uniform(0.0,5.0)) # wait a random amount of time to balance concurrent requests
+            #return -1
+        except requests.exceptions.ReadTimeout:
+            retry_count -= 1
+            print(f"Retry count: {retry_count} Timed out when attempting to read from CYBEX for {data} page {count}")
+            time.sleep(random.uniform(0.0,5.0)) # wait a random amount of time to balance concurrent requests
+            #return 0
 
 
 # Description: Gets the CYBEX orgid of the current user

@@ -223,6 +223,8 @@ class macroCybex(APIView):
                 thread_list.append(thread)
             for thread in thread_list:
                 thread.start()
+                # thread.start()
+                # time.sleep(2)
             for thread in thread_list:
                 thread.join()
             ## End of threaded version
