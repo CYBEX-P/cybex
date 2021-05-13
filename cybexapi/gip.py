@@ -2,7 +2,7 @@ import geoip2.database
 from py2neo import Graph, Node, Relationship
 import json
 import os
-from cybexapi.cybexlib import pull_ip_src
+# from cybexapi.cybexlib import pull_ip_src
 from django.conf import settings
 
 # TODO

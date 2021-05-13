@@ -47,7 +47,7 @@ const InsertForm = props => {
   function handleEnrichIP(values, actions) {
     const { enrichmentType, ipToEnrich } = values;
     if (ipToEnrich !== 'none' && selectedIOC2 === "Host" && enrichmentType === 'pdns') {
-      setLoading(true);
+      setLoading("Enriching " + enrichmentType);
       axios
         .post(`/api/v1/enrichPDNS`, {value: `${ipToEnrich}`})
         .then(({ data }) => {
@@ -76,7 +76,7 @@ const InsertForm = props => {
         });
     }
     else if (enrichmentType === "cybexCount" || enrichmentType === "cybexRelated") {
-      setLoading(true);
+      setLoading("Enriching " + enrichmentType);
       axios
         .post(`/api/v1/enrich/${enrichmentType}`, {Ntype: `${selectedIOC2}`,value: `${ipToEnrich}`})
         .then(({ data }) => {
@@ -105,7 +105,7 @@ const InsertForm = props => {
         });
     }
     else if (ipToEnrich !== 'none' && selectedIOC2 === "URL") {
-      setLoading(true);
+      setLoading("Enriching " + enrichmentType);
       axios
         .post(`/api/v1/enrichURL`, {value: `${ipToEnrich}`})
         .then(({ data }) => {
@@ -134,7 +134,7 @@ const InsertForm = props => {
         });
     }
     else if (ipToEnrich !== 'none') {
-      setLoading(true);
+      setLoading("Enriching " + enrichmentType);
       axios
         .get(`/api/v1/enrich/${enrichmentType}/${ipToEnrich}`)
         .then(({ data }) => {
@@ -167,7 +167,7 @@ const InsertForm = props => {
 
   function handleHighlightNode(values, actions) {
     const { dataToHighlight, typeToHighlight} = values;
-    setLoading(true);
+    setLoading("Highlighting node");
     axios
       .get('/api/v1/neo4j/export')
       .then(({data}) => {

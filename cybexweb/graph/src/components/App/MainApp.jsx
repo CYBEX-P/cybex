@@ -28,7 +28,11 @@ import { Formik} from 'formik';
 import * as Yup from 'yup';
 
 const App = props => {
-  const [isLoading, setLoading] = useState(false);
+	const [fromDate, setFromDate] = useState('');
+	const [toDate, setToDate] = useState('');
+	const [timezone, setTimezone] = useState('');
+	
+	const [isLoading, setLoading] = useState(false);
 
   const [isExpanded, dispatchExpand] = useReducer((_, action) => {
     if (action === 'left' || action === 'right' || action === 'bottom' || action === 'top') {
@@ -49,6 +53,8 @@ const App = props => {
   const [errorToDisplay, setError] = useState(null);
 
   const [macroDetails, setMacroDetails] = useState('none');
+
+  const [userProfile, setUserProfile] = useState(null);
   
   // Timezone state for use with data entry form
   const [selectedTimezone, setSelectedTimezone] = useState({})
@@ -62,7 +68,28 @@ const App = props => {
       axios.get('/api/v1/neo4j/export').then(({ data }) => {
         setNeo4jData(data);
       });
+
+      // retrieve current user's information on render:
+      let user_info = {};
+      //const params_info = {'info_to_return': 'basic_info'};
+      axios.get('/api/v1/user_management/currentUserInfo/basic_info').then(({ data }) => {
+        user_info.email_addr = data.result.data.email_addr;
+        user_info.name = data.result.data.name;
+        user_info.hash = data.result._hash;
+        axios.get('/api/v1/user_management/currentUserInfo/user_of').then(({ data }) => {
+          // retrieve the orgs the current user belongs to:
+          let org_string = "No orgs found for this user."
+          if (Array.isArray(data.result) && data.result.length) {
+            // make sure data.result exists, is an array, and is nonempty
+            org_string = ''
+            data.result.forEach(org => org_string += org.data.orgname + ', ')
+          }
+          user_info.orgs = org_string;
+          setUserProfile(user_info);
+        });
+      });
     }
+
   }, []);
 
   return (
@@ -261,6 +288,30 @@ const App = props => {
                )}   
             </Formik>      
           </GraphModal>
+          {/* Modal to display user profile */}
+            <GraphModal afterCloseFn={() => setError(null)} title="User Profile" contentLabel="User Profile">
+              <div style={{ textAlign: 'center' }}>
+                <FontAwesomeIcon icon="user" size="10x" />
+                <br />
+                {userProfile != null && (
+                  <div>
+                    <div style={{ marginTop:'5px' }}><b>{userProfile.name}</b></div>
+                    <div style={{display: "flex", justifyContent: "center"}}>
+                      <div style={{textAlign: 'left', marginTop:'30px' }}>
+                        <div>Email:&nbsp;{userProfile.email_addr}</div>
+                        <div>Unique Identifier:&nbsp;{userProfile.hash}</div>
+                        <div>Organizations:&nbsp;{userProfile.orgs}</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {userProfile == null && (
+                  <div>Error retrieving user profile.</div>
+                )}
+                <div style={{ color: '#ff4300' }}>{errorToDisplay}</div>
+              </div>
+            </GraphModal>
+
           <GraphModal afterCloseFn={() => setError(null)} title="Error" contentLabel="Error">
             <div style={{ textAlign: 'center' }}>
               <FontAwesomeIcon icon="meh" size="10x" />
@@ -290,9 +341,12 @@ const App = props => {
 
           <AppContainer>
             <ContentContainerStyle>
-              <Graph isLoading={isLoading} />
+              <Graph isLoading={isLoading} setFromDate={setFromDate} setToDate={setToDate} setTimezone={setTimezone} />
             </ContentContainerStyle>
-            <NavBar />
+            <NavBar 
+              dispatchModal={dispatchModal}
+							userProfile={userProfile}
+            />
             {/* Below TrendsContext component should be used if we move from state to context for trends panel.
              At the moment, the trends component gets placed into the navbar, and is rendered dependent on a state within the navbar component.
             To more properly treat Trends as an independent component, context can be used in future reworking of the Trend panel logic */}

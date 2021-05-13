@@ -1,3 +1,22 @@
+"""Functions for sending/receiving data from the CYBEX backend.
+
+This module provides three categories of functions for interfacing with the 
+CYBEX backend. The first is a set of functions for requesting data on related
+IOCs and threat data for IOCs. To return related IOCs, use 
+cybexRelatedHandler(). threadedLoop_cybexRelatedHandler() and 
+insertRelatedAttributes() are associated helper functions. To return threat
+data about an IOC, use cybexCountHandler(). insertCybexCount() is an 
+associated helper function.
+
+The second category of functions handles submitting event data to the CYBEX
+backend.
+
+The third category of functions handles CYBEX administrative information, such
+as getting user, organization, admin, and ACL information. Functions are
+provided for making changes to the above administrative properties.
+
+"""
+
 from py2neo import Graph, Node, Relationship
 from cybexapi.exportDB import bucket
 from cybexapi.api import *
@@ -7,74 +26,40 @@ from django.conf import settings
 from threading import Timer
 from cybexapi.shodanSearch import insert_ports
 import threading
+import time
+import random
 
+# deprecated, testing if still being used..
+# def pull_ip_src():
 
-def pull_ip_src():
+#     ip_list = []
 
-    ip_list = []
+#     with open('data/ti.json') as f:
+#         data = json.load(f)
 
-    with open('data/ti.json') as f:
-        data = json.load(f)
+#         for entry in data['response']['Attribute']:
+#             if (entry['type'] == "ip-src"):
+#                 ip_list.append(entry['value'])
 
-        for entry in data['response']['Attribute']:
-            if (entry['type'] == "ip-src"):
-                ip_list.append(entry['value'])
+#     return ip_list
 
-    return ip_list
+def insertCybexCount(num_benign, num_mal, graph, value, ntype):
+    """Adds Cybex Count and Malicious Count to node data.
 
+    Args:
+        num_benign (int): Number of sightings in benign CYBEX event contexts
+        num_mal (int): Number of sightings in malicious CYBEX event contexts
+        graph (py2neo.database.Graph): The graph object for the current graph
+        value (string): JSON data for the originating node
+        ntype (string): The IOC type of the originating node
 
-def insertCybex(data, graph, value):
-
-    c = Node("CybexCount", data=data)
-    ip_node = graph.nodes.match(data=value).first()
-    c_node = graph.nodes.match("CybexCount", data=data).first()
-
-    if(c_node):
-        rel = Relationship(ip_node, "HAS_OCCURED", c_node)
-        graph.create(rel)
-        print("Existing CybexCount node linked")
-    else:
-        graph.create(c)
-        rel = Relationship(ip_node, "HAS_OCCURED", c)
-        graph.create(rel)
-        print("New CybexCount node created and linked")
-
-    return 1
-
-
-def insertRelated(data, graph, value):
-
-    c = Node("CybexRelated", data=data)
-    ip_node = graph.nodes.match(data=value).first()
-    c_node = graph.nodes.match("CybexRelated", data=data).first()
-
-    if(c_node):
-        rel = Relationship(ip_node, "HAS_OCCURED", c_node)
-        graph.create(rel)
-        print("Existing CybexRelated node linked")
-    else:
-        graph.create(c)
-        rel = Relationship(ip_node, "HAS_OCCURED", c)
-        graph.create(rel)
-        print("New CybexRelated node created and linked")
-
-    return 1
-
-# Description: Adds Cybex Count and Malicious Count to node data
-# Parameters: <int>numOccur - Cybex Count query response
-#             <int>numMal - Cybex Count Malicious query response
-#             <object>graph - The current graph
-#             <string>Ntype - The type of the originating node
-#             <string>value - JSON data for the originating node
-# Returns: 1 if successful
-# Author: Adam Cassell
-
-
-def insertCybexCount(numOccur, numMal, graph, value, nType):
-    ip_node = graph.nodes.match(nType, data=value).first()
+    Returns:
+        1 if successful
+    """
+    ip_node = graph.nodes.match(ntype, data=value).first()
     if(ip_node):
-        ip_node["count"] = numOccur
-        ip_node["countMal"] = numMal
+        ip_node["count"] = num_benign
+        ip_node["countMal"] = num_mal
         graph.push(ip_node)
         print("CybexCount added to node")
     else:
@@ -82,60 +67,83 @@ def insertCybexCount(numOccur, numMal, graph, value, nType):
         return -1
     return 1
 
-# Description: Attaches nodes to an object for all related attributes queried from Cybex
-# Parameters: <string>data - JSON response string from the Related Attribute Summary API call
-#             <object>graph - The current graph
-#             <string>value - JSON data for the originating node
-#             <string>originalType - type of originating node
-# Returns: 0 if successful
-# Author: Adam Cassell
+def insertRelatedAttributes(data, graph, value, original_type, insertions_to_make):
+    """Adds related attributes queried from CYBEX to insertions_to_make dict.
 
-def insertRelatedAttributes(data, graph, value, originalType, insertions_to_make):
+    Args:
+        data (string): JSON response string from the Related Attribute Summary API call
+        graph (py2neo.database.Graph): The graph object for the current graph
+        value (string): JSON data for the originating node 
+        original_type (string): IOC type of originating node
+        insertions_to_make (dict): dictionary with each key representing each
+            node to add to graph. Each value is the Relationship object
+            that will be later processed to insert the relationship into the
+            neo4j graph
+
+    Returns:
+        int: 1 if successful
+    """
     # iterate over all related attributes..
     for attr, val in data["data"].items():
+        # format IOC type labels to be most human-readable
         attr = bucket(attr)
-        originalType = bucket(originalType)
+        original_type = bucket(original_type)
         valString = ""
         # Only connect ports to graph if the original node is of type 'IP'
         # Doesn't make sense to add ports to a url node, for example
         if attr == "Ports":
-            if originalType == "IP" or originalType == "Subnet":
+            if original_type == "IP" or original_type == "Subnet":
                 # Special case for ports. Group them together.
                 insert_ports(val,graph,value)
         else:
-            for each in val:
-                #     valString = valString + str(each) + ','
-                # valString = valString[:-1] # remove trailing comma
-                # #nodeData = attr + ": " + valString # currently only using value
-                # nodeData = valString
-                nodeData = each
-                c = Node(attr, data=nodeData)
-                c["source"] = "cybex"
-                ip_node = graph.nodes.match(data=value).first()
-                c_node = graph.nodes.match(attr, data=nodeData).first()
+            for nodeData in val:
+                # Note: nodeData is a list of length 2, with the first index
+                # being the node's value and the second index being a list
+                # that defines associated event data. This is the event data
+                # that this related IOC was associated with
+                event_details = nodeData[1]
+                # items in event_details can be objects, attributes, or events
+                # create label to be used to describe relationship
+                separator = ','
+                event_string = "CYBEX:" + separator.join(event_details)
 
+                # Create a temporary node with the given data for comparsions
+                c = Node(attr, data=nodeData[0])
+                c["source"] = "cybex"
+                # Get the existing node from which this query originates
+                original_node = graph.nodes.match(data=value).first()
+                # see if a node already exists with the new data
+                c_node = graph.nodes.match(attr, data=nodeData[0]).first()
+                
+                # if c_node is true, an existing node matched the given data
                 if(c_node):
-                    if (ip_node != c_node):
-                        rel = Relationship(ip_node, "CYBEX", c_node)
-                        #rel['color'] = 'rgb(255,255,255)'
-                        #graph.create(rel)
-                        insertions_to_make[nodeData+"_r"] = rel
+                    # if the new node is different from the originating node..
+                    if (original_node != c_node):
+                        # create relationshop object from originating node to
+                        # the matching existing node 
+                        rel = Relationship(original_node, event_string, c_node)
+                        # Add relationship object to key of dict that
+                        # corresponds to the appropriate node. Note that the
+                        # key is the data value of the node, represented as a
+                        # string, with an '_r' appended. This is done to cast
+                        # all node values as strings for easy indexing of dict
+                        insertions_to_make[nodeData[0]+"_r"] = rel
                         print("Existing CybexRelated node linked")
                     else:
                         print("Related node is same as origin node. Skipped.")
                 else:
-                    #graph.create(c)
-                    #insertions_to_make[str(nodeData)] = c
-                    rel = Relationship(ip_node, "CYBEX", c)
-                    #rel['color'] = 'rgb(255,255,255)'
-                    #graph.create(rel)
-                    insertions_to_make[nodeData +"_r"] = rel
+                    # no existing node with given data is found...
+                    # create relationship object from originating node to the
+                    # newly created node
+                    rel = Relationship(original_node, event_string, c)
+                    insertions_to_make[nodeData[0] +"_r"] = rel
                     print("New CybexRelated node created and linked")
 
-    return 0
+    return 1
 
 
 def replaceType(value):
+    """Format IOC types to match the strings the backend expects."""
     if value == "Email":
         return "email_addr"
     elif value == "Host":
@@ -149,232 +157,263 @@ def replaceType(value):
     else:
         return value.lower()
 
-# Description: Handler for cybexCount() and also designed to be called seperately
-# Parameters: <string>Ntype - The type of the originating node
-#             <string>data1 - JSON data for the originating node
-# Returns: 1 if successful
-# Author: Adam Cassell
 # TODO
 # Use django.settings to get keys and move URLS to settings as well.
+def cybexCountHandler(ntype, data, graph, user, event):
+    """Queries CYBEX for benign and malicious counts of the given IOC.
 
+    Args:
+        ntype (string): The IOC type of the originating node
+        data: The data value of the originating node
+        graph (py2neo.database.Graph): The graph object for the current graph
+        user (django.contrib.auth.models.User): The current user making the 
+            request
+        event (threading.Event): Thread event object for faciliting the use
+            of event.wait() between request attempts
 
-def cybexCountHandler(Ntype, data1, graph, user):
-    # graph = connect2graph()
-    Ntype1 = replaceType(Ntype)
+    Returns:
+        int: 1 if successful
+    """
+    # process the IOC type to ensure it matches the string the backend expects
+    ntype_processed = replaceType(ntype)
+    # First, query count (sightings in benign contexts)...
 
-    # test_url = "http://cybex-api.cse.unr.edu:5000/hello"
-    # test_r = requests.get(test_url)
-    # print(test_r.text)
-
-    # First, query total count
-    #url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count"
-    #url = "http://localhost:5001/query"
+    # The url to be used for the query to the CYBEX API
     url = "https://cybex-api.cse.unr.edu:5000/query"
+    # Retrieve the token of the current user. This is stored in the django
+    # user profile model and is created by the backend upon user creation.
+    # The token is required for authenticating the request
     user_token = user.profile.cybex_token
     headers = {'content-type': 'application/json',
                'Authorization': 'Bearer ' + user_token}
-    # data = {Ntype1: data1, "from": "2019/8/30 00:00",
-    #         "to": "2020/3/1 6:00am", "tzname": "US/Pacific"}
-    def raise_timeout():
-        #raise requests.exceptions.Timeout("Count query timed out.")
-        print("*****TIMED OUT*****")
-        return 0
 
-    try:
-        data = {
-            "type": "count", 
-            "data" : {
-                "sub_type": Ntype1, 
-                "data": data1,
-                "category": "all",
-                "context": "all",
-                "last": "1Y"
-            }
+    # construct the data object to be passed to post request
+    payload = {
+        "type": "count", #specify that we want count data
+        "data" : {
+            "sub_type": ntype_processed, 
+            "data": data,
+            "category": "all",
+            "context": "all",
+            "last": "1Y"
         }
-        data = json.dumps(data)
-        print("Fetching cybexCount for "+data1+"...")
-        valid = False # Flag to be set when valid api response is returned
-        api_timeout = False
-        t = Timer(30.0, raise_timeout)
-        t.start()      
-        while not valid:
-            print("requesting "+ data1 +"...")
-            try:
-                # request timeout tuple is (connection timeout, read timeout)
-                r = requests.post(url, headers=headers, data=data, timeout=(3.05, 30))
-            except requests.exceptions.ConnectTimeout:
-                print("Couldn't connect to CYBEX, timed out.")
-                return -1
-            except requests.exceptions.ReadTimeout:
-                print("Timed out when attempting to read cybexCount")
-                return 0
+    }
+    payload = json.dumps(payload)
+    print("Fetching cybexCount for "+data+"...")
+
+    # NOTE: The backend cannot instantaneously calculate and return count
+    # information. Often, it takes several checks before the backend has
+    # completed calculations and returns valid data. Until this result is
+    # computed, the backend returns "check back later". To handle this,
+    # this function repeatedly makes requests to check calculation status.
+    # The event object is used to cause the thread to wait for a few
+    # seconds in between each repeated request, to mitigate server load.
+    # Each request has timeouts that define the upper limit of how long 
+    # it will wait for a valid response. Once a valid response is returned
+    # the data is read and added to the graph.
+
+    valid = False # Flag to be set when valid api response is returned
+    # counter used for debugging, to track # of iterative request attempts
+    count = 1
+    while not valid:
+        print("attempt " + str(count)+ ": requesting cybexCount "+ data +"...")
+        count +=1
+        try:
+            # request timeout tuple is (connection timeout, read timeout)
+            r = requests.post(url, headers=headers, data=payload, timeout=(3.05, 30))
+        except requests.exceptions.ConnectTimeout:
+            print("Couldn't connect to CYBEX, timed out.")
+            return -1
+        except requests.exceptions.ReadTimeout:
+            print("Timed out when attempting to read cybexCount")
+            return 0
+        try:
             res = json.loads(r.text)
-            if "status" not in res:
-                t.cancel()
+            if "data" in res:
+                # t.cancel()
                 valid = True
+            else:
+                event.wait(5)
+        except json.decoder.JSONDecodeError as e:
+            print("Could not decode JSON in response for " + data,e)
+            #print(res)
 
-        # Handle situation where timeout occurs on query:
-        if r.status_code == 504:
-            raise_timeout()
-        # Next, query malicious count
-        #urlMal = "http://cybexp1.acs.unr.edu:5000/api/v1.0/count/malicious"
-        #urlMal = "http://localhost:5001/query"
-        # urlMal = "https://cybex-api.cse.unr.edu:5000/query"
-        # headersMal = {'content-type': 'application/json',
-        #             'Authorization': 'Bearer xxxxx'}
-        #dataMal = {Ntype1: data1, "from": "2019/8/30 00:00",
-        #           "to": "2020/4/23 6:00am", "tzname": "US/Pacific"}
-        dataMal = {
-            "type": "count", 
-            "data" : {
-                "sub_type": Ntype1, 
-                "data": data1,
-                "category": "malicious",
-                "context": "all",
-                "last": "1Y"
-            }
+    # Next, query malicious count...
+    
+    #dataMal = {Ntype1: data1, "from": "2019/8/30 00:00",
+    #           "to": "2020/4/23 6:00am", "tzname": "US/Pacific"}
+    payloadMal = {
+        "type": "count", 
+        "data" : {
+            "sub_type": ntype_processed, 
+            "data": data,
+            "category": "malicious",
+            "context": "all",
+            "last": "1Y"
         }
-        dataMal = json.dumps(dataMal)
-        print("Fetching cybexCountMalicious for "+data1+"...")
-        valid = False # Flag to be set when valid api response is returned
-        api_timeout = False
-        t = Timer(30.0, raise_timeout)
-        t.start()
-        while not valid:
-            try:
-                rMal = requests.post(url, headers=headers, data=dataMal, timeout=(3.05, 30))
-            except requests.exceptions.ConnectTimeout:
-                print("Couldn't connect to CYBEX, timed out.")
-                return -1
-            except requests.exceptions.ReadTimeout:
-                print("Timed out when attempting to read cybexMaliciousCount")
-                return 0
+    }
+    payloadMal = json.dumps(payloadMal)
+    print("Fetching cybexCountMalicious for "+data+"...")
+
+    valid = False # Flag to be set when valid api response is returned
+    count = 1
+    while not valid:
+        print("attempt " + str(count)+ ": requesting cybexMaliciousCount "+ data +"...")
+        count+=1
+        try:
+            rMal = requests.post(url, headers=headers, data=payloadMal, timeout=(3.05, 30))
+        except requests.exceptions.ConnectTimeout:
+            print("Couldn't connect to CYBEX, timed out.")
+            return -1
+        except requests.exceptions.ReadTimeout:
+            print("Timed out when attempting to read cybexMaliciousCount")
+            return 0
+        try:
+            #print(rMal.text)
             resMal = json.loads(rMal.text)
             # if resMal["status"] is not "processing":
-            if "status" not in resMal:
-                t.cancel()
+            if "data" in resMal:
+                # t.cancel()
                 valid = True
+            else:
+                event.wait(5)
+        except json.decoder.JSONDecodeError as e:
+            print("Could not decode JSON in response for " + data,e)
+            #print(resMal)
 
-    except requests.exceptions.Timeout as e:
-        print(e)
-        return 0
-
-    numOccur = res["data"]
-    numMal = resMal["data"]
-    # status = insertCybex(numOccur, graph, data1)
-    status = insertCybexCount(numOccur,numMal,graph,data1,Ntype)
+    num_benign = res["data"]
+    num_mal = resMal["data"]
+    status = insertCybexCount(num_benign,num_mal,graph,data,ntype)
     # return jsonify({"insert status" : status})
     return status
 
-def cybexRelatedHandler(Ntype, data1, graph, user):
+def cybexRelatedHandler(ntype, data, graph, user, num_pages = 10):
+    """Queries CYBEX for related IOCs and inserts them into the graph.
+
+    Takes the given IOC data and queries CYBEX for all related IOCs (as 
+    captured in related CYBEX event data). The returned IOCs are then 
+    processed and inserted into the graph.
+
+    Note that the order and results of the pages varies for each query.
+    There is also sometimes duplicate data across different pages, but
+    this is handled immediately and duplicates are removed. Future work
+    may be done to order the pages that are returned by the underlying
+    CYBEX query, such as ordering the pages in order of their contents'
+    threatRank.
+
+    Args:
+        ntype (string): The IOC type of the originating node
+        data: The data value of the originating node
+        graph (py2neo.database.Graph): The graph object for the current graph
+        user (django.contrib.auth.models.User): The current user making the 
+            request
+        num_pages (int): The desired number of response pages. CYBEX often
+            has large numbers of pages that can be returned for a given piece
+            of data. This value serves to cap the number of pages the query
+            waits for before processing and adding data to the graph. Defaults
+            to 10.
+
+    Returns:
+        int: 1 if successful
+
+    """
+
     #TODO: Modify timeout/execption handling and returns
-    
-    #graph = connect2graph()
-    #req = request.get_json()
-    #Ntype = str(req['Ntype'])
-    Ntype1 = replaceType(Ntype)
-    #data1 = req['value']
-    #print(req)
-    #url = "http://cybexp1.acs.unr.edu:5000/api/v1.0/related/attribute/summary"
+    # process the IOC type to ensure it matches the string the backend expects
+    ntype_processed = replaceType(ntype)
+    # The url to be used for the query to the CYBEX API
     url = "https://cybex-api.cse.unr.edu:5000/query"
+    # Retrieve the token of the current user. This is stored in the django
+    # user profile model and is created by the backend upon user creation.
+    # The token is required for authenticating the request
     user_token = user.profile.cybex_token
-    # print(f"user: {user}")
     headers = {'content-type': 'application/json', 'Authorization' : 'Bearer ' + user_token}
-    #data = { Ntype1 : data1, "from" : "2019/8/30 00:00", "to" : "2019/12/5 6:00am", "tzname" : "US/Pacific" }
+    # Initialize page count for iterating through response pages. Each page is
+    # queried independently.
     count = 1
     r = None
 
-
-    #TODO REPLACE below with real stop condition and/or max pagination
-
-    # Hash table (dict) to solve multithreading insertion duplicate issue:
+    # Hash table (dict) to solve multithreading insertion duplicate issue.
+    # The results of each response page are stored here, excluding duplicates
     insertions_to_make = {}
 
-    ## Start of threaded version
+    ## Start of multithreading
+    # Starts individual threads for querying each page of related IOC data
     thread_list = []
-    for count in range(10):
-        thread = threading.Thread(target=threadedLoop_cybexRelatedHandler, args=(count, Ntype1, data1, graph, headers, url, insertions_to_make))
+     #NOTE: Perhaphs replace below with more advanced stop condition
+     # Currently is based on defined num_pages page limit
+    for count in range(num_pages):
+        thread = threading.Thread(target=threadedLoop_cybexRelatedHandler, args=(count, ntype_processed, data, graph, headers, url, insertions_to_make))
         thread_list.append(thread)
     for thread in thread_list:
         thread.start()
+        # thread.start()
+        # time.sleep(2)
     for thread in thread_list:
         thread.join()
-    ## End of threaded version
+    ## End of multithreading
 
-    # print(insertions_to_make)
-
+    # Iterate through all entries now populated in insertions_to_make dict
+    # and create each relationship. This inserts each item into graph database
     for key, rel in insertions_to_make.items():
         graph.create(rel)
-
-    ## Start of non-threaded version
-    # while r != "[]" and count <= 10:
-    #     print(f"Count: {count}")
-    #     data = {
-    #         "type": "related",
-    #         "data": {
-    #             "sub_type": Ntype1, # make sure ipv4 works for ip (replaceType())
-    #             "data": data1,
-    #             "return_type": "attribute",
-    #             "summary" : True,
-    #             "page": count
-    #         }
-    #     }
-        
-
-    #     data = json.dumps(data) # data is jsonified request
-    #     print(f"data: {data}")
-
-    #     r = requests.post(url, headers=headers, data=data)
-    #     res = json.loads(r.text)
-    #     print(f"res: {res}")
-    #     count += 1
-
-    #     try:
-    #         #status = insertRelated(str(res), graph, data1)
-    #         status = insertRelatedAttributes(res, graph, data1,Ntype1)
-
-    #     except:
-    #         return 1
-    ## End of non-threaded version
-
 
     return 1
 
 
-def threadedLoop_cybexRelatedHandler(count, Ntype1, data1, graph, headers, url, insertions_to_make):
-    print(f"Count: {count}")
-    data = {
-        "type": "related",
+def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, headers, url, insertions_to_make):
+    """Helper function for cybexRelatedHandler. Handles cybexRelated requests.
+
+    This function sends and receives a single page for a single cybexRelated
+    query. It then calls insertRelatedAttributes() to insert the response 
+    data into the neo4j graph database. Only meant to be called by 
+    cybexRelatedHandler().
+
+    """
+    print(f"Page count: {count}")
+    # construct the data object to be passed to post request
+    payload = {
+        "type": "related", # specify we want to return related IOC data
         "data": {
-            "sub_type": Ntype1, # make sure ipv4 works for ip (replaceType())
-            "data": data1,
-            "return_type": "attribute",
+            "sub_type": ntype_processed,
+            "data": data,
+            #"return_type": "attribute",
             "summary" : True,
+            "event_graph": True,
             "page": count
         }
     }
-    
+    #TODO: make sure ipv4 works for ip (replaceType())
 
-    data = json.dumps(data) # data is jsonified request
-    print(f"data: {data}")
+    payload = json.dumps(payload) # data is jsonified request
+    print(f"data: {payload}")
 
-    try:
-        r = requests.post(url, headers=headers, data=data, timeout=(3.05, 10))
-    except requests.exceptions.ConnectTimeout:
-        print("Couldn't connect to CYBEX, timed out.")
-        return -1
-    except requests.exceptions.ReadTimeout:
-        print("Timed out when attempting to read from CYBEX")
-        return 0
-    res = json.loads(r.text)
-    print(f"res: {res}")
+    retry_count = 3 # sets number of allowable timeouts before call stops retrying.
+    while retry_count >= 1:
+        try:
+            with requests.post(url, headers=headers, data=payload, timeout=(3.05, 20)) as r:
+                try:
+                    res = json.loads(r.text)
+                    print(f"res: {res}")
+                    # Use response data to now insert nodes into graph database
+                    if "data" in res:
+                        status = insertRelatedAttributes(res, graph, data, ntype_processed, insertions_to_make)
+                    else: # Report response not ready yet or doesn't exist for this page
+                        print("Unable to get report response for page " + str(count) + " for " + str(data))
+                except TypeError as e:
+                    print("Error inserting " + data + " into the graph:\n",e)
+                worked = 0
+        except requests.exceptions.ConnectTimeout:
+            retry_count -= 1
+            print(f"Retry count: {retry_count} Couldn't connect to CYBEX, timed out.")
+            time.sleep(random.uniform(0.0,5.0)) # wait a random amount of time to balance concurrent requests
+            #return -1
+        except requests.exceptions.ReadTimeout:
+            retry_count -= 1
+            print(f"Retry count: {retry_count} Timed out when attempting to read from CYBEX for {data} page {count}")
+            time.sleep(random.uniform(0.0,5.0)) # wait a random amount of time to balance concurrent requests
+            #return 0
 
-    try:
-        #status = insertRelated(str(res), graph, data1)
-        status = insertRelatedAttributes(res, graph, data1,Ntype1, insertions_to_make)
-
-    except:
-        return -1
 
 # Description: Gets the CYBEX orgid of the current user
 # Parameters: <object>user - Object representing the user
