@@ -7,6 +7,7 @@ import TrendsContext from '../App/TrendsContext';
 import TrendBox from './TrendBox';
 import { TrendPanelStyle } from '../__styles__/styles';
 import TrendRow from './TrendRow';
+import Honeypot from '../honeypot/Honeypot';
 
 const Trends = (props) => {
 	const [mapViewState, setMapViewState] = useState(false);
@@ -66,9 +67,10 @@ const Trends = (props) => {
 					{mapViewState && (
 
 				<TrendPanelStyle>
-						<div style={{marginLeft:"100px",textAlign: "center", fontSize: "2em"}}>IP Map View
+					<Honeypot></Honeypot>
+						{/* <div style={{marginLeft:"100px",textAlign: "center", fontSize: "2em"}}>IP Map View */}
 								{/* Button for trends*/}
-							<div style={{display: "inline"}}>
+							{/* <div style={{display: "inline"}}>
 									<button 
 										style={{
 											float:"right",
@@ -85,14 +87,15 @@ const Trends = (props) => {
 									</button>
 								</div>
 							</div>
-							
+							 */}
 
-							<TrendRow>
-								<TrendBox size = "large" type="IP" IPs={props.IPs}>
+							{/* <TrendRow> */}
+								{/* <TrendBox size = "large" type="IP" IPs={props.IPs}> */}
 									{/* PUT SENIOR PROJECT STUFF HERE */}
 									{/* <SeniorProject IPs={props.IPs} */}
-								</TrendBox>
-							</TrendRow>
+								{/* </TrendBox> */}
+								{/* <Honeypot></Honeypot> */}
+							{/* </TrendRow> */}
 
 
 
