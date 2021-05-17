@@ -26,7 +26,7 @@ function InitializeGraph(data) {
     height: '99vh',
     nodes: {
       shape: 'circularImage',
-      image: '/static/SVG/DataAnalytics/svg_other.svg',
+      image: '/static/SVG/DataAnalytics/svg_other.svg', //default IOC image
       borderWidth: 4,
       color: 'rgba(151,194,252,1)',
       widthConstraint: 100,
