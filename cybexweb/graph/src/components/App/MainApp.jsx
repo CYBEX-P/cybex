@@ -463,11 +463,6 @@ const App = props => {
                 }}
               >
                 <InsertForm config={props.config} />
-                <Row />
-                <Row />
-                <Button width="100%" onClickFunction={() => dispatchModal('Submit Event Data')}>
-                  <div>New Event</div>
-                </Button>
               </div>
             </MenuBar>
             <MenuBar side="bottom" icon="list">
