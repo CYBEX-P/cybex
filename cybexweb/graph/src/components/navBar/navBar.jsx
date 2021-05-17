@@ -14,6 +14,8 @@ const NavBar = (props) => {
   const { isExpanded, dispatchExpand } = useContext(MenuContext);
   
   const [trendState,setTrendState] = useState(false);
+  
+  const [IPs, setIPs] = useState([]);
 
   // States for admin page
   const [adminPageState, setAdminPageState] = useState(false);
@@ -58,6 +60,13 @@ const NavBar = (props) => {
 			setCurrentUser(user);
 		}
 	}, [props.userProfile])
+  
+  // This should update IPs everytime props.ipData
+	// is changed from MainApp.jsx
+	useEffect(() => {
+		setIPs(props.ipData);
+	}, [props.ipData]);
+
 
   return (
     <>
@@ -172,7 +181,7 @@ const NavBar = (props) => {
 
 
       {trendState && (
-        <Trends title = "Trends"/>
+        <Trends title = "Trends" IPs={IPs}/>
       )}
 
     </>
