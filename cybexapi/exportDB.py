@@ -63,10 +63,10 @@ def processExport(dataObject):
                 #     #key['color'] = "#B37469"
                 #     #key['color'] = 'rgba(151,252,158,1)'
                 #     key['color'] = 'rgba(151,194,252,1)'
-            elif key['label'] == 'SPort':
-                key['color'] = '#8C99CE'
-            elif key['label'] == 'DPort':
-                key['color'] = '#5B8E7D'
+            # elif key['label'] == 'SPort':
+            #     key['color'] = '#8C99CE'
+            # elif key['label'] == 'DPort':
+                # key['color'] = '#5B8E7D'
             elif key['label'] == 'Email':
                 key['image'] = '/static/SVG/DataAnalytics/svg_email.svg'
                 key['color'] = threatColor(threatLevel)
@@ -86,14 +86,14 @@ def processExport(dataObject):
                 # key['color'] = 'rgba(151,194,252,1)'
                 key['image'] = '/static/SVG/DataAnalytics/svg_country_alt.svg'
                 key['color'] = threatColor(threatLevel)
-            elif key['label'] == 'BTC':
-                key['color'] = '#3185FC'
-            elif key['label'] == 'MAC':
-                key['color'] = '#DDF8E8'
-            elif key['label'] == 'BGPath':
-                key['color'] = '#28AFB0'
-            elif key['label'] == 'SSID':
-                key['color'] = '#E8E8E8'
+            # elif key['label'] == 'BTC':
+            #     key['color'] = '#3185FC'
+            # elif key['label'] == 'MAC':
+            #     key['color'] = '#DDF8E8'
+            # elif key['label'] == 'BGPath':
+            #     key['color'] = '#28AFB0'
+            # elif key['label'] == 'SSID':
+            #     key['color'] = '#E8E8E8'
             elif key['label'] == 'Domain':
                 key['image'] = '/static/SVG/DataAnalytics/svg_ip.svg'
                 key['color'] = threatColor(threatLevel)
@@ -134,13 +134,13 @@ def processExport(dataObject):
                 # key['color'] = 'rgba(151,194,252,1)'
             elif key['label'] == 'User':
                 key['color'] = threatColor(threatLevel)
-            elif key['label'] == 'CybexCount':
-                # key['color'] = "#29e682"
-                key['color'] = 'rgba(151,194,252,1)'
-            elif key['label'] == 'CybexRelated':
-                # key['color'] = "#92fd6c"
-                key['color'] = 'rgba(151,194,252,1)'
-                key['shape'] = 'hexagon'
+            # elif key['label'] == 'CybexCount':
+            #     # key['color'] = "#29e682"
+            #     key['color'] = 'rgba(151,194,252,1)'
+            # elif key['label'] == 'CybexRelated':
+            #     # key['color'] = "#92fd6c"
+            #     key['color'] = 'rgba(151,194,252,1)'
+            #     key['shape'] = 'hexagon'
             else:
                 key['color'] = threatColor(threatLevel)
             #     # key['color'] = 'rgba(151,194,252,1)'
