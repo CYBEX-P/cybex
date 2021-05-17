@@ -56,6 +56,8 @@ const App = props => {
   const [errorToDisplay, setError] = useState(null);
 
   const [macroDetails, setMacroDetails] = useState('none');
+
+  const [userProfile, setUserProfile] = useState(null);
   
   // Timezone state for use with data entry form
   const [selectedTimezone, setSelectedTimezone] = useState({})
@@ -69,7 +71,28 @@ const App = props => {
       axios.get('/api/v1/neo4j/export').then(({ data }) => {
         setNeo4jData(data);
       });
+
+      // retrieve current user's information on render:
+      let user_info = {};
+      //const params_info = {'info_to_return': 'basic_info'};
+      axios.get('/api/v1/user_management/currentUserInfo/basic_info').then(({ data }) => {
+        user_info.email_addr = data.result.data.email_addr;
+        user_info.name = data.result.data.name;
+        user_info.hash = data.result._hash;
+        axios.get('/api/v1/user_management/currentUserInfo/user_of').then(({ data }) => {
+          // retrieve the orgs the current user belongs to:
+          let org_string = "No orgs found for this user."
+          if (Array.isArray(data.result) && data.result.length) {
+            // make sure data.result exists, is an array, and is nonempty
+            org_string = ''
+            data.result.forEach(org => org_string += org.data.orgname + ', ')
+          }
+          user_info.orgs = org_string;
+          setUserProfile(user_info);
+        });
+      });
     }
+
   }, []);
 
 	// Getting IP data from neo4jData
@@ -127,7 +150,7 @@ const App = props => {
           </GraphModal> */}
           <GraphModal title="Submit Event Data" contentLabel="Submit Event Data" afterCloseFn={() => setUploadedFile(null)}>
             <Formik
-              initialValues={{ file: null, timezone: '' }}
+              initialValues={{ file: null, timezone: '', orgid: '' }}
               validationSchema={Yup.object({
                 file: Yup.mixed()
                   // .max(15, 'Must be 15 characters or less')
@@ -135,20 +158,26 @@ const App = props => {
                 timezone: Yup.string()
                   // .max(20, 'Must be 20 characters or less')
                   .required('Required'),
+                orgid: Yup.string()
+                .required('Required'),
               })}
               onSubmit={(values, { setSubmitting }) => {
                 setTimeout(() => {
                   let formData = new FormData();
                   formData.append('timezone', values.timezone);
                   formData.append('file', values.file);
+                  formData.append('orgid', values.orgid);
                   axios.post('/api/v1/dataEntry', formData, {
                     headers: {
                       'Content-Type': 'multipart/form-data'
                     }
-                  }).then(({ response }) => {
+                  }).then(() => {
                     dispatchModal('none');
-                  }).catch(() => {
-                    alert('Error submitting data:\n' + JSON.stringify(values, null, 2));
+                  }).catch((error ) => {
+                    alert('Error submitting data:\n' + 
+                      JSON.stringify(values, null, 2) + "\n" + "Status Code " 
+                      +error.response.status + "\n" + 
+                      JSON.stringify(error.response.data));
                   });
                   setSubmitting(false);
                 }, 400);
@@ -254,7 +283,15 @@ const App = props => {
                         <div>{uploadedFile}</div>
                       )}
                       {!uploadedFile && (
-                        <p>Select a file to see a preview here... </p>
+                        <div>     
+                          <h4>Instructions:</h4>
+                          <p><i>Select a file to see a preview here.</i></p>
+                          <p>Supported formats currently include:</p>
+                          <ul>
+                            <li>Cowrie Log Files</li>
+                          </ul>
+                          <p>Specify the timezone from which the data was captured. Next, verify that the correct organization is selected (i.e. is the one you wish to submit from). Finally, click submit. The submitted data will be validated against the supported formats listed above. If the file passes validation, it will be processed and contributed to CYBEX-P.</p>
+                        </div>
                       )}
                                            
                     </div>
@@ -270,9 +307,24 @@ const App = props => {
                         alignItems: "center"
                       }}
                     >
-                      <div>
-                        <div>Organization ID:</div>
-                        <div>[test_org]</div>
+                      <div style={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+                        <div>Organization:</div>
+                        <div style={{ color: 'black', width: '150px', marginLeft: '10px'}}>
+                          <Select 
+                            // defaultValue={{ label: 'test_org', value: 'test_org' }}
+                            menuPlacement="top" 
+                            options = {[
+                              { value: 'test_org', label: 'test_org' },
+                              { value: 'test_org2', label: 'test_org2' }
+                            ]}
+                            onChange={ e => {
+                              formik.setFieldValue("orgid", e.value);
+                            }}
+                          />
+                          {formik.touched.orgid && formik.errors.orgid ? (
+                              <div style={{color:"red"}}>{formik.errors.orgid}</div>
+                            ) : null}
+                        </div>
                       </div>
                       <Button width="90px" type="submit">
                           Submit
@@ -292,6 +344,30 @@ const App = props => {
                )}   
             </Formik>      
           </GraphModal>
+          {/* Modal to display user profile */}
+            <GraphModal afterCloseFn={() => setError(null)} title="User Profile" contentLabel="User Profile">
+              <div style={{ textAlign: 'center' }}>
+                <FontAwesomeIcon icon="user" size="10x" />
+                <br />
+                {userProfile != null && (
+                  <div>
+                    <div style={{ marginTop:'5px' }}><b>{userProfile.name}</b></div>
+                    <div style={{display: "flex", justifyContent: "center"}}>
+                      <div style={{textAlign: 'left', marginTop:'30px' }}>
+                        <div>Email:&nbsp;{userProfile.email_addr}</div>
+                        <div>Unique Identifier:&nbsp;{userProfile.hash}</div>
+                        <div>Organizations:&nbsp;{userProfile.orgs}</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {userProfile == null && (
+                  <div>Error retrieving user profile.</div>
+                )}
+                <div style={{ color: '#ff4300' }}>{errorToDisplay}</div>
+              </div>
+            </GraphModal>
+
           <GraphModal afterCloseFn={() => setError(null)} title="Error" contentLabel="Error">
             <div style={{ textAlign: 'center' }}>
               <FontAwesomeIcon icon="meh" size="10x" />
@@ -323,8 +399,13 @@ const App = props => {
             <ContentContainerStyle>
               <Graph isLoading={isLoading} setFromDate={setFromDate} setToDate={setToDate} setTimezone={setTimezone} />
             </ContentContainerStyle>
-						{/* Sending IP's for IPMapTrends */}
-            <NavBar ipData={ipData}/>
+
+            <NavBar 
+              dispatchModal={dispatchModal}
+							userProfile={userProfile}
+              ipData={ipData}
+            />
+                
             {/* Below TrendsContext component should be used if we move from state to context for trends panel.
              At the moment, the trends component gets placed into the navbar, and is rendered dependent on a state within the navbar component.
             To more properly treat Trends as an independent component, context can be used in future reworking of the Trend panel logic */}

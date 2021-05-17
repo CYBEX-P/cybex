@@ -34,7 +34,7 @@ def create_user_extra(sender, instance, created, **kwargs):
         # (Profile.cybex_token). Therefore, it is advised to only use the
         # manually-created superuser account for administration purposes only.
 
-        url = "https://cybex-api.cse.unr.edu:5000/add/user"
+        url = "https://cybex-api.cse.unr.edu:5000/create/user"
 
         # The following flag is set if a user creation event is triggered via
         # a get request (such as via the Django admin panel) instead of 
@@ -63,7 +63,7 @@ def create_user_extra(sender, instance, created, **kwargs):
             headers = {
                 'content-type': "application/json",
                 # we use Bearer token auth mode
-                'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWJfdHlwZSI6ImN5YmV4cF91c2VyIiwiX2hhc2giOiJjMDU3ZWVkZTYxMTRiOWZjMTFkZWY3YTMzOGY2OTRkNjY5MWJkNjU2NjEzZjIxNzE4YzFiYmRmYWJkMzkxMDM2IiwianRpIjoiODY2YzNjMmMtMmQ3OC00Njg1LTgzNzUtYzQyMmMwODk1M2U2In0.pibz34CfF0B3QLsIKcP8qFzc7jZ57kvOOTHRq7RSS88"
+                'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWJfdHlwZSI6ImN5YmV4cF9zdXBlcnVzZXIiLCJfaGFzaCI6IjExN2NkNzVjODNkZmQzMjIzZDRlNWZjMDFjZjA4OTFkMmUzMjBlMWQxZjlmZTBjZmM4MmE1N2I0ZTRiNjg3ZWEiLCJqdGkiOiI4MTI1NTZkMS03MjBlLTRhYTYtYjY1Yi02ZjZkMzIxMTdlZDUifQ.D8OCZyIeYLOjSzS6lFlqK4iVu5kRtY7KkX0dkUQ-IuE"
                 }
             payload = json.dumps(payload)
             r = requests.post(url, data=payload, headers=headers)

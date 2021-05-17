@@ -11,7 +11,7 @@ The project is split into three apps
 - cybexdata
   - container project for all custom data models.
 
-Keys are stored in a .env environment file and loaded dynamicall in the settings. 
+NOTE: Keys for different lookup services are required for all features to run properly. These are to be stored in a .env environment file and loaded dynamicaly in the settings. This .env file should be created in the same directory where env-dist is located. Ask a CYBEX administrator for the keys.
 
 Steps to run
 

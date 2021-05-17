@@ -1,7 +1,8 @@
 openapi: 3.0.2
 info:
-  title: ''
-  version: ''
+  title: 'CYBEX-P Portal API Doc'
+  description: 'Documentation for the CYBEX-P Portal API. This is solely for the frontend web application and is seperate from the backend CYBEX-P API.'
+  version: '1.0.0'
 paths:
   /api/v1/admin/config:
     get:
@@ -182,15 +183,17 @@ paths:
       - name: info_to_return
         in: path
         required: true
-        description: ''
+        description: '"user_of" for all orgs user belongs to,
+                "admin_of" for all orgs user is admin of, or "basic_info" for user
+                info object containing user hash, username, email'
         schema:
           type: string
       responses:
         '200':
-          content:
-            application/json:
-              schema: {}
-          description: ''
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: 'Either object containing user info or list of orgs, depending on info_to_return'
       tags:
       - api
   /isSignedIn:
@@ -279,38 +282,70 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: {}
+            schema: 
+              type: object
+              properties:
+                  org_hash:
+                    type: string
+                    description: unique hash for the org
+                  return_type:
+                    type: string
+                    description: admin, user, acl, or all. Specifies whether to return the chosen individual list or all lists for the given org.
+              required:
+                  - org_hash
+                  - return_type
           application/x-www-form-urlencoded:
             schema: {}
           multipart/form-data:
             schema: {}
       responses:
         '201':
-          content:
-            application/json:
-              schema: {}
-          description: ''
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: 'Object representing specified lists for given org.'
       tags:
       - api
   /api/v1/user_management/org_add_remove:
     post:
       operationId: createorgAddRemoveUser
-      description: Implements post method for orgInfo API
+      description: Implements post method for orgAddRemoveUser API
       parameters: []
       requestBody:
         content:
           application/json:
-            schema: {}
+            schema: 
+              type: object
+              properties:
+                  org_hash:
+                    type: string
+                    description: unique hash for the org
+                  users:
+                    type: array
+                    items:
+                      type: string
+                    description: array of user hashes to be added or removed.
+                  list_type: 
+                    type: string
+                    description: admin, user, or acl. The list to which the given users should be added or removed from.
+                  action: 
+                    type: string
+                    description: add or remove. The action to perform for the given users.
+              required:
+                  - org_hash
+                  - users
+                  - list_type
+                  - action
           application/x-www-form-urlencoded:
             schema: {}
           multipart/form-data:
             schema: {}
       responses:
         '201':
-          content:
-            application/json:
-              schema: {}
-          description: ''
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: '201 if successful'
       tags:
       - api
   /import_json:
@@ -418,3 +453,17 @@ paths:
           description: ''
       tags:
       - api
+
+components:
+   schemas:
+      Pet:
+         type: object
+         properties:
+            name:
+               type: string
+            type:
+               type: string
+            legs:
+               type: integer
+         required:
+            - type

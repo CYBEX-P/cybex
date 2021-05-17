@@ -21,11 +21,14 @@ from py2neo import Graph, Node, Relationship
 from cybexapi.exportDB import bucket
 from cybexapi.api import *
 import json
+import ast
 import requests
 from django.conf import settings
 from threading import Timer
 from cybexapi.shodanSearch import insert_ports
 import threading
+import time
+import random
 
 # deprecated, testing if still being used..
 # def pull_ip_src():
@@ -95,13 +98,23 @@ def insertRelatedAttributes(data, graph, value, original_type, insertions_to_mak
                 insert_ports(val,graph,value)
         else:
             for nodeData in val:
+                # Note: nodeData is a list of length 2, with the first index
+                # being the node's value and the second index being a list
+                # that defines associated event data. This is the event data
+                # that this related IOC was associated with
+                event_details = nodeData[1]
+                # items in event_details can be objects, attributes, or events
+                # create label to be used to describe relationship
+                separator = ','
+                event_string = "CYBEX:" + separator.join(event_details)
+
                 # Create a temporary node with the given data for comparsions
-                c = Node(attr, data=nodeData)
+                c = Node(attr, data=nodeData[0])
                 c["source"] = "cybex"
                 # Get the existing node from which this query originates
                 original_node = graph.nodes.match(data=value).first()
                 # see if a node already exists with the new data
-                c_node = graph.nodes.match(attr, data=nodeData).first()
+                c_node = graph.nodes.match(attr, data=nodeData[0]).first()
                 
                 # if c_node is true, an existing node matched the given data
                 if(c_node):
@@ -109,13 +122,13 @@ def insertRelatedAttributes(data, graph, value, original_type, insertions_to_mak
                     if (original_node != c_node):
                         # create relationshop object from originating node to
                         # the matching existing node 
-                        rel = Relationship(original_node, "CYBEX", c_node)
+                        rel = Relationship(original_node, event_string, c_node)
                         # Add relationship object to key of dict that
                         # corresponds to the appropriate node. Note that the
                         # key is the data value of the node, represented as a
                         # string, with an '_r' appended. This is done to cast
                         # all node values as strings for easy indexing of dict
-                        insertions_to_make[nodeData+"_r"] = rel
+                        insertions_to_make[nodeData[0]+"_r"] = rel
                         print("Existing CybexRelated node linked")
                     else:
                         print("Related node is same as origin node. Skipped.")
@@ -123,8 +136,8 @@ def insertRelatedAttributes(data, graph, value, original_type, insertions_to_mak
                     # no existing node with given data is found...
                     # create relationship object from originating node to the
                     # newly created node
-                    rel = Relationship(original_node, "CYBEX", c)
-                    insertions_to_make[nodeData +"_r"] = rel
+                    rel = Relationship(original_node, event_string, c)
+                    insertions_to_make[nodeData[0] +"_r"] = rel
                     print("New CybexRelated node created and linked")
 
     return 1
@@ -335,6 +348,8 @@ def cybexRelatedHandler(ntype, data, graph, user, num_pages = 10):
         thread_list.append(thread)
     for thread in thread_list:
         thread.start()
+        # thread.start()
+        # time.sleep(2)
     for thread in thread_list:
         thread.join()
     ## End of multithreading
@@ -363,8 +378,9 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
         "data": {
             "sub_type": ntype_processed,
             "data": data,
-            "return_type": "attribute",
+            #"return_type": "attribute",
             "summary" : True,
+            "event_graph": True,
             "page": count
         }
     }
@@ -373,64 +389,130 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
     payload = json.dumps(payload) # data is jsonified request
     print(f"data: {payload}")
 
-    try:
-        with requests.post(url, headers=headers, data=payload, timeout=(3.05, 20)) as r:
-            try:
-                res = json.loads(r.text)
-                print(f"res: {res}")
-                # Use response data to now insert nodes into graph database
-                if "data" in res:
-                    status = insertRelatedAttributes(res, graph, data, ntype_processed, insertions_to_make)
-                else: # Report response not ready yet or doesn't exist for this page
-                    print("Unable to get report response for page " + str(count) + " for " + str(data))
-            except TypeError as e:
-                print("Error inserting " + data + " into the graph:\n",e)
-    except requests.exceptions.ConnectTimeout:
-        print("Couldn't connect to CYBEX, timed out.")
-        return -1
-    except requests.exceptions.ReadTimeout:
-        print("Timed out when attempting to read from CYBEX for " + data + " page " + str(count))
-        return 0
+    retry_count = 3 # sets number of allowable timeouts before call stops retrying.
+    while retry_count >= 1:
+        try:
+            with requests.post(url, headers=headers, data=payload, timeout=(3.05, 20)) as r:
+                try:
+                    res = json.loads(r.text)
+                    print(f"res: {res}")
+                    # Use response data to now insert nodes into graph database
+                    if "data" in res:
+                        status = insertRelatedAttributes(res, graph, data, ntype_processed, insertions_to_make)
+                    else: # Report response not ready yet or doesn't exist for this page
+                        print("Unable to get report response for page " + str(count) + " for " + str(data))
+                except TypeError as e:
+                    print("Error inserting " + data + " into the graph:\n",e)
+                retry_count = 0
+        except requests.exceptions.ConnectTimeout:
+            retry_count -= 1
+            print(f"Retry count: {retry_count} Couldn't connect to CYBEX, timed out.")
+            time.sleep(random.uniform(0.0,5.0)) # wait a random amount of time to balance concurrent requests
+            #return -1
+        except requests.exceptions.ReadTimeout:
+            retry_count -= 1
+            print(f"Retry count: {retry_count} Timed out when attempting to read from CYBEX for {data} page {count}")
+            time.sleep(random.uniform(0.0,5.0)) # wait a random amount of time to balance concurrent requests
+            #return 0
 
 
-# Description: Gets the CYBEX orgid of the current user
-# Parameters: <object>user - Object representing the user
-# Returns: Response status
-# Author: Adam Cassell
-def get_orgid(user):
-    # TODO: return result of user's orgid query instead of hardcode
-    return "test_org"
+##############################################################################
+# Functions for data upload to CYBEX-P from web app, including validation:
+##############################################################################
     
-# Description: Posts user event data to CYBEX
-# Parameters:   <object>data - the request data
-#               <object>user - Object representing the user
-# Returns: Response status
 # Author: Adam Cassell
 def send_to_cybex(data, user):
+    """Validates user event file uploads and posts to CYBEX.
+
+    Note that the file is validated against the schema defined within
+    the body of this function. Modify required_keys to customize.
+
+    Args:
+        data (dict): The request data
+        user (models.User): The reqesting user
+
+    Returns:
+        int: 1 if successful
+    
+    Raises:
+        TypeError: If any lines of submitted file are invalid JSON, or if 
+            schema validation fails according to the configured requirements.
+        Exception: If response status >= 400 upon attempting to post data.
+
+    """
     # file is retreived from data object passed in from js
     # this reads the file in binary mode, which is recommended
-    files = {'file':  data['file']}
-    data.pop('file', None) # take file key out of data dict
-    
+
+    # These lines first decode file in default utf-8 from binary
+    # in order to perform string validation on submitted file.
+    file_contents = data['file']
+    file_string = file_contents.read().decode()
+    left_count = file_string.count('{')
+    right_count = file_string.count('}')
+
+    if left_count > 1 and right_count > 1:
+        entries = file_string.splitlines()
+    else:
+        entries = [file_string]
+    for entry in entries:
+        #print(entry)
+        try:
+            entry = json.loads(entry)
+        except json.decoder.JSONDecodeError as err:
+            print(f"Invalid JSON: {err}") # in case json is invalid
+            raise TypeError("The supplied file did not pass validation. "
+                + "JSON on one or more lines is invalid.")
+
+    # First, validate all entries:
+    # NOTE: Requiring all of the following fields failed on real-world cowrie
+    #   output. The less strict key requirement below is max that passes.
+    # required_keys = ["eventid","timestamp","session","src_port","message",
+    #     "system","isError","src_ip","dst_port","dst_ip","sensor"]
+    required_keys = ["eventid","timestamp","session","message",
+        "src_ip","sensor"]
+    for entry in entries:
+        if not dictionary_validator(entry,required_keys):
+            raise TypeError("The supplied file did not pass validation. "
+                + " Ensure that the contents match a supported CYBEX-P schema.") 
+
+    # If all entries are valid, then submit all entries individually...
+
     # Code to retrieve user orgid will go below
-    # populate rest of data fields that don't come
-    # from user input:
-    data["orgid"] = get_orgid(user)
+    # populate rest of data fields that don't come from user input:
+    data.pop('file', None) # take file key out of data dict
+    # data["orgid"] = 'test_org' # Now passed in by user
     data["typetag"] = 'test_json'
     data["name"] = 'frontend_input'
+    for entry in entries:
+        files = {'file': bytes(entry, 'utf-8')}
+        url = "https://cybex-api.cse.unr.edu:5000/raw"
+        user_token = user.profile.cybex_token
+        headers = {"Authorization": user_token}
+        with requests.post(url, files=files,
+                    headers=headers, data=data) as r:
+            print(r.text)
+            if r.status_code >= 400:
+                print((
+                    f"error posting. "
+                    f"status_code = '{r.status_code}', "
+                    f"API response = '{r.content.decode()}'"))
+                raise Exception
 
-    url = "https://cybex-api.cse.unr.edu:5000/raw"
-    user_token = user.profile.cybex_token
-    headers = {"Authorization": user_token}
-    with requests.post(url, files=files,
-                 headers=headers, data=data) as r:
-        print(r.text)
-        if r.status_code >= 400:
-            print((
-                f"error posting. "
-                f"status_code = '{r.status_code}', "
-                f"API response = '{r.content.decode()}'"))
-            raise Exception
+            r.close()
+            return 1
 
-        r.close() # redundant?
-        return 1
+def check_key(key,dictionary):
+    """Returns whether key is in dictionary"""
+    if key not in dictionary:
+        print(key + " not found in dictionary")
+        return False
+    else:
+        return True
+
+def dictionary_validator(dictionary,required_keys):
+    """Returns whether dictionary has all required keys"""
+    # The following only passes the file if in strict cowrie format
+    for key in required_keys:
+        if not check_key(key, dictionary):
+            return False
+    return True
