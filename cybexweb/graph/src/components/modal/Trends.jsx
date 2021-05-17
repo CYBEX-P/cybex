@@ -41,10 +41,10 @@ const Trends = (props) => {
 									<button 
 										style={{
 											float:"right",
-											marginRight:"3%",
+											// marginRight:"1%",
 											borderRadius:"4px",
-											borderColor:"#6c757d",
-											backgroundColor:"#6c757d",
+											borderColor:"black",
+											backgroundColor:"black",
 											color:"white",
 											padding:"3px 12px"
 										}}
@@ -67,27 +67,28 @@ const Trends = (props) => {
 					{mapViewState && (
 
 				<TrendPanelStyle>
-					<Honeypot></Honeypot>
-						{/* <div style={{marginLeft:"100px",textAlign: "center", fontSize: "2em"}}>IP Map View */}
-								{/* Button for trends*/}
-							{/* <div style={{display: "inline"}}>
-									<button 
-										style={{
-											float:"right",
-											marginRight:"3%",
-											borderRadius:"4px",
-											borderColor:"#6c757d",
-											backgroundColor:"#6c757d",
-											color:"white",
-											padding:"3px 12px"
-										}}
-										onClick={() => setMapViewState(false)}
-									>
+						<div style={{marginLeft:"100px",textAlign: "center", fontSize: "2em", zIndex: "100000", width: "100%"}}>Honeypot Attack Visualizer
+								{/* Button for trends */}
+							<div style={{display: "inline"}}>
+								<button 
+									style={{
+										position:"fixed",
+										// marginRight:"1%",
+										borderRadius:"4px",
+										right:"1%",
+										borderColor:"black",
+										backgroundColor:"black",
+										color:"white",
+										padding:"3px 12px"
+									}}
+									onClick={() => setMapViewState(false)}
+								>
 									<FontAwesomeIcon size="sm" icon={faChartLine}/>
-									</button>
-								</div>
+								</button>
 							</div>
-							 */}
+						</div>
+						<Honeypot></Honeypot>
+							
 
 							{/* <TrendRow> */}
 								{/* <TrendBox size = "large" type="IP" IPs={props.IPs}> */}

@@ -222,8 +222,8 @@ function Honeypot() {
                     </Row>
                     <Row>
                         <Col id="header_col">
-                            <h1>Statistics</h1>
-                            <h2>{appliedFilters.appliedHoneypots.length === 0 ? "No data to summarize on the map" : "Number of displayed attacks by honeypot"}</h2>
+                            <h4>Statistics</h4>
+                            <h5>{appliedFilters.appliedHoneypots.length === 0 ? "No data to summarize on the map" : "Number of displayed attacks by honeypot"}</h5>
                         </Col>
                     </Row>
                     <Row id="chart_row">
