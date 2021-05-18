@@ -449,13 +449,12 @@ def send_to_cybex(data, user):
     file_string = file_contents.read().decode()
     left_count = file_string.count('{')
     right_count = file_string.count('}')
-
+    
     if left_count > 1 and right_count > 1:
         entries = file_string.splitlines()
     else:
         entries = [file_string]
     for entry in entries:
-        #print(entry)
         try:
             entry = json.loads(entry)
         except json.decoder.JSONDecodeError as err:
@@ -463,17 +462,67 @@ def send_to_cybex(data, user):
             raise TypeError("The supplied file did not pass validation. "
                 + "JSON on one or more lines is invalid.")
 
+
     # First, validate all entries:
     # NOTE: Requiring all of the following fields failed on real-world cowrie
     #   output. The less strict key requirement below is max that passes.
     # required_keys = ["eventid","timestamp","session","src_port","message",
     #     "system","isError","src_ip","dst_port","dst_ip","sensor"]
-    required_keys = ["eventid","timestamp","session","message",
-        "src_ip","sensor"]
-    for entry in entries:
-        if not dictionary_validator(entry,required_keys):
-            raise TypeError("The supplied file did not pass validation. "
+
+    cowrie_required_keys = [
+        ["eventid","timestamp","session","message",
+            "src_ip","sensor"],
+        ["timestamp","message","system","height","src_ip","width",
+            "isError","session","sensor"],
+        ["username","timestamp","message","system","isError","src_ip",
+            "session","password","sensor"],
+        ["timestamp","message","system","isError","src_ip","duration",
+            "session","sensor"],
+        ["timestamp","sensor","system","isError","src_ip","session","dst_port",
+            "dst_ip","data","message"],
+        ["src_ip","session","shasum","url","timestamp","outfile","sensor",
+            "message"],
+        ["username","timestamp","message","system","isError","src_ip","session",
+            "password","sensor"],
+        ["macCS","timestamp","session","kexAlgs","keyAlgs","message","system",
+            "isError","src_ip","version","compCS","sensor","encCS"],
+        ["username","timestamp","message","fingerprint","system",
+            "isError","src_ip","session","input","sensor"],
+        ["timestamp","message","ttylog","system","isError","src_ip","session","sensor"],
+        ["timestamp","sessions","message","src_port","system","isError",
+            "src_ip","dst_port","dst_ip","sensor"],
+        ["timestamp","session","src_port","message","system","isError","src_ip",
+            "dst_port","dst_ip","sensor"],
+        ["timestamp","message","ttylog","system","src_ip","session","duration",
+            "sensor","isError","size"],
+        ["timestamp","message","system","isError","src_ip","session","input","sensor"]
+    ]
+
+    # phishtank_required_keys = [
+    # ]
+
+    all_pass_count = 0
+    # have to change below to work with Phishtank
+    # if type == "cowrie":
+    for required_keys in cowrie_required_keys:      
+        
+        # One case has to pass
+        if all_pass_count > 0:
+            break
+
+        for entry in entries:
+            # If dictionary has all required keys, file is good
+            if dictionary_validator(entry,required_keys):
+                all_pass_count = all_pass_count + 1
+                break
+        
+    
+    # If no cases pass, throw error
+    if all_pass_count < 1:
+        raise TypeError("The supplied file did not pass validation. "
                 + " Ensure that the contents match a supported CYBEX-P schema.") 
+ 
+
 
     # If all entries are valid, then submit all entries individually...
 
