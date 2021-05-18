@@ -1,3 +1,17 @@
+"""Main API implementation file for CYBEX-P Web Application.
+
+This file contains all API implementations, using Django rest framework. All
+backend functionality required by the frontend client is accessed through
+the APIViews defined in this file.
+
+This file also contains a number of helper functions that assist the requests
+defined in each APIview.
+
+Note that following Django rest framework structure, URL endpoints that are
+bound to these APIviews can be found in urls.py.
+
+"""
+
 from django.shortcuts import render
 from django.conf import settings
 from rest_framework.response import Response
@@ -30,18 +44,37 @@ import time
 import threading
 
 
-# TODO
-# This needs more error checking and probably a more elegent check to see if the db is available
+# This needs more error checking and probably a more elegant check to see if the db is available
 def connect2graph(user, passw, addr, bolt_port):
+    """returns the graph db stored in the given user's docker container."""
     URI = "bolt://" + addr + ":" + str(bolt_port)
 
     graph = Graph(URI, auth=(user, passw))
     return graph
 
-# TODO
-# Move to library file
+# May want to cinsider moving to separate library file
 def enrichLocalNode(enrich_type, value, node_type, graph, user=None,event=None):
+    """Executes the requested enrichment type on the given node.
+    
+    Args:
+        enrich_type (string): Type of enrichment to perfom.
+        value (string): The value of the node to enrich.
+        node_type (string): The node type of the node to enrich.
+        graph (py2neo.database.Graph): The graph object for the current graph.
+        user (django.contrib.auth.models.User): The current user making the 
+            request. Defaults to None, because the only enrichments that
+            require user authentication are cybex enrichments.
+        event (threading.Event): Thread event object for faciliting the use
+            of event.wait() between request attempts. Defaults to None, 
+            because this is only needed for the cybexCount enrichment.
+    
+    Returns:
+        dict: Dictionary containing insert status. Insert status is defined
+            by whichever downstream function is called to complete the
+            enrichment. For example, asn_insert returns an integer 1 or 0
+            depending on success of the operation.
 
+    """
     if(enrich_type == "asn"):
         a_results = ASN(value)
         status = asn_insert(a_results, graph)
@@ -109,11 +142,11 @@ def enrichLocalNode(enrich_type, value, node_type, graph, user=None,event=None):
     #         status = insertComment("test comment", graph, value, "Domain")
     #         return json.dumps({"insert status" : status})
     else:
-        return "Invalid enrichment type. Try 'asn', 'gip', 'whois', or 'hostname'."
+        return "Invalid enrichment type."
 
-# TODO
-# Move to library file
+# May consider moving to separate library file
 def insertLocalNode(node_type, value, graph):
+    """Inserts a node of given type and value to the graph"""
     status = insertNode(node_type, value, graph)
     return status
 
@@ -121,6 +154,19 @@ class exportNeoDB(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request):
+        """Retrieves and processes latest graph data from neo4j database.
+        
+        Args:
+            request (rest_framework.request.Request): The request object
+            info_to_return (string): "user_of" for all orgs user belongs to,
+                "admin_of" for all orgs user is admin of, or "basic_info" for user
+                info object containing user hash, username, email
+
+        Returns:
+            rest_framework.response.Response: API response containing 
+                processed graph object.
+
+        """
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
@@ -134,6 +180,18 @@ class insert(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, node_type=None, value=None):
+        """Inserts given node into the current graph
+        
+        Args:
+            request (rest_framework.request.Request): The request object
+            node_type (string): The type of IOC to insert.
+            value (string): The value of the IOC to insert.
+
+        Returns:
+            rest_framework.response.Response: API response object, 
+                with status either equal to "Success" or "Failed".
+
+        """
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
@@ -147,7 +205,18 @@ class insert(APIView):
 class delete(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, format=None, node_id=None):
+    def get(self, request, node_id=None):
+        """Deletes the given node from the current graph
+        
+        Args:
+            request (rest_framework.request.Request): The request object
+            node_id (int): The node id to remove from the graph.
+
+        Returns:
+            rest_framework.response.Response: API response object, 
+                with status either equal to "Success" or "Failed".
+
+        """
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
@@ -163,7 +232,29 @@ class delete(APIView):
 class enrichNode(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, format=None, enrich_type=None, value=None, node_type=None):
+    def get(self, request, enrich_type=None, value=None, node_type=None):
+        """Enrich the given node with the given enrichment type (GET version).
+
+        The GET request for enriching nodes is intended for enrichments that
+        don't need to pass sensitive user data (such as user object). This is
+        mainly for standard network structure lookups like asn, gip, whois, 
+        etc.. For CYBEX enrichments (cybexRelated, cybexCount), use the POST
+        version (enrichNodePost()).
+        
+        Args:
+            request (rest_framework.request.Request): The request object
+            enrich_type (string): The type of enrichment to perform.
+            value (string): The value of the node to be enriched.
+            node_type (string): The type of the node to be enriched
+
+        Returns:
+            rest_framework.response.Response: API response object. 
+                Insert status is defined by whichever downstream function 
+                is called to complete the enrichment. Ex: 'asn' enrichment 
+                type returns an integer 1 or 0 depending on success of the
+                operation.
+
+        """
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
@@ -174,7 +265,28 @@ class enrichNode(APIView):
 class enrichNodePost(APIView):
     permission_classes = (IsAuthenticated, )
     
-    def post(self, request, format=None, enrich_type=None):
+    def post(self, request, enrich_type=None):
+        """Enrich the given node with the given enrichent type (POST version).
+
+        The POST request for enriching nodes is intended for enrichments that
+        need to pass sensitive user data (such as user object). This is mainly
+        for CYBEX enrichments (cybexRelated, cybexCount) that must
+        authenticate with the CYBEX backend. For standard network structure 
+        lookups like asn, gip, whois, etc., use GET version (enrichNode()).
+        
+        Args: 
+            request (rest_framework.request.Request): The request object
+            enrich_type (string): The type of enrichment to perform.
+
+        Returns:
+            rest_framework.response.Response: API response
+                object. Insert status is defined by whichever downstream
+                function is called to complete the enrichment. cybexRelated 
+                and cybexCount enrichments return an integer 1 if successful, 
+                0 if a read timeout occurs, and -1 if a connection timeout 
+                occurs.
+        
+        """
         current_user = request.user
         data = request.data
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
@@ -185,7 +297,21 @@ class enrichNodePost(APIView):
 class enrichURL(APIView):
     permission_classes = (IsAuthenticated, )
     
-    def post(self, request, format=None, enrich_type=None):
+    def post(self, request):
+        """Enrich the given URL (exposes its domain for further action).
+
+        Note: This ideally should be consolidated into the enrichNodePost
+        function, so that all enrichments are executed through common
+        endpoints/functions.
+
+        Args:
+            request (rest_framework.request.Request): The request object
+
+        Returns:
+            rest_framework.response.Response: API response object. 1 if 
+                successful.
+        
+        """
         current_user = request.user
         data = request.data
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
@@ -197,15 +323,28 @@ class enrichURL(APIView):
 class macroCybex(APIView):
     permission_classes = (IsAuthenticated, )
 
-    # Description: Runs the CYBEX-P Analysis Macro. Note: I have implemented a multithreading
-    #               version to increase pooling rate. I have left the non-threaded version as well commented out.
-    #               To run the seralized version, comment out the threaded version and uncomment the non-threaded version.
-    # Parameters: <object>request - The user request
-    #             <object>graph - The current graph
-    # Returns: Response status
-    # Author: Spencer Kase Rohlfing & (Someone else, sorry don't know who)
     def get(self, request, query):
-        # start = time.time()
+        """Runs the CYBEX-P Analysis Macro.
+        
+        For every node in the graph, query CYBEX-P for the specified 
+        information. The "related" query returns objects and attributes
+        that were found in the same event contexts as each existing graph 
+        node. The "count" query returns the number of tiems each node was seen
+        in malicious vs. non-malicious event contexts. "both" runs "related"
+        and "count" together in sequence. Multithreading has been implemented
+        to increase pooling rate for both query types, processing all graph
+        nodes in parallel.
+
+        Args:
+            request (rest_framework.request.Request): The request object
+            query (string): The type of CYBEX-P query to perform. "related",
+                "count", or "both".
+        Returns:
+            rest_framework.response.Response: API response object containing 
+                the nodes that were processed as part of the macro run
+        
+        """
+        # start = time.time() ## This is used for tracking performance
 
         current_user = request.user
         print(f"current user: {current_user}")
@@ -230,7 +369,7 @@ class macroCybex(APIView):
             ## End of threaded version
 
         # Now that new related IOCs have been added, query cybexCount
-        # This is done all all nodes including the newly added ones
+        # This is done on all nodes including the newly added ones
         # Re-process graph because new nodes have been added from part 1
         data = processExport(export(graph))
         nodes = data["Neo4j"][0][0]["nodes"]
@@ -252,29 +391,7 @@ class macroCybex(APIView):
                 thread.join()
             ## End of threaded version
 
-        ## Start of non-threaded version
-        # for node in nodes:
-        #     value = node["properties"]["data"]
-        #     nType = node["properties"]["type"]
-        #     if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
-        #         print("--> Querying cybexRelated IOCs for", value)
-        #         enrichLocalNode('cybexRelated', value, nType, graph)
-        #         print("Done with", str(value))
-
-        # # Now that new related IOCs have been added, query cybexCount
-        # # This is done all all nodes including the newly added ones
-        # data = processExport(export(graph))
-        # nodes = data["Neo4j"][0][0]["nodes"]
-        # for node in nodes:
-        #     value = node["properties"]["data"]
-        #     nType = node["properties"]["type"]
-        #     if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename":
-        #         print("--> Querying cybexCounts for ", value)
-        #         enrichLocalNode('cybexCount', value, nType, graph)
-        #         print("Done with", str(value))
-        ## End of non-threaded version
-
-        ## This is used for tracking the performance speedup between seralized and threaded versions
+        ## This is used for tracking performance
         # end = time.time()
         # print(f"TIME: {end - start}")
         return Response(nodes)
@@ -567,11 +684,11 @@ class getContents(APIView):
         return Response(result)
 
 class currentUserInfo(APIView):
-    '''API for returning various information about the requesting user'''
+    '''API for returning various information about the requesting user.'''
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, info_to_return=None):
-        '''Implements get method for currentUser API
+        '''Returns various information about the requesting user.
 
         Args:
             request (rest_framework.request.Request): The request object
@@ -598,7 +715,7 @@ class orgInfo(APIView):
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def post(self, request):
-        '''Implements post method for orgInfo API
+        '''Returns various information about the given organization.
 
         Args:
             request (rest_framework.request.Request): The request object
@@ -628,7 +745,7 @@ class orgAddRemoveUser(APIView):
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def post(self, request, org_hash=None, users=None, list_type=None, action=None):
-        '''Implements post method for orgAddRemoveUser API
+        '''Add or remove user from given organization.
 
         Args:
             request (rest_framework.request.Request): The request object
