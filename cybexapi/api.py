@@ -324,7 +324,7 @@ class macroCybex(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, query):
-        """Runs the CYBEX-P Analysis Macro.
+        """Runs the CYBEX-P Analysis Macro on all graph nodes.
         
         For every node in the graph, query CYBEX-P for the specified 
         information. The "related" query returns objects and attributes
@@ -346,13 +346,17 @@ class macroCybex(APIView):
         """
         # start = time.time() ## This is used for tracking performance
 
-        current_user = request.user
+        current_user = request.user # The user that made the request
         print(f"current user: {current_user}")
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
 
         data = processExport(export(graph))
         nodes = data["Neo4j"][0][0]["nodes"]
+
+        # Related queries and then count queries are requested using threaded 
+        # loops. This is so that the queries for all graph nodes can be 
+        # executed in parallel.
 
         if query == "related" or query == "both":
             ## Start of threaded version part 1
@@ -396,6 +400,9 @@ class macroCybex(APIView):
         # print(f"TIME: {end - start}")
         return Response(nodes)
 
+    # The following functions are called from their own threads (one thread
+    # per graph node). These then execute the indididual related and count
+    # enrichments for each node.
     def threadedLoop_cybexRelated(self, node, graph, current_user):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
@@ -412,22 +419,43 @@ class macroCybex(APIView):
             enrichLocalNode('cybexCount', value, nType, graph, current_user,event)
             print("Done with", str(value))
 
-# TODO
-# Move the bulk of code here to library file
 
+# May want to consider moving some macro code to separate file.
 class macro(APIView):
     permission_classes = (IsAuthenticated, )
 
-    # Description: Runs the Phishing Investigation Macro. Note: I have implemented a multithreading
-    #               version to increase pooling rate. I have left the non-threaded version as well commented out.
-    #               To run the seralized version, comment out the threaded version and uncomment the non-threaded version.
     # Parameters: <object>request - The user request
     #             <object>graph - The current graph
     #             <string>subroutine - which macro to run. If value is None then run all macros
     # Returns: Response status
     # Author: Spencer Kase Rohlfing & (Someone else, sorry don't know who)
-    def get(self, request, format=None, subroutine=None):
-        # start = time.time()
+    def get(self, request, subroutine=None):
+        """Runs the Standard Lookups Macro on all or some graph nodes.
+        
+        For all or some IOC types in the graph, available standard lookup
+        enrichments are performed. This is focused on showing the general
+        network structure, through lookups such as ASN, GIP, Whois, and more.
+        Additional operations include resolving hosts, deconstructing urls
+        and emails to their individual components, and more. Multithreading has been implemented
+        to increase pooling rate for both query types, processing all graph
+        nodes in parallel.
+
+        Args:
+            request (rest_framework.request.Request): The request object
+            subroutine (string): Either "all", or the name of a specific
+                subroutine to run if only one type is desired. Subroutine
+                options include "url", "email", "host", "domain", and "ip".
+                These correspond to the IOC types that will be enriched 
+                during the macro run, where all other IOC types will be 
+                ignored. 
+
+        Returns:
+            rest_framework.response.Response: API response object. If
+                succesful, it contains a message that all nodes were 
+                processed.
+
+        """
+        # start = time.time() # used to track macro performance
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
@@ -451,84 +479,10 @@ class macro(APIView):
             thread.join()
         ## End of threaded version
 
-        ## Start of non-threaded version
-        # for node in nodes:
-        #     value = node["properties"]["data"]
-        #     nType = node["properties"]["type"]
-        #     print("--> Enriching", value)
-
-        #     if(nType == "URL" and (subroutine == 'url' or subroutine == 'all')):
-        #         ## deconstruct URL
-        #         status = insert_domain(value, graph)
-        #         # print(str(status))
-
-        #     elif(nType == "Email" and (subroutine == 'email' or subroutine == 'all')):
-        #         ## deconstruct Email
-        #         status = insert_domain_and_user(value, graph)
-        #         # print(str(status))
-
-        #     elif(nType == "Host" and (subroutine == 'host' or subroutine == 'all')):
-        #         ## resolve IP, MX, nameservers
-        #         try:
-        #             status1 = resolveHost(value, graph)
-        #         except:
-        #             print("IP resolve Error")
-        #         try:
-        #             status2 = getMailServer(value, graph)
-        #         except:
-        #             print("MX Error")
-        #         try:
-        #             w_results = whois(value)
-        #             status3 = getNameservers(w_results, graph, value)
-        #         except:
-        #             print("Nameserver Error")
-        #         try:
-        #             w_results = whois(value)
-        #             status3 = getRegistrar(w_results, graph, value)
-        #         except:
-        #             print("No registrar")
-
-        #     elif(nType == "Domain" and (subroutine == 'domain' or subroutine == 'all')):
-        #         ## resolve IP, MX, nameservers
-        #         try:
-        #             status1 = resolveHost(value, graph)
-        #         except:
-        #             print("IP resolve Error")
-        #         try:
-        #             status2 = getMailServer(value, graph)
-        #         except:
-        #             print("MX Error")
-        #         try:
-        #             w_results = whois(value)
-        #             status3 = getNameservers(w_results, graph, value)
-        #         except:
-        #             print("Nameserver Error")
-        #         try:
-        #             w_results = whois(value)
-        #             status3 = getRegistrar(w_results, graph, value)
-        #         except:
-        #             print("No registrar")
-
-        #     elif(nType == "IP" and (subroutine == 'ip' or subroutine == 'all')):
-        #         ## enrich all + ports + netblock
-        #         enrichLocalNode('asn', value, nType, graph)
-        #         enrichLocalNode('gip', value, nType, graph)
-        #         enrichLocalNode('whois', value, nType, graph)
-        #         enrichLocalNode('hostname', value, nType, graph)
-        #         ## enrich cybexp needed here
-        #         results = shodan_lookup(value)
-        #         status1 = insert_ports(results, graph, value)
-
-        #         status2 = insert_netblock(value, graph)
-
-        #     print("Done with", str(value))
-        ## End of non-threaded version
-
-        ## This is used for tracking the performance speedup between seralized and threaded versions
+        ## This is used for tracking performance
         # end = time.time()
         # print(f"TIME: {end - start}")
         return Response({"Status": "All nodes were processed."})
-        # return json.dumps(nodes)
 
     def threadedLoop(self, node, graph, subroutine):
         value = node["properties"]["data"]
@@ -604,14 +558,27 @@ class macro(APIView):
 class wipe(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, format=None):
+    def get(self, request):
+        """Deletes the user's graph data.
+
+        Args:
+            request (rest_framework.request.Request): The request object
+
+        Returns:
+            rest_framework.response.Response: API response object containing
+                a message that the Neo4j DB was wiped.
+        
+        """
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         wipeDB(graph)
         return Response({"Status": "Neo4j DB full wipe complete!"})
 
-## Remove before release
+# TODO: Examine this before deploying to sensitive environments. This is a
+# workaround to avoid the csrf checks that were causing authentication errors.
+# However, csrf checks should be enabled for maximum security. Depending on
+# deployment environment, this issue should be resolved in a better way.
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
@@ -620,14 +587,20 @@ class CsrfExemptSessionAuthentication(SessionAuthentication):
 class importJson(APIView):
     permission_classes = (IsAuthenticated, )
 
-    ## Also remove this line, it was to bypass the CSRF
+    ## Consider removing this line, it was to bypass the CSRF
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
-    # Description: Used to import a JSON file of the graph and loads the graph.
-    # Parameters: <object>request - The user request
-    # Returns: Response status
-    # Author: Spencer Kase Rohlfing
-    def post(self, request, format=None):
+    def post(self, request):
+        """Used to import a JSON file of the graph and load the graph.
+
+        Args:
+            request (rest_framework.request.Request): The request object
+
+        Returns:
+            responce (rest_framework.response.Response): API response object 
+                containing the values that were imported.
+
+        """
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
@@ -637,14 +610,20 @@ class importJson(APIView):
 class position(APIView):
     permission_classes = (IsAuthenticated, )
 
-    ## Also remove this line, it was to bypass the CSRF
+    ## Consider removing this line, it was to bypass the CSRF
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
-    # Description: Used to update the current positions of each node and stores it in the Neo4j database.
-    # Parameters: <object>request - The user request
-    # Returns: Response status
-    # Author: Spencer Kase Rohlfing
-    def post(self, request, format=None):
+    def post(self, request):
+        """Used to update the current positions of each node and stores it in the Neo4j database.
+        
+        Args:
+            request (rest_framework.request.Request): The request object
+
+        Returns:
+            rest_framework.response.Response: API response object containing
+                "Success" if successful.
+
+        """
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
@@ -655,14 +634,20 @@ class position(APIView):
 class dataEntry(APIView):
     permission_classes = (IsAuthenticated, )
 
-    ## TODO: Also remove this line, it was to bypass the CSRF
+    ## TODO: Consider removing this line, it was to bypass the CSRF
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
-    # Description: Used to send user event data to CYBEX
-    # Parameters: <object>request - The user request
-    # Returns: Response status
-    # Author: Adam Cassell
-    def post(self, request, format=None):
+    def post(self, request):
+        """Sends user event file submissions to CYBEX.
+        
+        Args:
+            request (rest_framework.request.Request): The request object
+
+        Returns:
+            rest_framework.response.Response: API response object containing
+                "Success" if successful.
+        
+        """
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
@@ -676,6 +661,22 @@ class getContents(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, path=None):
+        """"Gets directory contents at the given path.
+        
+        This is currently used for the honeypot data download feature. It
+        requires the desired data to be hosted on the web server. This query
+        can be used generically to retrieve any data that is hosted on the
+        production server.
+
+        Args:
+            request (rest_framework.request.Request): The request object
+            path (string): String representing the path to get contents from.
+
+        Returns:
+            rest_framework.response.Response: API response object containing
+                a dictionary of directories and files, or 1 if error.
+        
+        """
         current_user = request.user
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
@@ -697,7 +698,8 @@ class currentUserInfo(APIView):
                 info object containing user hash, username, email
 
         Returns:
-            Response (rest_framework.response.Response): API response
+            rest_framework.response.Response: API response containing user 
+                information.
 
         '''
         current_user = request.user
@@ -711,7 +713,7 @@ class orgInfo(APIView):
     '''API for returning various information about the given organization'''
     permission_classes = (IsAuthenticated, )
 
-    ## TODO: Also remove this line, it was to bypass the CSRF
+    # Consider removing this line, it was to bypass the CSRF
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def post(self, request):
@@ -721,7 +723,8 @@ class orgInfo(APIView):
             request (rest_framework.request.Request): The request object
 
         Returns:
-            Response (rest_framework.response.Response): API response
+            rest_framework.response.Response: API response containing
+                organization information.
 
         '''
         current_user = request.user
@@ -751,7 +754,8 @@ class orgAddRemoveUser(APIView):
             request (rest_framework.request.Request): The request object
 
         Returns:
-            Response (rest_framework.response.Response): API response
+            rest_framework.response.Response: API response after attempting
+                addition or removal.
 
         '''
         current_user = request.user
@@ -769,28 +773,26 @@ class orgAddRemoveUser(APIView):
         result = org_add_remove(current_user, data["org_hash"], data["users"], data["list_type"], data["action"])
         return Response(result)
 
-# class insertURL(APIView):
-#     permission_classes = (IsAuthenticated, )
-
-#     def post(self, request, format=None):
-#         current_user = request.user
-#         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
-#                               current_user.graphdb.dbip, current_user.graphdb.dbport)
-#         req = request.get_json()
-#         Ntype = req['Ntype']
-#         data = req['value']
-
-#         status = insertNode(Ntype, data, graph)
-#         if status == 1:
-#             return Response({"Status": "Success"})
-#         else:
-#             return Response({"Status": "Failed"})
-
-
 class start(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def post(self, request, format=None):
+    def post(self, request):
+        """DEPRECATED. Handles event data subission from inline input.
+        
+        This supports an older data submission form that is currently unused.
+        This API endpoint is being maintained and documented in case it is 
+        desired to return to the alternative data submission approach. The 
+        older version supported user options for encryption. Lastly, it 
+        automatically added all submitted data directly to the graph. 
+
+        Args:
+            request (rest_framework.request.Request): The request object
+
+        Returns:
+            rest_framework.response.Response: API response after attempting
+                addition or removal.
+        
+        """
         res = request.get_json()
         os.environ['eventName'] = res['EventName']
         current_user = request.user
@@ -809,12 +811,27 @@ class start(APIView):
 
         return Response('OK')
 
-# TODO
 # Needs more error checking and move variables to django.settings from env
 class startFile(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def post(self, request, format=None):
+    def post(self, request):
+        """DEPRECATED. Handles event data subission from file.
+        
+        This supports an older data submission form that is currently unused.
+        This API endpoint is being maintained and documented in case it is 
+        desired to return to the alternative data submission approach. The 
+        older version supported user options for encryption. Lastly, it 
+        automatically added all submitted data directly to the graph. 
+
+        Args:
+            request (rest_framework.request.Request): The request object
+
+        Returns:
+            rest_framework.response.Response: API response after attempting
+                addition or removal.
+        
+        """
 
         os.environ['eventName'] = request.form['eventName']
 
