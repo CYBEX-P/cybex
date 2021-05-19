@@ -158,9 +158,6 @@ class exportNeoDB(APIView):
         
         Args:
             request (rest_framework.request.Request): The request object
-            info_to_return (string): "user_of" for all orgs user belongs to,
-                "admin_of" for all orgs user is admin of, or "basic_info" for user
-                info object containing user hash, username, email
 
         Returns:
             rest_framework.response.Response: API response containing 
@@ -275,8 +272,12 @@ class enrichNodePost(APIView):
         lookups like asn, gip, whois, etc., use GET version (enrichNode()).
         
         Args: 
-            request (rest_framework.request.Request): The request object
+            request (rest_framework.request.Request): The request object.
+                Request data is json with the following keys:
+                value (string): The value of the node to be enriched
+                Ntype (string): The node type of the node to be enriched.
             enrich_type (string): The type of enrichment to perform.
+                Ex. "cybexRelated" or "cybexCount".
 
         Returns:
             rest_framework.response.Response: API response
@@ -287,6 +288,11 @@ class enrichNodePost(APIView):
                 occurs.
         
         """
+        # Request data is json with the following keys:
+        #   value (string): unique hash for the org
+        #   return_type (string): "admin","user","acl", or "all". Specifies
+        #      whether to return the chosen individual list or all lists
+        #      for the given org
         current_user = request.user
         data = request.data
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
@@ -305,7 +311,9 @@ class enrichURL(APIView):
         endpoints/functions.
 
         Args:
-            request (rest_framework.request.Request): The request object
+            request (rest_framework.request.Request): The request object.
+                Request data is json with the following keys:
+                value (string): The value of the node to be enriched
 
         Returns:
             rest_framework.response.Response: API response object. 1 if 
@@ -341,7 +349,7 @@ class macroCybex(APIView):
                 "count", or "both".
         Returns:
             rest_framework.response.Response: API response object containing 
-                the nodes that were processed as part of the macro run
+                the nodes that were processed as part of the macro run.
         
         """
         # start = time.time() ## This is used for tracking performance
@@ -595,6 +603,9 @@ class importJson(APIView):
 
         Args:
             request (rest_framework.request.Request): The request object
+                Request data is json with the following keys:
+                file: The file to import graph data from. Represented as
+                serialized JSON string.
 
         Returns:
             responce (rest_framework.response.Response): API response object 
@@ -617,7 +628,9 @@ class position(APIView):
         """Used to update the current positions of each node and stores it in the Neo4j database.
         
         Args:
-            request (rest_framework.request.Request): The request object
+            request (rest_framework.request.Request): The request object.
+                Request data is array of JSON, which each item having "id",
+                "x", and "y" keys.
 
         Returns:
             rest_framework.response.Response: API response object containing
@@ -641,7 +654,10 @@ class dataEntry(APIView):
         """Sends user event file submissions to CYBEX.
         
         Args:
-            request (rest_framework.request.Request): The request object
+            request (rest_framework.request.Request): The request object.
+                Request data is json with the following keys:
+                file (binary): The file to submit to the CYBEX-P system.
+                Must be a valid CYBEX-supported file format.
 
         Returns:
             rest_framework.response.Response: API response object containing
@@ -720,7 +736,12 @@ class orgInfo(APIView):
         '''Returns various information about the given organization.
 
         Args:
-            request (rest_framework.request.Request): The request object
+            request (rest_framework.request.Request): The request object.
+                Request data is json with the following keys:
+                org_hash (string): unique hash for the org.
+                return_type (string): "admin","user","acl", or "all". Specifies
+                whether to return the chosen individual list or all lists
+                for the given org.
 
         Returns:
             rest_framework.response.Response: API response containing
@@ -729,11 +750,7 @@ class orgInfo(APIView):
         '''
         current_user = request.user
         data = request.data
-        # Request data is json with the following keys:
-        #   org_hash (string): unique hash for the org
-        #   return_type (string): "admin","user","acl", or "all". Specifies
-        #      whether to return the chosen individual list or all lists
-        #      for the given org
+        
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         
@@ -752,6 +769,13 @@ class orgAddRemoveUser(APIView):
 
         Args:
             request (rest_framework.request.Request): The request object
+                Request data is json with the following keys:
+                org_hash (string): unique hash for the org
+                users (list of str): list of user hashes to be added or removed
+                list_type (string): "admin","user", or "acl". The list to which the
+                given users should be added or removed from.
+                action (string): "add" or remove". The action to perform for the 
+                given users.
 
         Returns:
             rest_framework.response.Response: API response after attempting
@@ -760,13 +784,7 @@ class orgAddRemoveUser(APIView):
         '''
         current_user = request.user
         data = request.data
-        # Request data is json with the follwing keys:
-            # org_hash (string): unique hash for the org
-            # users (list of str): list of user hashes to be added or removed
-            # list_type (string): "admin","user", or "acl". The list to which the
-            #     given users should be added or removed from.
-            # action (string): "add" or remove". The action to perform for the 
-            #     given users.
+        
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
         
