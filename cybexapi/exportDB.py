@@ -43,10 +43,10 @@ def processExport(dataObject):
                 key['y'] = key['properties']['y']
             if 'countMal' in str(key):
                 # sightings = total count in cybex
-                sightings = key['properties']['count'] + \
-                    key['properties']['countMal']
+                sightings = (int(key['properties']['count']) + 
+                    int(key['properties']['countMal']))
                 if (sightings != 0):
-                    ratioMal = key['properties']['countMal']/sightings
+                    ratioMal = int(key['properties']['countMal'])/sightings
                     if ratioMal == 0:
                         threatLevel = 0
                     elif 0 < ratioMal < 0.5:

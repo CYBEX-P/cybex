@@ -194,7 +194,7 @@ def cybexCountHandler(ntype, data, graph, user, event):
         "data" : {
             "sub_type": ntype_processed, 
             "data": data,
-            "category": "all",
+            "category": "benign",
             "context": "all",
             "last": "1Y"
         }
@@ -380,7 +380,7 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
             "data": data,
             #"return_type": "attribute",
             "summary" : True,
-            "event_graph": True,
+            "summary_graph": True,
             "page": count
         }
     }
