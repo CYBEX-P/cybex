@@ -23,16 +23,16 @@ urlpatterns = [
     path('api/v1/user_management/org_add_remove', orgAddRemoveUser.as_view()),
 
     ##post
-    path('import_json', importJson.as_view()),
+    path('api/v1/import_json', importJson.as_view()),
     path('api/v1/position', position.as_view()),
     path('api/v1/dataEntry', dataEntry.as_view()),
     #path('api/v1/neo4j/insertURL', insertURL.as_view()), # using /insert now
     path('api/v1/event/start', start.as_view()),
     path('api/v1/event/start/file', startFile.as_view()),
-    #TODO
-    #Depracate these two functions
-    path('isSignedIn', views.isSignedIn.as_view()),
-    path('isAdmin', views.isAdmin.as_view()),
+
+    #Deprecated
+    # path('isSignedIn', views.isSignedIn.as_view()),
+    # path('isAdmin', views.isAdmin.as_view()),
 
     # path('openapi/', get_schema_view(
     #     title="CYBEX-P Portal API Doc",

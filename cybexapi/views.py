@@ -11,21 +11,22 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 class getconfig(APIView):
-    def get(self, request, format=None):
+    def get(self, request):
+        """Reads YAML configuration file."""
         config = json.dumps(settings.YAML_CONFIG)
         print(config)
         return Response(config)
 
 
-#TODO
-# Helper views to be replaced once front end is fixed
-class isSignedIn(APIView):
-    def get(self, request, format=None):
-        return Response({"value" : True})
 
-class isAdmin(APIView):
-    def get(self, request, format=None):
-        return Response({"value" : False})
+# Helper views to be replaced..These are not being used...
+# class isSignedIn(APIView):
+#     def get(self, request, format=None):
+#         return Response({"value" : True})
+
+# class isAdmin(APIView):
+#     def get(self, request, format=None):
+#         return Response({"value" : False})
 
 
 # Moved from Cybexweb > views.py to here

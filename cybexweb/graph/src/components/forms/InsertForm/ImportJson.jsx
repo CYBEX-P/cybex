@@ -10,7 +10,7 @@ const ImportJson = props => {
   function onChange(e) {
     const data = new FormData();
     data.append('file', e.target.files[0]);
-    axios.post('/import_json', data, {}).then(res => {
+    axios.post('/api/v1/import_json', data, {}).then(res => {
       console.log(res.data);
       setNeo4jData(res.data);
     });
