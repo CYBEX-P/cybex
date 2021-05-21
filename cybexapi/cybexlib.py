@@ -400,7 +400,7 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
             #"return_type": "attribute",
             "summary" : True,
             "summary_graph": True,
-            "page": count
+            "page": count,
             "from": from_date, 
             "to": to_date,
             "tzname": timezone
