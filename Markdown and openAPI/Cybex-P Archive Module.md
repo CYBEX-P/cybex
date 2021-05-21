@@ -33,7 +33,7 @@ C[Archive Database]
 > - **archive**(cacheconfig, force_process = False, exec_once = False)
 
 - `decrypt_file()`: 
-	- This function is only used by ***archive_one()*** and is used to decrypt threat that has been previously encrypted with the public key of the `Cybex-P Archive Module`. When called, a file of the set of threat data is passed in along with the private key of the of the module (by default, the private key is under "priv.pem"). **decrypt_file()** go ahead and validate the file to ensure correct format. Once validated, the private key is pulled and the session key, nonce, tags, and ciphertext are extract from the private key. The session key is then decrypted with the private RSA key and the data gets decrypted with the AES session key. The threat data is then returned in *utf-8* formatting.
+	- This function is only used by ***archive_one()*** and is used to decrypt threat data that has been previously encrypted with the public key of the `Cybex-P Archive Module`. When called, a file of the set of threat data is passed in along with the private key of the of the module (by default, the private key is under "priv.pem"). **decrypt_file()** go ahead and validate the file to ensure correct format. Once validated, the private key is pulled and the session key, nonce, tags, and ciphertext are extract from the private key. The session key is then decrypted with the private RSA key and the data gets decrypted with the AES session key. The threat data is then returned in *utf-8* formatting.
 - `archive_one()`:
 	- **archive_one()** is responsible for taking a single event provided to it and administrating decryption and  TAHOE parsing methods to process the data. Like the ***decrypt_file()*** function, this function is only used by one other function: ***archive()*** [See below]. This function utilizes **decrypt_file()** in its definition take the provided byte data and return the raw threat data. A call is then made to the **parsemain()** function (defined as *parsemain_func* within the definition of this function) to take the provided threat data and parse it into a raw TAHOE object. When the data proceeds to get parsed, the result of the parsing will come back in 1 of 3 states administrated by **parsemain()**:
 		-	 ***SUCCESS*** - The parsing was successful and will be updated to the Archive module database with its reference hash
@@ -58,7 +58,13 @@ The `parsemain` source code is a key sub-component that is utilized by the `arch
 
 ***Key functions***:
 
-> - parsemain(typetag, org id, timezone, data)
+> - parsemain(typtag, org id, timezone, data)
 
 -	`parsemain()`:
-	-	parsemain is the sole function that is responsible for taking a single event of threat data and parsing it into a raw TAHOE object.  
+	-	parsemain is the sole function that is responsible for taking a single event of threat data and parsing it into a raw TAHOE object.  This function is only used by ***archive_one()*** from the `archive` source code.
+	-	When called, the *typtag* will be used to pull the raw sub type from the list of available sub types within the Cybex-P database. if typtag is valid and we receive a valid raw_sub_type, we can then go ahead and call TAHOEs ***Raw()***  and parse the following into a TAHOE instance that will get posted to the Archive Datababase:
+	> -	raw  =  Raw(raw_sub_type, data, orgid, timezone)
+	- Recall to the previous explanation within ***archive_one()*** above; based on the outcome of a valid raw sub type, parsemain will administrate 1 of 3 states to the function call:
+		- ***ParseState.SUCCESS*** - a valid raw sub type was found and the data was successfully parsed into a raw TAHOE object.
+		- ***ParseState.NOT_SUPPORTED*** - an unknown typtag was supplied, therefore there was now available raw sub type.
+		- ***ParseState.ERROR*** - An error happened and was caught

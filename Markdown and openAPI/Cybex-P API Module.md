@@ -17,7 +17,7 @@ the `Cybex-P API Module` and it's sub-modules is comprised of the following thre
 	 - Privacy preservation
 	 - Report querying and status updates
 	 - Data parsing and processing
- - `Resources`
+ - `Resource`
 	 - Token validation
 	 - User authentication
 	 - Appending of new users and organiztion 
@@ -76,10 +76,52 @@ The Views module is a respository of various functions and utility that encompas
 ## Resource
 The resource module contains a variety of decorator functions and utility functions meant to handle and support the more miscellaneous task of the `Cybex-P API Module`. Some of these task include:
 - Token authentication
--  Login authentication
--  Hash supplying
--  User preferences and configuration
--  New user and organization registration
+- Login authentication
+- Hash supplying
+- User preferences and configuration
+- New user and organization registration
+
+And more internal responsibilities such as:
+- System exception handling
+- Backend configurations
+- Required input fields
+
+ - # <small> Common</small>
+`Common` is the code in resources that contains common resources and decorators widely used throughout the `Cybex-P API Module`. 
+-	***configureIDBackend()*** :
+	-	use by `api.py` to setup the identity backend. The information on the backend identity gets stored in the two variables below. If the following variables aren't properly set, the rest of the code will not work.
+	> - ResourceBase._backend = _backend
+	> - Identity._backend = _backend
+
+- ***early_return()***
+	- Utility dectorator used by other decorators as a way to early return from any function call if a decorator calls for an early return. It is meant to be placed between any decorators before the action calling of the function. That is because if any of the previous decorators delcare an error on their part, ***early_return()*** can return a true as a way of allowing the previous decorater to return that error message; It also signals the current process to return earlier.
+
+-  ***exception_handler()*** :
+	- This decorator function is in tandem with almost all other functions and API endpoint calls in the API module. the exception handler signals on any errors such as a bad HTTP request, Invalid input, and if the backend is currently down and/or not working properly.	
+
+-	***require_fields()*** :
+	-	Another decorator function that is responsible for establishing the fields mandated in order to process a request. If any fields are missing from a request, a response of `"Missing the following fields: {}"` is returned with a HTTP 400. 
+- ***validate_org()*** :
+	- This function takes the provided JSON Web Token (JWT) of an organization request and ensures the validity of it and authentication. If the token is valid, it will return the request organization object
+- ***validate_user()*** :
+	- Works equivalently to   ***validate_org()*** , Just with returning a user object is the token is valid
+
+# <small> Identity </small>
+`Identity` contains functionality to handle various responsibilities of user and organization management, authentication, and access control list modification.
+
+-	***CreateOrg()*** :
+	-	Takes a request to register and create an organization in Cybex-P. 
+- ***CreateUser()*** :
+	- 	Takes a request to register and create an user in Cybex-P. 
+- ***OrgAddUser()*** :
+	- foo
+- ***OrgInfo()*** :
+	- foo
+-	***OrgDelUser()*** :
+	-	foo
+-	***OrgsAdminOf()*** :
+	-	foo
+-	***
 
 The following are *decorator functions* used across multiple modules of the `Cybex-P API Module` to assist with various responsibilities:
 >- ***validate_token()*** - Decorator function that checks the validity of a token, failures will return a response code of 401. tokens are received from request_data["token"] of a user request,

@@ -21,7 +21,7 @@ A --Encrypted Query--> B --Report creation and storing--> C --Pull report--> D -
 
 ```mermaid
 sequenceDiagram
-Archive-Database->> Report-Cluster: encrypted query
+Archive-Database->> Report-Cluster: Encrypted query
 Report-Cluster->> Report-Database: Report creation and storing of the report
 Report-Database->> Cybex-P-API: Pull report on demand
 Cybex-P-API->> Frontend-Server: Frontend server pulls the report data
