@@ -455,42 +455,34 @@ def send_to_cybex(data, user):
     if left_count > 1 and right_count > 1:
 
         # entries = file_string.splitlines()
-        # entries = file_string.replace('}{', '}\n\n{')
-        
-        # entries = entries.split('\n\n')
-        # entries = file_string.split('\n\n')
         entries = file_string
         currentList = "" 
+
+        # Get indices of '{' and '}'
         openIndexList = []
         closeIndexList = []
-        
-        print ("UNEDITED:", entries)
-        
         
         for index, entry in enumerate(entries):
             if entry == '{':
                 openIndexList.append(index)
             if entry == '}':
                 closeIndexList.append(index)
-        
+       
+        # Grabbing all JSON information between each opening
+        # and closing brace
         for i in range(0, len(openIndexList)):
-            print ("NEW INDEX:", openIndexList[i])
-            # for index, entry in enumerate(entries,start=openIndexList[i]):
             for index in range(openIndexList[i], closeIndexList[i] + 1):
                 entry = entries[index]
                 currentList = currentList + entry
-            print ("CURRENT LIST:", currentList)
             entryList.append(currentList)
             currentList = ""
 
 
-        print(currentList)
     else:
         # entries = [file_string]
         entryList.append(file_string)
     
     for entry in entryList:
-        print ("ENTRY:", entry)
         try:
             entry = json.loads(entry)
         except json.decoder.JSONDecodeError as err:
@@ -533,6 +525,11 @@ def send_to_cybex(data, user):
             "sensor","isError","size"],
         ["timestamp","message","system","isError","src_ip","session","input","sensor"]
     ]
+    
+    # Can also just put all required keys for phishtank
+    # above, and just has to pass the number of cases that is 
+    # the same as the length of how many JSON objects
+    # So if data has only one JSON object it only has to pass one case
 
     # phishtank_required_keys = [
     # ]
@@ -555,8 +552,6 @@ def send_to_cybex(data, user):
     
     # If no cases pass, throw error
     if all_pass_count < len(entryList):
-        print ("COUNT :", all_pass_count)
-        print ("DID NOT PASS")
         raise TypeError("The supplied file did not pass validation. "
                 + " Ensure that the contents match a supported CYBEX-P schema.") 
     else:
@@ -565,7 +560,7 @@ def send_to_cybex(data, user):
 
 
     # If all entries are valid, then submit all entries individually...
-
+        
     # Code to retrieve user orgid will go below
     # populate rest of data fields that don't come from user input:
     data.pop('file', None) # take file key out of data dict
@@ -573,14 +568,10 @@ def send_to_cybex(data, user):
     data["typetag"] = 'test_json'
     data["name"] = 'frontend_input'
     for entry in entryList:
-        print ("ENTRY 2:", entry)
         files = {'file': bytes(entry, 'utf-8')}
         url = "https://cybex-api.cse.unr.edu:5000/raw"
         user_token = user.profile.cybex_token
         headers = {"Authorization": user_token}
-        print ("TOKEN:", user_token)
-        print ("HEADERS:", headers)
-        print ('\n')
         with requests.post(url, files=files,
                     headers=headers, data=data) as r:
             print(r.text)
