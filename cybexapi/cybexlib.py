@@ -571,7 +571,7 @@ def send_to_cybex(data, user):
         files = {'file': bytes(entry, 'utf-8')}
         url = "https://cybex-api.cse.unr.edu:5000/raw"
         user_token = user.profile.cybex_token
-        headers = {"Authorization": user_token}
+        headers = {"Authorization": 'Bearer ' + user_token}
         with requests.post(url, files=files,
                     headers=headers, data=data) as r:
             print(r.text)
