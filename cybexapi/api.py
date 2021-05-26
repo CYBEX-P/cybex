@@ -53,7 +53,7 @@ def connect2graph(user, passw, addr, bolt_port):
     return graph
 
 # May want to cinsider moving to separate library file
-def enrichLocalNode(enrich_type, value, node_type, graph, user=None,event=None):
+def enrichLocalNode(enrich_type, value, node_type, graph, user=None,event=None, from_date=None, to_date=None, timezone=None):
     """Executes the requested enrichment type on the given node.
     
     Args:
@@ -127,12 +127,12 @@ def enrichLocalNode(enrich_type, value, node_type, graph, user=None,event=None):
 
     elif enrich_type == "cybexCount":
             #status = insertCybexCount(value, graph)
-            status = cybexCountHandler(node_type,value, graph, user, event)
+            status = cybexCountHandler(node_type,value, graph, user, event, from_date, to_date, timezone)
             return json.dumps({"insert status" : status})
 
     elif enrich_type == "cybexRelated":
         #status = insertCybexCount(value, graph)
-        status = cybexRelatedHandler(node_type,value, graph, user)
+        status = cybexRelatedHandler(node_type,value, graph, user, from_date, to_date, timezone)
         return json.dumps({"insert status" : status})
 
     # elif enrich_type == "comment":
@@ -295,9 +295,17 @@ class enrichNodePost(APIView):
         #      for the given org
         current_user = request.user
         data = request.data
+        print(data)
         graph = connect2graph(current_user.graphdb.dbuser, current_user.graphdb.dbpass,
                               current_user.graphdb.dbip, current_user.graphdb.dbport)
-        result = enrichLocalNode(enrich_type, data["value"], data["Ntype"], graph, current_user)
+        # If is a cybex enrichment, need to pass in date range and timezone from filter
+        if enrich_type == "cybexCount" or enrich_type == "cybexRelated":
+            result = enrichLocalNode(enrich_type, data["value"], 
+                data["Ntype"], graph, user=current_user, 
+                from_date=data["fromDate"], to_date=data["toDate"], 
+                timezone=data["timezone"])
+        else:
+            result = enrichLocalNode(enrich_type, data["value"], data["Ntype"], graph, current_user)
         return Response(result)
 
 class enrichURL(APIView):
@@ -331,7 +339,7 @@ class enrichURL(APIView):
 class macroCybex(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, query):
+    def get(self, request, query, from_date, to_date, timezone):
         """Runs the CYBEX-P Analysis Macro on all graph nodes.
         
         For every node in the graph, query CYBEX-P for the specified 
@@ -370,7 +378,7 @@ class macroCybex(APIView):
             ## Start of threaded version part 1
             thread_list = []
             for node in nodes:
-                thread = threading.Thread(target=self.threadedLoop_cybexRelated, args=(node,graph,current_user))
+                thread = threading.Thread(target=self.threadedLoop_cybexRelated, args=(node,graph,current_user,from_date,to_date, timezone))
                 thread_list.append(thread)
             for thread in thread_list:
                 thread.start()
@@ -395,7 +403,7 @@ class macroCybex(APIView):
             ## Start of threaded version part 2
             thread_list = []
             for node in nodes:
-                thread = threading.Thread(target=self.threadedLoop_cybexCount, args=(node,graph,current_user,event))
+                thread = threading.Thread(target=self.threadedLoop_cybexCount, args=(node,graph,current_user,event,from_date,to_date, timezone))
                 thread_list.append(thread)
             for thread in thread_list:
                 thread.start()
@@ -411,20 +419,20 @@ class macroCybex(APIView):
     # The following functions are called from their own threads (one thread
     # per graph node). These then execute the indididual related and count
     # enrichments for each node.
-    def threadedLoop_cybexRelated(self, node, graph, current_user):
+    def threadedLoop_cybexRelated(self, node, graph, current_user, from_date, to_date, timezone):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
         if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename" or nType== "sha256" or nType== "Email" or nType== "email_addr" or nType== "subject" or nType== "body":
             print("--> Querying cybexRelated IOCs for", value)
-            enrichLocalNode('cybexRelated', value, nType, graph, current_user)
+            enrichLocalNode('cybexRelated', value, nType, graph, current_user, from_date=from_date, to_date=to_date, timezone=timezone)
             print("Done with", str(value))
 
-    def threadedLoop_cybexCount(self, node, graph, current_user,event):
+    def threadedLoop_cybexCount(self, node, graph, current_user,event, from_date, to_date, timezone):
         value = node["properties"]["data"]
         nType = node["properties"]["type"]
         if nType == "URL" or nType == "Host" or nType == "Domain" or nType == "IP" or nType == "ASN" or nType == "filename" or nType== "sha256" or nType== "Email" or nType== "email_addr" or nType== "subject" or nType== "body":
             print("--> Querying cybexCounts for ", value)
-            enrichLocalNode('cybexCount', value, nType, graph, current_user,event)
+            enrichLocalNode('cybexCount', value, nType, graph, current_user, event, from_date, to_date, timezone)
             print("Done with", str(value))
 
 

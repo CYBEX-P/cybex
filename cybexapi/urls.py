@@ -14,7 +14,7 @@ urlpatterns = [
     path('api/v1/delete/<node_id>/', delete.as_view()),
     path('api/v1/enrich/<enrich_type>/', enrichNodePost.as_view()),
     path('api/v1/enrichURL', enrichURL.as_view()),
-    path('api/v1/macroCybex/<query>/', macroCybex.as_view()),
+    path('api/v1/macroCybex/<query>/<from_date>/<to_date>/<timezone>/', macroCybex.as_view()),
     path('api/v1/macro/<subroutine>/', macro.as_view()),
     path('api/v1/neo4j/wipe', wipe.as_view()),
     path('api/v1/getContents/<path>/', getContents.as_view()),

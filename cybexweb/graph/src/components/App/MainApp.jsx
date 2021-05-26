@@ -397,7 +397,7 @@ const App = props => {
 
           <AppContainer>
             <ContentContainerStyle>
-              <Graph isLoading={isLoading} setFromDate={setFromDate} setToDate={setToDate} setTimezone={setTimezone} />
+              <Graph isLoading={isLoading} setFromDate={setFromDate} setToDate={setToDate} setTimezone={setTimezone} fromDate={fromDate} toDate={toDate} timezone={timezone}/>
             </ContentContainerStyle>
 
             <NavBar 
@@ -422,6 +422,9 @@ const App = props => {
                   setNeo4jData={setNeo4jData}
                   dispatchModal={dispatchModal}
                   setMacroDetails={setMacroDetails}
+                  fromDate={fromDate}
+                  toDate={toDate}
+                  timezone={timezone}
                 />
                 { macroDetails != 'none' && (
                   <div>
@@ -462,7 +465,12 @@ const App = props => {
                   paddingTop: '20px'
                 }}
               >
-                <InsertForm config={props.config} />
+                <InsertForm config={props.config} fromDate={fromDate} toDate={toDate} timezone={timezone} />
+                <Row />
+                <Row />
+                <Button width="100%" onClickFunction={() => dispatchModal('Submit Event Data')}>
+                  <div>New Event</div>
+                </Button>
               </div>
             </MenuBar>
             <MenuBar side="bottom" icon="list">
