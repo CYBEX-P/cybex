@@ -411,15 +411,20 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
     payload = json.dumps(payload) # data is jsonified request
     print(f"data: {payload}")
 
+    valid = False # Flag that is set to true once a valid response has been recieved.
     retry_count = 3 # sets number of allowable timeouts before call stops retrying.
-    while retry_count >= 1:
+    while retry_count >= 1 and not valid:
         try:
-            with requests.post(url, headers=headers, data=payload, timeout=(3.05, 20)) as r:
+            with requests.post(url, headers=headers, data=payload, timeout=(3.05, 60)) as r:
                 try:
                     res = json.loads(r.text)
                     print(f"res: {res}")
                     # Use response data to now insert nodes into graph database
                     if "data" in res:
+                        # if status: 'processing' is part of response, then
+                        # that means a valid response hasn't been reached yet
+                        if not "status" in res["data"]:
+                            valid = True
                         status = insertRelatedAttributes(res, graph, data, ntype_processed, insertions_to_make)
                     else: # Report response not ready yet or doesn't exist for this page
                         print("Unable to get report response for page " + str(count) + " for " + str(data))
