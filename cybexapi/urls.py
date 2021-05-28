@@ -23,9 +23,12 @@ urlpatterns = [
     #path('api/v1/neo4j/insertURL', insertURL.as_view()), # using /insert now
     path('api/v1/event/start', start.as_view()),
     path('api/v1/event/start/file', startFile.as_view()),
+    path('docs', views.DocsView.as_view(), name='docs'), # for documentation homepage
     #TODO
     #Depracate these two functions
     path('isSignedIn', views.isSignedIn.as_view()),
     path('isAdmin', views.isAdmin.as_view()),
+
+    path('cybexAppDocs', views.CybexDocsView.as_view(), name='cybexdocs'),
 
 ]
