@@ -1,4 +1,5 @@
-﻿# Cybex-P API Module
+﻿
+# Cybex-P API Module
 
 The `Cybex-P API Module` is the gateway for all data that travels in and out of Cybex-P during collection and posting. Cybex-P API is combintation of two sub-modules; the *Data Input sub-module* and the *Report Publishing sub-module*. The *Data Input sub-module* deals with the parsing of posted raw data and transferring of it to the backend. The *Report Publishing sub-module* deals with the handling of report request and the returning of any available ports to the user. In addition to being the gateway to the Cybex-P services, The API module also works as another checkpoint of additional privacy preservation  in which the data gets further encrypted. 
 ```mermaid
@@ -137,7 +138,7 @@ Classes:
 -	***UserInfoSelf()*** :
 	-	Provides information on the current user
 
-The following are *decorator functions* ***deprecated*** or previous functions in the source code:
+The following are  ***deprecated*** or previous functions in the source code:
 >- ***validate_token()*** - Decorator function that checks the validity of a token, failures will return a response code of 401. tokens are received from request_data["token"] of a user request,
 >- ***extract_request_data()*** - Decorator function that grabs the data from the falcon request objected and passes it to the decorated function as *'request_data'*. The *required_fields* parameter is often used with the decorator to properly extract certain pieces of data within a query; otherwise, the request_data will only contain the timestamp of the call.
 >- ***exception_handler()*** - This decorator function is in tandem with almost all other functions and API endpoint calls in the API module. the exception handler signals on any errors such as a bad HTTP request, Invalid input, and if the backend is currently down and/or not working properly.

@@ -5,19 +5,7 @@ Cybex-P has a unique way in storing cyberthreat data in which the data is stored
 
 In regards to complexity in terms of the information provided from a report, a report can be something as straightforward as countign the occurences of a specific IP address within a time range to the correlational analysis of the attributes of a single URL. 
 
-***Data Pipeline***
--	the pipeline for a report request is represented by the following:
-```mermaid
-graph 
-A[Archive Database]
-B(Report Cluster)
-C(Report Database)
-D(Cybex-P API)
-E(Frontend Server)
-F(Frontend Webclient)
-A --Encrypted Query--> B --Report creation and storing--> C --Pull report--> D --Pull Report from API--> E --Pull report data--> F
-
-```
+***<u>Data Pipeline</u>***
 
 ```mermaid
 sequenceDiagram
@@ -49,7 +37,10 @@ The report repository is the source code that is entirely responsible for all as
 ***key functions***:
 > - get_dtrange()
 > - decrypt_file()
-> - main code // <--- rest of the main code, not a function
+> - get_query()
+> - process_query()
+> - get_report()
+> - main()
 
 - ***get_dtrange()***
 	- 
@@ -64,23 +55,33 @@ into the local timezone of the user who made the query.
 
 - ***decrypt_file()***
 	- 
-	- the decrypt_file() functions works as exactly like the decrypt_file function located in the `Cybex-P Archive Module`. In this case its purpose serves to decrypt the querys provided from the `Cybex-P API Module`. 
+	- the ***decrypt_file()*** functions works as exactly like the decrypt_file function located in the `Cybex-P Archive Module`. In this case its purpose serves to decrypt the querys provided from the `Cybex-P API Module`. 
 
-- ***Main***
+- ***get_query()***
+	-
+	- get_query() serves to be the method that will consistently pull query request made to the report module provided from the archive database. get_query() encodes those querys into a TDQL and places it into a queue for processing. 
+		>  tdql = parse(i, backend=Report._backend, validate=False)
+		> tdql.status = 'processing'
+		> queue.put(tdql)
+	
+	
+	-	This process is ran forever in it's own thread. 
+
+- ***get_report()***
 	- 
-	- ***NOTE***: "Main" is not an actual function. Main is just a title that represents the rest of the main functionality of the ***report*** source code.  The rest of the source code is wrapped functionality that is consistently ran in an infinite (while) loop.
-	- This is the main body of the code where most of the actual report generation takes place.  At execution, the code will immediately seek all existing available querys from the report backend identity. 
-	> - r = _REPORT_BACKEND.find({'itype': 'object', 'sub_type': 'query', '_cref': await_hash}, _P) 
-	
-	- All querys are stored within the variable **r** (within the source code). Once all currently existing querys are pulled from the backend, We begin to to iterate through the list. With each iteration, we begin by parsing the query into a TAHOE TQDL query and set its status to a 'processing' state.
-	> - tdql = parse(i, backend=_REPORT_BACKEND) tdql.status = 'processing' 
+	get_report() is responsible for generating a report from a single TDQL object when called. 
 
-	-	The query is then evaluated and decrypted from by the **decrypt_file()** function.
-	> -	ciphertext_query = eval(tdql.qdata)
-	> - canonical_query = decrypt_file(ciphertext_query)
-	> - query = decanonical(canonical_query)
+	The TDQL is first evaluated evaluated and decrypted from by the **decrypt_file()** function.
+	> - if tdql.encrypted:
+			--- canonical_qdata = decrypt_file(canonical_qdata)
+
 	
-	- Proceeding the file decryption, the timelime values are extract from the query and the **get_dtrange()** function is called to set the timelime according the timezone of the query.
+	 Proceeding the file decryption, parameters are extracted from the decrypted data such as teh category, context data, and return type.
+	 > - category = qdata.pop('category', 'all')
+	 context = qdata.pop('context', 'all')
+	 return_type = qdata.pop('return_type', 'all')
+
+	the timelime values are then extractd from the query and the **get_dtrange()** function is called to set the timelime according the timezone of the query.
 	> - from_ = query.pop('from', None)
 	> - to = query.pop('to', None)
 	> - last = query.pop('last', None)
@@ -88,7 +89,7 @@ into the local timezone of the user who made the query.
 	> - try:
 		---	start, end = get_dtrange(from_, to, last, tzname)
 	
-	- At this point we can proceed to othe actual generation of the report requested by the query. Recall from this modules repository that we have three different report generation types; these three different report types are labeled, in Cybex-P terminology as:
+	 At this point we can proceed to othe actual generation of the report requested by the query. Recall from this modules repository that we have three different report generation types; these three different report types are labeled, in Cybex-P terminology as:
 		- `count`:
 			- A report based on the on the number of occurences of a specific attribute as indicated by the sub type from the query
 		- `related`: 
@@ -96,15 +97,28 @@ into the local timezone of the user who made the query.
 		-	`threat rank`:
 			-	A report based on generating the threat rank of an event. This sort of report is more complicated compared to the other report types as this report requires running the an even through Cybex-P's own threat rank evaluation algorithm.
 
-	-	In the event that none of the report types above correlate to the report type that is requested by the query. the query status is set to "failed".
+	In the event that none of the report types above correlate to the report type that is requested by the query. the query status is set to "failed".
 	> - query.status = 'failed'
 	
-	- Once the 	the report or done generating (or the query is marked a "failure), we can go ahead and extract the report and encode all related parts of the query into a block of bytes.
+
+- **Process_Query()**
+	- 
+	Process query is a method that is used to process a single TDQL instance. It handles the address signing and websocket execution of where a processed TDQL report is to go outside of the API.
+	
+	 Once the report is done generating (or the query is marked a "failure), we can go ahead and extract the report and encode all related parts of the query into a block of bytes.
 	> -	if not isinstance(nonce, bytes):
 	> -	--- nonce = nonce.encode()
 	
-	- At the final step, we use websockets to connect to the host API and send the report back.
+	 At the final step, we use websockets to connect to the host API and send the report back.
 	> - sock.connect((host, port))
 	> - sock.send(nonce)
 
-	-	At this point, the ***Main*** will continue to the previous steps for the rest of the querys stored in the ***r*** variable. Once all querys are completed, we go back to the initial step and extract any recently created querys that are stored in the Report backend.
+- ***Main()***
+	- 
+	Main() is responsible for initializating the forever running query queue and consistently checking and executing any available TDQLs in the queue.
+	>  queue = Queue()
+	thread_producer = Thread(target=get_query, args=(queue, ))
+
+	executing querys to process:
+	> with ThreadPoolExecutor(64) as executor:
+	--- executor.map(process_query, iter(queue.get, None))

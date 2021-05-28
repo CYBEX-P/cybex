@@ -54,7 +54,7 @@ C[Archive Database]
 	-	Otherwise, if a successful query was made, *n_failed_attempts* is set back to 0 which will lead the archive module to increasing the rate of query and archive attempts again. 
 
 # parsemain
-The `parsemain` source code is a key sub-component that is utilized by the `archive` code to handle the responsibility of parsing threat data to the raw TAHOE objects that will eventually be used by the `Cybex-P Analytics Module`.
+The `parsemain` source code is a key sub-component that is utilized by `archive` to handle the responsibility of parsing threat data to the raw TAHOE objects that will eventually be used by the `Cybex-P Analytics Module`.
 
 ***Key functions***:
 

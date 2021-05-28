@@ -139,4 +139,6 @@ A an example of a filter event ID will look like -
 	- 
 	 phishtank is another phishing intelligence platform that helps to provide the latest information on any URLs identified as phishing links. Unlike openphish, the phishtank platform is a collaborative community-based platform in which a large majority of phishing identification is done by the open community. Just like openphish, the phishtank filter pulls the information from the platform and is correlated against raw threat data.
 	
-	- foo
+	- `filt_phishtank`:
+		- Type: phishtank-url
+			-  Data that shows similar findings from the phishtank database are translated into Tahoe objects an stored in the backend.
