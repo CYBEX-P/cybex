@@ -42,7 +42,7 @@ paths:
         '400':
           description: 'Bad request. The formatting of the query is invalid.'
         '500': 
-          description: 'Internal error. The server is potentially down or another internal error is present'
+          description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'
   /raw:
     post:
       tags: 
@@ -87,6 +87,8 @@ paths:
           description: 'User token is valid'
         '401':
           description: 'Unauthorized. The provided token is invalid'
+        '500': 
+          description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'
           
   /Create/Org:
     post:
@@ -99,9 +101,14 @@ paths:
         '400':
           description: 'Bad request. The user who made the request is not an admin, the organization already exist, or a potential key error when trying to pull data from the request media.'
         '401':
-          description: 'Attribute error, a request was made with a request attribute that is not a Cybex-P admin user'
+          description: 'Attribute error, a request was made with a request attribute that does not contain the proper priveleges or an invalid JWT token.'
         '201':
           description: 'Organization was successfully created in Cybex-P'
+        '409':
+          description: 'Response to a org that does not exist.'
+        '500': 
+          description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'  
+
   /Create/User:
     post:
       tags:
@@ -114,6 +121,10 @@ paths:
           description: 'Attribute error, the user context provided is not a Cybex-P admin and cannot create the user.'
         '201':
           description: 'the new user was successfully created in Cybex-P'
+        '409':
+          description: 'Response to a user that does not exist within context. Potentially a request by a non-existant user'
+        '500': 
+          description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'
   /org/add/user:
     post:
       tags:
@@ -124,9 +135,11 @@ paths:
         '400':
           description: 'Invalid org hash, the organization potentially does not exist; Key error; An invalid string is attempted to being added to the organization, or the user already exist in the provided organization or ACL'
         '401':
-          description: 'a request was made by a user that is not an admin of the organization'
+          description: 'a request was made by a user that is not an admin of the organization or the provided JWT token was revoked.'
         '201':
           description: 'The user was successfully added to the access control list or organization.'
+        '500': 
+          description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'
     
   /org/info:
     get:
@@ -141,6 +154,8 @@ paths:
           description: 'a request was made by a user that is not an admin of the orgnization.'
         '201':
           description: 'a result was successfully extracted, see the result.'
+        '500': 
+          description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'
   /org/del/user:
     delete:
       tags:
@@ -149,7 +164,11 @@ paths:
       description: 'delete a user from an organization or access control list'
       responses:
         '400':
-          description: 'Key error. Invalid org hash, '
+          description: 'Key error. Invalid org hash'
+        '201':
+          description: 'The user(s) was successfully removed from the acl, admin priveleges and/or delete from the organization.'
+        '500': 
+          description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'  
   
   /org/admins_of:
     get:
@@ -161,6 +180,8 @@ paths:
           description: 'Invalid token/authentication'
         '200':
           description: 'Successful authentication, see the result of admins of an organization provided from the endpoint'
+        '500': 
+          description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'
   /orgs/user_of:
     get:
       tags:
@@ -181,3 +202,5 @@ paths:
           description: 'Invalid token/authentication'
         '200':
           description: 'Successful authentication, see the provided result of users of an organization provided from the endpoint'
+        '500': 
+          description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'
