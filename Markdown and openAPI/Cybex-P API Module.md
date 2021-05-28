@@ -106,29 +106,40 @@ And more internal responsibilities such as:
 - ***validate_user()*** :
 	- Works equivalently to   ***validate_org()*** , Just with returning a user object is the token is valid
 
-# <small> Identity </small>
-`Identity` contains functionality to handle various responsibilities of user and organization management, authentication, and access control list modification.
 
+- # <small>config</small>
+`config` deals with initializing the an organization object and it's required keys within the `Cybex-P API`.
+
+Classes:
+-	***AddConfig()***
+
+-	# <small> Identity </small>
+`Identity` contains functionality to handle various responsibilities of user and organization management, authentication, and access control list modification. Every class in the `Identity` source code is decorated with the ***validate_user()*** and ***exception_handler()*** functions from `Common` to assist with authentication and exception handling capabilities.
+
+Classes:
 -	***CreateOrg()*** :
 	-	Takes a request to register and create an organization in Cybex-P. 
 - ***CreateUser()*** :
 	- 	Takes a request to register and create an user in Cybex-P. 
 - ***OrgAddUser()*** :
-	- foo
+	- Appends a new user to an organization. Users can be appended in one of three different privilege categories to an organization object:
+		- **admin** : add the user as a new admin to the org
+		- **user** : add the user as a new general user under the org
+		- **acl** : add the user as a general user under the organizations access control list (acl)
 - ***OrgInfo()*** :
-	- foo
+	- Returns information of an organization based on the request. This function can return information on the list of admins, users, and users under the organizations access control list. The user making the request must have admin privileges of their organization.
 -	***OrgDelUser()*** :
-	-	foo
+	-	Takes a request to remove a user from the acl or admin privileges of an organization. If the user is delete from the general user category of an orgnization, that user is removed from the organization as a whole and does not exist in the list of users. Must have admin privileges to request
 -	***OrgsAdminOf()*** :
-	-	foo
--	***
+	-	Provides a list of organizations that a user is an admin to
+-	***OrgsUserOf()*** :
+	-	Provides a list of organizations that a user exist under
+-	***UserInfoSelf()*** :
+	-	Provides information on the current user
 
-The following are *decorator functions* used across multiple modules of the `Cybex-P API Module` to assist with various responsibilities:
+The following are *decorator functions* ***deprecated*** or previous functions in the source code:
 >- ***validate_token()*** - Decorator function that checks the validity of a token, failures will return a response code of 401. tokens are received from request_data["token"] of a user request,
 >- ***extract_request_data()*** - Decorator function that grabs the data from the falcon request objected and passes it to the decorated function as *'request_data'*. The *required_fields* parameter is often used with the decorator to properly extract certain pieces of data within a query; otherwise, the request_data will only contain the timestamp of the call.
 >- ***exception_handler()*** - This decorator function is in tandem with almost all other functions and API endpoint calls in the API module. the exception handler signals on any errors such as a bad HTTP request, Invalid input, and if the backend is currently down and/or not working properly.
 > - ***early_return()*** - Utility dectorator used by other decorators as a way to early return from any function call if a decorator calls for an early return.
 > - ***get_org_object()*** - checks to see if the key `org_hash` is present within the argument `request_data`. If it fails, then a response code 400 is returned. This decorator will pull *'org_hash'* from *request_data["org_hash"]* and place the org tahoe object under *org_object*.
-
-# Miscellaneous 
-foo
