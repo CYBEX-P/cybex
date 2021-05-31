@@ -1,46 +1,42 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-    <title>{% block title %}Docs{% endblock %}</title>
-  </head>
-  <body>
-    <div class="container">
-
-    {% block content %}
-    <br>
-    <div class="jumbotron">
-        <h1>CYBEX-P Documentation</h1>
-        <h5>This page is under construction...</h5>
-        <br>
-        <h2>User Guide</h2>
-        <h5>Quickstart</h5>
-        <h5>Feature Reference</h5>
-        <h5>Guided Tutorials</h5>
-        <video width="100%" controls>
-            <source src="../static/video/cybex_overview.mp4" type="video/mp4">
-            Your browser does not support this video.
-        </video>
-        <h2>For Developers</h2>
-        <h5>Platform Overview</h5>
-        <img src="../static/images/sysarch.png" alt="CYBEX ARCH" width="50%;">
-        <h5>CYBEX Backend</h5>
-        <h5>Web Portal</h5>
-        <p>API Specification</p>
-        <p>Full Reference</p>
-        <p>Deployment</p>
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="jumbotron transparent">
+  <nav class="nav nav-pills nav-fill nav-custom">
+    <a class="nav-item nav-link" href="/home">Home</a>
+    <a class="nav-item nav-link" href="/about">About CYBEX</a>
+    <a class="nav-item nav-link" href="/personnel">Personnel</a>
+  </nav>
+  <div style="text-align: center;">
+    <hr class="my-4">
+    <h2>Documentation</h2>
+    <hr class="my-4">
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; padding: 20px;">
+    <div style="display: flex; justify-content: center; align-items: center; width:60%; height:30vh; background-color:white; padding:10px;border-radius:20px; text-align: center; margin-bottom: 20px; font-size: x-large;">
+        <a href="cybexAppDocs">CYBEX-P Infrastructure & Web App Documentation</a>
+      </div>
+    <div style="display: flex; justify-content: center; align-items: center; width:30%; height:10vh; background-color:white; padding:10px;border-radius:20px; text-align: center;">
+      <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1739032&HistoricalAwards=false">Privacy-Preservation Documentation</a>
     </div>
-    {% endblock %}
-          <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-  </body>
-</html>
+  </div>
+    <!-- <h5>This page is under construction...</h5>
+    <br>
+    <h2>User Guide</h2>
+    <h5>Quickstart</h5>
+    <h5>Feature Reference</h5>
+    <h5>Guided Tutorials</h5>
+    <video width="100%" controls>
+        <source src="../static/video/cybex_overview.mp4" type="video/mp4">
+        Your browser does not support this video.
+    </video>
+    <h2>For Developers</h2>
+    <h5>Platform Overview</h5>
+    <img src="../static/images/sysarch.png" alt="CYBEX ARCH" width="50%;">
+    <h5>CYBEX Backend</h5>
+    <h5>Web Portal</h5>
+    <p>API Specification</p>
+    <p>Full Reference</p>
+    <p>Deployment</p> -->
+</div>
+{% endblock %}

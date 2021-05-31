@@ -29,10 +29,8 @@ urlpatterns = [
     #path('api/v1/neo4j/insertURL', insertURL.as_view()), # using /insert now
     path('api/v1/event/start', start.as_view()),
     path('api/v1/event/start/file', startFile.as_view()),
-
-    #Deprecated
-    # path('isSignedIn', views.isSignedIn.as_view()),
-    # path('isAdmin', views.isAdmin.as_view()),
+    path('docs', views.DocsView.as_view(), name='docs'), # for documentation homepage
+    path('cybexAppDocs', views.CybexDocsView.as_view(), name='cybexdocs'),
 
     # path('openapi/', get_schema_view(
     #     title="CYBEX-P Portal API Doc",

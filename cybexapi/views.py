@@ -6,7 +6,7 @@ import json
 
 import docker
 from cybexweb.dockers import check_db, create_db
-from django.views.generic import View
+from django.views.generic import View, TemplateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
@@ -54,3 +54,11 @@ class GraphView(View):
             print("Container running")
                 
         return render(request, self.template_name)
+
+class DocsView(TemplateView):
+    template_name = 'docs.html'
+
+class CybexDocsView(TemplateView):
+    template_name = 'sphinx/html/index.html'
+    #html files copied and pasted from sphinx build folder.
+    #update each time new version of application is released.
