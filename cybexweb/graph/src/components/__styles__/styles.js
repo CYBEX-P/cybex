@@ -253,6 +253,15 @@ const TrendRowStyle = styled.div`
   justify-content: space-around;
 `;
 
+const AdminPageStyle = styled.div`
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+  background-color: white;
+	border-radius: 5px;
+`;
+
 export {
   AppContainer,
   SplashScreenBody,
@@ -269,5 +278,6 @@ export {
   TrendPanelStyle,
   TrendBoxStyle,
   TrendRowStyle,
-  CenterModalStyle
+  CenterModalStyle,
+	AdminPageStyle
 };

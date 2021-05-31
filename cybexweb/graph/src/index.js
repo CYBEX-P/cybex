@@ -1,6 +1,8 @@
 /* eslint react/jsx-filename-extension: 0 */
 import React from 'react';
 import ReactDOM from 'react-dom';
+// Datepicker css
+import 'react-datepicker/dist/react-datepicker-cssmodules.min.css';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faChartBar,
@@ -65,6 +67,7 @@ library.add(
   faMailBulk,
   faShieldAlt
 );
+
 
 let YAMLConfig = {};
 

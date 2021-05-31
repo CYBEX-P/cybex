@@ -1,0 +1,572 @@
+openapi: 3.0.2
+info:
+  title: 'CYBEX-P Portal API Doc'
+  description: 'Documentation for the CYBEX-P Portal API. This is solely for the frontend web application and is seperate from the backend CYBEX-P API.'
+  version: '1.0.1'
+paths:
+  /api/v1/admin/config:
+    get:
+      operationId: listgetconfigs
+      description: 'Reads YAML configuration file.'
+      parameters: []
+      responses:
+        '200':
+          # content:
+          #   application/json:
+          #     schema:
+          #       type: array
+          #       items: {}
+          description: 'The configuration details from the YAML configuration file.'
+      tags:
+      - api
+  /api/v1/neo4j/export:
+    get:
+      operationId: listexportNeoDBs
+      description: Retrieves and processes latest graph data from neo4j database.
+      parameters: []
+      responses:
+        '200':
+          # content:
+          #   application/json:
+          #     schema:
+          #       type: array
+          #       items: {}
+          description: 'API response containing processed graph object.'
+      tags:
+      - api
+  /api/v1/neo4j/insert/{node_type}/{value}/:
+    get:
+      operationId: retrieveinsert
+      description: Inserts given node into the current graph
+      parameters:
+      - name: node_type
+        in: path
+        required: true
+        description: 'The type of IOC to insert.'
+        schema:
+          type: string
+      - name: value
+        in: path
+        required: true
+        description: 'The value of the IOC to insert.'
+        schema:
+          type: string
+      responses:
+        '200':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: 'API response object, with status either equal to "Success" or "Failed".'
+      tags:
+      - api
+  /api/v1/enrich/{enrich_type}/{value}/:
+    get:
+      operationId: retrieveenrichNode
+      description: "Enrich the given node with the given enrichment type (GET version).\n\
+        \nThe GET request for enriching nodes is intended for enrichments that\ndon't\
+        \ need to pass sensitive user data (such as user object). This is\nmainly\
+        \ for standard network structure lookups like asn, gip, whois, \netc.. For\
+        \ CYBEX enrichments (cybexRelated, cybexCount), use the POST\nversion (enrichNodePost())."
+      parameters:
+      - name: enrich_type
+        in: path
+        required: true
+        description: 'The type of enrichment to perform.'
+        schema:
+          type: string
+      - name: value
+        in: path
+        required: true
+        description: 'The value of the node to be enriched.'
+        schema:
+          type: string
+      - name: node_type
+        in: path
+        required: true
+        description: 'The type of the node to be enriched.'
+        schema:
+          type: string
+      responses:
+        '200':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: 'API response object. Insert status is defined by whichever downstream function is called to complete the enrichment. Ex. asn enrichment type returns an integer 1 or 0 depending on success of the operation.'
+      tags:
+      - api
+  /api/v1/delete/{node_id}/:
+    get:
+      operationId: retrievedelete
+      description: Deletes the given node from the current graph
+      parameters:
+      - name: node_id
+        in: path
+        required: true
+        description: 'The node id to remove from the graph.'
+        schema:
+          type: string
+      responses:
+        '200':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: 'API response object, with status either equal to "Success" or "Failed".'
+      tags:
+      - api
+  /api/v1/macroCybex/{query}/:
+    get:
+      operationId: retrievemacroCybex
+      description: "Runs the CYBEX-P Analysis Macro on all graph nodes.\n\nFor every\
+        \ node in the graph, query CYBEX-P for the specified \ninformation. The \"\
+        related\" query returns objects and attributes\nthat were found in the same\
+        \ event contexts as each existing graph \nnode. The \"count\" query returns\
+        \ the number of tiems each node was seen\nin malicious vs. non-malicious event\
+        \ contexts. \"both\" runs \"related\"\nand \"count\" together in sequence.\
+        \ Multithreading has been implemented\nto increase pooling rate for both query\
+        \ types, processing all graph\nnodes in parallel."
+      parameters:
+      - name: query
+        in: path
+        required: true
+        description: 'The type of CYBEX-P query to perform. "related", "count", or "both".'
+        schema:
+          type: string
+      responses:
+        '200':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: 'API response object containing the nodes that were processed as part of the macro run.'
+      tags:
+      - api
+  /api/v1/macro/{subroutine}/:
+    get:
+      operationId: retrievemacro
+      description: 'Runs the Standard Lookups Macro on all or some graph nodes.
+
+
+        For all or some IOC types in the graph, available standard lookup
+
+        enrichments are performed. This is focused on showing the general
+
+        network structure, through lookups such as ASN, GIP, Whois, and more.
+
+        Additional operations include resolving hosts, deconstructing urls
+
+        and emails to their individual components, and more. Multithreading has been
+        implemented
+
+        to increase pooling rate for both query types, processing all graph
+
+        nodes in parallel.'
+      parameters:
+      - name: subroutine
+        in: path
+        required: true
+        description: 'Either "all", or the name of a specific
+                subroutine to run if only one type is desired. Subroutine
+                options include "url", "email", "host", "domain", and "ip".
+                These correspond to the IOC types that will be enriched 
+                during the macro run, where all other IOC types will be 
+                ignored.'
+        schema:
+          type: string
+      responses:
+        '200':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: 'If succesful, it contains a message that all nodes were processed.'
+      tags:
+      - api
+  /api/v1/neo4j/wipe:
+    get:
+      operationId: listwipes
+      description: Deletes the user's graph data.
+      parameters: []
+      responses:
+        '200':
+          content:
+            # application/json:
+              # schema:
+              #   type: array
+              #   items: {}
+          description: 'API response object containing a message that the Neo4j DB was wiped.'
+      tags:
+      - api
+  /api/v1/getContents/{path}/:
+    get:
+      operationId: retrievegetContents
+      description: '"Gets directory contents at the given path.
+
+
+        This is currently used for the honeypot data download feature. It
+
+        requires the desired data to be hosted on the web server. This query
+
+        can be used generically to retrieve any data that is hosted on the
+
+        production server.'
+      parameters:
+      - name: path
+        in: path
+        required: true
+        description: 'String representing the path to get contents from.'
+        schema:
+          type: string
+      responses:
+        '200':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: 'API response object containing a dictionary of directories and files, or 1 if error.'
+      tags:
+      - api
+  /api/v1/user_management/currentUserInfo/{info_to_return}/:
+    get:
+      operationId: retrievecurrentUserInfo
+      description: Returns various information about the requesting user.
+      parameters:
+      - name: info_to_return
+        in: path
+        required: true
+        description: '"user_of" for all orgs user belongs to,
+                "admin_of" for all orgs user is admin of, or "basic_info" for user
+                info object containing user hash, username, email.'
+        schema:
+          type: string
+      responses:
+        '200':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: 'API response containing user information.'
+      tags:
+      - api
+  # /isSignedIn:
+  #   get:
+  #     operationId: listisSignedIns
+  #     description: ''
+  #     parameters: []
+  #     responses:
+  #       '200':
+  #         # content:
+  #         #   application/json:
+  #         #     schema:
+  #         #       type: array
+  #         #       items: {}
+  #         description: ''
+  #     tags:
+  #     - isSignedIn
+  # /isAdmin:
+  #   get:
+  #     operationId: listisAdmins
+  #     description: ''
+  #     parameters: []
+  #     responses:
+  #       '200':
+  #         # content:
+  #         #   application/json:
+  #         #     schema:
+  #         #       type: array
+  #         #       items: {}
+  #         description: ''
+  #     tags:
+  #     - isAdmin
+  /api/v1/enrich/{enrich_type}/:
+    post:
+      operationId: createenrichNodePost
+      description: "Enrich the given node with the given enrichent type (POST version).\n\
+        \nThe POST request for enriching nodes is intended for enrichments that\n\
+        need to pass sensitive user data (such as user object). This is mainly\nfor\
+        \ CYBEX enrichments (cybexRelated, cybexCount) that must\nauthenticate with\
+        \ the CYBEX backend. For standard network structure \nlookups like asn, gip,\
+        \ whois, etc., use GET version (enrichNode())."
+      parameters:
+      - name: enrich_type
+        in: path
+        required: true
+        description: 'The type of enrichment to perform. Ex. "cybexRelated" or "cybexCount".'
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                  value:
+                    type: string
+                    description: The value of the node to be enriched
+                  Ntype:
+                    type: string
+                    description: The node type of the node to be enriched.
+              required:
+                  - value
+                  - Ntype
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '201':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: 'Insert status is defined by whichever downstream
+                function is called to complete the enrichment. cybexRelated 
+                and cybexCount enrichments return an integer 1 if successful, 
+                0 if a read timeout occurs, and -1 if a connection timeout 
+                occurs.'
+      tags:
+      - api
+  /api/v1/enrichURL:
+    post:
+      operationId: createenrichURL
+      description: Enrich the given URL (exposes its domain for further action).
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                  value:
+                    type: string
+                    description: The value of the node to be enriched
+              required:
+                  - value
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '201':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: '1 if successful.'
+      tags:
+      - api
+  /api/v1/user_management/org_info:
+    post:
+      operationId: createorgInfo
+      description: Returns various information about the given organization.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                  org_hash:
+                    type: string
+                    description: unique hash for the org
+                  return_type:
+                    type: string
+                    description: admin, user, acl, or all. Specifies whether to return the chosen individual list or all lists for the given org.
+              required:
+                  - org_hash
+                  - return_type
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '201':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: 'JSON of organization information.'
+      tags:
+      - api
+  /api/v1/user_management/org_add_remove:
+    post:
+      operationId: createorgAddRemoveUser
+      description: Add or remove user from given organization.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                  org_hash:
+                    type: string
+                    description: unique hash for the org
+                  users:
+                    type: array
+                    items:
+                      type: string
+                    description: array of user hashes to be added or removed.
+                  list_type: 
+                    type: string
+                    description: admin, user, or acl. The list to which the given users should be added or removed from.
+                  action: 
+                    type: string
+                    description: add or remove. The action to perform for the given users.
+              required:
+                  - org_hash
+                  - users
+                  - list_type
+                  - action
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '201':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: 'Backend CYBEX API response after attempting addition or removal.'
+      tags:
+      - api
+  /api/v1/import_json:
+    post:
+      operationId: createimportJson
+      description: Used to import a JSON file of the graph and load the graph.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                  file:
+                    type: string
+                    description: The file to import graph data from. Represented as serialized JSON string.
+              required:
+                  - file
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '201':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: 'API response object containing the values that were imported.'
+      tags:
+      - api
+  /api/v1/position:
+    post:
+      operationId: createposition
+      description: Used to update the current positions of each node and stores it
+        in the Neo4j database.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: array
+              items:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      description: The id of the node.
+                    x:
+                      type: integer
+                      description: The x position of the node.
+                    y:
+                      type: integer
+                      description: The y position of the node.
+                required:
+                    - id
+                    - x
+                    - y 
+              description: Array of json objects containing node ids, x coordinates, and y coordinates.
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '201':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: 'API response object containing "Success" if successful.'
+      tags:
+      - api
+  /api/v1/dataEntry:
+    post:
+      operationId: createdataEntry
+      description: Sends user event file submissions to CYBEX.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                  file:
+                    type: binary
+                    description: The file to submit to the CYBEX-P system. Must be a valid CYBEX-supported file format.
+              required:
+                  - file
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '201':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: 'API response object containing "Success" if successful.'
+      tags:
+      - api
+  /api/v1/event/start:
+    post:
+      operationId: createstart
+      description: "DEPRECATED. Handles event data subission from inline input.\n\n\
+        This supports an older data submission form that is currently unused.\nThis\
+        \ API endpoint is being maintained and documented in case it is \ndesired\
+        \ to return to the alternative data submission approach. The \nolder version\
+        \ supported user options for encryption. Lastly, it \nautomatically added\
+        \ all submitted data directly to the graph."
+      parameters: []
+      requestBody:
+        # content:
+        #   application/json:
+        #     schema: {}
+        #   application/x-www-form-urlencoded:
+        #     schema: {}
+        #   multipart/form-data:
+        #     schema: {}
+      responses:
+        '201':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: ''
+      tags:
+      - api
+  /api/v1/event/start/file:
+    post:
+      operationId: createstartFile
+      description: "DEPRECATED. Handles event data subission from file.\n\nThis supports\
+        \ an older data submission form that is currently unused.\nThis API endpoint\
+        \ is being maintained and documented in case it is \ndesired to return to\
+        \ the alternative data submission approach. The \nolder version supported\
+        \ user options for encryption. Lastly, it \nautomatically added all submitted\
+        \ data directly to the graph."
+      parameters: []
+      requestBody:
+        # content:
+        #   application/json:
+        #     schema: {}
+        #   application/x-www-form-urlencoded:
+        #     schema: {}
+        #   multipart/form-data:
+        #     schema: {}
+      responses:
+        '201':
+          # content:
+          #   application/json:
+          #     schema: {}
+          description: ''
+      tags:
+      - api

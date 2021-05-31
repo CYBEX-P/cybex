@@ -9,6 +9,7 @@ import MenuContext from '../App/MenuContext';
 import RadialMenu from '../radialMenu/radialMenu';
 import withNodeType from '../radialMenu/withNodeType';
 import Trends from '../modal/Trends';
+import GraphFilter from './GraphFilter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle, faArrowRight,faTimesCircle, faFilter, faMapPin, faCircleNotch, faDotCircle, faCommentDollar, faCommentDots, faArrowCircleUp } from '@fortawesome/free-solid-svg-icons';
 
@@ -25,7 +26,7 @@ function InitializeGraph(data) {
     height: '99vh',
     nodes: {
       shape: 'circularImage',
-      image: '/static/SVG/DataAnalytics/svg_other.svg',
+      image: '/static/SVG/DataAnalytics/svg_other.svg', //default IOC image
       borderWidth: 4,
       color: 'rgba(151,194,252,1)',
       widthConstraint: 100,
@@ -55,7 +56,7 @@ function InitializeGraph(data) {
 // Helper function to truncate strings (used for tooltips)
 const truncate = (input,numChar) => input.length > numChar ? `${input.substring(0, numChar)}...` : input;
 
-const Graph = ({ isLoading }) => {
+const Graph = ({ isLoading, setFromDate, setToDate, setTimezone, fromDate, toDate, timezone }) => {
   const { setLoading } = useContext(MenuContext);
   const { neo4jData, setNeo4jData, config } = useContext(NetworkContext);
 
@@ -77,8 +78,6 @@ const Graph = ({ isLoading }) => {
   const [eventListenersAdded, setEventListenersAdded] = useState(false);
 
   const [network, setNetwork] = useState(null);
-
-  const [filterState,setFilterState] = useState(false);
 
   const [commentState,setCommentState] = useState(false);
   const [commentTextState, setCommentTextState] = useState('');
@@ -265,12 +264,36 @@ const Graph = ({ isLoading }) => {
     {
       if (typeof data.Neo4j !== 'undefined') {
         var edgeObj = data.Neo4j[1][0].edges.filter(properties => properties.id === e.edge);
+        var edgeType = edgeObj[0].type; // Describes the relationship this edge represents
+        var edgeLabel = JSON.stringify(edgeType) // The label to be rendered for this edge
+        // If edgeType is cybexRelated, render special event data stored in relationship.
+        // Otherwise, render the relationship data as a simple string upon hover tooltip
+        if (edgeType.includes("CYBEX:")) {
+          //let edgeType = "CYBEX:password=attribute,login_credentials=object,ssh=event,file_download=event,file=object,hash=attribute"; // for testing
+          var edgeTypeArr = edgeType.split(':'); // only care about string after 'CYBEX:'
+          var event_items = edgeTypeArr[1].split(',');
+          event_items.forEach((item, index) => {
+            var itemArr = item.split('=');
+            // itemArr[0] is item description, itemArr[1] is item type
+            // replace item type with the associated color that will show in
+            // this item tag's background (i.e. color driven by item type)
+            if (itemArr[1] == "attribute") {
+              itemArr[1] = "#8F4DA3" // purple
+            } else if (itemArr[1] == "object") {
+              itemArr[1] = "#4DA38F" // blue-green
+            } else if (itemArr[1] == "event") {
+              itemArr[1] = "#A38F4D" // gold
+            }
+            // replace item string with modified item array
+            event_items[index] = itemArr
+          });
+          // event_items now fully modified, this array becomes the 'edgeType'...
+          edgeLabel = event_items
+        } 
         setHoverTextEdge({
-          // Set the select text to the properties of the data
-          data: JSON.stringify(edgeObj[0].type),
+          data: edgeLabel, // is either string or array for special cybexRelated case
           x: e.event.clientX,
           y: e.event.clientY,
-          //label: JSON.stringify(nodeObj[0].label),
         });
       }
     });
@@ -388,8 +411,10 @@ const Graph = ({ isLoading }) => {
     return setRadialPosition(null);
   }, [selection]);
 
+
   // HOC that returns the radial menu to use
-  const RadialToRender = withNodeType(RadialMenu, selectedNodeType, setNeo4jData, config);
+  const RadialToRender = withNodeType(RadialMenu, selectedNodeType, setNeo4jData, config, fromDate, toDate, timezone);
+
 
   return (
     <div style={{ display: 'grid', gridTemplateRows: '56px auto' }}>
@@ -407,140 +432,7 @@ const Graph = ({ isLoading }) => {
         }}
       />
       {/* TODO: Turn filter box into seperate component */}
-      {!filterState && ( 
-        <div style={{
-          position:"absolute",
-          right:"1%",
-          top:"65px",
-          zIndex: 4,
-          backgroundColor: "black",
-          color: "white",
-          opacity: "0.95",
-          borderRadius: "10px",
-          padding: "13px",
-          paddingTop: "10px",
-          paddingBottom: "10px",
-          boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"
-        }}
-        onClick={() => setFilterState(true)}>
-          <FontAwesomeIcon size="1x" icon={faFilter}/>
-        </div>
-      )}
-      {filterState && (
-      <div style={{
-        position:"absolute",
-        width:"300px", 
-        right:"10px",
-        top:"65px",
-        zIndex: 4,
-        // backgroundColor: '#111', // Used for classic Card styling only.
-        backgroundColor: "black",
-        color: "white",
-        opacity: "0.95",
-        borderRadius: "10px",
-        padding: "20px",
-        paddingBottom: "20px",
-        boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"
-        }}>
-          <div onClick={() => setFilterState(false)}>
-            <FontAwesomeIcon size="2x" icon={faTimesCircle} style={{position:'absolute',right:'10px',top:'10px'}}/>
-          </div>
-          <h4 style={{textAlign:"center"}}>
-            <b>Filters</b>
-          </h4>
-          <hr/>
-          <h5>Time</h5>
-          <div style={{color:"white",fontSize:"large"}}>
-            From: <input style={{width:'70px',backgroundColor:"#232323",border:"none",borderRadius:"5px",marginRight:"10px"}}></input>
-            To: <input style={{width:'70px',backgroundColor:"#232323",border:"none",borderRadius:"5px"}}></input>
-          </div><br></br>
-          Time Zone:
-          <select style={{color: "white",backgroundColor: "#232323",width:"200px",border:"none"}}>
-            <option timeZoneId="1" gmtAdjustment="GMT-12:00" useDaylightTime="0" value="-12">(GMT-12:00) International Date Line West</option>
-            <option timeZoneId="2" gmtAdjustment="GMT-11:00" useDaylightTime="0" value="-11">(GMT-11:00) Midway Island, Samoa</option>
-            <option timeZoneId="3" gmtAdjustment="GMT-10:00" useDaylightTime="0" value="-10">(GMT-10:00) Hawaii</option>
-            <option timeZoneId="4" gmtAdjustment="GMT-09:00" useDaylightTime="1" value="-9">(GMT-09:00) Alaska</option>
-            <option timeZoneId="5" gmtAdjustment="GMT-08:00" useDaylightTime="1" value="-8">(GMT-08:00) Pacific Time (US & Canada)</option>
-            <option timeZoneId="6" gmtAdjustment="GMT-08:00" useDaylightTime="1" value="-8">(GMT-08:00) Tijuana, Baja California</option>
-            <option timeZoneId="7" gmtAdjustment="GMT-07:00" useDaylightTime="0" value="-7">(GMT-07:00) Arizona</option>
-            <option timeZoneId="8" gmtAdjustment="GMT-07:00" useDaylightTime="1" value="-7">(GMT-07:00) Chihuahua, La Paz, Mazatlan</option>
-            <option timeZoneId="9" gmtAdjustment="GMT-07:00" useDaylightTime="1" value="-7">(GMT-07:00) Mountain Time (US & Canada)</option>
-            <option timeZoneId="10" gmtAdjustment="GMT-06:00" useDaylightTime="0" value="-6">(GMT-06:00) Central America</option>
-            <option timeZoneId="11" gmtAdjustment="GMT-06:00" useDaylightTime="1" value="-6">(GMT-06:00) Central Time (US & Canada)</option>
-            <option timeZoneId="12" gmtAdjustment="GMT-06:00" useDaylightTime="1" value="-6">(GMT-06:00) Guadalajara, Mexico City, Monterrey</option>
-            <option timeZoneId="13" gmtAdjustment="GMT-06:00" useDaylightTime="0" value="-6">(GMT-06:00) Saskatchewan</option>
-            <option timeZoneId="14" gmtAdjustment="GMT-05:00" useDaylightTime="0" value="-5">(GMT-05:00) Bogota, Lima, Quito, Rio Branco</option>
-            <option timeZoneId="15" gmtAdjustment="GMT-05:00" useDaylightTime="1" value="-5">(GMT-05:00) Eastern Time (US & Canada)</option>
-            <option timeZoneId="16" gmtAdjustment="GMT-05:00" useDaylightTime="1" value="-5">(GMT-05:00) Indiana (East)</option>
-            <option timeZoneId="17" gmtAdjustment="GMT-04:00" useDaylightTime="1" value="-4">(GMT-04:00) Atlantic Time (Canada)</option>
-            <option timeZoneId="18" gmtAdjustment="GMT-04:00" useDaylightTime="0" value="-4">(GMT-04:00) Caracas, La Paz</option>
-            <option timeZoneId="19" gmtAdjustment="GMT-04:00" useDaylightTime="0" value="-4">(GMT-04:00) Manaus</option>
-            <option timeZoneId="20" gmtAdjustment="GMT-04:00" useDaylightTime="1" value="-4">(GMT-04:00) Santiago</option>
-            <option timeZoneId="21" gmtAdjustment="GMT-03:30" useDaylightTime="1" value="-3.5">(GMT-03:30) Newfoundland</option>
-            <option timeZoneId="22" gmtAdjustment="GMT-03:00" useDaylightTime="1" value="-3">(GMT-03:00) Brasilia</option>
-            <option timeZoneId="23" gmtAdjustment="GMT-03:00" useDaylightTime="0" value="-3">(GMT-03:00) Buenos Aires, Georgetown</option>
-            <option timeZoneId="24" gmtAdjustment="GMT-03:00" useDaylightTime="1" value="-3">(GMT-03:00) Greenland</option>
-            <option timeZoneId="25" gmtAdjustment="GMT-03:00" useDaylightTime="1" value="-3">(GMT-03:00) Montevideo</option>
-            <option timeZoneId="26" gmtAdjustment="GMT-02:00" useDaylightTime="1" value="-2">(GMT-02:00) Mid-Atlantic</option>
-            <option timeZoneId="27" gmtAdjustment="GMT-01:00" useDaylightTime="0" value="-1">(GMT-01:00) Cape Verde Is.</option>
-            <option timeZoneId="28" gmtAdjustment="GMT-01:00" useDaylightTime="1" value="-1">(GMT-01:00) Azores</option>
-            <option timeZoneId="29" gmtAdjustment="GMT+00:00" useDaylightTime="0" value="0">(GMT+00:00) Casablanca, Monrovia, Reykjavik</option>
-            <option timeZoneId="30" gmtAdjustment="GMT+00:00" useDaylightTime="1" value="0">(GMT+00:00) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London</option>
-            <option timeZoneId="31" gmtAdjustment="GMT+01:00" useDaylightTime="1" value="1">(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna</option>
-            <option timeZoneId="32" gmtAdjustment="GMT+01:00" useDaylightTime="1" value="1">(GMT+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague</option>
-            <option timeZoneId="33" gmtAdjustment="GMT+01:00" useDaylightTime="1" value="1">(GMT+01:00) Brussels, Copenhagen, Madrid, Paris</option>
-            <option timeZoneId="34" gmtAdjustment="GMT+01:00" useDaylightTime="1" value="1">(GMT+01:00) Sarajevo, Skopje, Warsaw, Zagreb</option>
-            <option timeZoneId="35" gmtAdjustment="GMT+01:00" useDaylightTime="1" value="1">(GMT+01:00) West Central Africa</option>
-            <option timeZoneId="36" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Amman</option>
-            <option timeZoneId="37" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Athens, Bucharest, Istanbul</option>
-            <option timeZoneId="38" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Beirut</option>
-            <option timeZoneId="39" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Cairo</option>
-            <option timeZoneId="40" gmtAdjustment="GMT+02:00" useDaylightTime="0" value="2">(GMT+02:00) Harare, Pretoria</option>
-            <option timeZoneId="41" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius</option>
-            <option timeZoneId="42" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Jerusalem</option>
-            <option timeZoneId="43" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Minsk</option>
-            <option timeZoneId="44" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Windhoek</option>
-            <option timeZoneId="45" gmtAdjustment="GMT+03:00" useDaylightTime="0" value="3">(GMT+03:00) Kuwait, Riyadh, Baghdad</option>
-            <option timeZoneId="46" gmtAdjustment="GMT+03:00" useDaylightTime="1" value="3">(GMT+03:00) Moscow, St. Petersburg, Volgograd</option>
-            <option timeZoneId="47" gmtAdjustment="GMT+03:00" useDaylightTime="0" value="3">(GMT+03:00) Nairobi</option>
-            <option timeZoneId="48" gmtAdjustment="GMT+03:00" useDaylightTime="0" value="3">(GMT+03:00) Tbilisi</option>
-            <option timeZoneId="49" gmtAdjustment="GMT+03:30" useDaylightTime="1" value="3.5">(GMT+03:30) Tehran</option>
-            <option timeZoneId="50" gmtAdjustment="GMT+04:00" useDaylightTime="0" value="4">(GMT+04:00) Abu Dhabi, Muscat</option>
-            <option timeZoneId="51" gmtAdjustment="GMT+04:00" useDaylightTime="1" value="4">(GMT+04:00) Baku</option>
-            <option timeZoneId="52" gmtAdjustment="GMT+04:00" useDaylightTime="1" value="4">(GMT+04:00) Yerevan</option>
-            <option timeZoneId="53" gmtAdjustment="GMT+04:30" useDaylightTime="0" value="4.5">(GMT+04:30) Kabul</option>
-            <option timeZoneId="54" gmtAdjustment="GMT+05:00" useDaylightTime="1" value="5">(GMT+05:00) Yekaterinburg</option>
-            <option timeZoneId="55" gmtAdjustment="GMT+05:00" useDaylightTime="0" value="5">(GMT+05:00) Islamabad, Karachi, Tashkent</option>
-            <option timeZoneId="56" gmtAdjustment="GMT+05:30" useDaylightTime="0" value="5.5">(GMT+05:30) Sri Jayawardenapura</option>
-            <option timeZoneId="57" gmtAdjustment="GMT+05:30" useDaylightTime="0" value="5.5">(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi</option>
-            <option timeZoneId="58" gmtAdjustment="GMT+05:45" useDaylightTime="0" value="5.75">(GMT+05:45) Kathmandu</option>
-            <option timeZoneId="59" gmtAdjustment="GMT+06:00" useDaylightTime="1" value="6">(GMT+06:00) Almaty, Novosibirsk</option>
-            <option timeZoneId="60" gmtAdjustment="GMT+06:00" useDaylightTime="0" value="6">(GMT+06:00) Astana, Dhaka</option>
-            <option timeZoneId="61" gmtAdjustment="GMT+06:30" useDaylightTime="0" value="6.5">(GMT+06:30) Yangon (Rangoon)</option>
-            <option timeZoneId="62" gmtAdjustment="GMT+07:00" useDaylightTime="0" value="7">(GMT+07:00) Bangkok, Hanoi, Jakarta</option>
-            <option timeZoneId="63" gmtAdjustment="GMT+07:00" useDaylightTime="1" value="7">(GMT+07:00) Krasnoyarsk</option>
-            <option timeZoneId="64" gmtAdjustment="GMT+08:00" useDaylightTime="0" value="8">(GMT+08:00) Beijing, Chongqing, Hong Kong, Urumqi</option>
-            <option timeZoneId="65" gmtAdjustment="GMT+08:00" useDaylightTime="0" value="8">(GMT+08:00) Kuala Lumpur, Singapore</option>
-            <option timeZoneId="66" gmtAdjustment="GMT+08:00" useDaylightTime="0" value="8">(GMT+08:00) Irkutsk, Ulaan Bataar</option>
-            <option timeZoneId="67" gmtAdjustment="GMT+08:00" useDaylightTime="0" value="8">(GMT+08:00) Perth</option>
-            <option timeZoneId="68" gmtAdjustment="GMT+08:00" useDaylightTime="0" value="8">(GMT+08:00) Taipei</option>
-            <option timeZoneId="69" gmtAdjustment="GMT+09:00" useDaylightTime="0" value="9">(GMT+09:00) Osaka, Sapporo, Tokyo</option>
-            <option timeZoneId="70" gmtAdjustment="GMT+09:00" useDaylightTime="0" value="9">(GMT+09:00) Seoul</option>
-            <option timeZoneId="71" gmtAdjustment="GMT+09:00" useDaylightTime="1" value="9">(GMT+09:00) Yakutsk</option>
-            <option timeZoneId="72" gmtAdjustment="GMT+09:30" useDaylightTime="0" value="9.5">(GMT+09:30) Adelaide</option>
-            <option timeZoneId="73" gmtAdjustment="GMT+09:30" useDaylightTime="0" value="9.5">(GMT+09:30) Darwin</option>
-            <option timeZoneId="74" gmtAdjustment="GMT+10:00" useDaylightTime="0" value="10">(GMT+10:00) Brisbane</option>
-            <option timeZoneId="75" gmtAdjustment="GMT+10:00" useDaylightTime="1" value="10">(GMT+10:00) Canberra, Melbourne, Sydney</option>
-            <option timeZoneId="76" gmtAdjustment="GMT+10:00" useDaylightTime="1" value="10">(GMT+10:00) Hobart</option>
-            <option timeZoneId="77" gmtAdjustment="GMT+10:00" useDaylightTime="0" value="10">(GMT+10:00) Guam, Port Moresby</option>
-            <option timeZoneId="78" gmtAdjustment="GMT+10:00" useDaylightTime="1" value="10">(GMT+10:00) Vladivostok</option>
-            <option timeZoneId="79" gmtAdjustment="GMT+11:00" useDaylightTime="1" value="11">(GMT+11:00) Magadan, Solomon Is., New Caledonia</option>
-            <option timeZoneId="80" gmtAdjustment="GMT+12:00" useDaylightTime="1" value="12">(GMT+12:00) Auckland, Wellington</option>
-            <option timeZoneId="81" gmtAdjustment="GMT+12:00" useDaylightTime="0" value="12">(GMT+12:00) Fiji, Kamchatka, Marshall Is.</option>
-            <option timeZoneId="82" gmtAdjustment="GMT+13:00" useDaylightTime="0" value="13">(GMT+13:00) Nuku'alofa</option>
-          </select>	
-        </div>
-      )}
+		<GraphFilter setFromDate={setFromDate} setToDate={setToDate} setTimezone={setTimezone}/>
       {isLoading && (
         <div style={{
           display:"flex",
@@ -629,22 +521,36 @@ const Graph = ({ isLoading }) => {
         </div>
       )}
       {hoverTextEdge && (
-        <div
-          style={{
-                position: 'absolute',
-                zIndex: 1000,
-                top: hoverTextEdge.y,
-                left: hoverTextEdge.x,
-                // backgroundColor: '#111', // Used for classic Card styling only.
-                pointerEvents: 'none',
-                backgroundColor: "black",
-                color: "white",
-                opacity: "0.85",
-                borderRadius: "10px",
-                padding: "10px",
-                boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"
-              }}>
-          <h6 style={{textAlign:"center"}}>{hoverTextEdge.data.replace(/"/g,"")}</h6>
+        <div style={{
+          position: 'absolute',
+          zIndex: 1000,
+          top: hoverTextEdge.y,
+          left: hoverTextEdge.x,
+          // backgroundColor: '#111', // Used for classic Card styling only.
+          pointerEvents: 'none',
+          backgroundColor: "black",
+          color: "white",
+          opacity: "0.85",
+          borderRadius: "10px",
+          padding: "10px",
+          boxShadow: "0px 2px 5px 0px rgba(31,30,31,1)"
+        }}>
+          {Array.isArray(hoverTextEdge.data) && (
+            <div>
+              <h6 style={{textAlign:"center"}}>Has CYBEX Relationship:</h6>
+              {/* &#8249; */}-
+              {hoverTextEdge.data.map(item => (
+                // Creates colored tags with item description (item[0]). item[1] is the color
+                <div style={{display: "inline-block"}}>
+                  <div style={{backgroundColor: item[1],borderRadius:"3px",display: "inline-block", padding:"2px"}}>{item[0]}</div>-
+                </div>                      
+              ))}
+              {/* &#8250; */}
+            </div>
+          )}
+          {!Array.isArray(hoverTextEdge.data) && (
+            <h6 style={{textAlign:"center"}}>{hoverTextEdge.data.replace(/"/g,"")}</h6>
+          )}
         </div>
       )}
       {/* TODO: Turn selectText box into seperate component */}
