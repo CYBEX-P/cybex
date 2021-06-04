@@ -1,7 +1,18 @@
 # Web Application
 This documentation is for the CYBEX-P Web Application. For details on the CYBEX-P platform and infrastructure, please see its seperate documentation. This resource is broken into the following categories:
 
-#### Getting Started
+#### User Guide
+The user guide below is excerpted from the thesis titled *Navigating Cyberthreat Intelligence with CYBEX-P: Dashboard Design and User Experience*
+
+{download}`User Guide PDF <cybex_user_guide.pdf>`
+
+[Video Guides](https://cybex.cse.unr.edu/videos)
+
+#### API Reference
+
+[Interactive API Reference](https://cybex.cse.unr.edu/portalapi)
+
+#### Getting Started with the Codebase
 
 The CYBEX web application is a DJango project with a React client component
 
@@ -62,7 +73,7 @@ Production Server Deployment:
 2. Configure nginx by setting a configuration file at /etc/nginx/conf.d/virtual.conf.d
   
   Deployment uses standard supervisor w/guncicorn approach to run Django app.
-  Is run behind nginx web server as a reverse proxy, as shown above.
+  Is run behind nginx web server as a reverse proxy.
   
 To update sphinx documentation, run make html in main directory. Note that this is generated from the files in /source, as well as automatically inferred from docstrings throughout all Python modules.
 
@@ -70,10 +81,6 @@ To update sphinx documentation, run make html in main directory. Note that this 
 The architecure & deployment documentation below is excerpted from the thesis titled *Navigating Cyberthreat Intelligence with CYBEX-P: Dashboard Design and User Experience*
 
 {download}`Architecture & Deployment PDF <arch_deployment.pdf>`
-
-#### API Reference
-
-[Interactive API Reference](https://cybex.cse.unr.edu/portalapi)
 
 #### Django Backend
 
@@ -84,11 +91,4 @@ modules
 ```
 
 #### React Frontend
-
-#### User Guide
-The user guide below is excerpted from the thesis titled *Navigating Cyberthreat Intelligence with CYBEX-P: Dashboard Design and User Experience*
-
-{download}`User Guide PDF <cybex_user_guide.pdf>`
-
-[Video Guides](https://cybex.cse.unr.edu/videos)
 

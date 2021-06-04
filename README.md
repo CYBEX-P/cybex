@@ -32,8 +32,8 @@ Steps to run
 
 Before installation, ensure you are using an updated version of pip and npm:
 
-pip install --upgrade pip
-npm install -g npm@latest
+- pip install --upgrade pip
+- npm install -g npm@latest
 
 1. git clone ...
 2. cd cybex
@@ -52,12 +52,15 @@ npm install -g npm@latest
 15. rename dot-env to .env file for sensitive settings.  Request keys from admin
 16. python3 manage.py runserver
 
+- NOTE: The initial superuser created ins step 14 should only be used for initial application setup or for creating new accounts. This superuser should be considered a 'CYBEX master admin' account, which will not be used to actually use the application or access the threat-intelligence graph. Instead, this initial account can be used to access the 'admin' page from the CYBEX-P homepage. Here, use the Django admin panel to create new CYBEX-P users. These are treated as normal users; any users created using this interface can then access the threat intelligence graph. Users can also be granted admin privelages or have theier passwords changed using this same interface. Default, non-admin users will not be able to access this admin panel. 
+- NOTE: When first configuring and running this application in a new deployment environment, the above process should be undertaken to create at least one CYBEX-P user. Log in as that user to properly test the threat-intelligence graph. 
+
 Production Server Deployment:
 1. Follow the guidance here (static files are pushed to '/static/'):
   - https://docs.djangoproject.com/en/3.0/howto/static-files/deployment/
 2. Configure nginx by setting a configuration file at /etc/nginx/conf.d/virtual.conf.d
   
   Deployment uses standard supervisor w/guncicorn approach to run Django app.
-  Is run behind nginx web server as a reverse proxy, as shown above.
+  Is run behind nginx web server as a reverse proxy.
   
-To update sphinx documentation, run make html in main directory. Note that this is generated from the files in /source, as well as automatically inferred from docstrings throughout all Python modules.
+To update sphinx documentation, run 'make html' in main directory. Note that this is generated from the files in /source, as well as automatically inferred from docstrings throughout all Python modules.

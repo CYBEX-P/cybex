@@ -87,18 +87,18 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Web Application</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#user-guide">User Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api-reference">API Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started-with-the-codebase">Getting Started with the Codebase</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#steps-to-run">Steps to run</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#high-level-architecture-deployment-config">High-Level Architecture &amp; Deployment Config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#api-reference">API Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#django-backend">Django Backend</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules.html">Full Python Reference</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#react-frontend">React Frontend</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#user-guide">User Guide</a></li>
 </ul>
 </li>
 </ul>
@@ -171,8 +171,18 @@
   <div class="section" id="web-application">
 <h1>Web Application<a class="headerlink" href="#web-application" title="Permalink to this headline">¶</a></h1>
 <p>This documentation is for the CYBEX-P Web Application. For details on the CYBEX-P platform and infrastructure, please see its seperate documentation. This resource is broken into the following categories:</p>
-<div class="section" id="getting-started">
-<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h2>
+<p>The user guide below is excerpted from the thesis titled <em>Navigating Cyberthreat Intelligence with CYBEX-P: Dashboard Design and User Experience</em></p>
+<p><a class="reference download internal" download="" href="_downloads/ca43a08eb52ee9d8efaad30acad937c8/cybex_user_guide.pdf"><code class="xref download docutils literal notranslate"><span class="pre">User</span> <span class="pre">Guide</span> <span class="pre">PDF</span></code></a></p>
+<p><a class="reference external" href="https://cybex.cse.unr.edu/videos">Video Guides</a></p>
+</div>
+<div class="section" id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://cybex.cse.unr.edu/portalapi">Interactive API Reference</a></p>
+</div>
+<div class="section" id="getting-started-with-the-codebase">
+<h2>Getting Started with the Codebase<a class="headerlink" href="#getting-started-with-the-codebase" title="Permalink to this headline">¶</a></h2>
 <p>The CYBEX web application is a DJango project with a React client component</p>
 <p>The project is split into four main directories</p>
 <ul class="simple">
@@ -265,7 +275,7 @@ npm install -g npm&#64;latest</p>
 <li><p>Configure nginx by setting a configuration file at /etc/nginx/conf.d/virtual.conf.d</p></li>
 </ol>
 <p>Deployment uses standard supervisor w/guncicorn approach to run Django app.
-Is run behind nginx web server as a reverse proxy, as shown above.</p>
+Is run behind nginx web server as a reverse proxy.</p>
 <p>To update sphinx documentation, run make html in main directory. Note that this is generated from the files in /source, as well as automatically inferred from docstrings throughout all Python modules.</p>
 </div>
 </div>
@@ -273,10 +283,6 @@ Is run behind nginx web server as a reverse proxy, as shown above.</p>
 <h2>High-Level Architecture &amp; Deployment Config<a class="headerlink" href="#high-level-architecture-deployment-config" title="Permalink to this headline">¶</a></h2>
 <p>The architecure &amp; deployment documentation below is excerpted from the thesis titled <em>Navigating Cyberthreat Intelligence with CYBEX-P: Dashboard Design and User Experience</em></p>
 <p><a class="reference download internal" download="" href="_downloads/2892642230dfd566a47ea09ebbf9d204/arch_deployment.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Architecture</span> <span class="pre">&amp;</span> <span class="pre">Deployment</span> <span class="pre">PDF</span></code></a></p>
-</div>
-<div class="section" id="api-reference">
-<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="https://cybex.cse.unr.edu/portalapi">Interactive API Reference</a></p>
 </div>
 <div class="section" id="django-backend">
 <h2>Django Backend<a class="headerlink" href="#django-backend" title="Permalink to this headline">¶</a></h2>
@@ -295,12 +301,6 @@ Is run behind nginx web server as a reverse proxy, as shown above.</p>
 </div>
 <div class="section" id="react-frontend">
 <h2>React Frontend<a class="headerlink" href="#react-frontend" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="user-guide">
-<h2>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h2>
-<p>The user guide below is excerpted from the thesis titled <em>Navigating Cyberthreat Intelligence with CYBEX-P: Dashboard Design and User Experience</em></p>
-<p><a class="reference download internal" download="" href="_downloads/ca43a08eb52ee9d8efaad30acad937c8/cybex_user_guide.pdf"><code class="xref download docutils literal notranslate"><span class="pre">User</span> <span class="pre">Guide</span> <span class="pre">PDF</span></code></a></p>
-<p><a class="reference external" href="https://cybex.cse.unr.edu/videos">Video Guides</a></p>
 </div>
 </div>
 
