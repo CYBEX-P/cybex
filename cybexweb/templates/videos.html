@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="jumbotron transparent">
+  <nav class="nav nav-pills nav-fill nav-custom">
+    <a class="nav-item nav-link" href="/home">Home</a>
+    <a class="nav-item nav-link" href="/about">About CYBEX</a>
+    <a class="nav-item nav-link" href="/personnel">Personnel</a>
+  </nav>
+  <div style="text-align: center;">
+    <hr class="my-4">
+    <h2>Video Guides</h2>
+    <hr class="my-4">
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; padding: 20px;">
+    <h4>General Overview</h4>
+    <div style="display: flex; justify-content: center; align-items: center; background-color:white; padding:10px;border-radius:20px; text-align: center; margin-bottom: 20px;">
+        <video width="100%" controls>
+            <source src="../static/video/cybex_overview.mp4" type="video/mp4">
+            Your browser does not support this video.
+        </video>
+      </div>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; padding: 20px;">
+    <h4>Features, Architecture, and Design Considerations</h4>
+    <div style="display: flex; justify-content: center; align-items: center; background-color:white; padding:10px;border-radius:20px; text-align: center; margin-bottom: 20px;">
+        <video width="100%" controls>
+            <source src="../static/video/features_and_challenges.mp4" type="video/mp4">
+            Your browser does not support this video.
+        </video>
+      </div>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; padding: 20px;">
+    <h4>Feature Demonstration/Usage Scenario 1: Threat Analysis</h4>
+    <div style="display: flex; justify-content: center; align-items: center; background-color:white; padding:10px;border-radius:20px; text-align: center; margin-bottom: 20px;">
+        <video width="100%" controls>
+            <source src="../static/video/threat_analysis_demo.mp4" type="video/mp4">
+            Your browser does not support this video.
+        </video>
+      </div>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; padding: 20px;">
+    <h4>Usage Scenario 2: Network Exploration (No audio)</h4>
+    <div style="display: flex; justify-content: center; align-items: center; background-color:white; padding:10px;border-radius:20px; text-align: center; margin-bottom: 20px;">
+        <video width="100%" controls>
+            <source src="../static/video/scenario_a.mp4" type="video/mp4">
+            Your browser does not support this video.
+        </video>
+      </div>
+  </div>
+    <!-- <h5>This page is under construction...</h5>
+    <br>
+    <h2>User Guide</h2>
+    <h5>Quickstart</h5>
+    <h5>Feature Reference</h5>
+    <h5>Guided Tutorials</h5>
+    <video width="100%" controls>
+        <source src="../static/video/cybex_overview.mp4" type="video/mp4">
+        Your browser does not support this video.
+    </video>
+    <h2>For Developers</h2>
+    <h5>Platform Overview</h5>
+    <img src="../static/images/sysarch.png" alt="CYBEX ARCH" width="50%;">
+    <h5>CYBEX Backend</h5>
+    <h5>Web Portal</h5>
+    <p>API Specification</p>
+    <p>Full Reference</p>
+    <p>Deployment</p> -->
+</div>
+{% endblock %}

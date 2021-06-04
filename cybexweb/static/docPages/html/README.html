@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Web Application &mdash; cybex_web_app 0.9.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Full Python Reference" href="modules.html" />
+    <link rel="prev" title="Welcome to the CYBEX-P documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> cybex_web_app
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Web Application</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#steps-to-run">Steps to run</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#high-level-architecture-deployment-config">High-Level Architecture &amp; Deployment Config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api-reference">API Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#django-backend">Django Backend</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules.html">Full Python Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#react-frontend">React Frontend</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#user-guide">User Guide</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cybex_web_app</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Web Application</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/README.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="web-application">
+<h1>Web Application<a class="headerlink" href="#web-application" title="Permalink to this headline">¶</a></h1>
+<p>This documentation is for the CYBEX-P Web Application. For details on the CYBEX-P platform and infrastructure, please see its seperate documentation. This resource is broken into the following categories:</p>
+<div class="section" id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>The CYBEX web application is a DJango project with a React client component</p>
+<p>The project is split into four main directories</p>
+<ul class="simple">
+<li><p>cybex</p>
+<ul>
+<li><p>master project</p></li>
+</ul>
+</li>
+<li><p>cybexapi</p>
+<ul>
+<li><p>api functionaity</p></li>
+</ul>
+</li>
+<li><p>cybexweb</p>
+<ul>
+<li><p>container project for the React app under ./graph</p></li>
+</ul>
+</li>
+<li><p>cybexdata</p>
+<ul>
+<li><p>contains all custom data models used by the Django application.</p></li>
+</ul>
+</li>
+</ul>
+<p>In addition to these main directories, the following files are used for configuration and documentation purposes:</p>
+<ul class="simple">
+<li><p>build</p>
+<ul>
+<li><p>Build location for generated Sphinx documentation content (i.e. html files)</p></li>
+</ul>
+</li>
+<li><p>source</p>
+<ul>
+<li><p>Source files for Sphinx Python documentation</p></li>
+</ul>
+</li>
+<li><p>make.bat and Makefile</p>
+<ul>
+<li><p>Used to generate html pages from sphinx documentation source directory</p></li>
+</ul>
+</li>
+<li><p>openapi-schema.yml</p>
+<ul>
+<li><p>Openapi schema file used to generate the interactive api documentation</p></li>
+</ul>
+</li>
+<li><p>README.md</p>
+<ul>
+<li><p>This document</p></li>
+</ul>
+</li>
+<li><p>requirements.txt</p>
+<ul>
+<li><p>Requirements file used for python dependency installation</p></li>
+</ul>
+</li>
+</ul>
+<p>NOTE: Keys for different lookup services are required for all features to run properly. These are to be stored in a .env environment file and loaded dynamicaly in the settings. This .env file should be created in the same directory where env-dist is located. Ask a CYBEX administrator for the keys.</p>
+<div class="section" id="steps-to-run">
+<h3>Steps to run<a class="headerlink" href="#steps-to-run" title="Permalink to this headline">¶</a></h3>
+<p>Before installation, ensure you are using an updated version of pip and npm:</p>
+<p>pip install –upgrade pip
+npm install -g npm&#64;latest</p>
+<ol class="simple">
+<li><p>git clone …</p></li>
+<li><p>cd cybex</p></li>
+<li><p>python3 -m venv .venv</p></li>
+<li><p>source .venv/bin/activate</p></li>
+<li><p>pip3 install -r requirements.txt</p></li>
+<li><p>cd ./cybexweb/graph</p></li>
+<li><p>npm install (installs react app dependencies)</p></li>
+<li><p>npm run build</p></li>
+<li><p>cd ../</p></li>
+<li><p>npm install (installs dependencies for honeypot visualizer)</p></li>
+<li><p>cd ../</p></li>
+<li><p>python3 manage.py migrate</p></li>
+<li><p>python3 manage.py makemigrations cybexdata</p></li>
+<li><p>python3 manage.py createsuperuser</p></li>
+<li><p>rename dot-env to .env file for sensitive settings.  Request keys from admin</p></li>
+<li><p>python3 manage.py runserver</p></li>
+</ol>
+<p>Production Server Deployment:</p>
+<ol class="simple">
+<li><p>Follow the guidance here (static files are pushed to ‘/static/’):</p></li>
+</ol>
+<ul class="simple">
+<li><p>https://docs.djangoproject.com/en/3.0/howto/static-files/deployment/</p></li>
+</ul>
+<ol class="simple">
+<li><p>Configure nginx by setting a configuration file at /etc/nginx/conf.d/virtual.conf.d</p></li>
+</ol>
+<p>Deployment uses standard supervisor w/guncicorn approach to run Django app.
+Is run behind nginx web server as a reverse proxy, as shown above.</p>
+<p>To update sphinx documentation, run make html in main directory. Note that this is generated from the files in /source, as well as automatically inferred from docstrings throughout all Python modules.</p>
+</div>
+</div>
+<div class="section" id="high-level-architecture-deployment-config">
+<h2>High-Level Architecture &amp; Deployment Config<a class="headerlink" href="#high-level-architecture-deployment-config" title="Permalink to this headline">¶</a></h2>
+<p>The architecure &amp; deployment documentation below is excerpted from the thesis titled <em>Navigating Cyberthreat Intelligence with CYBEX-P: Dashboard Design and User Experience</em></p>
+<p><a class="reference download internal" download="" href="_downloads/2892642230dfd566a47ea09ebbf9d204/arch_deployment.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Architecture</span> <span class="pre">&amp;</span> <span class="pre">Deployment</span> <span class="pre">PDF</span></code></a></p>
+</div>
+<div class="section" id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://cybex.cse.unr.edu/portalapi">Interactive API Reference</a></p>
+</div>
+<div class="section" id="django-backend">
+<h2>Django Backend<a class="headerlink" href="#django-backend" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Full Python Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cybex.html">cybex package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cybexapi.html">cybexapi package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cybexdata.html">cybexdata package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cybexweb.html">cybexweb package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manage.html">manage module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="react-frontend">
+<h2>React Frontend<a class="headerlink" href="#react-frontend" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h2>
+<p>The user guide below is excerpted from the thesis titled <em>Navigating Cyberthreat Intelligence with CYBEX-P: Dashboard Design and User Experience</em></p>
+<p><a class="reference download internal" download="" href="_downloads/ca43a08eb52ee9d8efaad30acad937c8/cybex_user_guide.pdf"><code class="xref download docutils literal notranslate"><span class="pre">User</span> <span class="pre">Guide</span> <span class="pre">PDF</span></code></a></p>
+<p><a class="reference external" href="https://cybex.cse.unr.edu/videos">Video Guides</a></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="modules.html" class="btn btn-neutral float-right" title="Full Python Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to the CYBEX-P documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Adam Cassell.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
