@@ -535,7 +535,7 @@ const App = props => {
                         }}
                         width="100%"
                       >
-                        Wipe DB
+                        Clear Graph
                       </Button>
                     }
                   </div>

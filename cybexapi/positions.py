@@ -1,9 +1,13 @@
+"""Module containing functions for storing graph node positions."""
 
-# Description: Used for writing position x & y to the Neo4j database.
-# Parameters: <object>graph - The current graph
-#             <json>data - the json data
-# Author: Spencer Kase Rohlfing
 def update_positions(data, graph):
+    """Used for writing position x & y to the Neo4j database.
+
+    Args:
+        data (dict): the JSON data.
+        graph (py2neo.database.Graph): The graph object for the current graph.
+    
+    """
     if(data != None):
         for node in data:
             id_value = node['id']

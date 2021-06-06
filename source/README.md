@@ -94,4 +94,5 @@ modules
 ```
 
 #### React Frontend
+Component-level react documentation coming soon.
 

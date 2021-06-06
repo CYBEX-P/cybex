@@ -1180,56 +1180,87 @@ cybexRelatedHandler().</p>
 </div>
 <div class="section" id="module-cybexapi.delete_node">
 <span id="cybexapi-delete-node-module"></span><h2>cybexapi.delete_node module<a class="headerlink" href="#module-cybexapi.delete_node" title="Permalink to this headline">¶</a></h2>
+<p>Module containing functions for deleting graph nodes.</p>
 <dl class="py function">
 <dt id="cybexapi.delete_node.delete_node">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.delete_node.</span></code><code class="sig-name descname"><span class="pre">delete_node</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.delete_node.delete_node" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Used to search the Neo4j db for a node and delete it from the db.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>rest_framework.request.Request</em>) – The request object.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True</p>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 <div class="section" id="module-cybexapi.directory">
 <span id="cybexapi-directory-module"></span><h2>cybexapi.directory module<a class="headerlink" href="#module-cybexapi.directory" title="Permalink to this headline">¶</a></h2>
+<p>Module containing functions for facilitating file downloads from server.</p>
 <dl class="py function">
 <dt id="cybexapi.directory.get_contents">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.directory.</span></code><code class="sig-name descname"><span class="pre">get_contents</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.directory.get_contents" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns list of directory items at given path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>string</em>) – Path of directory to observe inside static folder.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dictionary of root, subdirectories, and files.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>content_map (dict)</p>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 <div class="section" id="module-cybexapi.enrichments">
 <span id="cybexapi-enrichments-module"></span><h2>cybexapi.enrichments module<a class="headerlink" href="#module-cybexapi.enrichments" title="Permalink to this headline">¶</a></h2>
+<p>Module containing functions for performing non-cybex enrichments.</p>
 <dl class="py function">
 <dt id="cybexapi.enrichments.getMailServer">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.enrichments.</span></code><code class="sig-name descname"><span class="pre">getMailServer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.enrichments.getMailServer" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Inserts mailserver for given domain.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="cybexapi.enrichments.getNameservers">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.enrichments.</span></code><code class="sig-name descname"><span class="pre">getNameservers</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.enrichments.getNameservers" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Inserts nameservers for given host.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="cybexapi.enrichments.getRegistrar">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.enrichments.</span></code><code class="sig-name descname"><span class="pre">getRegistrar</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.enrichments.getRegistrar" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Inserts registrar for given host.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="cybexapi.enrichments.insert_domain">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.enrichments.</span></code><code class="sig-name descname"><span class="pre">insert_domain</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">URLString</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.enrichments.insert_domain" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Inserts domain from given url address.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="cybexapi.enrichments.insert_domain_and_user">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.enrichments.</span></code><code class="sig-name descname"><span class="pre">insert_domain_and_user</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emailString</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.enrichments.insert_domain_and_user" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Inserts domain and username from given email address.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="cybexapi.enrichments.insert_netblock">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.enrichments.</span></code><code class="sig-name descname"><span class="pre">insert_netblock</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.enrichments.insert_netblock" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Inserts netblock subnet for given IP address.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="cybexapi.enrichments.resolveHost">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.enrichments.</span></code><code class="sig-name descname"><span class="pre">resolveHost</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.enrichments.resolveHost" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Inserts IP for given host.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-cybexapi.exportDB">
@@ -1304,97 +1335,197 @@ export() function.</p>
 </div>
 <div class="section" id="module-cybexapi.gip">
 <span id="cybexapi-gip-module"></span><h2>cybexapi.gip module<a class="headerlink" href="#module-cybexapi.gip" title="Permalink to this headline">¶</a></h2>
+<p>Module containing functions for gip enrichments (country and asn)</p>
 <dl class="py function">
 <dt id="cybexapi.gip.ASN">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.gip.</span></code><code class="sig-name descname"><span class="pre">ASN</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.gip.ASN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Retrieves ASN information for given IP address.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="cybexapi.gip.asn_insert">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.gip.</span></code><code class="sig-name descname"><span class="pre">asn_insert</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.gip.asn_insert" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Inserts ASN node into graph for given IP address.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="cybexapi.gip.geoip">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.gip.</span></code><code class="sig-name descname"><span class="pre">geoip</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.gip.geoip" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Retreives geoip information for given IP address.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="cybexapi.gip.geoip_insert">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.gip.</span></code><code class="sig-name descname"><span class="pre">geoip_insert</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.gip.geoip_insert" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Inserts country node into graph for given IP.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-cybexapi.import_json">
 <span id="cybexapi-import-json-module"></span><h2>cybexapi.import_json module<a class="headerlink" href="#module-cybexapi.import_json" title="Permalink to this headline">¶</a></h2>
+<p>Module containing functions for importing graph data from JSON files.</p>
 <dl class="py function">
 <dt id="cybexapi.import_json.import_json">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.import_json.</span></code><code class="sig-name descname"><span class="pre">import_json</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.import_json.import_json" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Used to read the JSON value into python JSON.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>py2neo.database.Graph</em>) – The graph object for the current graph</p></li>
+<li><p><strong>data</strong> (<em>dict</em>) – the JSON data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The JSON values.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="cybexapi.import_json.writeToDB">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.import_json.</span></code><code class="sig-name descname"><span class="pre">writeToDB</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.import_json.writeToDB" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Used to write the values to the data.</p>
+<p>First it parses the information then creates the nodes in the database.
+Then it creates the relationship between nodes if there were any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>py2neo.database.Graph</em>) – The graph object for the current graph.</p></li>
+<li><p><strong>json</strong> (<em>dict</em>) – the JSON data</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 <div class="section" id="module-cybexapi.positions">
 <span id="cybexapi-positions-module"></span><h2>cybexapi.positions module<a class="headerlink" href="#module-cybexapi.positions" title="Permalink to this headline">¶</a></h2>
+<p>Module containing functions for storing graph node positions.</p>
 <dl class="py function">
 <dt id="cybexapi.positions.update_positions">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.positions.</span></code><code class="sig-name descname"><span class="pre">update_positions</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.positions.update_positions" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Used for writing position x &amp; y to the Neo4j database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>dict</em>) – the JSON data.</p></li>
+<li><p><strong>graph</strong> (<em>py2neo.database.Graph</em>) – The graph object for the current graph.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 <div class="section" id="module-cybexapi.runner">
 <span id="cybexapi-runner-module"></span><h2>cybexapi.runner module<a class="headerlink" href="#module-cybexapi.runner" title="Permalink to this headline">¶</a></h2>
+<p>Module containing functions for inserting various nodes to the graph.</p>
 <dl class="py function">
 <dt id="cybexapi.runner.insertHostname">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.runner.</span></code><code class="sig-name descname"><span class="pre">insertHostname</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.runner.insertHostname" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Inserts host node into the graph for given IP node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node</strong> (<em>string</em>) – The value of the IP node.</p></li>
+<li><p><strong>graph</strong> (<em>py2neo.database.Graph</em>) – The graph object for the current graph.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>1 if host node is able to be inserted.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="cybexapi.runner.insertNode">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.runner.</span></code><code class="sig-name descname"><span class="pre">insertNode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodeType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.runner.insertNode" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Inserts given node into the graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nodeType</strong> (<em>string</em>) – The type of the node to insert.</p></li>
+<li><p><strong>data</strong> (<em>string</em>) – The value of the node.</p></li>
+<li><p><strong>graph</strong> (<em>py2neo.database.Graph</em>) – The graph object for the current graph.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>1 if node is able to be inserted.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 <div class="section" id="module-cybexapi.shodanSearch">
 <span id="cybexapi-shodansearch-module"></span><h2>cybexapi.shodanSearch module<a class="headerlink" href="#module-cybexapi.shodanSearch" title="Permalink to this headline">¶</a></h2>
+<p>Module containing functions for inserting port info into the graph.</p>
 <dl class="py function">
 <dt id="cybexapi.shodanSearch.insert_ports">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.shodanSearch.</span></code><code class="sig-name descname"><span class="pre">insert_ports</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.shodanSearch.insert_ports" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Inserts ports into graph for given IP address.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> (<em>string</em>) – comma separated string of ports.</p></li>
+<li><p><strong>graph</strong> (<em>py2neo.database.Graph</em>) – The graph object for the current graph.</p></li>
+<li><p><strong>ip</strong> (<em>string</em>) – The ip address to insert the detected ports for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>1 if ports were able to be inserted successfully.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="cybexapi.shodanSearch.shodan_lookup">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.shodanSearch.</span></code><code class="sig-name descname"><span class="pre">shodan_lookup</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.shodanSearch.shodan_lookup" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Performs a shodan lookup to return detected ports for given IP.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-cybexapi.tests">
 <span id="cybexapi-tests-module"></span><h2>cybexapi.tests module<a class="headerlink" href="#module-cybexapi.tests" title="Permalink to this headline">¶</a></h2>
+<p>Module reserved for test cases and associated functions.</p>
 </div>
 <div class="section" id="module-cybexapi.urls">
 <span id="cybexapi-urls-module"></span><h2>cybexapi.urls module<a class="headerlink" href="#module-cybexapi.urls" title="Permalink to this headline">¶</a></h2>
+<p>URL Configuration for all urls that are accessed behind authentication.</p>
+<dl class="simple">
+<dt>The <cite>urlpatterns</cite> list routes URLs to views. For more information please see:</dt><dd><p><a class="reference external" href="https://docs.djangoproject.com/en/3.0/topics/http/urls/">https://docs.djangoproject.com/en/3.0/topics/http/urls/</a></p>
+</dd>
+</dl>
+<p>Examples:
+Function views</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Add an import:  from my_app import views</p></li>
+<li><p>Add a URL to urlpatterns:  path(‘’, views.home, name=’home’)</p></li>
+</ol>
+</div></blockquote>
+<dl class="simple">
+<dt>Class-based views</dt><dd><ol class="arabic simple">
+<li><p>Add an import:  from other_app.views import Home</p></li>
+<li><p>Add a URL to urlpatterns:  path(‘’, Home.as_view(), name=’home’)</p></li>
+</ol>
+</dd>
+<dt>Including another URLconf</dt><dd><ol class="arabic simple">
+<li><p>Import the include() function: from django.urls import include, path</p></li>
+<li><p>Add a URL to urlpatterns:  path(‘blog/’, include(‘blog.urls’))</p></li>
+</ol>
+</dd>
+</dl>
 </div>
 <div class="section" id="module-cybexapi.views">
 <span id="cybexapi-views-module"></span><h2>cybexapi.views module<a class="headerlink" href="#module-cybexapi.views" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="cybexapi.views.CybexDocsView">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">cybexapi.views.</span></code><code class="sig-name descname"><span class="pre">CybexDocsView</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.views.CybexDocsView" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.views.generic.base.TemplateView</span></code></p>
-<dl class="py attribute">
-<dt id="cybexapi.views.CybexDocsView.template_name">
-<code class="sig-name descname"><span class="pre">template_name</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'sphinx/html/index.html'</span></em><a class="headerlink" href="#cybexapi.views.CybexDocsView.template_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<p>Module that defines the main Django views locked behind authentication.</p>
 <dl class="py class">
 <dt id="cybexapi.views.DocsView">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">cybexapi.views.</span></code><code class="sig-name descname"><span class="pre">DocsView</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.views.DocsView" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.views.generic.base.TemplateView</span></code></p>
+<p>View for main documentation landing page.</p>
 <dl class="py attribute">
 <dt id="cybexapi.views.DocsView.template_name">
 <code class="sig-name descname"><span class="pre">template_name</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'docs.html'</span></em><a class="headerlink" href="#cybexapi.views.DocsView.template_name" title="Permalink to this definition">¶</a></dt>
@@ -1406,6 +1537,7 @@ export() function.</p>
 <dt id="cybexapi.views.GraphView">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">cybexapi.views.</span></code><code class="sig-name descname"><span class="pre">GraphView</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.views.GraphView" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.views.generic.base.View</span></code></p>
+<p>View for the main threat-intelligence graph React application.</p>
 <dl class="py method">
 <dt id="cybexapi.views.GraphView.get">
 <code class="sig-name descname"><span class="pre">get</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.views.GraphView.get" title="Permalink to this definition">¶</a></dt>
@@ -1422,6 +1554,7 @@ export() function.</p>
 <dt id="cybexapi.views.VideoView">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">cybexapi.views.</span></code><code class="sig-name descname"><span class="pre">VideoView</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.views.VideoView" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.views.generic.base.TemplateView</span></code></p>
+<p>Viwe for the video documentation page.</p>
 <dl class="py attribute">
 <dt id="cybexapi.views.VideoView.template_name">
 <code class="sig-name descname"><span class="pre">template_name</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'videos.html'</span></em><a class="headerlink" href="#cybexapi.views.VideoView.template_name" title="Permalink to this definition">¶</a></dt>
@@ -1444,23 +1577,28 @@ export() function.</p>
 </div>
 <div class="section" id="module-cybexapi.whoisXML">
 <span id="cybexapi-whoisxml-module"></span><h2>cybexapi.whoisXML module<a class="headerlink" href="#module-cybexapi.whoisXML" title="Permalink to this headline">¶</a></h2>
+<p>Module containing functions for adding whois information to the graph.</p>
 <dl class="py function">
 <dt id="cybexapi.whoisXML.insertWhois">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.whoisXML.</span></code><code class="sig-name descname"><span class="pre">insertWhois</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.whoisXML.insertWhois" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Inserts whois organization info into graph for given domain/host.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="cybexapi.whoisXML.whois">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.whoisXML.</span></code><code class="sig-name descname"><span class="pre">whois</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.whoisXML.whois" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns whois information for given domain as JSON.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-cybexapi.wipe_db">
 <span id="cybexapi-wipe-db-module"></span><h2>cybexapi.wipe_db module<a class="headerlink" href="#module-cybexapi.wipe_db" title="Permalink to this headline">¶</a></h2>
+<p>Module containing functions for deleting user’s neo4j graph data.</p>
 <dl class="py function">
 <dt id="cybexapi.wipe_db.wipeDB">
 <code class="sig-prename descclassname"><span class="pre">cybexapi.wipe_db.</span></code><code class="sig-name descname"><span class="pre">wipeDB</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexapi.wipe_db.wipeDB" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Deletes all data from user’s neo4j graph database.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-cybexapi">

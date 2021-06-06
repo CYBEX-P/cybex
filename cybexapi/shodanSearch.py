@@ -1,11 +1,11 @@
+"""Module containing functions for inserting port info into the graph."""
 import shodan
 import yaml
 from py2neo import Graph, Node, Relationship
 from django.conf import settings
 
-#TODO
-#Move to django.settings. and document
 def shodan_lookup(ip):
+    """Performs a shodan lookup to return detected ports for given IP."""
     
     API_KEY = settings.SHODAN_KEY
 
@@ -14,14 +14,22 @@ def shodan_lookup(ip):
         results = api.host(ip, minify=True)
     except:
         return None
-    # results = api.scan(ip)
 
     # return list of ports detected
     return results['ports']
 
-#TODO
-#Move to lib file
 def insert_ports(values, graph, ip):
+    """Inserts ports into graph for given IP address.
+    
+    Args:
+        values (string): comma separated string of ports.
+        graph (py2neo.database.Graph): The graph object for the current graph.
+        ip (string): The ip address to insert the detected ports for.
+
+    Returns:
+        1 if ports were able to be inserted successfully.
+    
+    """
     if values is None:
         return 0
         
@@ -44,12 +52,4 @@ def insert_ports(values, graph, ip):
             print("New port node created and linked")
 
     return 1
-
-
-
-# if __name__ == "__main__":
-
-#     value = str(input("Enter an IP: "))
-#     results = shodan_lookup(value)
-#     print("Ports open: " + str(results['ports']))
 
