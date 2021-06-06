@@ -10,7 +10,7 @@ import TrendRow from './TrendRow';
 import Honeypot from '../honeypot/Honeypot';
 
 const Trends = (props) => {
-	const [mapViewState, setMapViewState] = useState(false);
+	const [mapViewState, setMapViewState] = useState(true);
 
 	console.log(props.IPs);
 
