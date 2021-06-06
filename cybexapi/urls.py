@@ -30,6 +30,7 @@ urlpatterns = [
     path('api/v1/event/start', start.as_view()),
     path('api/v1/event/start/file', startFile.as_view()),
     path('docs', views.DocsView.as_view(), name='docs'), # for documentation homepage
+    path('videos', views.VideoView.as_view(), name='videos'), # for documentation videos
     path('cybexAppDocs', views.CybexDocsView.as_view(), name='cybexdocs'),
 
     # path('openapi/', get_schema_view(

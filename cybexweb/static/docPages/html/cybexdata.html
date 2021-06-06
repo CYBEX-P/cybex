@@ -1,0 +1,578 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>cybexdata package &mdash; cybex_web_app 0.9.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cybexdata.migrations package" href="cybexdata.migrations.html" />
+    <link rel="prev" title="cybexapi package" href="cybexapi.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> cybex_web_app
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="README.html">Overview</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="README.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#high-level-architecture">High-Level Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#api-reference">API Reference</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="README.html#django-backend">Django Backend</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="modules.html">Full Python Reference</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cybex.html">cybex package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cybexapi.html">cybexapi package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cybexdata package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cybexweb.html">cybexweb package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="manage.html">manage module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#react-frontend">React Frontend</a></li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#deployment">Deployment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#user-guide">User Guide</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cybex_web_app</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="README.html">Overview</a> &raquo;</li>
+        
+          <li><a href="modules.html">Full Python Reference</a> &raquo;</li>
+        
+      <li>cybexdata package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/cybexdata.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cybexdata-package">
+<h1>cybexdata package<a class="headerlink" href="#cybexdata-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cybexdata.migrations.html">cybexdata.migrations package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cybexdata.migrations.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cybexdata.migrations.html#module-cybexdata.migrations.0001_initial">cybexdata.migrations.0001_initial module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cybexdata.migrations.html#module-cybexdata.migrations.0002_graphdb_containerid">cybexdata.migrations.0002_graphdb_containerid module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cybexdata.migrations.html#module-cybexdata.migrations.0003_profile_cybex_token">cybexdata.migrations.0003_profile_cybex_token module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cybexdata.migrations.html#module-cybexdata.migrations.0004_auto_20201114_0539">cybexdata.migrations.0004_auto_20201114_0539 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cybexdata.migrations.html#module-cybexdata.migrations.0005_auto_20201120_0451">cybexdata.migrations.0005_auto_20201120_0451 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cybexdata.migrations.html#module-cybexdata.migrations">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-cybexdata.admin">
+<span id="cybexdata-admin-module"></span><h2>cybexdata.admin module<a class="headerlink" href="#module-cybexdata.admin" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="cybexdata.admin.CustomUserAdmin">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">cybexdata.admin.</span></code><code class="sig-name descname"><span class="pre">CustomUserAdmin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.auth.admin.UserAdmin</span></code></p>
+<dl class="py attribute">
+<dt id="cybexdata.admin.CustomUserAdmin.add_fieldsets">
+<code class="sig-name descname"><span class="pre">add_fieldsets</span></code><em class="property"> <span class="pre">=</span> <span class="pre">((None,</span> <span class="pre">{'classes':</span> <span class="pre">('wide',),</span> <span class="pre">'fields':</span> <span class="pre">('username',</span> <span class="pre">'email',</span> <span class="pre">'password1',</span> <span class="pre">'password2')}),)</span></em><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin.add_fieldsets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="cybexdata.admin.CustomUserAdmin.get_containerid">
+<code class="sig-name descname"><span class="pre">get_containerid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin.get_containerid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="cybexdata.admin.CustomUserAdmin.get_cybex_token">
+<code class="sig-name descname"><span class="pre">get_cybex_token</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin.get_cybex_token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="cybexdata.admin.CustomUserAdmin.get_dbip">
+<code class="sig-name descname"><span class="pre">get_dbip</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin.get_dbip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="cybexdata.admin.CustomUserAdmin.get_dbpass">
+<code class="sig-name descname"><span class="pre">get_dbpass</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin.get_dbpass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="cybexdata.admin.CustomUserAdmin.get_dbport">
+<code class="sig-name descname"><span class="pre">get_dbport</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin.get_dbport" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="cybexdata.admin.CustomUserAdmin.get_dbuser">
+<code class="sig-name descname"><span class="pre">get_dbuser</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin.get_dbuser" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="cybexdata.admin.CustomUserAdmin.get_inline_instances">
+<code class="sig-name descname"><span class="pre">get_inline_instances</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin.get_inline_instances" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="cybexdata.admin.CustomUserAdmin.get_orgid">
+<code class="sig-name descname"><span class="pre">get_orgid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin.get_orgid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="cybexdata.admin.CustomUserAdmin.get_tzname">
+<code class="sig-name descname"><span class="pre">get_tzname</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin.get_tzname" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.admin.CustomUserAdmin.inlines">
+<code class="sig-name descname"><span class="pre">inlines</span></code><em class="property"> <span class="pre">=</span> <span class="pre">(&lt;class</span> <span class="pre">'cybexdata.admin.ProfileInline'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'cybexdata.admin.GraphdbInline'&gt;)</span></em><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin.inlines" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.admin.CustomUserAdmin.list_display">
+<code class="sig-name descname"><span class="pre">list_display</span></code><em class="property"> <span class="pre">=</span> <span class="pre">('username',</span> <span class="pre">'email',</span> <span class="pre">'first_name',</span> <span class="pre">'last_name',</span> <span class="pre">'is_staff',</span> <span class="pre">'get_cybex_token',</span> <span class="pre">'get_orgid',</span> <span class="pre">'get_tzname',</span> <span class="pre">'get_dbport',</span> <span class="pre">'get_dbip',</span> <span class="pre">'get_dbpass',</span> <span class="pre">'get_dbuser',</span> <span class="pre">'get_containerid')</span></em><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin.list_display" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.admin.CustomUserAdmin.list_select_related">
+<code class="sig-name descname"><span class="pre">list_select_related</span></code><em class="property"> <span class="pre">=</span> <span class="pre">('profile',)</span></em><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin.list_select_related" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="cybexdata.admin.CustomUserAdmin.media">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">media</span></code><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin.media" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="cybexdata.admin.GraphdbInline">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">cybexdata.admin.</span></code><code class="sig-name descname"><span class="pre">GraphdbInline</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.admin.GraphdbInline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.StackedInline</span></code></p>
+<dl class="py attribute">
+<dt id="cybexdata.admin.GraphdbInline.can_delete">
+<code class="sig-name descname"><span class="pre">can_delete</span></code><em class="property"> <span class="pre">=</span> <span class="pre">False</span></em><a class="headerlink" href="#cybexdata.admin.GraphdbInline.can_delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.admin.GraphdbInline.fk_name">
+<code class="sig-name descname"><span class="pre">fk_name</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'user'</span></em><a class="headerlink" href="#cybexdata.admin.GraphdbInline.fk_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="cybexdata.admin.GraphdbInline.media">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">media</span></code><a class="headerlink" href="#cybexdata.admin.GraphdbInline.media" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.admin.GraphdbInline.model">
+<code class="sig-name descname"><span class="pre">model</span></code><a class="headerlink" href="#cybexdata.admin.GraphdbInline.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#cybexdata.models.Graphdb" title="cybexdata.models.Graphdb"><code class="xref py py-class docutils literal notranslate"><span class="pre">cybexdata.models.Graphdb</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.admin.GraphdbInline.verbose_name_plural">
+<code class="sig-name descname"><span class="pre">verbose_name_plural</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'Graphdb'</span></em><a class="headerlink" href="#cybexdata.admin.GraphdbInline.verbose_name_plural" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="cybexdata.admin.ProfileInline">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">cybexdata.admin.</span></code><code class="sig-name descname"><span class="pre">ProfileInline</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.admin.ProfileInline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.StackedInline</span></code></p>
+<dl class="py attribute">
+<dt id="cybexdata.admin.ProfileInline.can_delete">
+<code class="sig-name descname"><span class="pre">can_delete</span></code><em class="property"> <span class="pre">=</span> <span class="pre">False</span></em><a class="headerlink" href="#cybexdata.admin.ProfileInline.can_delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.admin.ProfileInline.fk_name">
+<code class="sig-name descname"><span class="pre">fk_name</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'user'</span></em><a class="headerlink" href="#cybexdata.admin.ProfileInline.fk_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="cybexdata.admin.ProfileInline.media">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">media</span></code><a class="headerlink" href="#cybexdata.admin.ProfileInline.media" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.admin.ProfileInline.model">
+<code class="sig-name descname"><span class="pre">model</span></code><a class="headerlink" href="#cybexdata.admin.ProfileInline.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#cybexdata.models.Profile" title="cybexdata.models.Profile"><code class="xref py py-class docutils literal notranslate"><span class="pre">cybexdata.models.Profile</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.admin.ProfileInline.verbose_name_plural">
+<code class="sig-name descname"><span class="pre">verbose_name_plural</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'Profile'</span></em><a class="headerlink" href="#cybexdata.admin.ProfileInline.verbose_name_plural" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cybexdata.apps">
+<span id="cybexdata-apps-module"></span><h2>cybexdata.apps module<a class="headerlink" href="#module-cybexdata.apps" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="cybexdata.apps.CybexdataConfig">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">cybexdata.apps.</span></code><code class="sig-name descname"><span class="pre">CybexdataConfig</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_module</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.apps.CybexdataConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.apps.config.AppConfig</span></code></p>
+<dl class="py attribute">
+<dt id="cybexdata.apps.CybexdataConfig.name">
+<code class="sig-name descname"><span class="pre">name</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'cybexdata'</span></em><a class="headerlink" href="#cybexdata.apps.CybexdataConfig.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cybexdata.models">
+<span id="cybexdata-models-module"></span><h2>cybexdata.models module<a class="headerlink" href="#module-cybexdata.models" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="cybexdata.models.Graphdb">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">cybexdata.models.</span></code><code class="sig-name descname"><span class="pre">Graphdb</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dbport</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dbip</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dbuser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dbpass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">containerid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.models.Graphdb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.base.Model</span></code></p>
+<dl class="py exception">
+<dt id="cybexdata.models.Graphdb.DoesNotExist">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-name descname"><span class="pre">DoesNotExist</span></code><a class="headerlink" href="#cybexdata.models.Graphdb.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="cybexdata.models.Graphdb.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></code><a class="headerlink" href="#cybexdata.models.Graphdb.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Graphdb.containerid">
+<code class="sig-name descname"><span class="pre">containerid</span></code><a class="headerlink" href="#cybexdata.models.Graphdb.containerid" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Graphdb.dbip">
+<code class="sig-name descname"><span class="pre">dbip</span></code><a class="headerlink" href="#cybexdata.models.Graphdb.dbip" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Graphdb.dbpass">
+<code class="sig-name descname"><span class="pre">dbpass</span></code><a class="headerlink" href="#cybexdata.models.Graphdb.dbpass" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Graphdb.dbport">
+<code class="sig-name descname"><span class="pre">dbport</span></code><a class="headerlink" href="#cybexdata.models.Graphdb.dbport" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Graphdb.dbuser">
+<code class="sig-name descname"><span class="pre">dbuser</span></code><a class="headerlink" href="#cybexdata.models.Graphdb.dbuser" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Graphdb.id">
+<code class="sig-name descname"><span class="pre">id</span></code><a class="headerlink" href="#cybexdata.models.Graphdb.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Graphdb.objects">
+<code class="sig-name descname"><span class="pre">objects</span></code><em class="property"> <span class="pre">=</span> <span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#cybexdata.models.Graphdb.objects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Graphdb.user">
+<code class="sig-name descname"><span class="pre">user</span></code><a class="headerlink" href="#cybexdata.models.Graphdb.user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a one-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Restaurant</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">place</span> <span class="o">=</span> <span class="n">OneToOneField</span><span class="p">(</span><span class="n">Place</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;restaurant&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Restaurant.place</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardOneToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Graphdb.user_id">
+<code class="sig-name descname"><span class="pre">user_id</span></code><a class="headerlink" href="#cybexdata.models.Graphdb.user_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="cybexdata.models.Profile">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">cybexdata.models.</span></code><code class="sig-name descname"><span class="pre">Profile</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orgid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organizationname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tzname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cybex_token</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.models.Profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.base.Model</span></code></p>
+<dl class="py exception">
+<dt id="cybexdata.models.Profile.DoesNotExist">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-name descname"><span class="pre">DoesNotExist</span></code><a class="headerlink" href="#cybexdata.models.Profile.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="cybexdata.models.Profile.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></code><a class="headerlink" href="#cybexdata.models.Profile.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Profile.cybex_token">
+<code class="sig-name descname"><span class="pre">cybex_token</span></code><a class="headerlink" href="#cybexdata.models.Profile.cybex_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Profile.objects">
+<code class="sig-name descname"><span class="pre">objects</span></code><em class="property"> <span class="pre">=</span> <span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#cybexdata.models.Profile.objects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Profile.organizationname">
+<code class="sig-name descname"><span class="pre">organizationname</span></code><a class="headerlink" href="#cybexdata.models.Profile.organizationname" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Profile.orgid">
+<code class="sig-name descname"><span class="pre">orgid</span></code><a class="headerlink" href="#cybexdata.models.Profile.orgid" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Profile.tzname">
+<code class="sig-name descname"><span class="pre">tzname</span></code><a class="headerlink" href="#cybexdata.models.Profile.tzname" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Profile.user">
+<code class="sig-name descname"><span class="pre">user</span></code><a class="headerlink" href="#cybexdata.models.Profile.user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a one-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Restaurant</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">place</span> <span class="o">=</span> <span class="n">OneToOneField</span><span class="p">(</span><span class="n">Place</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;restaurant&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Restaurant.place</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardOneToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="cybexdata.models.Profile.user_id">
+<code class="sig-name descname"><span class="pre">user_id</span></code><a class="headerlink" href="#cybexdata.models.Profile.user_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="cybexdata.models.create_user_extra">
+<code class="sig-prename descclassname"><span class="pre">cybexdata.models.</span></code><code class="sig-name descname"><span class="pre">create_user_extra</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sender</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.models.create_user_extra" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="cybexdata.models.save_user_extra">
+<code class="sig-prename descclassname"><span class="pre">cybexdata.models.</span></code><code class="sig-name descname"><span class="pre">save_user_extra</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sender</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.models.save_user_extra" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-cybexdata.tests">
+<span id="cybexdata-tests-module"></span><h2>cybexdata.tests module<a class="headerlink" href="#module-cybexdata.tests" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-cybexdata">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cybexdata" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="cybexdata.migrations.html" class="btn btn-neutral float-right" title="cybexdata.migrations package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cybexapi.html" class="btn btn-neutral float-left" title="cybexapi package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Adam Cassell.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

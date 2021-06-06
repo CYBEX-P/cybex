@@ -13,7 +13,7 @@ djangorestframework==3.12.1
 django-rest-swagger==2.2.0
 dnspython==1.16.0
 docker==4.3.1
-geoip2==3.0.0
+geoip2
 idna==2.9
 isort==4.3.21
 lazy-object-proxy==1.4.3
@@ -38,7 +38,7 @@ Sphinx==3.5.3
 sphinx-rtd-theme==0.5.1
 sqlparse==0.4.1
 toml==0.10.1
-urllib3==1.25.9
+urllib3
 wcwidth==0.2.4
 websocket-client==0.57.0
 wrapt==1.12.1

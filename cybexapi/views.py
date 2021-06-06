@@ -58,6 +58,9 @@ class GraphView(View):
 class DocsView(TemplateView):
     template_name = 'docs.html'
 
+class VideoView(TemplateView):
+    template_name = 'videos.html'
+
 class CybexDocsView(TemplateView):
     template_name = 'sphinx/html/index.html'
     #html files copied and pasted from sphinx build folder.
