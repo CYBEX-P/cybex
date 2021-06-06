@@ -1,3 +1,18 @@
+"""URL Configuration for all urls that are accessed behind authentication.
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/3.0/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
 from django.urls import include, path
 from . import views
 from cybexapi.api import exportNeoDB, insert, delete, enrichNode, enrichNodePost, enrichURL, macroCybex, macro, wipe, start, startFile, importJson, position, dataEntry, getContents, currentUserInfo, orgInfo, orgAddRemoveUser#, insertURL
@@ -31,13 +46,7 @@ urlpatterns = [
     path('api/v1/event/start/file', startFile.as_view()),
     path('docs', views.DocsView.as_view(), name='docs'), # for documentation homepage
     path('videos', views.VideoView.as_view(), name='videos'), # for documentation videos
-    path('cybexAppDocs', views.CybexDocsView.as_view(), name='cybexdocs'),
 
-    # path('openapi/', get_schema_view(
-    #     title="CYBEX-P Portal API Doc",
-    #     description="Documentation for the CYBEX-P Portal API. This is solely for the frontend web application and is seperate from the backend CYBEX-P API.",
-    #     version ="1.0.0",
-    # ), name='openapi-schema'),
     path('portalapi/', TemplateView.as_view(
         template_name='apiportal.html',
         extra_context={'schema_url':'openapi-schema'}

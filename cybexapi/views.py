@@ -1,3 +1,5 @@
+"""Module that defines the main Django views locked behind authentication."""
+
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -17,21 +19,10 @@ class getconfig(APIView):
         print(config)
         return Response(config)
 
-
-
-# Helper views to be replaced..These are not being used...
-# class isSignedIn(APIView):
-#     def get(self, request, format=None):
-#         return Response({"value" : True})
-
-# class isAdmin(APIView):
-#     def get(self, request, format=None):
-#         return Response({"value" : False})
-
-
 # Moved from Cybexweb > views.py to here
 # This was done so we require 2fa to access the graphs page but not the home page.
 class GraphView(View):
+    """View for the main threat-intelligence graph React application."""
     template_name = 'index.html'
 
     @method_decorator(login_required())
@@ -56,12 +47,9 @@ class GraphView(View):
         return render(request, self.template_name)
 
 class DocsView(TemplateView):
+    """View for main documentation landing page."""
     template_name = 'docs.html'
 
 class VideoView(TemplateView):
+    """Viwe for the video documentation page."""
     template_name = 'videos.html'
-
-class CybexDocsView(TemplateView):
-    template_name = 'sphinx/html/index.html'
-    #html files copied and pasted from sphinx build folder.
-    #update each time new version of application is released.
