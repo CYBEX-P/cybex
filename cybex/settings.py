@@ -35,6 +35,8 @@ LOGIN_REDIRECT_URL = 'home'
 
 LOGOUT_REDIRECT_URL = 'home'
 
+DOCS_ROOT = 'build/html'
+
 
 with open(BASE_DIR + '/cybex/config.yaml','r') as f:
     conf = yaml.load(f)

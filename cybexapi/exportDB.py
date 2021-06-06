@@ -1,12 +1,38 @@
+"""Functions for preparing stored neo4j data for visual display.
+
+This module facilitates the retreival and processing of stored neo4j graph
+data. Processing augments the retrieved data with extra properties and
+computed value assignments that prepare the data for interpretation by the 
+front end.
+
+"""
+
 from py2neo import Graph, Node, Relationship
 import os
 import json
-# TODO
-# Needs documentation
+
 def processExport(dataObject):
+    """Processes and augments stored data in preparation for frontend display.
+
+    Each node is checked to see if count values has been added to its data. If
+    so, a 'malicousness ratio' and categorical threat level (0- 2) are
+    calculated from this data. This threat level is used to determine which
+    color to assign to the node usign the threatColor() helper function.
+
+    Node comments are handled, labels are simplified/truncated, and type
+    values are assigned here as well. For especially common IOC types, 
+    specific node icons are assigned.
+
+    Args:
+        dataObject (dict): Dictionary containing nodes and edges returned from
+            export() function.
+
+    Returns:
+        dataObject (dict): The augmented version of the dataObject dict, with
+            all properties and values required for frontend rendering.
+    """
     for x in dataObject["Neo4j"][0]:
         for key in x['nodes']:
-            # print(x['nodes'])
             # Before assigning color, referene malicious counts to assign threat level.
             threatLevel = -1  # default to -1 for inconclusive threat level
             sightings = -1  # default to -1 for unknown sightings
@@ -17,140 +43,56 @@ def processExport(dataObject):
                 key['y'] = key['properties']['y']
             if 'countMal' in str(key):
                 # sightings = total count in cybex
-                sightings = key['properties']['count'] + \
-                    key['properties']['countMal']
+                sightings = (int(key['properties']['count']) + 
+                    int(key['properties']['countMal']))
                 if (sightings != 0):
-                    # if (key['properties']['countMal'] != 0) and (key['properties']['count'] != 0):
-                    ratioMal = key['properties']['countMal']/sightings
+                    ratioMal = int(key['properties']['countMal'])/sightings
                     if ratioMal == 0:
                         threatLevel = 0
                     elif 0 < ratioMal < 0.5:
                         threatLevel = 1
                     elif 0.5 <= ratioMal <= 1:
                         threatLevel = 2
-                    # else:
-                    #     threatLevel = 0
-            #key['label'] = bucket(key['label'][0])
             if 'comment' in str(key):
                 key['font'] = {'color': 'black', 'strokeWidth': 0,
                                'strokeColor': "white", 'background': threatColor(threatLevel)}
+            # Set label to only display a subset of its original value
             key['label'] = key['label'][0]
+            # Make the type property the original label
             key['properties']['type'] = key['label']
             # Initialize color defaults and set special color classes
             key['color'] = 'rgba(151,194,252,1)'
-            # if 'source' in key['properties']:
-            #     if (key['properties']['source'] == 'cybex'):
-            #         key['color']['border'] = 'rgba(255,255,255,1)'
-            #         #key['color']['background'] = 'rgba(255,255,255,1)'e
+            # 'value' is what drives the node sizing on the frontend. Change
+            #  this to another value (ex: countMal) to change sizing rules
             key['value'] = sightings
+            # Node color gets assigned according to threat level (if computed)
+            key['color'] = threatColor(threatLevel)
+            # For specific common IOC types, assign an associated node icon
             if key['label'] == 'IP':
                 key['image'] = '/static/SVG/DataAnalytics/svg_ip.svg'
-                key['color'] = threatColor(threatLevel)
-                # else:
-                #     #key['color'] = "#B37469"
-                #     #key['color'] = 'rgba(151,252,158,1)'
-                #     key['color'] = 'rgba(151,194,252,1)'
-                #key['widthConstraint'] = 120
             elif key['label'] == 'Host':
                 key['image'] = '/static/SVG/DataAnalytics/svg_host.svg'
-                key['color'] = threatColor(threatLevel)
-                # key['color'] = '#FB7E81'
-                #key['color'] = 'rgba(247, 151, 77, 1)'
             elif key['label'] == 'URL':
                 key['image'] = '/static/SVG/DataAnalytics/svg_ip.svg'
-                key['color'] = threatColor(threatLevel)
-                # else:
-                #     #key['color'] = "#B37469"
-                #     #key['color'] = 'rgba(151,252,158,1)'
-                #     key['color'] = 'rgba(151,194,252,1)'
-            elif key['label'] == 'SPort':
-                key['color'] = '#8C99CE'
-            elif key['label'] == 'DPort':
-                key['color'] = '#5B8E7D'
             elif key['label'] == 'Email':
                 key['image'] = '/static/SVG/DataAnalytics/svg_email.svg'
-                key['color'] = threatColor(threatLevel)
-                # key['color'] = '#34E5FF'
-                # key['color'] = 'rgba(151,194,252,1)'
-            elif key['label'] == 'Hash':
-                key['color'] = threatColor(threatLevel)
             elif key['label'] == 'ASN':
-                # key['color'] = '#8CB369'
-                #key['color'] = 'rgba(168, 50, 50)'
-                # key['color'] = 'rgba(151,194,252,1)'
                 key['image'] = '/static/SVG/DataAnalytics/svg_asn.svg'
-                key['color'] = threatColor(threatLevel)
             elif key['label'] == 'Country':
-                # key['color'] = '#F4A259'
-                #key['color'] = 'rgba(247, 151, 77, 1)'
-                # key['color'] = 'rgba(151,194,252,1)'
                 key['image'] = '/static/SVG/DataAnalytics/svg_country_alt.svg'
-                key['color'] = threatColor(threatLevel)
-            elif key['label'] == 'BTC':
-                key['color'] = '#3185FC'
-            elif key['label'] == 'MAC':
-                key['color'] = '#DDF8E8'
-            elif key['label'] == 'BGPath':
-                key['color'] = '#28AFB0'
-            elif key['label'] == 'SSID':
-                key['color'] = '#E8E8E8'
             elif key['label'] == 'Domain':
                 key['image'] = '/static/SVG/DataAnalytics/svg_ip.svg'
-                key['color'] = threatColor(threatLevel)
-                # if threatLevel == 0:
-                #     key['color']['background']  = 'rgba(151,252,158,1)'
-                #     key['color']['border']  = 'rgba(151,252,158,1)'
-                # elif threatLevel == 1:
-                #     key['color']['background'] = 'rgba(255,222,0,1)'
-                #     key['color']['border'] = 'rgba(255,222,0,1)'
-                # elif threatLevel == 2:
-                #     key['color']['background'] = 'rgba(168,50,50,1)'
-                #     key['color']['border'] = 'rgba(168,50,50,1)'
-                # else:
-                #     #key['color'] = "#B37469"
-                #     #key['color'] = 'rgba(151,252,158,1)'
-                #     key['color'] = 'rgba(151,194,252,1)'
             elif key['label'] == 'Ports':
                 key['image'] = '/static/SVG/DataAnalytics/svg_ports.svg'
-                key['color'] = threatColor(threatLevel)
-                # key['color'] = "#ff41e2"
-                # key['color'] = 'rgba(151,194,252,1)'
-            elif key['label'] == 'Whois':
-                # key['color'] = "#4070f4"
-                key['color'] = threatColor(threatLevel)
             elif key['label'] == 'Subnet':
                 key['image'] = '/static/SVG/DataAnalytics/svg_subnet.svg'
-                # key['color'] = "#eeee58"
-                # key['color'] = 'rgba(151,194,252,1)'
             elif key['label'] == 'Registrar':
                 key['image'] = '/static/SVG/DataAnalytics/svg_registrar.svg'
-                key['color'] = threatColor(threatLevel)
-                # key['color'] = "#06de9e"
-            elif key['label'] == 'Nameserver':
-                key['color'] = threatColor(threatLevel)
             elif key['label'] == 'MailServer':
                 key['image'] = '/static/SVG/DataAnalytics/svg_mail.svg'
-                key['color'] = threatColor(threatLevel)
-                # key['color'] = 'rgba(151,194,252,1)'
-            elif key['label'] == 'User':
-                key['color'] = threatColor(threatLevel)
-            elif key['label'] == 'CybexCount':
-                # key['color'] = "#29e682"
-                key['color'] = 'rgba(151,194,252,1)'
-            elif key['label'] == 'CybexRelated':
-                # key['color'] = "#92fd6c"
-                key['color'] = 'rgba(151,194,252,1)'
-                key['shape'] = 'hexagon'
-            else:
-                key['color'] = threatColor(threatLevel)
-            #     # key['color'] = 'rgba(151,194,252,1)'
-            #     #key['shape'] = 'hexagon'
-            #     key['color'] = 'rgba(255,255,255,1)'
-            #     #key['color'] = 'rgba(151,252,158,1)',
 
             # Change label to represent the actual node data, rather than node type
-            # Original logic relied on label property, so this is a stopgap measure.
-            # Ideally, all prior logic should be rewritten to not use IOC type as label.
+            # Original logic relied on label property
             # New property.type in nodedata now exists to contain this information.
             labelString = str(key['properties']['data'])
             key['label'] = (labelString[:11] +
@@ -159,20 +101,14 @@ def processExport(dataObject):
     for x in dataObject["Neo4j"][1]:
         for key in x['edges']:
             if "CYBEX" in key['type']:
-            #if key['type'] == 'CYBEX':
                 key['dashes'] = 'true'
-                #key['arrows'] = 'to;from'
                 key['width'] = 0.5
-                # key['label'] = "CYBEX-P"
-                # key['font'] = {'size': 8, 'strokeWidth':0,'color':'white'}
 
     return dataObject
 
-    # Added limit of 10 nodes and edges just for testing on full cybexp2 graph -- jeffs
-    # "collect(blah blah blah)[..10] AS edges..."
-
 
 def threatColor(threatLevel):
+    """Returns an rgba color value based on given threat level."""
     color = 'rgba(151,194,252,1)'  # default color
     if threatLevel == 0:
         color = 'rgba(151,252,158,1)'
@@ -184,6 +120,7 @@ def threatColor(threatLevel):
 
 
 def bucket(label):
+    """Reformats label for certain IOC types for better frontend presentation."""
     if label == 'ip' or label == 'ipv4':
         label = 'IP'
     elif label == 'asn':
@@ -202,6 +139,16 @@ def bucket(label):
 
 
 def export(graph):
+    """Queries neo4j database to get the nodes and edges of the stored graph.
+
+    Args:
+        graph (py2neo.database.Graph): The graph object for the current graph
+
+    Returns:
+        dict: Dictionary representing nodes and edges retrieved from neo4j
+            graph database.
+
+    """
     r_response = graph.run("MATCH (a)-[r]->(b) \
         WITH collect( \
             { \

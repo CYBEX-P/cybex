@@ -78,7 +78,13 @@ const InsertForm = props => {
     else if (enrichmentType === "cybexCount" || enrichmentType === "cybexRelated") {
       setLoading("Enriching " + enrichmentType);
       axios
-        .post(`/api/v1/enrich/${enrichmentType}`, {Ntype: `${selectedIOC2}`,value: `${ipToEnrich}`})
+        .post(`/api/v1/enrich/${enrichmentType}/`, {
+          Ntype: `${selectedIOC2}`,
+          value: `${ipToEnrich}`,
+          fromDate: props.fromDate, 
+          toDate: props.toDate,
+          timezone: props.timezone
+        })
         .then(({ data }) => {
           if (data['insert status'] !== 0) {
             axios

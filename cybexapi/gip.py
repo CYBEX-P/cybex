@@ -1,3 +1,4 @@
+"""Module containing functions for gip enrichments (country and asn)"""
 import geoip2.database
 from py2neo import Graph, Node, Relationship
 import json
@@ -10,6 +11,7 @@ from django.conf import settings
 
 
 def geoip(ip):
+    """Retreives geoip information for given IP address."""
     path = str(os.path.dirname(__file__)) + '/data/GeoLite2-City.mmdb'
     reader = geoip2.database.Reader(path)
 
@@ -30,7 +32,7 @@ def geoip(ip):
 
 
 def geoip_insert(data, graph):
-
+    """Inserts country node into graph for given IP."""
     if(data != 0):
         c = Node("Country", data=data["country"])
         ip_node = graph.nodes.match("IP", data=data["ip_src"]).first()
@@ -54,6 +56,7 @@ def geoip_insert(data, graph):
 # TODO
 # Move file location to django settings
 def ASN(ip):
+    """Retrieves ASN information for given IP address."""
     path = str(os.path.dirname(__file__)) + '/data/GeoLite2-ASN.mmdb'
     with geoip2.database.Reader(path) as reader:
 
@@ -69,7 +72,7 @@ def ASN(ip):
 
 
 def asn_insert(data, graph):
-
+    """Inserts ASN node into graph for given IP address."""
     if(data != 0):
         a = Node("ASN", data=str(data["ASN"]))
         ip_node = graph.nodes.match("IP", data=data["ip_src"]).first()

@@ -32,6 +32,9 @@ const App = props => {
 	const [toDate, setToDate] = useState('');
 	const [timezone, setTimezone] = useState('');
 	
+
+	const [ipData, setIPData] = useState([]);
+	
 	const [isLoading, setLoading] = useState(false);
 
   const [isExpanded, dispatchExpand] = useReducer((_, action) => {
@@ -114,6 +117,28 @@ const App = props => {
 		return orgOptions;
 	}
 	
+	// Getting IP data from neo4jData
+	useEffect(() => {
+		if (Object.keys(neo4jData).length > 0) {
+			// Getting the nodes from neo4jData
+			const IPNodes = (neo4jData["Neo4j"]["0"]["0"]["nodes"])
+			// Getting only the nodes with the property type of "IP"
+			const IPObj = (IPNodes.filter(x => x.properties.type === "IP"))
+			// Storing all IPs in a list
+			const allIPs = []
+
+			// Iterating through each node to grab the IP from "data"
+			for (var key in IPObj) {
+				var obj = IPObj[key];
+				for (var prop in obj) {
+					if (prop === "properties") {
+						allIPs.push(obj[prop]["data"]);
+					}
+				}
+			}
+			setIPData(allIPs);
+		}
+	}, [neo4jData])
 
   return (
     <MenuContext.Provider value={{ isExpanded, dispatchExpand, setLoading }}>
@@ -391,12 +416,15 @@ const App = props => {
 
           <AppContainer>
             <ContentContainerStyle>
-              <Graph isLoading={isLoading} setFromDate={setFromDate} setToDate={setToDate} setTimezone={setTimezone} />
+              <Graph isLoading={isLoading} setFromDate={setFromDate} setToDate={setToDate} setTimezone={setTimezone} fromDate={fromDate} toDate={toDate} timezone={timezone}/>
             </ContentContainerStyle>
+
             <NavBar 
               dispatchModal={dispatchModal}
 							userProfile={userProfile}
+              ipData={ipData}
             />
+                
             {/* Below TrendsContext component should be used if we move from state to context for trends panel.
              At the moment, the trends component gets placed into the navbar, and is rendered dependent on a state within the navbar component.
             To more properly treat Trends as an independent component, context can be used in future reworking of the Trend panel logic */}
@@ -413,6 +441,9 @@ const App = props => {
                   setNeo4jData={setNeo4jData}
                   dispatchModal={dispatchModal}
                   setMacroDetails={setMacroDetails}
+                  fromDate={fromDate}
+                  toDate={toDate}
+                  timezone={timezone}
                 />
                 { macroDetails != 'none' && (
                   <div>
@@ -453,7 +484,7 @@ const App = props => {
                   paddingTop: '20px'
                 }}
               >
-                <InsertForm config={props.config} />
+                <InsertForm config={props.config} fromDate={fromDate} toDate={toDate} timezone={timezone} />
                 <Row />
                 <Row />
                 <Button width="100%" onClickFunction={() => dispatchModal('Submit Event Data')}>
@@ -523,7 +554,7 @@ const App = props => {
                         }}
                         width="100%"
                       >
-                        Wipe DB
+                        Clear Graph
                       </Button>
                     }
                   </div>

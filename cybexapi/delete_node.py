@@ -1,12 +1,15 @@
+"""Module containing functions for deleting graph nodes."""
 
-
-# Description: Used to actually search the Neo4j database for a node and delete the node
-#               from the database.
-# Parameters: <object>request - The user request
-# Returns: True
-# Author: Spencer Kase Rohlfing
 def delete_node(node_id, graph):
-    # print(node_id)
+    """Used to search the Neo4j db for a node and delete it from the db.
+    
+    Args:
+        request (rest_framework.request.Request): The request object.
+
+    Returns:
+        True
+    
+    """
 
     # Need to add a check to see if the test doesn't return true
     del_node = graph.evaluate(f"MATCH (n) \

@@ -1,3 +1,5 @@
+"""Module that defines the main Django views locked behind authentication."""
+
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -6,31 +8,21 @@ import json
 
 import docker
 from cybexweb.dockers import check_db, create_db
-from django.views.generic import View
+from django.views.generic import View, TemplateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 class getconfig(APIView):
-    def get(self, request, format=None):
+    def get(self, request):
+        """Reads YAML configuration file."""
         config = json.dumps(settings.YAML_CONFIG)
         print(config)
         return Response(config)
 
-
-#TODO
-# Helper views to be replaced once front end is fixed
-class isSignedIn(APIView):
-    def get(self, request, format=None):
-        return Response({"value" : True})
-
-class isAdmin(APIView):
-    def get(self, request, format=None):
-        return Response({"value" : False})
-
-
 # Moved from Cybexweb > views.py to here
 # This was done so we require 2fa to access the graphs page but not the home page.
 class GraphView(View):
+    """View for the main threat-intelligence graph React application."""
     template_name = 'index.html'
 
     @method_decorator(login_required())
@@ -53,3 +45,11 @@ class GraphView(View):
             print("Container running")
                 
         return render(request, self.template_name)
+
+class DocsView(TemplateView):
+    """View for main documentation landing page."""
+    template_name = 'docs.html'
+
+class VideoView(TemplateView):
+    """Viwe for the video documentation page."""
+    template_name = 'videos.html'
