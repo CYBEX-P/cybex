@@ -12,7 +12,7 @@ import Button from '../Button/Button';
 // Helper function to truncate strings (used for delete button text)
 const truncate = (input,numChar) => input.length > numChar ? `${input.substring(0, numChar)}...` : input;
 
-function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
+function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config, fromDate, toDate, timezone) {
   const { setLoading } = useContext(MenuContext);
 
   if (nodeType === null) {
@@ -25,9 +25,18 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
 
   function EnrichIPbyType(type) {
     setLoading("Enriching " + type);
+    if (timezone == ''){
+      // Default to user's (clientside) local timezone string if not selected
+      timezone = Intl.DateTimeFormat().resolvedOptions().timeZone.replace("/","-");
+    }
     if (type === "cybexCount" || type === "cybexRelated"){
       axios
-        .post(`/api/v1/enrich/${type}/`, {Ntype: `${nodeType.properties.type}`, value: `${nodeType.properties.data}`})
+        .post(`/api/v1/enrich/${type}/`, {
+          Ntype: `${nodeType.properties.type}`, 
+          value: `${nodeType.properties.data}`, 
+          fromDate: fromDate, 
+          toDate: toDate,
+          timezone: timezone})
         .then(({ data }) => {
           // Response is being passed back as serialized string. 
           // Need to see if other request handlers need this change too.
@@ -73,6 +82,7 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config) {
         }
       });
     }
+    // May be deprecated...
     else if (type === "pdns"){
       axios
         .post(`/api/v1/enrichPDNS`, {value: `${nodeType.properties.data}`})

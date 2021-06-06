@@ -1,13 +1,18 @@
-#from py2neo import Graph, Node, Relationship
+"""Module containing functions for facilitating file downloads from server."""
 import json
 import os
 from django.conf import settings
 
-# Description: Returns list of directory items at given path
-# Parameters: <string>path - path of directory to observe inside static folder
-# Returns: <dict>content_map - dictionary of root, subdirectories, and files
-# Author: Adam Cassell
 def get_contents(path):
+    """Returns list of directory items at given path.
+
+    Args:
+        path (string): Path of directory to observe inside static folder.
+    
+    Returns: 
+        content_map (dict): Dictionary of root, subdirectories, and files.
+
+    """
     path = 'static/' + path.replace(":)","/")
     print(path)
     content_map = {

@@ -1,13 +1,19 @@
+"""Module containing functions for importing graph data from JSON files."""
 import json
 from cybexapi.wipe_db import wipeDB
 from django.conf import settings
 
-# Description: Used to read the JSON value into python JSON
-# Parameters: <object>graph - The current graph
-#             <json>data - the json data
-# Returns: the json values
-# Author: Spencer Kase Rohlfing
 def import_json(graph, data):
+    """Used to read the JSON value into python JSON.
+
+    Args:
+        graph (py2neo.database.Graph): The graph object for the current graph
+        data (dict): the JSON data.
+
+    Returns:
+        dict: The JSON values.
+
+    """
     wipeDB(graph) ## clear graph before importing
     values = data['file'].read()
     values = json.loads(values)
@@ -23,6 +29,16 @@ def import_json(graph, data):
 #             <json>data - the json data
 # Author: Spencer Kase Rohlfing
 def writeToDB(graph,json):
+    """Used to write the values to the data. 
+    
+    First it parses the information then creates the nodes in the database. 
+    Then it creates the relationship between nodes if there were any.
+    
+    Args:
+        graph (py2neo.database.Graph): The graph object for the current graph.
+        json (dict): the JSON data
+
+    """
     nodes = json['Neo4j'][0][0]['nodes']
     # print(nodes)
     for index, node in enumerate(nodes):

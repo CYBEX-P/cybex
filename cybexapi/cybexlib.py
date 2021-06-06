@@ -21,6 +21,7 @@ from py2neo import Graph, Node, Relationship
 from cybexapi.exportDB import bucket
 from cybexapi.api import *
 import json
+import ast
 import requests
 from django.conf import settings
 from threading import Timer
@@ -28,6 +29,7 @@ from cybexapi.shodanSearch import insert_ports
 import threading
 import time
 import random
+from dateutil.parser import parse
 
 # deprecated, testing if still being used..
 # def pull_ip_src():
@@ -159,7 +161,7 @@ def replaceType(value):
 
 # TODO
 # Use django.settings to get keys and move URLS to settings as well.
-def cybexCountHandler(ntype, data, graph, user, event):
+def cybexCountHandler(ntype, data, graph, user, event, from_date, to_date, timezone):
     """Queries CYBEX for benign and malicious counts of the given IOC.
 
     Args:
@@ -187,15 +189,22 @@ def cybexCountHandler(ntype, data, graph, user, event):
     headers = {'content-type': 'application/json',
                'Authorization': 'Bearer ' + user_token}
 
+    # Format dates
+    from_date = from_date.replace("-","/")
+    to_date = to_date.replace("-","/")
+    timezone= timezone.replace("-","/")
+
     # construct the data object to be passed to post request
     payload = {
         "type": "count", #specify that we want count data
         "data" : {
             "sub_type": ntype_processed, 
             "data": data,
-            "category": "all",
+            "category": "benign",
             "context": "all",
-            "last": "1Y"
+            "from": from_date, 
+            "to": to_date,
+            "tzname": timezone
         }
     }
     payload = json.dumps(payload)
@@ -249,7 +258,9 @@ def cybexCountHandler(ntype, data, graph, user, event):
             "data": data,
             "category": "malicious",
             "context": "all",
-            "last": "1Y"
+            "from": from_date, 
+            "to": to_date,
+            "tzname": timezone
         }
     }
     payloadMal = json.dumps(payloadMal)
@@ -287,7 +298,7 @@ def cybexCountHandler(ntype, data, graph, user, event):
     # return jsonify({"insert status" : status})
     return status
 
-def cybexRelatedHandler(ntype, data, graph, user, num_pages = 10):
+def cybexRelatedHandler(ntype, data, graph, user, from_date, to_date, timezone, num_pages = 10):
     """Queries CYBEX for related IOCs and inserts them into the graph.
 
     Takes the given IOC data and queries CYBEX for all related IOCs (as 
@@ -342,8 +353,11 @@ def cybexRelatedHandler(ntype, data, graph, user, num_pages = 10):
     thread_list = []
      #NOTE: Perhaphs replace below with more advanced stop condition
      # Currently is based on defined num_pages page limit
+
     for count in range(num_pages):
-        thread = threading.Thread(target=threadedLoop_cybexRelatedHandler, args=(count, ntype_processed, data, graph, headers, url, insertions_to_make))
+        thread = threading.Thread(target=threadedLoop_cybexRelatedHandler, 
+            args=(count, ntype_processed, data, graph, headers, url, 
+            insertions_to_make, from_date, to_date, timezone))
         thread_list.append(thread)
     for thread in thread_list:
         thread.start()
@@ -361,7 +375,7 @@ def cybexRelatedHandler(ntype, data, graph, user, num_pages = 10):
     return 1
 
 
-def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, headers, url, insertions_to_make):
+def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, headers, url, insertions_to_make, from_date, to_date, timezone):
     """Helper function for cybexRelatedHandler. Handles cybexRelated requests.
 
     This function sends and receives a single page for a single cybexRelated
@@ -371,6 +385,12 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
 
     """
     print(f"Page count: {count}")
+
+    # Format dates
+    from_date = from_date.replace("-","/")
+    to_date = to_date.replace("-","/")
+    timezone= timezone.replace("-","/")
+
     # construct the data object to be passed to post request
     payload = {
         "type": "related", # specify we want to return related IOC data
@@ -379,8 +399,11 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
             "data": data,
             #"return_type": "attribute",
             "summary" : True,
-            "event_graph": True,
-            "page": count
+            "summary_graph": True,
+            "page": count,
+            "from": from_date, 
+            "to": to_date,
+            "tzname": timezone
         }
     }
     #TODO: make sure ipv4 works for ip (replaceType())
@@ -388,15 +411,20 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
     payload = json.dumps(payload) # data is jsonified request
     print(f"data: {payload}")
 
+    valid = False # Flag that is set to true once a valid response has been recieved.
     retry_count = 3 # sets number of allowable timeouts before call stops retrying.
-    while retry_count >= 1:
+    while retry_count >= 1 and not valid:
         try:
-            with requests.post(url, headers=headers, data=payload, timeout=(3.05, 20)) as r:
+            with requests.post(url, headers=headers, data=payload, timeout=(3.05, 60)) as r:
                 try:
                     res = json.loads(r.text)
                     print(f"res: {res}")
                     # Use response data to now insert nodes into graph database
                     if "data" in res:
+                        # if status: 'processing' is part of response, then
+                        # that means a valid response hasn't been reached yet
+                        if not "status" in res["data"]:
+                            valid = True
                         status = insertRelatedAttributes(res, graph, data, ntype_processed, insertions_to_make)
                     else: # Report response not ready yet or doesn't exist for this page
                         print("Unable to get report response for page " + str(count) + " for " + str(data))
@@ -415,44 +443,187 @@ def threadedLoop_cybexRelatedHandler(count, ntype_processed, data, graph, header
             #return 0
 
 
-# Description: Gets the CYBEX orgid of the current user
-# Parameters: <object>user - Object representing the user
-# Returns: Response status
-# Author: Adam Cassell
-def get_orgid(user):
-    # TODO: return result of user's orgid query instead of hardcode
-    return "test_org"
+##############################################################################
+# Functions for data upload to CYBEX-P from web app, including validation:
+##############################################################################
     
-# Description: Posts user event data to CYBEX
-# Parameters:   <object>data - the request data
-#               <object>user - Object representing the user
-# Returns: Response status
 # Author: Adam Cassell
 def send_to_cybex(data, user):
+    """Validates user event file uploads and posts to CYBEX.
+
+    Note that the file is validated against the schema defined within
+    the body of this function. Modify required_keys to customize.
+
+    Args:
+        data (dict): The request data
+        user (models.User): The reqesting user
+
+    Returns:
+        int: 1 if successful
+    
+    Raises:
+        TypeError: If any lines of submitted file are invalid JSON, or if 
+            schema validation fails according to the configured requirements.
+        Exception: If response status >= 400 upon attempting to post data.
+
+    """
     # file is retreived from data object passed in from js
     # this reads the file in binary mode, which is recommended
-    files = {'file':  data['file']}
-    data.pop('file', None) # take file key out of data dict
+
+    # These lines first decode file in default utf-8 from binary
+    # in order to perform string validation on submitted file.
+    file_contents = data['file']
+    file_string = file_contents.read().decode()
+    left_count = file_string.count('{')
+    right_count = file_string.count('}')
+
+    entryList = []
+
+    if left_count > 1 and right_count > 1:
+
+        # entries = file_string.splitlines()
+        entries = file_string
+        currentList = "" 
+
+        # Get indices of '{' and '}'
+        openIndexList = []
+        closeIndexList = []
+        
+        for index, entry in enumerate(entries):
+            if entry == '{':
+                openIndexList.append(index)
+            if entry == '}':
+                closeIndexList.append(index)
+       
+        # Grabbing all JSON information between each opening
+        # and closing brace
+        for i in range(0, len(openIndexList)):
+            for index in range(openIndexList[i], closeIndexList[i] + 1):
+                entry = entries[index]
+                currentList = currentList + entry
+            entryList.append(currentList)
+            currentList = ""
+
+
+    else:
+        # entries = [file_string]
+        entryList.append(file_string)
     
+    for entry in entryList:
+        try:
+            entry = json.loads(entry)
+        except json.decoder.JSONDecodeError as err:
+            print(f"Invalid JSON: {err}") # in case json is invalid
+            raise TypeError("The supplied file did not pass validation. "
+                + "JSON on one or more lines is invalid.")
+
+
+    # First, validate all entries:
+    # NOTE: Requiring all of the following fields failed on real-world cowrie
+    #   output. The less strict key requirement below is max that passes.
+    # required_keys = ["eventid","timestamp","session","src_port","message",
+    #     "system","isError","src_ip","dst_port","dst_ip","sensor"]
+    
+    cowrie_required_keys = [
+        ["eventid","timestamp","session","message",
+            "src_ip","sensor"],
+        ["timestamp","message","system","height","src_ip","width",
+            "isError","session","sensor"],
+        ["username","timestamp","message","system","isError","src_ip",
+            "session","password","sensor"],
+        ["timestamp","message","system","isError","src_ip","duration",
+            "session","sensor"],
+        ["timestamp","sensor","system","isError","src_ip","session","dst_port",
+            "dst_ip","data","message"],
+        ["src_ip","session","shasum","url","timestamp","outfile","sensor",
+            "message"],
+        ["username","timestamp","message","system","isError","src_ip","session",
+            "password","sensor"],
+        ["macCS","timestamp","session","kexAlgs","keyAlgs","message","system",
+            "isError","src_ip","version","compCS","sensor","encCS"],
+        ["username","timestamp","message","fingerprint","system",
+            "isError","src_ip","session","input","sensor"],
+        ["timestamp","message","ttylog","system","isError","src_ip","session","sensor"],
+        ["timestamp","sessions","message","src_port","system","isError",
+            "src_ip","dst_port","dst_ip","sensor"],
+        ["timestamp","session","src_port","message","system","isError","src_ip",
+            "dst_port","dst_ip","sensor"],
+        ["timestamp","message","ttylog","system","src_ip","session","duration",
+            "sensor","isError","size"],
+        ["timestamp","message","system","isError","src_ip","session","input","sensor"]
+    ]
+    
+    # Can also just put all required keys for phishtank
+    # above, and just has to pass the number of cases that is 
+    # the same as the length of how many JSON objects
+    # So if data has only one JSON object it only has to pass one case
+
+    # phishtank_required_keys = [
+    # ]
+
+    all_pass_count = 0
+    # have to change below to work with Phishtank
+    # if type == "cowrie":
+    for required_keys in cowrie_required_keys:      
+        
+        # One case has to pass
+        if all_pass_count > 0:
+            break
+
+        for entry in entryList:
+            # If dictionary has all required keys, file is good
+            if dictionary_validator(entry,required_keys):
+                all_pass_count = all_pass_count + 1
+                # break
+        
+    
+    # If no cases pass, throw error
+    if all_pass_count < len(entryList):
+        raise TypeError("The supplied file did not pass validation. "
+                + " Ensure that the contents match a supported CYBEX-P schema.") 
+    else:
+        print ("VALIDATION PASS")
+ 
+
+
+    # If all entries are valid, then submit all entries individually...
+        
     # Code to retrieve user orgid will go below
-    # populate rest of data fields that don't come
-    # from user input:
-    data["orgid"] = get_orgid(user)
+    # populate rest of data fields that don't come from user input:
+    data.pop('file', None) # take file key out of data dict
+    # data["orgid"] = 'test_org' # Now passed in by user
     data["typetag"] = 'test_json'
     data["name"] = 'frontend_input'
+    for entry in entryList:
+        files = {'file': bytes(entry, 'utf-8')}
+        url = "https://cybex-api.cse.unr.edu:5000/raw"
+        user_token = user.profile.cybex_token
+        headers = {"Authorization": 'Bearer ' + user_token}
+        with requests.post(url, files=files,
+                    headers=headers, data=data) as r:
+            print(r.text)
+            if r.status_code >= 400:
+                print((
+                    f"error posting. "
+                    f"status_code = '{r.status_code}', "
+                    f"API response = '{r.content.decode()}'"))
+                raise Exception
 
-    url = "https://cybex-api.cse.unr.edu:5000/raw"
-    user_token = user.profile.cybex_token
-    headers = {"Authorization": user_token}
-    with requests.post(url, files=files,
-                 headers=headers, data=data) as r:
-        print(r.text)
-        if r.status_code >= 400:
-            print((
-                f"error posting. "
-                f"status_code = '{r.status_code}', "
-                f"API response = '{r.content.decode()}'"))
-            raise Exception
+            r.close()
+            return 1
 
-        r.close() # redundant?
-        return 1
+def check_key(key,dictionary):
+    """Returns whether key is in dictionary"""
+    if key not in dictionary:
+        print(key + " not found in dictionary")
+        return False
+    else:
+        return True
+
+def dictionary_validator(dictionary,required_keys):
+    """Returns whether dictionary has all required keys"""
+    # The following only passes the file if in strict cowrie format
+    for key in required_keys:
+        if not check_key(key, dictionary):
+            return False
+    return True

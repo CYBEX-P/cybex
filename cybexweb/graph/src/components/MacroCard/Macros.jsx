@@ -7,8 +7,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle, faPlayCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 
 // Macros represents the container that holds all of the possible
-export const Macros = ({ setLoading, setNeo4jData, dispatchModal, setMacroDetails }) => {
+export const Macros = ({ setLoading, setNeo4jData, dispatchModal, setMacroDetails, fromDate, toDate, timezone }) => {
 
+  console.log("fromDate: ");
+  console.log(fromDate);
   // Arrays of possible macros (including subroutines and other sub-types)
   const subroutines = ['Enrich IPs', 'Deconstruct URLs', 'Resolve Domains', 'Resolve Hosts', 'Deconstruct Emails'];
   const macros = ['Standard Lookups', 'CYBEX-P Analysis'];
@@ -97,7 +99,12 @@ export const Macros = ({ setLoading, setNeo4jData, dispatchModal, setMacroDetail
     }
     else {
       setLoading("Querying related IOCs...");
-      axios.get(`/api/v1/macroCybex/related`).then(() => {
+      console.log(timezone)
+      if (timezone == ''){
+        // Default to user's (clientside) local timezone string if not selected
+        timezone = Intl.DateTimeFormat().resolvedOptions().timeZone.replace("/","-");
+      }
+      axios.get(`/api/v1/macroCybex/related/${fromDate}/${toDate}/${timezone}`).then(() => {
         axios
           .get('/api/v1/neo4j/export')
           .then(({ data }) => {
@@ -105,7 +112,7 @@ export const Macros = ({ setLoading, setNeo4jData, dispatchModal, setMacroDetail
             // setLoading(false);
             setLoading("Querying threat data for all IOCs...");
             axios
-              .get('/api/v1/macroCybex/count')
+              .get(`/api/v1/macroCybex/count/${fromDate}/${toDate}/${timezone}`)
               .then(() => {
                 axios
                   .get('/api/v1/neo4j/export')

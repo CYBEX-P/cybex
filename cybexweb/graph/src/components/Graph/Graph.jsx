@@ -26,7 +26,7 @@ function InitializeGraph(data) {
     height: '99vh',
     nodes: {
       shape: 'circularImage',
-      image: '/static/SVG/DataAnalytics/svg_other.svg',
+      image: '/static/SVG/DataAnalytics/svg_other.svg', //default IOC image
       borderWidth: 4,
       color: 'rgba(151,194,252,1)',
       widthConstraint: 100,
@@ -56,7 +56,7 @@ function InitializeGraph(data) {
 // Helper function to truncate strings (used for tooltips)
 const truncate = (input,numChar) => input.length > numChar ? `${input.substring(0, numChar)}...` : input;
 
-const Graph = ({ isLoading, setFromDate, setToDate, setTimezone }) => {
+const Graph = ({ isLoading, setFromDate, setToDate, setTimezone, fromDate, toDate, timezone }) => {
   const { setLoading } = useContext(MenuContext);
   const { neo4jData, setNeo4jData, config } = useContext(NetworkContext);
 
@@ -413,7 +413,7 @@ const Graph = ({ isLoading, setFromDate, setToDate, setTimezone }) => {
 
 
   // HOC that returns the radial menu to use
-  const RadialToRender = withNodeType(RadialMenu, selectedNodeType, setNeo4jData, config);
+  const RadialToRender = withNodeType(RadialMenu, selectedNodeType, setNeo4jData, config, fromDate, toDate, timezone);
 
 
   return (

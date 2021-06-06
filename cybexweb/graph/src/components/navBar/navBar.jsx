@@ -8,12 +8,14 @@ import Trends from '../modal/Trends';
 import AdminPage from '../modal/AdminPage';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartBar, faProjectDiagram, faUsersCog } from '@fortawesome/free-solid-svg-icons';
+import { faChartBar, faFileUpload, faProjectDiagram, faUsersCog } from '@fortawesome/free-solid-svg-icons';
 
 const NavBar = (props) => {
   const { isExpanded, dispatchExpand } = useContext(MenuContext);
   
   const [trendState,setTrendState] = useState(false);
+  
+  const [IPs, setIPs] = useState([]);
 
   // States for admin page
   const [adminPageState, setAdminPageState] = useState(false);
@@ -58,12 +60,19 @@ const NavBar = (props) => {
 			setCurrentUser(user);
 		}
 	}, [props.userProfile])
+  
+  // This should update IPs everytime props.ipData
+	// is changed from MainApp.jsx
+	useEffect(() => {
+		setIPs(props.ipData);
+	}, [props.ipData]);
+
 
   return (
     <>
       <NavBarStyle>
         <div style={{marginLeft: "1%"}}> 
-          <NewDropdown permissions={props.permissions} dispatchExpand={dispatchExpand} isSignedIn={props.isSignedIn} dispatchModal={props.dispatchModal}/>
+          <NewDropdown permissions={props.permissions} dispatchExpand={dispatchExpand} dispatchModal={props.dispatchModal}/>
           <div style={{position: "absolute", left: "8%", top: "5px"}}>
             <div>Beta Version 0.9.0</div>
             <div>Build 2021-05-12</div>
@@ -74,82 +83,89 @@ const NavBar = (props) => {
           <h3 style ={{display: "inline-block", color: "#58a5f0"}}>CYBEX-P</h3>
           <h6 style ={{display: "inline-block"}}>&nbsp;&nbsp;Threat Intelligence</h6>
         </a>
-        {/*<UnstyledButton onClick={() => {}}>
-          <a style={{ flexGrow: 2, textAlign: 'center', color: '#e3e3e3' }} href="/login">
-            <FontAwesomeIcon size="lg" icon="user" color="#e0e0e0" />
-          </a>
-      </UnstyledButton>*/}
 		
-			{/* Admin Page */}
-			{(!adminPageState && userAdminStatus && (props.userProfile != null)) && (
-				<button
-					style={{
-						float:"right",
-						marginRight:"1%",
-						borderRadius:"4px",
-						borderColor:"#6c757d",
-						backgroundColor:"#6c757d",
-						color:"white",
-						padding:"7px 18px"
-					}}
-					onClick={() => setAdminPageState(true)}
-				>
-				<FontAwesomeIcon size="lg" icon={faUsersCog}/>
-			</button>
-			)}
+        {/* Admin Panel */}
+        {(!adminPageState && userAdminStatus && (props.userProfile != null)) && (
+          <button
+            style={{
+              float:"right",
+              marginRight:"1%",
+              borderRadius:"4px",
+              borderColor:"#6c757d",
+              backgroundColor:"#6c757d",
+              color:"white",
+              padding:"7px 14px"
+            }}
+            onClick={() => setAdminPageState(true)}
+          >
+          <FontAwesomeIcon size="lg" icon={faUsersCog}/>
+        </button>
+        )}
+        {(adminPageState && userAdminStatus && (props.userProfile != null)) && (
+          <button
+            style={{
+              float:"right",
+              marginRight:"1%",
+              borderRadius:"4px",
+              borderColor:"#6c757d",
+              backgroundColor:"#6c757d",
+              color:"white",
+              padding:"7px 14px"
+            }}
+            onClick={() => setAdminPageState(false)}
+          >
+          <FontAwesomeIcon size="lg" icon={faUsersCog}/>
+        </button>
+        )}
 
-
-			{(adminPageState && userAdminStatus && (props.userProfile != null)) && (
-				<button
-					style={{
-						float:"right",
-						marginRight:"1%",
-						borderRadius:"4px",
-						borderColor:"#6c757d",
-						backgroundColor:"#6c757d",
-						color:"white",
-						padding:"7px 18px"
-					}}
-					onClick={() => setAdminPageState(false)}
-				>
-				<FontAwesomeIcon size="lg" icon={faUsersCog}/>
-			</button>
-			)}
-
-			
-      {!trendState && (
-        <button 
-          style={{
-            float:"right", 
-            marginRight:"1%",
-            borderRadius:"4px",
-            borderColor:"#6c757d",
-            backgroundColor:"#6c757d", 
-            color:"white", 
-            padding:"7px 18px"
-          }}
-          onClick={() => setTrendState(true)}
-        >
-        <FontAwesomeIcon size="lg" icon={faChartBar}/>
-      </button>
-      )}
-      {trendState && (
-        <button 
-          style={{
-            float:"right", 
-            marginRight:"1%",
-            borderRadius:"4px",
-            borderColor:"#6c757d",
-            backgroundColor:"#6c757d", 
-            color:"white", 
-            padding:"7px 15px"
-          }}
-          onClick={() => setTrendState(false)}
-        >
-        <FontAwesomeIcon size="lg" icon={faProjectDiagram}/>
-      </button>
-      )}
+        {/* Data Submission Panel */}
+        <button
+            style={{
+              float:"right",
+              marginRight:"1%",
+              borderRadius:"4px",
+              borderColor:"#6c757d",
+              backgroundColor:"#6c757d",
+              color:"white",
+              padding:"7px 18px"
+            }}
+            onClick={() => props.dispatchModal('Submit Event Data')}
+          >
+          <FontAwesomeIcon size="lg" icon={faFileUpload}/>
+        </button>
       
+        {!trendState && (
+          <button 
+            style={{
+              float:"right", 
+              marginRight:"1%",
+              borderRadius:"4px",
+              borderColor:"#6c757d",
+              backgroundColor:"#6c757d", 
+              color:"white", 
+              padding:"7px 18px"
+            }}
+            onClick={() => setTrendState(true)}
+          >
+          <FontAwesomeIcon size="lg" icon={faChartBar}/>
+        </button>
+        )}
+        {trendState && (
+          <button 
+            style={{
+              float:"right", 
+              marginRight:"1%",
+              borderRadius:"4px",
+              borderColor:"#6c757d",
+              backgroundColor:"#6c757d", 
+              color:"white", 
+              padding:"7px 15px"
+            }}
+            onClick={() => setTrendState(false)}
+          >
+          <FontAwesomeIcon size="lg" icon={faProjectDiagram}/>
+        </button>
+        )}
       </NavBarStyle>
       {isExpanded === 'top' && (
         <div
@@ -172,7 +188,7 @@ const NavBar = (props) => {
 
 
       {trendState && (
-        <Trends title = "Trends"/>
+        <Trends title = "Trends" IPs={IPs}/>
       )}
 
     </>

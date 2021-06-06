@@ -1,3 +1,4 @@
+"""Module containing functions for adding whois information to the graph."""
 import os
 import json
 from py2neo import Graph, Node, Relationship
@@ -8,7 +9,7 @@ from django.conf import settings
 # Need to convert this to use django.settings to retrieve key from env
 
 def whois(data):
-
+    """Returns whois information for given domain as JSON."""
     try:
         from urllib.request import urlopen
     except ImportError:
@@ -27,7 +28,8 @@ def whois(data):
 
 
 def insertWhois(data, graph, value):
-    print(str(data))
+    """Inserts whois organization info into graph for given domain/host."""
+    #print(str(data))
     if(data != 0):
         try:
             c = Node("Whois", data=data["WhoisRecord"]

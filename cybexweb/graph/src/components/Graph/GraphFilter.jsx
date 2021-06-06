@@ -4,6 +4,7 @@ import { faFilter, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import TimezoneSelect from 'react-timezone-select';
 import DatePicker from 'react-datepicker';
+import moment from 'moment';
 
 
 const GraphFilter = (props) => {
@@ -16,6 +17,11 @@ const GraphFilter = (props) => {
 
 	const [toDate, setToDate] = useState(new Date());
 	const [fromDate, setFromDate] = useState(previousDate);
+	// Also set upstream states passed in as props. This is 
+	// So that MainApp.jsx can use these formatted dates in
+	// CYBEX queries
+	props.setToDate(moment(toDate).format('YYYY-MM-DD hh:mma'));
+	props.setFromDate(moment(fromDate).format('YYYY-MM-DD hh:mma'));
 	
 	const displayDatePickerFrom = () => {
 		return <div>
@@ -26,7 +32,7 @@ const GraphFilter = (props) => {
 					showMonthDropdown
 					showYearDropdown
 					dropdownMode="select"
-					placeholderText="Click to select a date"/>
+					placeholderText="Click to select a date"/>				
 		</div>
 	}
 	const displayDatePickerTo = () => {
@@ -56,20 +62,22 @@ const GraphFilter = (props) => {
 
 	
 	const setFromDateHelper = (date) => {
+		console.log(date);
 		setFromDate(date);
-		props.setFromDate(date);
+		props.setFromDate(moment(date).format('YYYY-MM-DD hh:mma'));
 	}
 
 	const setToDateHelper = (date) => {
+		//date = moment(date).format('yyyy/MM/dd hh:mma');
 		setToDate(date);
-		props.setToDate(date);
+		props.setToDate(moment(date).format('YYYY-MM-DD hh:mma'));
 	}
 
 	const setTimezoneHelper = (e) => {
 		// e is the timezone object (used to display the same timezone if user exits filter button)
 		setSelectedTimezone(e);
-		// gives the labal of the timezone back to the Graph.jsx page
-		props.setTimezone(e.label);
+		// gives url-freindly value of the timezone back to the Graph.jsx page
+		props.setTimezone(e.value.replace("/","-"));
 	}
 
 	

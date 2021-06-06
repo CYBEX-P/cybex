@@ -32,6 +32,9 @@ const App = props => {
 	const [toDate, setToDate] = useState('');
 	const [timezone, setTimezone] = useState('');
 	
+
+	const [ipData, setIPData] = useState([]);
+	
 	const [isLoading, setLoading] = useState(false);
 
   const [isExpanded, dispatchExpand] = useReducer((_, action) => {
@@ -71,6 +74,7 @@ const App = props => {
 
       // retrieve current user's information on render:
       let user_info = {};
+
       //const params_info = {'info_to_return': 'basic_info'};
       axios.get('/api/v1/user_management/currentUserInfo/basic_info').then(({ data }) => {
         user_info.email_addr = data.result.data.email_addr;
@@ -79,18 +83,62 @@ const App = props => {
         axios.get('/api/v1/user_management/currentUserInfo/user_of').then(({ data }) => {
           // retrieve the orgs the current user belongs to:
           let org_string = "No orgs found for this user."
+					// holds all orgs name and hash
+					let allOrgs = []
           if (Array.isArray(data.result) && data.result.length) {
             // make sure data.result exists, is an array, and is nonempty
             org_string = ''
-            data.result.forEach(org => org_string += org.data.orgname + ', ')
-          }
+						data.result.forEach(org => org_string += org.data.orgname + ', ')
+
+            data.result.forEach(org => {
+							let orgObj = {}
+							orgObj.org_name = org.data.orgname[0]; 
+							orgObj.org_hash = org._hash;
+							allOrgs.push(orgObj);
+						})
+					
           user_info.orgs = org_string;
+					user_info.orgInfo = allOrgs;
+          }
+					// console.log(user_info);
           setUserProfile(user_info);
+
         });
       });
     }
 
   }, []);
+
+	const getOrgOptions = () => {
+		let orgOptions = []
+		userProfile.orgInfo.map(org => {
+			orgOptions.push({ value: org.org_hash, label: org.org_name })
+		});
+		return orgOptions;
+	}
+	
+	// Getting IP data from neo4jData
+	useEffect(() => {
+		if (Object.keys(neo4jData).length > 0) {
+			// Getting the nodes from neo4jData
+			const IPNodes = (neo4jData["Neo4j"]["0"]["0"]["nodes"])
+			// Getting only the nodes with the property type of "IP"
+			const IPObj = (IPNodes.filter(x => x.properties.type === "IP"))
+			// Storing all IPs in a list
+			const allIPs = []
+
+			// Iterating through each node to grab the IP from "data"
+			for (var key in IPObj) {
+				var obj = IPObj[key];
+				for (var prop in obj) {
+					if (prop === "properties") {
+						allIPs.push(obj[prop]["data"]);
+					}
+				}
+			}
+			setIPData(allIPs);
+		}
+	}, [neo4jData])
 
   return (
     <MenuContext.Provider value={{ isExpanded, dispatchExpand, setLoading }}>
@@ -123,7 +171,7 @@ const App = props => {
           </GraphModal> */}
           <GraphModal title="Submit Event Data" contentLabel="Submit Event Data" afterCloseFn={() => setUploadedFile(null)}>
             <Formik
-              initialValues={{ file: null, timezone: '' }}
+              initialValues={{ file: null, timezone: '', orgid: '' }}
               validationSchema={Yup.object({
                 file: Yup.mixed()
                   // .max(15, 'Must be 15 characters or less')
@@ -131,20 +179,26 @@ const App = props => {
                 timezone: Yup.string()
                   // .max(20, 'Must be 20 characters or less')
                   .required('Required'),
+                orgid: Yup.string()
+                .required('Required'),
               })}
               onSubmit={(values, { setSubmitting }) => {
                 setTimeout(() => {
                   let formData = new FormData();
                   formData.append('timezone', values.timezone);
                   formData.append('file', values.file);
+                  formData.append('orgid', values.orgid);
                   axios.post('/api/v1/dataEntry', formData, {
                     headers: {
                       'Content-Type': 'multipart/form-data'
                     }
-                  }).then(({ response }) => {
+                  }).then(() => {
                     dispatchModal('none');
-                  }).catch(() => {
-                    alert('Error submitting data:\n' + JSON.stringify(values, null, 2));
+                  }).catch((error ) => {
+                    alert('Error submitting data:\n' + 
+                      JSON.stringify(values, null, 2) + "\n" + "Status Code " 
+                      +error.response.status + "\n" + 
+                      JSON.stringify(error.response.data));
                   });
                   setSubmitting(false);
                 }, 400);
@@ -250,7 +304,15 @@ const App = props => {
                         <div>{uploadedFile}</div>
                       )}
                       {!uploadedFile && (
-                        <p>Select a file to see a preview here... </p>
+                        <div>     
+                          <h4>Instructions:</h4>
+                          <p><i>Select a file to see a preview here.</i></p>
+                          <p>Supported formats currently include:</p>
+                          <ul>
+                            <li>Cowrie Log Files</li>
+                          </ul>
+                          <p>Specify the timezone from which the data was captured. Next, verify that the correct organization is selected (i.e. is the one you wish to submit from). Finally, click submit. The submitted data will be validated against the supported formats listed above. If the file passes validation, it will be processed and contributed to CYBEX-P.</p>
+                        </div>
                       )}
                                            
                     </div>
@@ -266,9 +328,22 @@ const App = props => {
                         alignItems: "center"
                       }}
                     >
-                      <div>
-                        <div>Organization ID:</div>
-                        <div>[test_org]</div>
+                      <div style={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+                        <div>Organization:</div>
+                        <div style={{ color: 'black', width: '150px', marginLeft: '10px'}}>
+													<Select
+                            // defaultValue={{ label: 'test_org', value: 'test_org' }}
+                            menuPlacement="top" 
+                            options = {getOrgOptions()}
+                            onChange={ e => {
+															console.log(e.value);
+                              formik.setFieldValue("orgid", e.value);
+                            }}
+                          />
+                          {formik.touched.orgid && formik.errors.orgid ? (
+                              <div style={{color:"red"}}>{formik.errors.orgid}</div>
+                            ) : null}
+                        </div>
                       </div>
                       <Button width="90px" type="submit">
                           Submit
@@ -341,12 +416,15 @@ const App = props => {
 
           <AppContainer>
             <ContentContainerStyle>
-              <Graph isLoading={isLoading} setFromDate={setFromDate} setToDate={setToDate} setTimezone={setTimezone} />
+              <Graph isLoading={isLoading} setFromDate={setFromDate} setToDate={setToDate} setTimezone={setTimezone} fromDate={fromDate} toDate={toDate} timezone={timezone}/>
             </ContentContainerStyle>
+
             <NavBar 
               dispatchModal={dispatchModal}
 							userProfile={userProfile}
+              ipData={ipData}
             />
+                
             {/* Below TrendsContext component should be used if we move from state to context for trends panel.
              At the moment, the trends component gets placed into the navbar, and is rendered dependent on a state within the navbar component.
             To more properly treat Trends as an independent component, context can be used in future reworking of the Trend panel logic */}
@@ -363,6 +441,9 @@ const App = props => {
                   setNeo4jData={setNeo4jData}
                   dispatchModal={dispatchModal}
                   setMacroDetails={setMacroDetails}
+                  fromDate={fromDate}
+                  toDate={toDate}
+                  timezone={timezone}
                 />
                 { macroDetails != 'none' && (
                   <div>
@@ -403,7 +484,7 @@ const App = props => {
                   paddingTop: '20px'
                 }}
               >
-                <InsertForm config={props.config} />
+                <InsertForm config={props.config} fromDate={fromDate} toDate={toDate} timezone={timezone} />
                 <Row />
                 <Row />
                 <Button width="100%" onClickFunction={() => dispatchModal('Submit Event Data')}>
@@ -473,7 +554,7 @@ const App = props => {
                         }}
                         width="100%"
                       >
-                        Wipe DB
+                        Clear Graph
                       </Button>
                     }
                   </div>

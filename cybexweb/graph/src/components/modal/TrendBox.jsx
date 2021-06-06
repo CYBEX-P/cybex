@@ -10,14 +10,26 @@ const TrendBox = (props) => {
     if (props.size == "large") {
         width = "98%";
     }
-    return (
-            <div style={{width: width}}>
-                <TrendBoxStyle>
-                    <iframe width="100%" height="100%" style={{borderRadius: "5px", border: "none"}}src={props.url}></iframe>
-                    {/* <div>{props.title}</div> */}
-                </TrendBoxStyle>
-            </div>
-    );
+		if (props.type != "IP") {
+			return (
+							<div style={{width: width}}>
+									<TrendBoxStyle>
+											<iframe width="100%" height="100%" style={{borderRadius: "5px", border: "none"}}src={props.url}></iframe>
+											{/* <div>{props.title}</div> */}
+									</TrendBoxStyle>
+							</div>
+			);
+		} else {
+			return (
+							<div style={{width: width}}>
+									<TrendBoxStyle>
+										{/* <div> {props.IPs} </div> */}
+											{/* <div>{props.title}</div> */}
+									</TrendBoxStyle>
+							</div>
+			);
+		}
+
 };
 
 export default TrendBox;
