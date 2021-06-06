@@ -13,7 +13,7 @@ def get_contents(path):
         content_map (dict): Dictionary of root, subdirectories, and files.
 
     """
-    path = 'cybexweb/static/' + path.replace(":)","/")
+    path = 'static/' + path.replace(":)","/")
     print(path)
     content_map = {
         "root": None,

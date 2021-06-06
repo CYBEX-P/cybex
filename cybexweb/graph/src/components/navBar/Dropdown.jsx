@@ -158,7 +158,7 @@ class NewDropdown extends React.Component {
                   <h5>Files:</h5>
                   {Object.keys(this.state.files).map(file => (
                     <div key={file} style={{ display: 'inline-block', margin: '10px', }}>
-                      <a href={"static/" + this.state.path + this.state.files[file]} download>{this.state.files[file]}</a>
+                      <a href={"../static/" + this.state.path + this.state.files[file]} download>{this.state.files[file]}</a>
                     </div>
                   ))}
                 </div>
