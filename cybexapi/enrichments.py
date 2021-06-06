@@ -1,13 +1,12 @@
+"""Module containing functions for performing non-cybex enrichments."""
 from py2neo import Graph, Node, Relationship
 import socket
 import dns.resolver
 from django.conf import settings
 
-# TODO
-# All these functions need documentation
-
 
 def insert_domain_and_user(emailString, graph):
+    """Inserts domain and username from given email address."""
     user, domain = emailString.split("@")
 
     c = Node("Domain", data=domain)
@@ -42,6 +41,7 @@ def insert_domain_and_user(emailString, graph):
 
 
 def insert_domain(URLString, graph):
+    """Inserts domain from given url address."""
     # Check if URL string contains '/'. Then parse accordingly.
     domain = URLString
     if ('/' in URLString):
@@ -66,6 +66,8 @@ def insert_domain(URLString, graph):
 
 
 def insert_netblock(value, graph):
+    """Inserts netblock subnet for given IP address."""
+    # TODO: Need to expand this function and ensure /16 is desired.
     netblock = str(value) + '/16'
 
     c = Node("Subnet", data=netblock)
@@ -86,6 +88,7 @@ def insert_netblock(value, graph):
 
 
 def resolveHost(node, graph):
+    """Inserts IP for given host."""
     try:
         host = socket.gethostbyname(node)
 
@@ -112,6 +115,7 @@ def resolveHost(node, graph):
 
 
 def getNameservers(data, graph, value):
+    """Inserts nameservers for given host."""
     if(data != 0):
         try:
             values = data["WhoisRecord"]["nameServers"]["hostNames"]
@@ -145,6 +149,7 @@ def getNameservers(data, graph, value):
 
 
 def getRegistrar(data, graph, value):
+    """Inserts registrar for given host."""
     if(data != 0):
         values = data["WhoisRecord"]["registrarName"]
         try:
@@ -173,6 +178,7 @@ def getRegistrar(data, graph, value):
 
 
 def getMailServer(data, graph):
+    """Inserts mailserver for given domain."""
     answers = []
     for x in dns.resolver.query(data, 'MX'):
         answers.append(x.to_text())
@@ -199,7 +205,3 @@ def getMailServer(data, graph):
             return 0
 
     return 1
-
-# if __name__ == "__main__":
-#         value = input("Enter Full URL: ")
-#         print(insert_domain(value, 1))
