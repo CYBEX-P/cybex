@@ -477,12 +477,39 @@ def send_to_cybex(data, user):
     left_count = file_string.count('{')
     right_count = file_string.count('}')
 
+    entryList = []
+
     if left_count > 1 and right_count > 1:
-        entries = file_string.splitlines()
+
+        # entries = file_string.splitlines()
+        entries = file_string
+        currentList = "" 
+
+        # Get indices of '{' and '}'
+        openIndexList = []
+        closeIndexList = []
+        
+        for index, entry in enumerate(entries):
+            if entry == '{':
+                openIndexList.append(index)
+            if entry == '}':
+                closeIndexList.append(index)
+       
+        # Grabbing all JSON information between each opening
+        # and closing brace
+        for i in range(0, len(openIndexList)):
+            for index in range(openIndexList[i], closeIndexList[i] + 1):
+                entry = entries[index]
+                currentList = currentList + entry
+            entryList.append(currentList)
+            currentList = ""
+
+
     else:
-        entries = [file_string]
-    for entry in entries:
-        #print(entry)
+        # entries = [file_string]
+        entryList.append(file_string)
+    
+    for entry in entryList:
         try:
             entry = json.loads(entry)
         except json.decoder.JSONDecodeError as err:
@@ -490,31 +517,88 @@ def send_to_cybex(data, user):
             raise TypeError("The supplied file did not pass validation. "
                 + "JSON on one or more lines is invalid.")
 
+
     # First, validate all entries:
     # NOTE: Requiring all of the following fields failed on real-world cowrie
     #   output. The less strict key requirement below is max that passes.
     # required_keys = ["eventid","timestamp","session","src_port","message",
     #     "system","isError","src_ip","dst_port","dst_ip","sensor"]
-    required_keys = ["eventid","timestamp","session","message",
-        "src_ip","sensor"]
-    for entry in entries:
-        if not dictionary_validator(entry,required_keys):
-            raise TypeError("The supplied file did not pass validation. "
+    
+    cowrie_required_keys = [
+        ["eventid","timestamp","session","message",
+            "src_ip","sensor"],
+        ["timestamp","message","system","height","src_ip","width",
+            "isError","session","sensor"],
+        ["username","timestamp","message","system","isError","src_ip",
+            "session","password","sensor"],
+        ["timestamp","message","system","isError","src_ip","duration",
+            "session","sensor"],
+        ["timestamp","sensor","system","isError","src_ip","session","dst_port",
+            "dst_ip","data","message"],
+        ["src_ip","session","shasum","url","timestamp","outfile","sensor",
+            "message"],
+        ["username","timestamp","message","system","isError","src_ip","session",
+            "password","sensor"],
+        ["macCS","timestamp","session","kexAlgs","keyAlgs","message","system",
+            "isError","src_ip","version","compCS","sensor","encCS"],
+        ["username","timestamp","message","fingerprint","system",
+            "isError","src_ip","session","input","sensor"],
+        ["timestamp","message","ttylog","system","isError","src_ip","session","sensor"],
+        ["timestamp","sessions","message","src_port","system","isError",
+            "src_ip","dst_port","dst_ip","sensor"],
+        ["timestamp","session","src_port","message","system","isError","src_ip",
+            "dst_port","dst_ip","sensor"],
+        ["timestamp","message","ttylog","system","src_ip","session","duration",
+            "sensor","isError","size"],
+        ["timestamp","message","system","isError","src_ip","session","input","sensor"]
+    ]
+    
+    # Can also just put all required keys for phishtank
+    # above, and just has to pass the number of cases that is 
+    # the same as the length of how many JSON objects
+    # So if data has only one JSON object it only has to pass one case
+
+    # phishtank_required_keys = [
+    # ]
+
+    all_pass_count = 0
+    # have to change below to work with Phishtank
+    # if type == "cowrie":
+    for required_keys in cowrie_required_keys:      
+        
+        # One case has to pass
+        if all_pass_count > 0:
+            break
+
+        for entry in entryList:
+            # If dictionary has all required keys, file is good
+            if dictionary_validator(entry,required_keys):
+                all_pass_count = all_pass_count + 1
+                # break
+        
+    
+    # If no cases pass, throw error
+    if all_pass_count < len(entryList):
+        raise TypeError("The supplied file did not pass validation. "
                 + " Ensure that the contents match a supported CYBEX-P schema.") 
+    else:
+        print ("VALIDATION PASS")
+ 
+
 
     # If all entries are valid, then submit all entries individually...
-
+        
     # Code to retrieve user orgid will go below
     # populate rest of data fields that don't come from user input:
     data.pop('file', None) # take file key out of data dict
     # data["orgid"] = 'test_org' # Now passed in by user
     data["typetag"] = 'test_json'
     data["name"] = 'frontend_input'
-    for entry in entries:
+    for entry in entryList:
         files = {'file': bytes(entry, 'utf-8')}
         url = "https://cybex-api.cse.unr.edu:5000/raw"
         user_token = user.profile.cybex_token
-        headers = {"Authorization": user_token}
+        headers = {"Authorization": 'Bearer ' + user_token}
         with requests.post(url, files=files,
                     headers=headers, data=data) as r:
             print(r.text)

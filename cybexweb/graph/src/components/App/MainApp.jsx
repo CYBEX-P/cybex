@@ -74,6 +74,7 @@ const App = props => {
 
       // retrieve current user's information on render:
       let user_info = {};
+
       //const params_info = {'info_to_return': 'basic_info'};
       axios.get('/api/v1/user_management/currentUserInfo/basic_info').then(({ data }) => {
         user_info.email_addr = data.result.data.email_addr;
@@ -82,19 +83,40 @@ const App = props => {
         axios.get('/api/v1/user_management/currentUserInfo/user_of').then(({ data }) => {
           // retrieve the orgs the current user belongs to:
           let org_string = "No orgs found for this user."
+					// holds all orgs name and hash
+					let allOrgs = []
           if (Array.isArray(data.result) && data.result.length) {
             // make sure data.result exists, is an array, and is nonempty
             org_string = ''
-            data.result.forEach(org => org_string += org.data.orgname + ', ')
-          }
+						data.result.forEach(org => org_string += org.data.orgname + ', ')
+
+            data.result.forEach(org => {
+							let orgObj = {}
+							orgObj.org_name = org.data.orgname[0]; 
+							orgObj.org_hash = org._hash;
+							allOrgs.push(orgObj);
+						})
+					
           user_info.orgs = org_string;
+					user_info.orgInfo = allOrgs;
+          }
+					// console.log(user_info);
           setUserProfile(user_info);
+
         });
       });
     }
 
   }, []);
 
+	const getOrgOptions = () => {
+		let orgOptions = []
+		userProfile.orgInfo.map(org => {
+			orgOptions.push({ value: org.org_hash, label: org.org_name })
+		});
+		return orgOptions;
+	}
+	
 	// Getting IP data from neo4jData
 	useEffect(() => {
 		if (Object.keys(neo4jData).length > 0) {
@@ -117,7 +139,6 @@ const App = props => {
 			setIPData(allIPs);
 		}
 	}, [neo4jData])
-
 
   return (
     <MenuContext.Provider value={{ isExpanded, dispatchExpand, setLoading }}>
@@ -310,14 +331,12 @@ const App = props => {
                       <div style={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
                         <div>Organization:</div>
                         <div style={{ color: 'black', width: '150px', marginLeft: '10px'}}>
-                          <Select 
+													<Select
                             // defaultValue={{ label: 'test_org', value: 'test_org' }}
                             menuPlacement="top" 
-                            options = {[
-                              { value: 'test_org', label: 'test_org' },
-                              { value: 'test_org2', label: 'test_org2' }
-                            ]}
+                            options = {getOrgOptions()}
                             onChange={ e => {
+															console.log(e.value);
                               formik.setFieldValue("orgid", e.value);
                             }}
                           />
