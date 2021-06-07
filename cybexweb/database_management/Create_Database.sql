@@ -28,7 +28,7 @@ CREATE TABLE Amsterdam
 
 -- The data for the Amsterdam table is loaded from a csv.
 
-LOAD DATA INFILE '/Users/adamcassell/VSCodeRepos/Cybex-Honeypot-Visualizer/database_management/DatabaseAmsterdam.csv'
+LOAD DATA INFILE '/srv/www/cybex/cybexweb/database_management/DatabaseAmsterdam.csv'
 INTO TABLE Amsterdam
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n';
@@ -55,7 +55,7 @@ CREATE TABLE Bangalore
 
 -- The data for the Bangalore table is loaded from a csv.
 
-LOAD DATA INFILE '/Users/adamcassell/VSCodeRepos/Cybex-Honeypot-Visualizer/database_management/DatabaseBangalore.csv'
+LOAD DATA INFILE '/srv/www/cybex/cybexweb/database_management/DatabaseBangalore.csv'
 INTO TABLE Bangalore
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n';
@@ -82,7 +82,7 @@ CREATE TABLE London
 
 -- The data for the London table is loaded from a csv.
 
-LOAD DATA INFILE '/Users/adamcassell/VSCodeRepos/Cybex-Honeypot-Visualizer/database_management/DatabaseLondon.csv'
+LOAD DATA INFILE '/srv/www/cybex/cybexweb/database_management/DatabaseLondon.csv'
 INTO TABLE London
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n';
@@ -109,7 +109,7 @@ CREATE TABLE New_York
 
 -- The data for the New_York table is loaded from a csv.
 
-LOAD DATA INFILE '/Users/adamcassell/VSCodeRepos/Cybex-Honeypot-Visualizer/database_management/DatabaseNew_York.csv'
+LOAD DATA INFILE '/srv/www/cybex/cybexweb/database_management/DatabaseNew_York.csv'
 INTO TABLE New_York
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n';
@@ -136,7 +136,7 @@ CREATE TABLE Singapore
 
 -- The data for the Singapore table is loaded from a csv.
 
-LOAD DATA INFILE '/Users/adamcassell/VSCodeRepos/Cybex-Honeypot-Visualizer/database_management/DatabaseSingapore.csv'
+LOAD DATA INFILE '/srv/www/cybex/cybexweb/database_management/DatabaseSingapore.csv'
 INTO TABLE Singapore
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n';
@@ -163,7 +163,7 @@ CREATE TABLE Toronto
 
 -- The data for the Toronto table is loaded from a csv.
 
-LOAD DATA INFILE '/Users/adamcassell/VSCodeRepos/Cybex-Honeypot-Visualizer/database_management/DatabaseToronto.csv'
+LOAD DATA INFILE '/srv/www/cybex/cybexweb/database_management/DatabaseToronto.csv'
 INTO TABLE Toronto
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n';
