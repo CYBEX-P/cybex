@@ -1,9 +1,9 @@
 openapi: 3.0.0
 servers: []
 info:
-  description: This is a list of available routes exposed from the Cybex-P backend API Module. The Cybex-P API module is the gateway between the frontend web application/input modules and the backend Archive/Analytics modules.
+  description: This is a list of available routes exposed from the Cybex-P backend API Module. The Cybex-P API module is the gateway between the frontend web application/input modules and the backend Archive/Analytics modules. Everything from backend querying and raw data posting to information on organizations and users is provided through here.
   version: "1.0.0"
-  title: Simple Inventory API
+  title: Cybex-P Backend API
   contact:
     email: you@your-company.com
   license:
@@ -32,17 +32,24 @@ paths:
         schema:
           type: string
         description: 'Identity of the backend database where the API call is being made to'
+      - in: query
+        name: 'req'
+        schema:
+          type: Cybex-P request object
+        description: 'Contains the entire query from the user on the web application. Contains query media such as the query type, the raw non-canonical data, and the redo flag.'
       responses:
         '201':
           description: 'The report request is done processing and is ready to be returned to the user.'
         '202':
           description: 'The report request has been accepted. However, the data is still currently being processed. Proceed to query again at a later time.'
         '401':
-          description: 'Unauthorized report request due to an invalid token.'
+          description: 'Unauthorized report request due to an invalid token. The JWT is revoked and/or is missing in within the authentication header. The token is not a of type "Bearer". Or the User just does not exist.'
         '400':
-          description: 'Bad request. The formatting of the query is invalid.'
+          description: 'Bad request. The formatting of the query is invalid or an exception was caught via an invalid input.'
+        '409':
+          description: 'Invalid query, the queried organization does not exist.'
         '500': 
-          description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'
+          description: 'Internal error. The server is potentially down, the database is down, or general catch-all 500 SERVER ERROR.'
   /raw:
     post:
       tags: 
@@ -56,9 +63,11 @@ paths:
         '201':
           description: 'Succesful POST request. The file(s) has been uploaded successfully.'
         '400':
-          description: 'Bad request. Inalid input, Incomplete input, or invalid raw input'
+          description: 'Bad request. Inalid input, Incomplete input, or invalid raw input data, or an invalid/missing file. Can also be an invalid organization ID. '
+        '401':
+          description: 'Privilege error. The call was made by a user who is not an admin of the associated organization they are querying for. The key of the user who made the POST might also potentially be invalid and/or missing in the authentication header.'
         '500': 
-          description: 'Internal error. The Server itself has an error or the Cacde data lake is down'
+          description: 'Internal error. The Server itself has an error or the Cache data lake is down. Otherwise, general catch-all 500 SERVER ERROR'
   /ping:
     put:
       tags:
@@ -90,7 +99,7 @@ paths:
         '500': 
           description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'
           
-  /Create/Org:
+  /create/org:
     post:
       tags:
       -  Cybex-P Resource
@@ -101,15 +110,13 @@ paths:
         '400':
           description: 'Bad request. The user who made the request is not an admin, the organization already exist, or a potential key error when trying to pull data from the request media.'
         '401':
-          description: 'Attribute error, a request was made with a request attribute that does not contain the proper priveleges or an invalid JWT token.'
+          description: 'Attribute error, a request was made with a request attribute that does not contain the proper priveleges or an invalid JWT token; the request was made by someone wwho is not a Cybex-P Administrator. Token could also be potentially revoked or missing from the header.'
         '201':
           description: 'Organization was successfully created in Cybex-P'
-        '409':
-          description: 'Response to a org that does not exist.'
         '500': 
           description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'  
 
-  /Create/User:
+  /create/user:
     post:
       tags:
       - Cybex-P Resource
@@ -192,6 +199,8 @@ paths:
           description: 'Invalid token/authentication'
         '200':
           description: 'Successful authentication, see the provided result of users of an organization provided from the endpoint'
+        '500': 
+          description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'
   /user/info/self:
     get:
       tags:
