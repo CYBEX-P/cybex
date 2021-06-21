@@ -9,14 +9,20 @@ In regards to complexity in terms of the information provided from a report, a r
 
 ```mermaid
 sequenceDiagram
+Note Left of Archive-Database: Begin data pipeline<br> here 
 Archive-Database->> Report-Cluster: Encrypted query
 Report-Cluster->> Report-Database: Report creation and storing of the report
 Report-Database->> Cybex-P-API: Pull report on demand
-Cybex-P-API->> Frontend-Server: Frontend server pulls the report data
-Frontend-Server->> Frontend-Webclient: Frontend web client pulls the report data and presents the information 
 
 ```
-
+***Part 1: Query handling and processing***
+```mermaid
+sequenceDiagram
+Note Left of Cybex-P-API: API has pulled the<br>report from the<br> report database
+Cybex-P-API->> Frontend-Server: Frontend server pulls the report data
+Frontend-Server->> Frontend-Webclient: Frontend web client pulls the report data and presents the information 
+```
+***Part 2: Sending back the report and serving it to the frontend web application.***
 # Cybex-P Report Module Repositories
 -	`report [source code]`:
 	-	setting time range of a record

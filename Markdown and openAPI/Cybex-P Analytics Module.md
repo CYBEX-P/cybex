@@ -85,6 +85,9 @@ A an example of a filter event ID will look like -
 > - `ExampleEventID:`
 	> 	- Type: Example ID
 		> 		- This part of the example is where what type of information is extracted and stored is located
+- ***common***
+	- 
+	Common is base filter module that supplies the other modules below with the filter() method. The filter method essentially handles the parsing of Tahoe data and storing the data and it's hash to the backend.
 -	***Cowrie***
 	-	
 	Cowrie is a piece of open source software that can be used in any environment to emulate a UNIX system or SSH/Telnet Proxy; under the hood of the the system, it is a honeypot for gathering malicious SSH connections. The *Cowrie filter* itself processes the SSH login information provided by the cowrie system. 	
@@ -128,17 +131,65 @@ A an example of a filter event ID will look like -
 		-	Type: File Download
 			-	Information on a download of Cybex-P session information
 
-- ***openphish***
+- ***email***
+	- 
+	The email filter takes raw email data and parses it into a Tahoe event. In Cybex-P, email data can be split into 8 different components as an email Tahoe event. However, not every piece of email contains the exact same elements so not all email records will contain all 8 components:
+	-	From attribute
+		-	contains the from email address and source's name
+	-	Sending IP
+		-	IPv4 address of the sender
+	-	Source Object
+		-	Source object is container of Cybex-P object data that contains the IPv4 address, the source's name, and the email address of a piece of email data. If any one of the 3 components is missing, a source object will not be created.
+	-	Reply-to
+		-	reply-to is a component that contains the replay-to address. If found, it is stored into Cybex-P as both an email address attribute and reply-to object
+		> -	art = Attribute('email_addr', art)
+				art = Object('reply_to', art)
+	-	To attribute
+		-	2 attributes that hold the name and email address of the email address that the email data was sent to
+	-	destination object
+		-	Like the source object, it is another Cybex-P object element that contains both the name and email address attributes of the *To attributes
+	-	subject attribute
+		-	Cybex-P Attribute of the emails subject
+	-	Body
+		-	Cybex-P Attribute of the emails body
+
+All the previous acquired data is then stored in the backend one last time, congregated together, as a piece of Cybex-P event data. 
+
+A raw hash of the event data is then returned. 
+
+
+- ***openphish_feed***
 	- 
 	The openphish filter deals with phishing intelligence and the identification any phishing URLs. It is derived from the openphish platform, a fully automated self-contained platform meant for large-scale phishing URL identification. The openphish filter has a single event ID:
 		
 	- `OpenPhish_Community`:
 		- Type: Sighting
 			-  Data that is passed through the openphish filter is compared to recent or previous URLs provided from the openphish platform. Whether a correlation is found or not, the the data gets updated and stored to help the malicious scoring system to judge the source.
-- ***phishtank***
+- ***phishtank_feed***
 	- 
 	 phishtank is another phishing intelligence platform that helps to provide the latest information on any URLs identified as phishing links. Unlike openphish, the phishtank platform is a collaborative community-based platform in which a large majority of phishing identification is done by the open community. Just like openphish, the phishtank filter pulls the information from the platform and is correlated against raw threat data.
 	
 	- `filt_phishtank`:
 		- Type: phishtank-url
 			-  Data that shows similar findings from the phishtank database are translated into Tahoe objects an stored in the backend.
+
+
+- ***sighting***
+	- 
+	sightings is a filter that functions as method to catching cowrie honeypot data and parsing it into Tahoe events.  When honey pot data is is ran through the sightings filter, the pieces of data in the event are categorized into one of two filters:
+		-	*malicious*
+		-	*benign*
+	All pieces of cowrie honeypot data are then parsed into a Tahoe event and that event gets assigned to a particular category. The Tahoe event's reference hash is then generated and returned.
+
+# Miscellaneous 
+- 	Config repository
+	- JSON format configurations of other module identities and the backend databases
+		- api
+		- cache
+		- report
+		- identity
+		- tahoe
+		- archive
+		- analytics
+- test/filters repository
+	- Various files of unfiltered data accompanied with python files to test out the filters

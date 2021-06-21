@@ -1,5 +1,5 @@
 ﻿# Cybex-P Input Module
-The `Cybex-P Input Module` is reponsible for the collection of threat data provided from user input and to populate it into the `Cybex-P API Module`. The Input module is located Inside the collector servers and in between the The frontend client and `Cybex-P API Module`.  Users can manually post threat data through the frontend web client or let handling be done automatically via the connector server to the collector.
+The `Cybex-P Input Module` is reponsible for the collection of threat data provided from user input and to populate it into the `Cybex-P API Module`. The Input module is located Inside the collector server and in between the frontend client and `Cybex-P API Module`.  Users can manually post threat data through the frontend web client or let handling be done automatically via the connector server to the collector.
 
 Examples of automatic data collection include:
 > - Calling an API
@@ -15,21 +15,29 @@ graph TD
 A[Automatically Collected Data] --> E((Connector Server)) --> F((Collector Server)) --> D 
 B[User webapp Inputted Data] --> G((Frontend Server))
 G --> D[Cybex-P API Module]
+H[Cache Data Lake]
+
+D --> H
+I[...]
+H --Data Continues further--> I
 
 ```
-# Cybex-P Input Repositories
+# Cybex-P Input Repository
 
-The `Cybex-P Input Module`   is a python websocket-based module that is compromised of multiple ***plugins*** for the handling of threat data and any other input. Plugins are their own seperate add-ons that are utilized by the two modules below: 
+The `Cybex-P Input Module`handles all kinds of data incoming to CYBEX-P. Users can manually upload threat data via a web client or automatically send machine data via a connector to the collector.
 
-- `PluginHandler`
-	-  Setting API url, Token authentication, backend identity configurations, plugin execution
-- `PluginManager`
-	- Socket Management, configuration status, 
-- `input`
-	- System Input call and execution
-	- running and executing config, API configuration, plugin configurations
+The module is compromised of multiple ***plugins*** to handle inputs. Plugins are their own seperate add-ons and each plugin handles one type of source (e.g. Cowrie honeypot). 
 
-Of the current the current six plugins that are present in the respository, four of the plugins are open source threat intelligence platforms while the other two plugins are entities that are fully native to the `Cybex-P Input Module`. The  ***plugins*** themselves are comprosed of the following services:
+Files:
+
+- `input.py`
+	-  This is the main file to start, stop or restart the input module. This file passes the start/stop/restart command to `run.py` and exits itself.
+- `run.py`
+	- This script keeps continuously running in the background. The `input.py` file starts this script as a process/fork and exits. The `run.py` creates an websocket and saves that info in the runningconfig file in the working directory. It also as functions to start/stop/restart specific plugins or inputs. 
+- `runningconfig`
+	- A text file created by `run.py` and deleted during normal exit. This file contains the host, port of the websocket used by `input.py`  to pass commands to `run.py`  (IPC). 
+
+There are currently six pluginsin the input module; four of the plugins are open source threat intelligence platforms while the other two plugins are entities that are fully native to the `Cybex-P Input Module`. The  ***plugins*** themselves are comprosed of the following services:
 - `common`
 	- Cybex Source Fetching, Exponential backoff, Cybex Sources. Common plugin module used by the other modules
 - `misp_api`
@@ -39,7 +47,7 @@ Of the current the current six plugins that are present in the respository, four
 - `openphish`
 	- phishing intelligence platform
 - `phishtank`
-	- phishing intelligence platform
+	- Gets phishing URLs from phishtank.com.
 - `websocket`
 	- Lomond websocket plugin
 
@@ -75,5 +83,20 @@ A[Threat data] --> G((websocket:<br> Cybex-P General <br>websocket)) --> H[Cybex
 	- like openphish, phishtank is another phishing intelligence platform that offers a community-based phish verification system and users get to vote if the URL should be flagged as a phish. like openphish, phishtank calls are consistently made and data is returned, compressed, in either .bz2 or .gz extension. The data then gets decompressed and comes out in the form a list of records from phishtank. All provided records get posted to the `Cybex-P API Module`.
 - `websocket`
 	- the websocket plugin is a general purpose plugin with no specific specification directly attached to it. This plugin is used for all other miscellaneous forms of threat data collection. This plugin establishes a connection to the `Cybex-P API Module` using lomond websocket protocol ws. Use it to connect to the log stash socket module.  The log stash provides information on threat data.
-# Module setup and execution
-- foo
+# Miscellaneous 
+
+- PluginHandler 
+	- deals with the handling of any threads spun up
+- PluginManager
+	- takes care and maintains the sockets of the cybex-p input module
+		- Updating socket configurations
+		- Spawning configurations
+		- Restarting sockets
+		- Killing sockets
+		- Checking on the running configs
+		- Initiating and updating to new configs
+		- Running input plugins
+		- Retrieving configurations from files
+		- running the files of input plugins
+		- handling changins
+		- removing stale sockets 

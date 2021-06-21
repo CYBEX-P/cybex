@@ -1,5 +1,9 @@
 openapi: 3.0.0
-servers: []
+servers: 
+  - url: https://cybex-api.cse.unr.edu:5000
+    description: Production Server
+  
+
 info:
   description: This is a list of available routes exposed from the Cybex-P backend API Module. The Cybex-P API module is the gateway between the frontend web application/input modules and the backend Archive/Analytics modules. Everything from backend querying and raw data posting to information on organizations and users is provided through here.
   version: "1.0.0"
@@ -9,6 +13,439 @@ info:
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+components:
+  securitySchemes:
+    JWTAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: 
+  schemas:
+
+    Querydata:
+
+      title: Querydata
+
+      required:
+
+      - sub_type
+
+      - data
+
+      - from
+
+      - to
+
+      - last
+
+      - tzname
+
+      - category
+
+      - context
+
+      - return_type
+
+      - level
+
+      - page
+
+      - summary
+
+      - summary_graph
+
+      - _hash
+
+      type: object
+
+      properties:
+
+        sub_type:
+
+          type: string
+
+        data:
+
+          type: string
+
+        from:
+
+          type: string
+
+        to:
+
+          type: string
+
+        last:
+
+          type: string
+
+        tzname:
+
+          type: string
+
+          example: '"UTC"'
+
+        category:
+
+          type: string
+
+        context:
+
+          type: string
+
+        return_type:
+
+          type: boolean
+
+        level:
+
+          type: integer
+
+          format: int32
+
+        page:
+
+          type: integer
+
+          format: int32
+
+        summary:
+
+          type: boolean
+
+        summary_graph:
+
+          type: boolean
+
+        _hash:
+
+          pattern: '"^[A-Fa-f0-9]{64}$"'
+
+          type: string
+
+    Querybody:
+
+      title: Querybody
+
+      required:
+
+      - type
+
+      - redo
+
+      - data
+
+      type: object
+
+      properties:
+
+        type:
+
+          type: string
+
+          description: Query type. Valid values = {"count", "related", "threatrank"}.
+
+          xml:
+
+            attribute: true
+
+            wrapped: false
+
+          example: '"count"'
+
+        redo:
+
+          type: boolean
+
+          description: Force redo report?
+
+          xml:
+
+            attribute: true
+
+            wrapped: false
+
+          example: true
+
+        data:
+
+          $ref: '#/components/schemas/Querydata'
+
+      description: Structure for body of /query endpoint.
+
+    Queryresponse:
+
+      title: Queryresponse
+
+      required:
+
+      - itype
+
+      - sub_type
+
+      - userid
+
+      - timestamp
+
+      - current_page
+
+      - next_page
+
+      - data
+
+      - _hash
+
+      type: object
+
+      properties:
+
+        itype:
+
+          type: string
+
+        sub_type:
+
+          type: string
+
+        userid:
+
+          type: string
+
+        timestamp:
+
+          type: integer
+
+          format: int32
+
+        current_page:
+
+          type: integer
+
+          format: int32
+
+        next_page:
+
+          type: integer
+
+          format: int32
+
+        data:
+
+          type: object
+
+        _hash:
+
+          type: string
+
+      description: Query response
+
+    TDQLAPI:
+
+      title: TDQLAPI
+
+      required:
+
+      - type
+
+      - data
+
+      type: object
+
+      properties:
+
+        type:
+
+          $ref: '#/components/schemas/Type'
+
+        redo:
+
+          type: boolean
+
+        data:
+
+          $ref: '#/components/schemas/Data'
+
+      description: TDQL format for CYBEX-P API.
+
+    Type:
+
+      title: Type
+
+      enum:
+
+      - count
+
+      - related
+
+      - threatrank
+
+      type: string
+
+    Data:
+
+      title: Data
+
+      type: object
+
+      properties:
+
+        sub_type:
+
+          $ref: '#/components/schemas/SubType'
+
+        data:
+
+          type: string
+
+          nullable: true
+
+        from:
+
+          type: string
+
+        to:
+
+          type: string
+
+        last:
+
+          type: string
+
+        tzname:
+
+          type: string
+
+        category:
+
+          $ref: '#/components/schemas/Category1'
+
+        context:
+
+          $ref: '#/components/schemas/Context'
+
+        return_type:
+
+          $ref: '#/components/schemas/ReturnType'
+
+        level:
+
+          maximum: 3
+
+          minimum: 1
+
+          type: integer
+
+          format: int32
+
+        page:
+
+          minimum: 1
+
+          type: integer
+
+          format: int32
+
+        summary:
+
+          type: boolean
+
+        summary_graph:
+
+          type: boolean
+
+        _hash:
+
+          pattern: ^[A-Fa-f0-9]{64}$
+
+          type: string
+
+    SubType:
+
+      title: SubType
+
+      enum:
+
+      - asn
+
+      - body
+
+      - domain
+
+      - email_addr
+
+      - filename
+
+      - hostname
+
+      - sha256
+
+      - subject
+
+      - ip
+
+      - ipv4
+
+      - url
+
+      type: string
+
+    Category1:
+
+      title: Category1
+
+      enum:
+
+      - all
+
+      - benign
+
+      - malicious
+
+      - unknown
+
+      type: string
+
+    Context:
+
+      title: Context
+
+      enum:
+
+      - all
+
+      - benign
+
+      - malicious
+
+      - unknown
+
+      type: string
+
+    ReturnType:
+
+      title: ReturnType
+
+      enum:
+
+      - all
+
+      - attribute
+
+      - event
+
+      - object
+
+      - session
+
+      type: string
+
+  # schemas:
+  #   query_body_schema: 
+                      
+
+security:
+  - JWTAuth: []
 tags:
   - name: Cybex-P Query
     description: Operations for handling Report calls to the backend
@@ -19,25 +456,70 @@ tags:
   - name: Cybex-P Ping
     description: Pinging protocols
 paths:
+
   /query:
-    get:
+
+    post:
+
       tags:
-        - Cybex-P Query
-      summary: Makes an API report request to the backend
-      operationId: query
-      description: 'When called, a Cybex-P TDQL report request is made to the backend to check on the status of data that was provided by the user.'
-      parameters: 
-      - in: query
-        name: 'Idnt_backend'
-        schema:
-          type: string
-        description: 'Identity of the backend database where the API call is being made to'
-      - in: query
-        name: 'req'
-        schema:
-          type: Cybex-P request object
-        description: 'Contains the entire query from the user on the web application. Contains query media such as the query type, the raw non-canonical data, and the redo flag.'
+      
+      - Cybex-P Query
+
+      - User
+
+      summary: Query
+
+      operationId: Query
+
+      parameters: []
+
+      requestBody:
+
+        description: ''
+
+        content:
+
+          application/json:
+
+            schema:
+
+              $ref: '#/components/schemas/TDQLAPI'
+
+            example:
+
+              type: count
+
+              redo: true
+
+              data:
+
+                sub_type: ipv4
+
+                data: 218.92.0.198
+
+                category: all
+
+                context: malicious
+
+                from: 20 May 2010
+
+        required: true
+
       responses:
+
+        '200':
+
+          description: ''
+
+          headers: {}
+
+          content:
+
+            application/json:
+
+              schema:
+
+                $ref: '#/components/schemas/Queryresponse'
         '201':
           description: 'The report request is done processing and is ready to be returned to the user.'
         '202':
@@ -50,6 +532,48 @@ paths:
           description: 'Invalid query, the queried organization does not exist.'
         '500': 
           description: 'Internal error. The server is potentially down, the database is down, or general catch-all 500 SERVER ERROR.'
+        
+
+      deprecated: false
+  
+  # /querybefore:
+  #   post:
+  #     tags:
+  #       - Cybex-P Query
+  #     summary: Requests (sends query) a report to CYBEX-P API
+  #     operationId: query
+  #     description: 'When called, a Cybex-P TDQL query request is made to the backend to get the report or the report status.'
+  #     requestBody:
+  #       description: Optional description in *Markdown*
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/query_body_schema'
+  #     parameters: 
+  #     - in: query
+  #       name: 'Idnt_backend'
+  #       schema:
+  #         type: string
+  #       description: 'Identity of the backend database where the API call is being made to'
+  #     - in: query
+  #       name: 'req'
+  #       schema:
+  #         type: string
+  #       description: 'Contains the entire query from the user on the web application. Contains query media such as the query type, the raw non-canonical data, and the redo flag.'
+  #     responses:
+  #       '201':
+  #         description: 'The report request is done processing and is ready to be returned to the user.'
+  #       '202':
+  #         description: 'The report request has been accepted. However, the data is still currently being processed. Proceed to query again at a later time.'
+  #       '401':
+  #         description: 'Unauthorized report request due to an invalid token. The JWT is revoked and/or is missing in within the authentication header. The token is not a of type "Bearer". Or the User just does not exist.'
+  #       '400':
+  #         description: 'Bad request. The formatting of the query is invalid or an exception was caught via an invalid input.'
+  #       '409':
+  #         description: 'Invalid query, the queried organization does not exist.'
+  #       '500': 
+  #         description: 'Internal error. The server is potentially down, the database is down, or general catch-all 500 SERVER ERROR.'
   /raw:
     post:
       tags: 
@@ -69,7 +593,7 @@ paths:
         '500': 
           description: 'Internal error. The Server itself has an error or the Cache data lake is down. Otherwise, general catch-all 500 SERVER ERROR'
   /ping:
-    put:
+    get:
       tags:
         - Cybex-P Ping
       summary: Simple ping to the specified identity backend
@@ -79,25 +603,25 @@ paths:
       responses:
         '200':
           description: 'Ping to the backend was successfully made. The backend is alive and running'
-  /TestToken:
-    put:
-      tags: 
-        - Cybex-P Resource
-      summary: Token validation endpoint
-      operationId: token testing
-      parameters: 
-      - in: query
-        name: 'Idnt_backend'
-        schema:
-          type: string
-        description: 'Identity of the backend database where the API call is being made to'
-      responses:
-        '200':
-          description: 'User token is valid'
-        '401':
-          description: 'Unauthorized. The provided token is invalid'
-        '500': 
-          description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'
+  # /TestToken:
+  #   put:
+  #     tags: 
+  #       - Cybex-P Resource
+  #     summary: Token validation endpoint
+  #     operationId: token testing
+  #     parameters: 
+  #     - in: query
+  #       name: 'Idnt_backend'
+  #       schema:
+  #         type: string
+  #       description: 'Identity of the backend database where the API call is being made to'
+  #     responses:
+  #       '200':
+  #         description: 'User token is valid'
+  #       '401':
+  #         description: 'Unauthorized. The provided token is invalid'
+  #       '500': 
+  #         description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'
           
   /create/org:
     post:
@@ -213,3 +737,115 @@ paths:
           description: 'Successful authentication, see the provided result of users of an organization provided from the endpoint'
         '500': 
           description: 'Internal error. The server is potentially down, the database is down, or some other internal error.'
+        
+  # /ChangeOrgACL:
+  #   patch:
+  #     tags:
+  #     -  Cybex-P Resource
+  #     summary: foo      
+  #     responses:
+  #       '400':
+  #         description: 'foo'
+  
+        
+    
+
+#   /inventory:
+#     get:
+#       tags:
+#         - developers
+#       summary: searches inventory
+#       operationId: searchInventory
+#       description: |
+#         By passing in the appropriate options, you can search for
+#         available inventory in the system
+#       parameters:
+#         - in: query
+#           name: searchString
+#           description: pass an optional search string for looking up inventory
+#           required: false
+#           schema:
+#             type: string
+#         - in: query
+#           name: skip
+#           description: number of records to skip for pagination
+#           schema:
+#             type: integer
+#             format: int32
+#             minimum: 0
+#         - in: query
+#           name: limit
+#           description: maximum number of records to return
+#           schema:
+#             type: integer
+#             format: int32
+#             minimum: 0
+#             maximum: 50
+#       responses:
+#         '200':
+#           description: search results matching criteria
+#           content:
+#             application/json:
+#               schema:
+#                 type: array
+#                 items:
+#                   $ref: '#/components/schemas/InventoryItem'
+#         '400':
+#           description: bad input parameter
+#     post:
+#       tags:
+#         - admins
+#       summary: adds an inventory item
+#       operationId: addInventory
+#       description: Adds an item to the system
+#       responses:
+#         '201':
+#           description: item created
+#         '400':
+#           description: 'invalid input, object invalid'
+#         '409':
+#           description: an existing item already exists
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               $ref: '#/components/schemas/InventoryItem'
+#         description: Inventory item to add
+# components:
+#   schemas:
+#     InventoryItem:
+#       type: object
+#       required:
+#         - id
+#         - name
+#         - manufacturer
+#         - releaseDate
+#       properties:
+#         id:
+#           type: string
+#           format: uuid
+#           example: d290f1ee-6c54-4b01-90e6-d701748f0851
+#         name:
+#           type: string
+#           example: Widget Adapter
+#         releaseDate:
+#           type: string
+#           format: date-time
+#           example: '2016-08-29T09:12:33.001Z'
+#         manufacturer:
+#           $ref: '#/components/schemas/Manufacturer'
+#     Manufacturer:
+#       required:
+#         - name
+#       properties:
+#         name:
+#           type: string
+#           example: ACME Corporation
+#         homePage:
+#           type: string
+#           format: url
+#           example: 'https://www.acme-corp.com'
+#         phone:
+#           type: string
+#           example: 408-867-5309
+#       type: object

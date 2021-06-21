@@ -1,5 +1,4 @@
-﻿
-# Cybex-P API Module
+﻿# Cybex-P API Module
 
 The `Cybex-P API Module` is the gateway for all data that travels in and out of Cybex-P during collection and posting. Cybex-P API is combintation of two sub-modules; the *Data Input sub-module* and the *Report Publishing sub-module*. The *Data Input sub-module* deals with the parsing of posted raw data and transferring of it to the backend. The *Report Publishing sub-module* deals with the handling of report request and the returning of any available ports to the user. In addition to being the gateway to the Cybex-P services, The API module also works as another checkpoint of additional privacy preservation  in which the data gets further encrypted. 
 ```mermaid
@@ -144,3 +143,22 @@ The following are  ***deprecated*** or previous functions in the source code:
 >- ***exception_handler()*** - This decorator function is in tandem with almost all other functions and API endpoint calls in the API module. the exception handler signals on any errors such as a bad HTTP request, Invalid input, and if the backend is currently down and/or not working properly.
 > - ***early_return()*** - Utility dectorator used by other decorators as a way to early return from any function call if a decorator calls for an early return.
 > - ***get_org_object()*** - checks to see if the key `org_hash` is present within the argument `request_data`. If it fails, then a response code 400 is returned. This decorator will pull *'org_hash'* from *request_data["org_hash"]* and place the org tahoe object under *org_object*.
+
+
+
+# Miscellaneous 
+-	Public key
+	- Public key of the Cybex-P API module, used with the privacy preservation system
+- 	Config repository
+	- JSON format configurations of other module identities and the backend databases
+		- api
+		- cache
+		- report
+		- identity
+		- tahoe
+		- archive
+		- analytics
+- load_config
+	- handles the execution and updating of the API backend and module configurations
+- uwsgi
+	- service file configuration for uwsgi instance

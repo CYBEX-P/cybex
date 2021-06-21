@@ -68,3 +68,10 @@ The `parsemain` source code is a key sub-component that is utilized by `archive`
 		- ***ParseState.SUCCESS*** - a valid raw sub type was found and the data was successfully parsed into a raw TAHOE object.
 		- ***ParseState.NOT_SUPPORTED*** - an unknown typtag was supplied, therefore there was now available raw sub type.
 		- ***ParseState.ERROR*** - An error happened and was caught
+
+# Miscellaneous 
+- Private Key
+	- Private key of the cybex-p archive module
+	- TAKE STEPS TO ENSURE THAT CANNOT BE EASILY ACCESSIBLE/READ
+- cybexp-archive.service
+	- systemd service file that maintains the cybex-p archive module
