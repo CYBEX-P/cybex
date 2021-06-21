@@ -67,7 +67,7 @@ const Trends = (props) => {
 					{mapViewState && (
 
 				<TrendPanelStyle>
-						<div style={{marginLeft:"100px",textAlign: "center", fontSize: "2em", zIndex: "100000", width: "100%"}}>Honeypot Attack Visualizer
+						<div style={{marginLeft:"100px",textAlign: "center", fontSize: "2em", zIndex: "10000", width: "100%"}}>Honeypot Attack Visualizer
 								{/* Button for trends */}
 							<div style={{display: "inline"}}>
 								<button 

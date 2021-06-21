@@ -38,9 +38,10 @@ $custom-control-label-disabled-color: #6c757d;
 
 #sidebar {
   position: relative;
-  z-index: 10000;
+  z-index: 10001;
   width: min-content;
   max-width: 30vw;
+  max-height: 90vh;
   margin-left: 0;
   display: flex;
   flex-flow: column;
@@ -70,7 +71,7 @@ $custom-control-label-disabled-color: #6c757d;
   background-color: rgba(55, 59, 71, 0.75);
   height: 16vh;
   width: 2em;
-  z-index: 10000;
+  z-index: 10001;
   position: absolute;
   top: 42vh;
   right: -2em;
@@ -165,11 +166,11 @@ h2 {
 }
 
 #deckgl-overlay {
-  z-index: 10000;
+  z-index: 10001;
 }
 
 .mapboxgl-popup {
-  z-index: 10001;
+  z-index: 10002;
 }
 
 #view-default-view > div:nth-child(1) {
