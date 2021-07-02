@@ -1,3 +1,5 @@
+"""Module for connecting to Neo4j DB in docker container."""
+
 import docker
 import time
 import socket

@@ -1,3 +1,5 @@
+"""Module for defining Profile and Graph data models."""
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -18,6 +20,7 @@ class Profile(models.Model):
 # Receiver function for user creation/registration signals
 @receiver(post_save, sender=User)
 def create_user_extra(sender, instance, created, **kwargs):
+    """Adds the newly created user to the backend cybex user database."""
     if created:
         # This facilitates adding the newly created user to the backend cybex
         # user database. The following logic automates this process anytime a 

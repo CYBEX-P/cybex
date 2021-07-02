@@ -270,6 +270,13 @@
 <li><p>NOTE: The initial superuser created ins step 14 should only be used for initial application setup or for creating new accounts. This superuser should be considered a ‘CYBEX master admin’ account, which will not be used to actually use the application or access the threat-intelligence graph. Instead, this initial account can be used to access the ‘admin’ page from the CYBEX-P homepage. Here, use the Django admin panel to create new CYBEX-P users. These are treated as normal users; any users created using this interface can then access the threat intelligence graph. Users can also be granted admin privelages or have theier passwords changed using this same interface. Default, non-admin users will not be able to access this admin panel.</p></li>
 <li><p>NOTE: When first configuring and running this application in a new deployment environment, the above process should be undertaken to create at least one CYBEX-P user. Log in as that user to properly test the threat-intelligence graph.</p></li>
 </ul>
+<p>To update sphinx documentation, run ‘make html’ in main directory. Note that this is generated from the files in /source, as well as automatically inferred from docstrings throughout all Python modules.</p>
+</div>
+</div>
+<div class="section" id="high-level-architecture-deployment-config">
+<h2>High-Level Architecture &amp; Deployment Config<a class="headerlink" href="#high-level-architecture-deployment-config" title="Permalink to this headline">¶</a></h2>
+<p>The architecure &amp; deployment documentation below is excerpted from the thesis titled <em>Navigating Cyberthreat Intelligence with CYBEX-P: Dashboard Design and User Experience</em></p>
+<p><a class="reference download internal" download="" href="_downloads/2892642230dfd566a47ea09ebbf9d204/arch_deployment.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Architecture</span> <span class="pre">&amp;</span> <span class="pre">Deployment</span> <span class="pre">PDF</span></code></a></p>
 <p>Production Server Deployment:</p>
 <ol class="simple">
 <li><p>Follow the guidance here (static files are pushed to ‘/static/’):</p></li>
@@ -281,14 +288,7 @@
 <li><p>Configure nginx by setting a configuration file at /etc/nginx/conf.d/virtual.conf.d</p></li>
 </ol>
 <p>Deployment uses standard supervisor w/guncicorn approach to run Django app.
-Is run behind nginx web server as a reverse proxy.</p>
-<p>To update sphinx documentation, run ‘make html’ in main directory. Note that this is generated from the files in /source, as well as automatically inferred from docstrings throughout all Python modules.</p>
-</div>
-</div>
-<div class="section" id="high-level-architecture-deployment-config">
-<h2>High-Level Architecture &amp; Deployment Config<a class="headerlink" href="#high-level-architecture-deployment-config" title="Permalink to this headline">¶</a></h2>
-<p>The architecure &amp; deployment documentation below is excerpted from the thesis titled <em>Navigating Cyberthreat Intelligence with CYBEX-P: Dashboard Design and User Experience</em></p>
-<p><a class="reference download internal" download="" href="_downloads/2892642230dfd566a47ea09ebbf9d204/arch_deployment.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Architecture</span> <span class="pre">&amp;</span> <span class="pre">Deployment</span> <span class="pre">PDF</span></code></a></p>
+Is run behind nginx web server as a reverse proxy. See pdf above for details.</p>
 </div>
 <div class="section" id="django-backend">
 <h2>Django Backend<a class="headerlink" href="#django-backend" title="Permalink to this headline">¶</a></h2>
