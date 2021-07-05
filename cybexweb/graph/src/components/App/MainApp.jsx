@@ -1,3 +1,12 @@
+/* 
+Master component that holds the main subcomponents of the application.
+This is a very large component responsible for render the central Graph
+canvas component, navbar, all expandable menus, and all toggleable modals.
+
+A number of states are defined within this component that are relevant across
+the application.
+*/
+
 import React, { useReducer, useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -145,30 +154,9 @@ const App = props => {
       <ModalContext.Provider value={{ isShowingModal, dispatchModal, setError }}>
         <DataContext.Provider value={{ config: props.config, neo4jData, setNeo4jData }}>
           {/* Keep modals here */}
-          {/* <GraphModal title="example" contentLabel="Example Modal">
-            <div>Content will go here soon!</div>
-          </GraphModal> */}
           <GraphModal title="Neo4j Data" contentLabel="Neo4j Data">
             <div>{JSON.stringify(neo4jData)}</div>
           </GraphModal>
-          {/* Deprecated Modal */}
-          {/* <GraphModal title="Database Management" contentLabel="Database Management">
-            <div>
-              <Button
-                width="128px"
-                onClickFunction={() => {
-                  axios.get('/api/v1/neo4j/wipe').then(() => {
-                    axios.get('/api/v1/neo4j/export').then(({ data }) => {
-                      setNeo4jData(data);
-                      dispatchModal('none');
-                    });
-                  });
-                }}
-              >
-                Wipe DB
-              </Button>
-            </div>
-          </GraphModal> */}
           <GraphModal title="Submit Event Data" contentLabel="Submit Event Data" afterCloseFn={() => setUploadedFile(null)}>
             <Formik
               initialValues={{ file: null, timezone: '', orgid: '' }}
@@ -230,7 +218,6 @@ const App = props => {
                       <div>
                         <div>Upload JSON:</div>
                         <Input id="file" name="file" type="file" onChange={(event) => {
-                          //alert(JSON.stringify(event));
                           // Read file so that it can be immediately displayed to user
                           let file = event.currentTarget.files[0];
                           let reader = new FileReader();
@@ -259,32 +246,19 @@ const App = props => {
                             }}
                           >
                             <TimezoneSelect
-                              // id="timezone"
                               name="timezone"
                               onChange={ e => {
                                 setSelectedTimezone();
                                 formik.setFieldValue("timezone", e.value);
-                                //formik.handleChange();
                               }}
                               onBlur={formik.handleBlur}
                               value={formik.values.timezone}
-                              //value={selectedTimezone}
-                              // onChange={setSelectedTimezone}
-                              //{...formik.getFieldProps('timezone')}
                             />
                             {formik.touched.timezone && formik.errors.timezone ? (
                               <div style={{color:"red"}}>{formik.errors.timezone}</div>
                             ) : null}
                           </div>
                         </div>
-                        {/* <div
-                          style={{ width: '150px' }}
-                        >
-                          <div>Type:</div>
-                          <Select options={
-                            { value: 'placeholder', label: 'placeholder' }
-                          }></Select>
-                        </div> */}
                       </div>                
                     </div>
                     <div
@@ -299,7 +273,6 @@ const App = props => {
                         //width: "calc(70vw - 20px)"
                       }}
                     >
-                      {/* <p>{uploadedFile}</p> */}
                       {uploadedFile && (
                         <div>{uploadedFile}</div>
                       )}
@@ -348,15 +321,6 @@ const App = props => {
                       <Button width="90px" type="submit">
                           Submit
                       </Button>
-                      {/* <div style={{display:"flex", justifyContent:"space-between", alignItems: "flex-end", width:"280px"}}>
-                        <div>
-                          <div>Name:</div>
-                          <input></input>
-                        </div>
-                        <Button width="90px" type="submit">
-                          Submit
-                        </Button>
-                      </div> */}
                     </div>
                   </div>
                 </form>   
@@ -424,18 +388,10 @@ const App = props => {
 							userProfile={userProfile}
               ipData={ipData}
             />
-                
-            {/* Below TrendsContext component should be used if we move from state to context for trends panel.
-             At the moment, the trends component gets placed into the navbar, and is rendered dependent on a state within the navbar component.
-            To more properly treat Trends as an independent component, context can be used in future reworking of the Trend panel logic */}
-            {/* <TrendsContext.Provider value={false}>
-              <Trends title = "Trends"/>
-            </TrendsContext.Provider> */}
             <MenuBar side="left" icon="search">
               <MacroCardText>Macros</MacroCardText>
               <hr />
               <div style={{ padding: '5%' }}>
-                {/* <MacroCardText>Investigation Patterns</MacroCardText> */}
                 <Macros
                   setLoading={setLoading}
                   setNeo4jData={setNeo4jData}
@@ -513,19 +469,6 @@ const App = props => {
                   <Button width="55%" type="button" onClickFunction={() => dispatchModal('Neo4j Data')}>
                     Export JSON
                   </Button>
-                  {/* <Button
-                    type="button"
-                    onClickFunction={() => {
-                      axios.get('/api/v1/neo4j/wipe').then(() => {
-                        axios.get('/api/v1/neo4j/export').then(({ data }) => {
-                          setNeo4jData(data);
-                        });
-                      });
-                    }}
-                    width="55%"
-                  >
-                    Wipe DB
-                  </Button> */}
                 </div>
                 <div style={{ gridColumn: 2 }}>
                   <ImportJson />
@@ -533,16 +476,6 @@ const App = props => {
                 <div style={{ gridColumn: 3 }}>
                   <div style={{ width: '55%', float: 'right' }}>
                     {
-                      /* <Button
-                        width="100%"
-                        hasIcon
-                        onClickFunction={() => {
-                          dispatchModal('Database Management');
-                        }}
-                      >
-                        <FontAwesomeIcon size="lg" icon="server" />
-                        More...
-                    </Button> */
                       <Button
                         type="button"
                         onClickFunction={() => {
