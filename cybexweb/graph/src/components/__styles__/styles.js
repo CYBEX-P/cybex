@@ -148,7 +148,7 @@ const ExpandedMenuBar = styled.div`
         grid-template-rows: 50px auto;
         justify-items: center;
         display: grid;
-        height: 100%;
+        height: 25%;
         width: 100%;
         max-width: 700px;
         border-top-left-radius: 16px;
