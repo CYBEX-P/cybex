@@ -1,3 +1,7 @@
+/*
+Component used for rendering the left, right, and bottom expandable menus.
+*/
+
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

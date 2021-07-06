@@ -1,3 +1,17 @@
+/*
+CURRENTLY UNUSED COMPONENT, but included for potential future reuse.
+
+The functionality in this now-deprecated component has been largely
+replaced by the 'Submit Event Data' modal, which is a graphModal
+component defined inside the MainApp.jsx component.
+
+This deprecated component was more complex in its intended utility,
+and so some of this functionality may need to be re-implmented in the
+future. This includes the ability to encrypt submitted data, submit
+in-line data using a text box, and having submitted data be immediately
+added to the user's current graph for visualization.
+*/
+
 import React from 'react';
 import { FormGroup, Input, Label, Row, Col, Container, Form } from 'reactstrap';
 import axios from 'axios';

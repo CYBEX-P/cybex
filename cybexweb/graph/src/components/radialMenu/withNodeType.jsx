@@ -129,41 +129,12 @@ function withNodeType(RadialMenuComponent, nodeType, setNeo4jData, config, fromD
         }); 
   }
 
-  // function EnrichIPAll() {
-  //   config.enrichments.IP.map(enrichmentType => {
-  //     axios.get(`/api/v1/enrich/${enrichmentType}/${nodeType.properties.data}`).then(({ data }) => {
-  //       if (data['insert status'] !== 0) {
-  //         axios.get('/api/v1/neo4j/export').then(response => {
-  //           setNeo4jData(response.data);
-  //         });
-  //       }
-  //     });
-  //     return true;
-  //   });
-  // }
-
   let icons = [];
   let onClickFns = [];
   let titles = [];
-  // if (nodeType.label === 'IP') {
-  //   // We could probably find a way to do this by YAML instead of hardcoding it
-  //   onClickFns = config.enrichments.IP.map(enrichmentType => () => {
-  //     return EnrichIPbyType(enrichmentType);
-  //   });
-  //   // Copy arrays
-  //   titles = config.enrichments.IP.map(val => val);
-  //   titles.push('all');
-  //   icons = titles.map(val => val);
-  //   onClickFns.push(() => EnrichIPAll());
-  // }
-  // return props => {
-  //   return <RadialMenuComponent titles={titles} icons={icons} onClickFunctions={onClickFns} {...props} />;
-  // };
   
   // If the selected node is a supported enrichment type (from config.yaml), then
-  // the enrichment list is derived from there. If not supported (current example is when 
-  // when querying cybexRelated attributes), default to 'Other' type.
-  //*MODIFIED: Changed nodeType.label to nodeType.properties.type to detach radial logic from labels */
+  // the enrichment list is derived from there. If not supported, default to 'Other' type.
   var nodeLabel;
   if (config.enrichments[`${nodeType.properties.type}`] == undefined)
   {

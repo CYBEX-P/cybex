@@ -1,3 +1,18 @@
+/*
+Component that holds the threat-intelligence graph object, as well as
+supplemental graph interface elements. The main graph uses a vis.js
+network object that is mapped to the user's underlying Neo4j graph database.
+Aside from rendering the main graph, supplemental elements like IOC 
+information cards and tooltips are also defined in this component.
+These are all conditionally rendered, depending on whether graph
+elements are selected, hovered over, etc. Note that all styling is defined
+in-line within this file.
+In the future, this component should be refactored so that these additional 
+UI elements have their own components, rather than being defined within
+this file directly. Styling should likewise be moved to external files,
+like how it is structure for some of the other components in this project.
+*/
+
 import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { Network } from 'vis';

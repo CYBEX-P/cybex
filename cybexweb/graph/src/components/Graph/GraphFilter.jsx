@@ -1,3 +1,8 @@
+/*
+Component for the filter controls that directly influence what data is 
+returned from CYBEX graph queries.
+*/
+
 import React, { useState, useEffect } from 'react';
 
 import { faFilter, faTimesCircle } from '@fortawesome/free-solid-svg-icons';

@@ -1,3 +1,7 @@
+/*
+Component used to render a splash screen during loading states.
+*/
+
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SplashScreenBody } from '../__styles__/styles';

@@ -1,3 +1,7 @@
+/*
+Component that facilitates importing a graph from a JSON File
+*/
+
 import React, { useContext } from 'react';
 import axios from 'axios';
 import DataContext from '../../App/DataContext';
