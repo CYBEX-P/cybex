@@ -30,7 +30,6 @@ import InsertForm from '../forms/InsertForm/InsertForm';
 import EventInsertForm from '../EventInsertForm/EventInsertForm';
 import ImportJson from '../forms/InsertForm/ImportJson';
 import Trends from '../modal/Trends';
-import TrendsContext from './TrendsContext';
 import { Macros, MacroCardContainer, MacroCardSubContainer, MacroCardText, MacroDetailsCard} from '../MacroCard';
 
 import { Formik} from 'formik';

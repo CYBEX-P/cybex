@@ -10,7 +10,6 @@ import React, { useContext, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { faGlobeAmericas, faChartLine } from '@fortawesome/free-solid-svg-icons';
-import TrendsContext from '../App/TrendsContext';
 import TrendBox from './TrendBox';
 import { TrendPanelStyle } from '../__styles__/styles';
 import TrendRow from './TrendRow';
