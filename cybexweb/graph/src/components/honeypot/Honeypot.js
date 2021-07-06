@@ -68,7 +68,12 @@ function Honeypot() {
         }
         // Future idea: should we cache request data to reduce load on the server?
         // Currently, every filter change results in a new request, even if the data we are requesting is a subset of the data we already have
-        Axios.post('/api/attacks', {  // Make an HTTP POST request
+        Axios.post('honeypot/api/attacks', {  // Make an HTTP POST request
+            // Note that 'honeypot' is prepended to request url.
+            // This is because on our server, this server.js exposes its api at
+            // the 'honeypot' (configured with nginx) base url to differentiate it from the main 
+            // CYBEX-P django api that is also running.
+    
             // Request body, specify paramters for the backend API
             honeypots: honeypots,
             dateRange: dateRange

@@ -154,7 +154,13 @@ const ExpandedMenuBar = styled.div`
         border-top-left-radius: 16px;
         border-top-right-radius: 16px;
         grid-column: 2 / span 3;
-        grid-row: 4 / span 2;
+        position: absolute;
+        bottom: 0px;
+        margin-left: auto;
+        margin-right: auto;
+        left: 0;
+        right: 0;
+        text-align: center;
         justify-self: center;
         align-self: end;
       `;
