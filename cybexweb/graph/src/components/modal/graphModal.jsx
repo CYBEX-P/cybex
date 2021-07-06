@@ -1,3 +1,9 @@
+/*
+Component that serves as a template for the main modal style used in the 
+application. See this component used and defined for different use-cases
+inside the MainApp.jsx component.
+*/
+
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';

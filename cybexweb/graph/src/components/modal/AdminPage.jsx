@@ -1,3 +1,7 @@
+/* 
+Component that renders the Admin Panel, used for user management.
+*/
+
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 

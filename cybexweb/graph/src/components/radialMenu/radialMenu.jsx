@@ -1,3 +1,7 @@
+/*
+Component that renders the main radial menu when users select a graph node.
+*/
+
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';

@@ -1,6 +1,6 @@
 require('dotenv').config()  // To utilize .env files for importing sensitive credentials
 const express = require('express');  // Express.js provides the framework for defining and implementing the API
-const mysql = require('mysql');  // For making queries to the MySQL database
+const mysql = require('mysql2');  // For making queries to the MySQL database
 const util = require('util');  // For 'promisify', which ensures that queries return a promise
 
 const app = express();

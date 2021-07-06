@@ -86,10 +86,11 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="README.html">Overview</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="README.html#getting-started">Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="README.html#high-level-architecture">High-Level Architecture</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="README.html">Web Application</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="README.html#user-guide">User Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="README.html#api-reference">API Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#getting-started-with-the-codebase">Getting Started with the Codebase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#high-level-architecture-deployment-config">High-Level Architecture &amp; Deployment Config</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="README.html#django-backend">Django Backend</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="modules.html">Full Python Reference</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="cybex.html">cybex package</a></li>
@@ -102,8 +103,6 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="README.html#react-frontend">React Frontend</a></li>
-<li class="toctree-l2"><a class="reference internal" href="README.html#deployment">Deployment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="README.html#user-guide">User Guide</a></li>
 </ul>
 </li>
 </ul>
@@ -154,7 +153,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-          <li><a href="README.html">Overview</a> &raquo;</li>
+          <li><a href="README.html">Web Application</a> &raquo;</li>
         
           <li><a href="modules.html">Full Python Reference</a> &raquo;</li>
         
@@ -213,6 +212,7 @@
 </div>
 <div class="section" id="module-cybexweb.dockers">
 <span id="cybexweb-dockers-module"></span><h2>cybexweb.dockers module<a class="headerlink" href="#module-cybexweb.dockers" title="Permalink to this headline">¶</a></h2>
+<p>Module for connecting to Neo4j DB in docker container.</p>
 <dl class="py function">
 <dt id="cybexweb.dockers.check_db">
 <code class="sig-prename descclassname"><span class="pre">cybexweb.dockers.</span></code><code class="sig-name descname"><span class="pre">check_db</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">containerid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexweb.dockers.check_db" title="Permalink to this definition">¶</a></dt>
@@ -256,9 +256,35 @@
 </div>
 <div class="section" id="module-cybexweb.urls">
 <span id="cybexweb-urls-module"></span><h2>cybexweb.urls module<a class="headerlink" href="#module-cybexweb.urls" title="Permalink to this headline">¶</a></h2>
+<p>URL Configuration for all urls that don’t require authentication.</p>
+<dl class="simple">
+<dt>The <cite>urlpatterns</cite> list routes URLs to views. For more information please see:</dt><dd><p><a class="reference external" href="https://docs.djangoproject.com/en/3.0/topics/http/urls/">https://docs.djangoproject.com/en/3.0/topics/http/urls/</a></p>
+</dd>
+</dl>
+<p>Examples:
+Function views</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Add an import:  from my_app import views</p></li>
+<li><p>Add a URL to urlpatterns:  path(‘’, views.home, name=’home’)</p></li>
+</ol>
+</div></blockquote>
+<dl class="simple">
+<dt>Class-based views</dt><dd><ol class="arabic simple">
+<li><p>Add an import:  from other_app.views import Home</p></li>
+<li><p>Add a URL to urlpatterns:  path(‘’, Home.as_view(), name=’home’)</p></li>
+</ol>
+</dd>
+<dt>Including another URLconf</dt><dd><ol class="arabic simple">
+<li><p>Import the include() function: from django.urls import include, path</p></li>
+<li><p>Add a URL to urlpatterns:  path(‘blog/’, include(‘blog.urls’))</p></li>
+</ol>
+</dd>
+</dl>
 </div>
 <div class="section" id="module-cybexweb.views">
 <span id="cybexweb-views-module"></span><h2>cybexweb.views module<a class="headerlink" href="#module-cybexweb.views" title="Permalink to this headline">¶</a></h2>
+<p>Module that defines the Django views that don’t require authentication.</p>
 <dl class="py class">
 <dt id="cybexweb.views.AboutView">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">cybexweb.views.</span></code><code class="sig-name descname"><span class="pre">AboutView</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexweb.views.AboutView" title="Permalink to this definition">¶</a></dt>

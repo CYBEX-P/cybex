@@ -1,3 +1,5 @@
+"""Module that defines the Django views that don't require authentication."""
+
 from django.shortcuts import render
 from django.views.generic import View
 from django.contrib.auth.decorators import login_required

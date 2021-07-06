@@ -1,3 +1,10 @@
+/*
+Component that facilitates IOC insertion as part of the form controls
+in the right-hand expandable IOC menu. These functions include manually
+inserting IOCs, performing enrichments from the menu controls, and
+highlighting nodes.
+*/
+
 import React, { useContext, useState } from 'react';
 import { Formik } from 'formik';
 import { Input } from 'reactstrap';
@@ -19,17 +26,6 @@ const InsertForm = props => {
 
   function handleInsertIP(values, actions) {
     const { ipToInsert } = values;
-    // if (selectedIOC === 'URL' && ipToInsert !== '') {
-    //   axios.post('/api/v1/neo4j/insertURL', {Ntype: "URL", value: `${ipToInsert}`}).then(() => {
-    //     axios
-    //       .get('/api/v1/neo4j/export')
-    //       .then(({ data }) => {
-    //         setNeo4jData(data);
-    //       })
-    //       .catch(() => {});
-    //   });
-    //   actions.resetForm();
-    // }
     if (ipToInsert !== '') {
       axios.get(`/api/v1/neo4j/insert/${selectedIOC}/${ipToInsert}`).then(() => {
         axios

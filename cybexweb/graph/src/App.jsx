@@ -1,3 +1,8 @@
+/*
+The parent component for the threat-intelligence graph application. All other
+components and functionality are inserted here.
+*/
+
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 

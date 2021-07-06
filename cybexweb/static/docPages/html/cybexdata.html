@@ -86,10 +86,11 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="README.html">Overview</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="README.html#getting-started">Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="README.html#high-level-architecture">High-Level Architecture</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="README.html">Web Application</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="README.html#user-guide">User Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="README.html#api-reference">API Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#getting-started-with-the-codebase">Getting Started with the Codebase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#high-level-architecture-deployment-config">High-Level Architecture &amp; Deployment Config</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="README.html#django-backend">Django Backend</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="modules.html">Full Python Reference</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="cybex.html">cybex package</a></li>
@@ -102,8 +103,6 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="README.html#react-frontend">React Frontend</a></li>
-<li class="toctree-l2"><a class="reference internal" href="README.html#deployment">Deployment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="README.html#user-guide">User Guide</a></li>
 </ul>
 </li>
 </ul>
@@ -154,7 +153,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-          <li><a href="README.html">Overview</a> &raquo;</li>
+          <li><a href="README.html">Web Application</a> &raquo;</li>
         
           <li><a href="modules.html">Full Python Reference</a> &raquo;</li>
         
@@ -201,6 +200,7 @@
 </div>
 <div class="section" id="module-cybexdata.admin">
 <span id="cybexdata-admin-module"></span><h2>cybexdata.admin module<a class="headerlink" href="#module-cybexdata.admin" title="Permalink to this headline">¶</a></h2>
+<p>Module for Django user model administration.</p>
 <dl class="py class">
 <dt id="cybexdata.admin.CustomUserAdmin">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">cybexdata.admin.</span></code><code class="sig-name descname"><span class="pre">CustomUserAdmin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.admin.CustomUserAdmin" title="Permalink to this definition">¶</a></dt>
@@ -358,6 +358,7 @@
 </div>
 <div class="section" id="module-cybexdata.models">
 <span id="cybexdata-models-module"></span><h2>cybexdata.models module<a class="headerlink" href="#module-cybexdata.models" title="Permalink to this headline">¶</a></h2>
+<p>Module for defining Profile and Graph data models.</p>
 <dl class="py class">
 <dt id="cybexdata.models.Graphdb">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">cybexdata.models.</span></code><code class="sig-name descname"><span class="pre">Graphdb</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dbport</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dbip</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dbuser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dbpass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">containerid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.models.Graphdb" title="Permalink to this definition">¶</a></dt>
@@ -511,7 +512,8 @@ object the first time, the query is executed.</p>
 <dl class="py function">
 <dt id="cybexdata.models.create_user_extra">
 <code class="sig-prename descclassname"><span class="pre">cybexdata.models.</span></code><code class="sig-name descname"><span class="pre">create_user_extra</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sender</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cybexdata.models.create_user_extra" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Adds the newly created user to the backend cybex user database.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="cybexdata.models.save_user_extra">
@@ -519,8 +521,8 @@ object the first time, the query is executed.</p>
 <dd></dd></dl>
 
 </div>
-<div class="section" id="module-cybexdata.tests">
-<span id="cybexdata-tests-module"></span><h2>cybexdata.tests module<a class="headerlink" href="#module-cybexdata.tests" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cybexdata-tests-module">
+<h2>cybexdata.tests module<a class="headerlink" href="#cybexdata-tests-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-cybexdata">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cybexdata" title="Permalink to this headline">¶</a></h2>
