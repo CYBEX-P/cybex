@@ -1,3 +1,9 @@
+/*
+Component representing the individual boxes used within the Trends panel.
+these are intended to be containers for specific dashboard-style content, 
+such as global CYBEX plots, trends, statistical views, etc.
+*/
+
 import React, { useContext } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,21 +18,21 @@ const TrendBox = (props) => {
     }
 		if (props.type != "IP") {
 			return (
-							<div style={{width: width}}>
-									<TrendBoxStyle>
-											<iframe width="100%" height="100%" style={{borderRadius: "5px", border: "none"}}src={props.url}></iframe>
-											{/* <div>{props.title}</div> */}
-									</TrendBoxStyle>
-							</div>
+				<div style={{width: width}}>
+						<TrendBoxStyle>
+								<iframe width="100%" height="100%" style={{borderRadius: "5px", border: "none"}}src={props.url}></iframe>
+								{/* <div>{props.title}</div> */}
+						</TrendBoxStyle>
+				</div>
 			);
 		} else {
 			return (
-							<div style={{width: width}}>
-									<TrendBoxStyle>
-										{/* <div> {props.IPs} </div> */}
-											{/* <div>{props.title}</div> */}
-									</TrendBoxStyle>
-							</div>
+				<div style={{width: width}}>
+						<TrendBoxStyle>
+							{/* <div> {props.IPs} </div> */}
+								{/* <div>{props.title}</div> */}
+						</TrendBoxStyle>
+				</div>
 			);
 		}
 

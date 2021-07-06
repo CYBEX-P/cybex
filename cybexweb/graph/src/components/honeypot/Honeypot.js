@@ -1,3 +1,8 @@
+/*
+Parent component for the honeypot viewer application. 
+This is transplanted from a prior seperate student project.
+*/
+
 import React, { useState, useEffect, Fragment } from 'react';
 import Axios from "axios";
 import DateRangePicker from '@wojtekmaj/react-daterange-picker';

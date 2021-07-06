@@ -1,3 +1,12 @@
+/*
+Component that renders the main Navbar present at the top of the screen.
+This contains several buttons for additional functions. These include an
+expandable hamburger menu on the left side, an admin panel button (if user)
+is an admin, a cybex data upload form, and a button to bring up the trends/
+honeypot viewer panel. This component is the parent to all trends/honepot 
+components.
+*/
+
 import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 

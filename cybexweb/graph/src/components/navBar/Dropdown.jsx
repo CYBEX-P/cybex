@@ -1,3 +1,8 @@
+/*
+Component that renders the dropdown options within the main hamburger menu
+on the left side of the navbar.
+*/
+
 import React from 'react';
 import axios from 'axios';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';

@@ -1,3 +1,8 @@
+/*
+Component that handles the rendering and logic for the macro expandable menu.
+This has multiple subcomponents that can be used to easily modify the macro
+options in future software versions.
+*/
 import React, { useState } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';

@@ -1,3 +1,8 @@
+/*
+Customized button component for use throughout application for various
+purposes. Is based on ReactStrapButton.
+*/
+
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
 import PropTypes from 'prop-types';
