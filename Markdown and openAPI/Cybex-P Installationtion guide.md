@@ -31,6 +31,7 @@ runs unit test (optional)
 ```
 (example_name) $: `python3,9 setup.py install`
 ```
+
 # <small> **Input Module Installation**</small>
 ***TODO***
 # <small> **API Module Installation**</small>
@@ -52,9 +53,46 @@ runs unit test (optional)
 # <small> **Report Module Installation**</small>
 ***TODO***
 
-# Database Setup and Installation
+# Database Setup and Installation (MongoDB)
 Cybex-P uses MongoDB as its relational database in storing and comparing threat data
 
+As for setting up the database, all that is needed is a simple installation of MongoDB. The Cybex-P configuration settings and code will handle the rest at run-time.
+
+To install MongoDB, execute the following commands:
+- Install gnupg
+```
+sudo apt-get install gnupg
+```
+- importing the MongoDB public GPG key
+```
+wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+```
+- Appending mongodb to apt sources list
+```
+echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+```
+- Updating the apt package list
+```
+sudo apt-get update
+```
+- Installing the latest stable version of MongoDB
+```
+sudo apt-get install -y mongodb-org
+```
+At this point your mongodb installation is complete, execute the following commands to initialize the mongodb systemd daemon:
+```
+sudo systemctl start mongod
+```
+If the following prompt comes up:
+***Failed to start mongod.service: Unit mongod.service not found.***
+
+Execute the following command:
+```
+sudo systemctl daemon-reload
+```
+Then run the systemctl start command again.
+
+For any other concerns and additional functionality and support on MongoDB, consult the following [documentation](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/).
 # Systemd Services (Debian)
 Each Module of the Cybex-P backend has their own systemd Service file to handle execution and monitoring.
 
