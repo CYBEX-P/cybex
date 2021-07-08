@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cybex-P Installation Guide</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="cybex-p-installation-guide">Cybex-P Installation guide</h1>
+<h1 id="small-environment-setup-and-tahoe-installation--small"><small> Environment setup and Tahoe Installation  </small></h1>
+<p>To set up the the Cybex-P backend run the following list of commands.</p>
+<p><strong>Note</strong>: Operating System used: Ubuntu (Debian)</p>
+<ul>
+<li>Create the python environment
+<ul>
+<li>Depdendencys:
+<ul>
+<li>Python3.9</li>
+<li>Python3.9 Headers</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><code>$: sudo apt-get install python3.9 python3.9-dev</code></p>
+<ul>
+<li>Downloading The Tahoe Module Code:</li>
+</ul>
+<pre><code>$: `git clone &lt;Tahoe-Module-URL&gt;`
+</code></pre>
+<ul>
+<li>Setting up The Tahoe Virtual Environment</li>
+</ul>
+<pre><code>$: `python3.9 -m venv &lt;venv-name&gt;`
+$: `source &lt;venv-name&gt;/bin/activate`
+(example_name)$:
+</code></pre>
+<ul>
+<li>Installing Tahoe Dependencies into Tahoe’s virtual environment</li>
+</ul>
+<pre><code>(example_name) $: `pip install -r  &lt;project-dir&gt;/requirements.txt`
+(example_name) $: `cd tahoe`
+(example_name) $: `python -m unittest` (optional)
+runs unit test (optional)
+</code></pre>
+<ul>
+<li>Installing  Tahoe</li>
+</ul>
+<pre><code>(example_name) $: `python3,9 setup.py install`
+</code></pre>
+<h1 id="small-input-module-installationsmall"><small> <strong>Input Module Installation</strong></small></h1>
+<p><em><strong>TODO</strong></em></p>
+<h1 id="small-api-module-installationsmall"><small> <strong>API Module Installation</strong></small></h1>
+<ul>
+<li>Basic Installation:
+<ul>
+<li>(example_name) $: <code>cd &lt;project-dir&gt;/...</code></li>
+<li>(example_name) $: <code>git clone https://github.com/CYBEX-P/cybexp-api.git</code></li>
+<li>(example_name) $: <code>cd cybexp-api</code></li>
+<li>(example_name) $:<code>pip install -r requirements.txt</code></li>
+</ul>
+</li>
+<li>Unit testing:
+<ul>
+<li>(example_name) $:<code>cd ../cybexp-api</code></li>
+<li>(example_name) $:<code>python3.9 -m unittest</code></li>
+</ul>
+</li>
+<li>Test run the environment:
+<ul>
+<li>hupper -m api</li>
+<li>curl <a href="http://localhost:5000/ping">http://localhost:5000/ping</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="small-archive-module-installationsmall"><small> <strong>Archive Module Installation</strong></small></h1>
+<p><em><strong>TODO</strong></em></p>
+<h1 id="small-analytics-module-installationsmall"><small> <strong>Analytics Module Installation</strong></small></h1>
+<p><em><strong>TODO</strong></em></p>
+<h1 id="small-report-module-installationsmall"><small> <strong>Report Module Installation</strong></small></h1>
+<p><em><strong>TODO</strong></em></p>
+<h1 id="database-setup-and-installation-mongodb">Database Setup and Installation (MongoDB)</h1>
+<p>Cybex-P uses MongoDB as its relational database in storing and comparing threat data</p>
+<p>As for setting up the database, all that is needed is a simple installation of MongoDB. The Cybex-P configuration settings and code will handle the rest at run-time.</p>
+<p>To install MongoDB, execute the following commands:</p>
+<ul>
+<li>Install gnupg</li>
+</ul>
+<pre><code>sudo apt-get install gnupg
+</code></pre>
+<ul>
+<li>importing the MongoDB public GPG key</li>
+</ul>
+<pre><code>wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+</code></pre>
+<ul>
+<li>Appending mongodb to apt sources list</li>
+</ul>
+<pre><code>echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+</code></pre>
+<ul>
+<li>Updating the apt package list</li>
+</ul>
+<pre><code>sudo apt-get update
+</code></pre>
+<ul>
+<li>Installing the latest stable version of MongoDB</li>
+</ul>
+<pre><code>sudo apt-get install -y mongodb-org
+</code></pre>
+<p>At this point your mongodb installation is complete, execute the following commands to initialize the mongodb systemd daemon:</p>
+<pre><code>sudo systemctl start mongod
+</code></pre>
+<p>If the following prompt comes up:<br>
+<em><strong>Failed to start mongod.service: Unit mongod.service not found.</strong></em></p>
+<p>Execute the following command:</p>
+<pre><code>sudo systemctl daemon-reload
+</code></pre>
+<p>Then run the systemctl start command again.</p>
+<p>For any other concerns and additional functionality and support on MongoDB, consult the following <a href="https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/">documentation</a>.</p>
+<h1 id="containzerization">Containzerization</h1>
+<p><strong>TODO</strong></p>
+<h1 id="systemd-services-debian">Systemd Services (Debian)</h1>
+<p>Each Module of the Cybex-P backend has their own systemd Service file to handle execution and monitoring.</p>
+<p>Below you will find a basic example of setting up the systemd service files</p>
+<pre><code># This systemd file executes and maintains Cybex-P's Archive Module
+[Unit]
+Description=Cybex-P archive Module
+After=network-online.target
+
+[Service]
+User=cybexp-archive
+Group=cybexp-archive
+WorkingDirectory=../&lt;proj-dir&gt;/archive
+Type=simple
+ExecStart=../cybexp/env/bin/python3 ../&lt;project-dir&gt;/archive/archive.py
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+</code></pre>
+<p>In the template above replace the following parameters with the indicated values:</p>
+<ul>
+<li><code>../&lt;proj-dir&gt;/</code> - The full directory leading to where the module is stored</li>
+<li><code>archive</code> - Name of the module for the systemd service file</li>
+</ul>
+<p>There should be 5 linux systemd service files that serve and maintain all of the Cybex-P Modules</p>
+<h1 id="small-creating-the-service-files-small"><small> Creating the service files </small></h1>
+<p>To make the cybex-p systemd service files, simply do the following</p>
+<pre><code>$: cd /etc/systemd/system
+$: touch cybexp_archive.service
+$: nano cybexp_archive.service
+</code></pre>
+<p>Replace the following to an appropriate name as desired:</p>
+<ul>
+<li><code>cybex_archive.service</code> - the name of whichever module’s systemd file is currently being created (E.G: <code>cybexp_api.service</code>)</li>
+</ul>
+<p>Then write in the template above and adjust accordingly to where your python3.9 cybex-p virtual environment and module is located</p>
+<h1 id="small-executing-cybex-services-small"><small> Executing Cybex Services </small></h1>
+<p>Once all systemd service files have been provisioned to the Cybex-P modules. Run the following to command on all service files to execute the modules.</p>
+<pre><code>$: systemctl start ***
+</code></pre>
+<ul>
+<li>Replacing <code>***</code> with the name of a module ( E.G: <code>cybex_archive</code> )</li>
+</ul>
+</div>
+</body>
+
+</html>
