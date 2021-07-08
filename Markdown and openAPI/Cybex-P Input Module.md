@@ -37,7 +37,7 @@ Files:
 - `runningconfig`
 	- A text file created by `run.py` and deleted during normal exit. This file contains the host, port of the websocket used by `input.py`  to pass commands to `run.py`  (IPC). 
 
-There are currently six pluginsin the input module; four of the plugins are open source threat intelligence platforms while the other two plugins are entities that are fully native to the `Cybex-P Input Module`. The  ***plugins*** themselves are comprosed of the following services:
+There are currently six plugins in the input module; four of the plugins are open source threat intelligence platforms while the other two plugins are entities that are fully native to the `Cybex-P Input Module`. The  ***plugins*** themselves are comprosed of the following services:
 - `common`
 	- Cybex Source Fetching, Exponential backoff, Cybex Sources. Common plugin module used by the other modules
 - `misp_api`

@@ -92,7 +92,7 @@ A an example of a filter event ID will look like -
 	-	
 	Cowrie is a piece of open source software that can be used in any environment to emulate a UNIX system or SSH/Telnet Proxy; under the hood of the the system, it is a honeypot for gathering malicious SSH connections. The *Cowrie filter* itself processes the SSH login information provided by the cowrie system. 	
 	
-	Event IDs of the cowrie filter include:
+	Event IDs are ran through the following filters, each filter is categorized into the a *Type* which is the source of the threat data:
 	
 	-	`ClientKex`:
 		-	Type: SSH
@@ -177,8 +177,10 @@ A raw hash of the event data is then returned.
 - ***sighting***
 	- 
 	sightings is a filter that functions as method to catching cowrie honeypot data and parsing it into Tahoe events.  When honey pot data is is ran through the sightings filter, the pieces of data in the event are categorized into one of two filters:
-		-	*malicious*
-		-	*benign*
+	
+	-	*malicious*
+	-	*benign*
+	
 	All pieces of cowrie honeypot data are then parsed into a Tahoe event and that event gets assigned to a particular category. The Tahoe event's reference hash is then generated and returned.
 
 # Miscellaneous 
