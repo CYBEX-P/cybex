@@ -442,9 +442,9 @@ const App = props => {
                 <InsertForm config={props.config} fromDate={fromDate} toDate={toDate} timezone={timezone} />
                 <Row />
                 <Row />
-                <Button width="100%" onClickFunction={() => dispatchModal('Submit Event Data')}>
+                {/* <Button width="100%" onClickFunction={() => dispatchModal('Submit Event Data')}>
                   <div>New Event</div>
-                </Button>
+                </Button> */}
               </div>
             </MenuBar>
             <MenuBar side="bottom" icon="list">
