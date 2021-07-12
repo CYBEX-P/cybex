@@ -14,6 +14,16 @@ Welcome to the CYBEX-P documentation!
 
 * Infrastructure (awaiting backend documentation).
 
+.. toctree::
+
+   The_Cybex-P_Backend
+   Cybex-P_Input_Module
+   Cybex-P_API_Module
+   Cybex-P_Analytics_Module
+   Cybex-P_Archive_Module
+   Cybex-P_Report_Module
+   Cybex-P_Installationtion_guide
+
 Indices and tables
 ==================
 
