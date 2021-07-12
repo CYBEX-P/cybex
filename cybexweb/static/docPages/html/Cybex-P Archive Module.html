@@ -1,0 +1,358 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Cybex-P Archive Module &mdash; cybex_web_app 0.9.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+        <script >mermaid.initialize({startOnLoad:true});</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> cybex_web_app
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Front End</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Web Application</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html">Cybex-P Analytics Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html#cybex-p-analytics-repositories">Cybex-P Analytics Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html#analytics">analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html#filters">Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html#miscellaneous">Miscellaneous</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cybex_web_app</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Cybex-P Archive Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/Cybex-P Archive Module.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cybex-p-archive-module">
+<h1>Cybex-P Archive Module<a class="headerlink" href="#cybex-p-archive-module" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Archive</span> <span class="pre">Module</span></code> is the next step in the process of threat data after being previously pushed to the cache data lake by the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">API</span> <span class="pre">Module</span></code>.  This module has the prime responsibility to pull data from the cache data lake and parse it into a <em><strong>TAHOE</strong></em> object. Once parsed, it is then pushed and stored to it’s database server in which it will await to be used by the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Analytics</span> <span class="pre">Module</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Archive</span> <span class="pre">Module</span></code> is compromised of two modules that work in cohesion with each other on different servers. The <em><strong>Archive Cluster</strong></em> and the <em><strong>Archive Database</strong></em>.</p>
+<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>graph LR
+A(Cache Data Lake) --data gets pulled--&gt; B
+B[Archive Cluster] -- Converted to TAHOE and Pushed--&gt; C
+C[Archive Database]
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><em><strong>Archive Cluster</strong></em></p>
+<ul>
+<li><p>Decryption of data</p></li>
+<li><p>Threat data to TAHOE object conversion</p></li>
+</ul>
+</li>
+<li><p><em><strong>Archive Database</strong></em></p>
+<ul>
+<li><p>Storage of the newly parse TAHOE object</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="cybex-p-archive-module-repositories">
+<h1>Cybex-P Archive Module Repositories<a class="headerlink" href="#cybex-p-archive-module-repositories" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">archive</span> <span class="pre">[Source</span> <span class="pre">Code]</span></code></p>
+<ul>
+<li><p>Data decryption</p></li>
+<li><p>Data Archiving</p></li>
+<li><p>Module Initialization and Execution</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">parsemain</span> <span class="pre">[Source</span> <span class="pre">Code]</span></code></p>
+<ul>
+<li><p>Data Parsing</p>
+<ul>
+<li><p>Turning a piece of data into a Raw <em><strong>TAHOE</strong></em> object</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="archive">
+<h1>archive<a class="headerlink" href="#archive" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">archive</span></code> is the core source code of the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Archive</span> <span class="pre">Module</span></code>  since alot of the main functionality takes place here. Everything from data decryption to archiving takes place in this module.</p>
+<p><em><strong>Key Functions</strong></em>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>decrypt_file</strong>(file_in, fpriv_name = “priv.pem”)</p></li>
+<li><p><strong>archive_one</strong>(event, cache_coll, fs, pkey_fp, parsemain_func)</p></li>
+<li><p><strong>archive</strong>(cacheconfig, force_process = False, exec_once = False)</p></li>
+</ul>
+</div></blockquote>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">decrypt_file()</span></code>:</p>
+<ul class="simple">
+<li><p>This function is only used by <em><strong>archive_one()</strong></em> and is used to decrypt threat data that has been previously encrypted with the public key of the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Archive</span> <span class="pre">Module</span></code>. When called, a file of the set of threat data is passed in along with the private key of the of the module (by default, the private key is under “priv.pem”). <strong>decrypt_file()</strong> go ahead and validate the file to ensure correct format. Once validated, the private key is pulled and the session key, nonce, tags, and ciphertext are extract from the private key. The session key is then decrypted with the private RSA key and the data gets decrypted with the AES session key. The threat data is then returned in <em>utf-8</em> formatting.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">archive_one()</span></code>:</p>
+<ul class="simple">
+<li><p><strong>archive_one()</strong> is responsible for taking a single event provided to it and administrating decryption and  TAHOE parsing methods to process the data. Like the <em><strong>decrypt_file()</strong></em> function, this function is only used by one other function: <em><strong>archive()</strong></em> [See below]. This function utilizes <strong>decrypt_file()</strong> in its definition take the provided byte data and return the raw threat data. A call is then made to the <strong>parsemain()</strong> function (defined as <em>parsemain_func</em> within the definition of this function) to take the provided threat data and parse it into a raw TAHOE object. When the data proceeds to get parsed, the result of the parsing will come back in 1 of 3 states administrated by <strong>parsemain()</strong>:</p>
+<ul>
+<li><p><em><strong>SUCCESS</strong></em> - The parsing was successful and will be updated to the Archive module database with its reference hash</p></li>
+<li><p><em><strong>NOT_SUPPORTED</strong></em> - An attempt at parsing the passed data was made but the type of data that was passed is an unsupported sub-type. The data will be sent to the database with the <strong>“skip”</strong> set to True.</p></li>
+<li><p><em><strong>ERROR</strong></em> - An attempt at parsing the passed data was made but an error was caught during the the function call. With an error case, a object of <em><strong>Nonetype</strong></em> is returned and updated to the database with the <em><strong>“skip”</strong></em> flag set to true.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">archive()</span></code>:</p>
+<ul class="simple">
+<li><p><em><strong>archive()</strong></em> Is the main controlling function of the <code class="docutils literal notranslate"><span class="pre">archive</span></code> source code. When executed, the function while go into an infinite while loop that will consistently be checking for a provided cache configuration and proceed to set the path to the Archive database and tunnel to grab data from the cache data lake.</p></li>
+<li><p>The rest of <em><strong>archive()</strong></em> is then an infinitely running while loop that is consistently querying the the cache data lake for available raw threat data provided from the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">API</span> <span class="pre">Module</span></code>. However, to save resources and optimize performance, <em><strong>archive()</strong></em> has a an exponential backoff method that is ran after every query attempt.</p></li>
+<li><p>The exponential backoff method is ran after every query and is meant to sleep the system for a certain amount of seconds in order to decrease the rate of querying in order to keep a stable rate of querys. If success is achieved after a single query and archive attempt, the amount of accounted failed attempts is reset to 0.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>n_failed_attempts -&gt; The number of failed attempts so far after <em><strong>every</strong></em> recent failed query.</p></li>
+<li><p><em><strong>exponential_backoff</strong></em>(n_failed_attempts)</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>E.G: If <em>n_failed_attempts</em> is currently set to 3, meaning 3 querys were made and ended up being failed attempts, the exponential backoff function sleeps the archive module for a certain amount of seconds based on the following function:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>s = min(3600, (2 ** <strong>n)</strong> + (random.randint(0, 1000) / 1000))
+time.sleep(s)
+#Where <strong>n</strong> = n_failed_attempt</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>Otherwise, if a successful query was made, <em>n_failed_attempts</em> is set back to 0 which will lead the archive module to increasing the rate of query and archive attempts again.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="parsemain">
+<h1>parsemain<a class="headerlink" href="#parsemain" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">parsemain</span></code> source code is a key sub-component that is utilized by <code class="docutils literal notranslate"><span class="pre">archive</span></code> to handle the responsibility of parsing threat data to the raw TAHOE objects that will eventually be used by the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Analytics</span> <span class="pre">Module</span></code>.</p>
+<p><em><strong>Key functions</strong></em>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>parsemain(typtag, org id, timezone, data)</p></li>
+</ul>
+</div></blockquote>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">parsemain()</span></code>:</p>
+<ul class="simple">
+<li><p>parsemain is the sole function that is responsible for taking a single event of threat data and parsing it into a raw TAHOE object.  This function is only used by <em><strong>archive_one()</strong></em> from the <code class="docutils literal notranslate"><span class="pre">archive</span></code> source code.</p></li>
+<li><p>When called, the <em>typtag</em> will be used to pull the raw sub type from the list of available sub types within the Cybex-P database. if typtag is valid and we receive a valid raw_sub_type, we can then go ahead and call TAHOEs <em><strong>Raw()</strong></em>  and parse the following into a TAHOE instance that will get posted to the Archive Datababase:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>raw  =  Raw(raw_sub_type, data, orgid, timezone)</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>Recall to the previous explanation within <em><strong>archive_one()</strong></em> above; based on the outcome of a valid raw sub type, parsemain will administrate 1 of 3 states to the function call:</p>
+<ul>
+<li><p><em><strong>ParseState.SUCCESS</strong></em> - a valid raw sub type was found and the data was successfully parsed into a raw TAHOE object.</p></li>
+<li><p><em><strong>ParseState.NOT_SUPPORTED</strong></em> - an unknown typtag was supplied, therefore there was now available raw sub type.</p></li>
+<li><p><em><strong>ParseState.ERROR</strong></em> - An error happened and was caught</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="miscellaneous">
+<h1>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Private Key</p>
+<ul>
+<li><p>Private key of the cybex-p archive module</p></li>
+<li><p>TAKE STEPS TO ENSURE THAT CANNOT BE EASILY ACCESSIBLE/READ</p></li>
+</ul>
+</li>
+<li><p>cybexp-archive.service</p>
+<ul>
+<li><p>systemd service file that maintains the cybex-p archive module</p></li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Adam Cassell.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

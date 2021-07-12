@@ -80,7 +80,6 @@ The architecure & deployment documentation below is excerpted from the thesis ti
 Production Server Deployment:
 1. Follow the guidance here (static files are pushed to '/static/'):
   - https://docs.djangoproject.com/en/3.0/howto/static-files/deployment/
-2. Configure nginx by setting a configuration file at /etc/nginx/conf.d/virtual.conf.d
   
   Deployment uses standard supervisor w/guncicorn approach to run Django app.
   Is run behind nginx web server as a reverse proxy. See pdf above for details.
@@ -99,7 +98,7 @@ It is constructed from the following components, all of which are documented
 in comments in their source code:
 
 - cybexweb/graph/src/App.jsx
-  - description
+  - The parent component for the threat-intelligence graph application. All other components and functionality are inserted here.
 - cybexweb/graph/src/components/App/MainApp.jsx
   - Master component that holds the main subcomponents of the application. This is a very large component responsible for render the central Graph canvas component, navbar, all expandable menus, and all toggleable modals. A number of states are defined within this component that are relevant across the application.
 - cybexweb/graph/src/components/Button/Button.jsx
@@ -141,7 +140,7 @@ in comments in their source code:
 - cybexweb/graph/src/components/SplashScreen/SplashScreen.jsx
   - Component used to render a splash screen during loading states.
 
-The following files/directories are not component source code but are still relevant to the clientside source-code:
+The following files/directories are not source code for React components, but are still relevant to the front end operation:
 
 - cybexweb/graph/src/testdata
   - Contains files used for testing the application when the backend Python code is not running. This is useful when running npm start, where the react code is run completely independently of the rest of the application. These files provide hardcoded values for mock data that the React code can use in the place of actual backend calls.

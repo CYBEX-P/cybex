@@ -20,7 +20,7 @@ In order from where threat data starts traveling from beginning to end, The Cybe
 Each page of the different modules of the `Cybex-P backend` documentation have been formatted uniformly in a way to make understanding of the system comprehensive and easier to digest. The following is a flow chart that acts as a guideline on how all modules are structured and documented. 
 
 
-```{mermaid}
+```mermaid
 graph 
 A[Module Introduction:<br>- General Overiew<br>- Key Components ] --> B
 B[Module Respositories:<br> - Table of contents <br>- Source code sections and their main purposes<br>- Sub-repositories and their purpose, if applicable.] --> C

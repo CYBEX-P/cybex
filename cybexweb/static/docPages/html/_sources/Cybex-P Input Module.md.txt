@@ -10,7 +10,7 @@ Examples of automatic data collection include:
 
 The following flow chart is a smaller scale summarization of the flow of data to the `Cybex-P API Module` via the `Cybex-P Input Module`:
 
-```{mermaid}
+```mermaid
 graph TD
 A[Automatically Collected Data] --> E((Connector Server)) --> F((Collector Server)) --> D 
 B[User webapp Inputted Data] --> G((Frontend Server))
@@ -52,7 +52,7 @@ There are currently six plugins in the input module; four of the plugins are ope
 	- Lomond websocket plugin
 
 Below is a general diagram of how threat data is handled by the various plugins in the `Cybex-P Input Module`: 
-```{mermaid}
+```mermaid
 graph
 A[Threat data] --> B((Common:<br> Base Cybex <br> source fetcher)) --> H[Cybex-P API Module]
 A[Threat data] --> C((misp_api:<br> MISP threat<br> intelligence API)) --> H[Cybex-P API Module]

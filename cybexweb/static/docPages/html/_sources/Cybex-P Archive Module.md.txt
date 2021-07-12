@@ -3,7 +3,7 @@ The `Cybex-P Archive Module` is the next step in the process of threat data afte
 
 The `Cybex-P Archive Module` is compromised of two modules that work in cohesion with each other on different servers. The ***Archive Cluster*** and the ***Archive Database***.
 
-```{mermaid}
+```mermaid
 graph LR
 A(Cache Data Lake) --data gets pulled--> B
 B[Archive Cluster] -- Converted to TAHOE and Pushed--> C
