@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cybex-P API Module.md</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="cybex-p-api-module">Cybex-P API Module</h1>
+<p>The <code>Cybex-P API Module</code> is the gateway for all data that travels in and out of Cybex-P during collection and posting. Cybex-P API is combintation of two sub-modules; the <em>Data Input sub-module</em> and the <em>Report Publishing sub-module</em>. The <em>Data Input sub-module</em> deals with the parsing of posted raw data and transferring of it to the backend. The <em>Report Publishing sub-module</em> deals with the handling of report request and the returning of any available ports to the user. In addition to being the gateway to the Cybex-P services, The API module also works as another checkpoint of additional privacy preservation  in which the data gets further encrypted.</p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-zNI62yumvRXnldUy" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="62.66667175292969" style="max-width: 543.5173950195312px;" viewBox="0 0.0000019073486328125 543.5173950195312 62.66667175292969"><style>#mermaid-svg-zNI62yumvRXnldUy{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-zNI62yumvRXnldUy .error-icon{fill:#552222;}#mermaid-svg-zNI62yumvRXnldUy .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-zNI62yumvRXnldUy .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-zNI62yumvRXnldUy .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-zNI62yumvRXnldUy .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-zNI62yumvRXnldUy .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-zNI62yumvRXnldUy .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-zNI62yumvRXnldUy .marker{fill:#666;stroke:#666;}#mermaid-svg-zNI62yumvRXnldUy .marker.cross{stroke:#666;}#mermaid-svg-zNI62yumvRXnldUy svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-zNI62yumvRXnldUy .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#000000;}#mermaid-svg-zNI62yumvRXnldUy .cluster-label text{fill:#333;}#mermaid-svg-zNI62yumvRXnldUy .cluster-label span{color:#333;}#mermaid-svg-zNI62yumvRXnldUy .label text,#mermaid-svg-zNI62yumvRXnldUy span{fill:#000000;color:#000000;}#mermaid-svg-zNI62yumvRXnldUy .node rect,#mermaid-svg-zNI62yumvRXnldUy .node circle,#mermaid-svg-zNI62yumvRXnldUy .node ellipse,#mermaid-svg-zNI62yumvRXnldUy .node polygon,#mermaid-svg-zNI62yumvRXnldUy .node path{fill:#eee;stroke:#999;stroke-width:1px;}#mermaid-svg-zNI62yumvRXnldUy .node .label{text-align:center;}#mermaid-svg-zNI62yumvRXnldUy .node.clickable{cursor:pointer;}#mermaid-svg-zNI62yumvRXnldUy .arrowheadPath{fill:#333333;}#mermaid-svg-zNI62yumvRXnldUy .edgePath .path{stroke:#666;stroke-width:1.5px;}#mermaid-svg-zNI62yumvRXnldUy .flowchart-link{stroke:#666;fill:none;}#mermaid-svg-zNI62yumvRXnldUy .edgeLabel{background-color:white;text-align:center;}#mermaid-svg-zNI62yumvRXnldUy .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#mermaid-svg-zNI62yumvRXnldUy .cluster rect{fill:hsl(210,66.6666666667%,95%);stroke:#26a;stroke-width:1px;}#mermaid-svg-zNI62yumvRXnldUy .cluster text{fill:#333;}#mermaid-svg-zNI62yumvRXnldUy .cluster span{color:#333;}#mermaid-svg-zNI62yumvRXnldUy div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(-160,0%,93.3333333333%);border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-svg-zNI62yumvRXnldUy:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-zNI62yumvRXnldUy flowchart{fill:apa;}</style><g><g class="output"><g class="clusters"></g><g class="edgePaths"><g class="edgePath LS-A LE-B" id="L-A-B" style="opacity: 1;"><path class="path" d="M127.93055725097656,31.33333396911621L152.93055725097656,31.33333396911621L177.93055725097656,31.33333396911621" marker-end="url(https://stackedit.io/app#arrowhead40)" style="fill:none"></path><defs><marker id="arrowhead40" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B LE-C" id="L-B-C" style="opacity: 1;"><path class="path" d="M283.4861145019531,31.33333396911621L308.4861145019531,31.33333396911621L333.4861145019531,31.33333396911621" marker-end="url(https://stackedit.io/app#arrowhead41)" style="fill:none"></path><defs><marker id="arrowhead41" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-B" class="edgeLabel L-LS-A' L-LE-B"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B-C" class="edgeLabel L-LS-B' L-LE-C"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="flowchart-A-203" transform="translate(67.96527862548828,31.33333396911621)" style="opacity: 1;"><rect rx="0" ry="0" x="-59.96527862548828" y="-23.33333396911621" width="119.93055725097656" height="46.66666793823242" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-49.96527862548828,-13.333333969116211)"><foreignObject width="99.93055725097656" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Cybex-P Input</div></foreignObject></g></g></g><g class="node default" id="flowchart-B-204" transform="translate(230.70833587646484,31.33333396911621)" style="opacity: 1;"><rect rx="5" ry="5" x="-52.77777862548828" y="-23.33333396911621" width="105.55555725097656" height="46.66666793823242" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-42.77777862548828,-13.333333969116211)"><foreignObject width="85.55555725097656" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Cybex-P API</div></foreignObject></g></g></g><g class="node default" id="flowchart-C-206" transform="translate(434.50174713134766,31.33333396911621)" style="opacity: 1;"><rect rx="5" ry="5" x="-101.01564025878906" y="-23.33333396911621" width="202.03128051757812" height="46.66666793823242" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-91.01564025878906,-13.333333969116211)"><foreignObject width="182.03126525878906" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Cybex-P Cache Data Lake</div></foreignObject></g></g></g></g></g></g></svg></pre>
+<h1 id="cybex-p-api-repositories">Cybex-P API Repositories</h1>
+<p>the <code>Cybex-P API Module</code> and it’s sub-modules is comprised of the following three modules.</p>
+<ul>
+<li><code>API</code>
+<ul>
+<li>URL calls</li>
+<li>Frontend to backend services</li>
+</ul>
+</li>
+<li><code>views</code>
+<ul>
+<li>Privacy preservation</li>
+<li>Report querying and status updates</li>
+<li>Data parsing and processing</li>
+</ul>
+</li>
+<li><code>Resource</code>
+<ul>
+<li>Token validation</li>
+<li>User authentication</li>
+<li>Appending of new users and organiztion</li>
+<li>Configurations</li>
+<li>Access control Lists</li>
+</ul>
+</li>
+</ul>
+<h2 id="api">API</h2>
+<p>the Cybex-P <code>API</code> (not to be confused with <code>Cybex-P API Module</code>, which is the entire backend API module) is where URL calls are made depending on the type of desired service. The <code>API</code> modules web backend runs off the Falcon framework.</p>
+<p>The following calls can be made to <code>Cybex-P API</code>:</p>
+
+<table>
+<thead>
+<tr>
+<th>URL/Routes</th>
+<th>TYPE</th>
+<th>FUNCTION</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/ping</code></td>
+<td>PUT</td>
+<td>Utility call to ping the backend</td>
+</tr>
+<tr>
+<td><code>/query</code></td>
+<td>GET</td>
+<td>When called, checks the status of the previously provided data set and returns it if available</td>
+</tr>
+<tr>
+<td><code>/raw</code></td>
+<td>POST</td>
+<td>Call the <code>raw</code> module and proceeds to parse and prepare the inputted data to be sent to the cache data lake</td>
+</tr>
+<tr>
+<td><code>Create/Org</code></td>
+<td>POST</td>
+<td>Register a new organization in Cybex-P</td>
+</tr>
+<tr>
+<td><code>/Create/User</code></td>
+<td>POST</td>
+<td>Register a new user</td>
+</tr>
+<tr>
+<td><code>/org/add/user</code></td>
+<td>POST</td>
+<td>Register a new user under an organization</td>
+</tr>
+<tr>
+<td><code>/org/info</code></td>
+<td>GET</td>
+<td>Pull Organization information</td>
+</tr>
+<tr>
+<td><code>/org/del/user</code></td>
+<td>DELETE</td>
+<td>Delete a user from an organization</td>
+</tr>
+<tr>
+<td><code>/org/admins_of</code></td>
+<td>GET</td>
+<td>Get the information of the current admins of an organization</td>
+</tr>
+<tr>
+<td><code>/orgs/user_of</code></td>
+<td>GET</td>
+<td>Get the information of all users under an organization</td>
+</tr>
+<tr>
+<td><code>/user/info/self</code></td>
+<td>GET</td>
+<td>Get information on the current sessions user</td>
+</tr>
+</tbody>
+</table><h2 id="views">Views</h2>
+<p>The Views module is a respository of various functions and utility that encompass the funtionality behind <code>Cybex-P API Module</code>'s two sub-modules. The <em>Data Input sub-module</em> utilizes the <code>raw</code> module for the handling of raw data posted to the API while  <em>Report Publishing sub-module</em> utilizes the <code>query</code> module for the handling of report request made by users. Both sub-modules also rely on the <code>crypto</code> repository to handle the encryption of posted data and querys made by users.</p>
+<ul>
+<li><strong><code>raw</code></strong>
+<ul>
+<li>Raw data that is supplied from the frontend arrives at the <em><strong>Raw</strong></em> module. When called, it pulls the database config information and issues a timestamp index for the call. <em><strong>Raw</strong></em> then takes the raw unfiltered data (which comes in the form of an <em><strong>Input Configuration Object</strong></em> that is passed to it) and begins to parise it. That raw data arrives in the form of a long list of strings that is scanned for the following mandatory keys:</li>
+</ul>
+<blockquote>
+<ul>
+<li>typetag</li>
+<li>name</li>
+<li>orgid</li>
+<li>timezone</li>
+<li>config_hash</li>
+</ul>
+</blockquote>
+<ul>
+<li>Once the The above tags have been identified. The data to be processed along with the identifying tags get encrypted with the public key of the archive server and gets stored in the cache data lake.</li>
+</ul>
+</li>
+<li><strong><code>query</code></strong>
+<ul>
+<li>The query module is responsible for the handling and retrieval of report queries made to the backend. When called, all forms of input data are encoded into a canonical formatting and then encrypted via the <code>crpyto</code> module. A report query is then made via the  Cybex-P language <em><strong>TDQL</strong></em>.</li>
+</ul>
+<blockquote>
+<p><em><strong>query  =  TDQL(qtype, enc_qdata, qhash, userid, time.time())</strong></em></p>
+<ul>
+<li>qtype -&gt; data itype</li>
+<li>enc_qdata -&gt; JSON of the data query</li>
+<li>qhash -&gt; sha256 hexdigest of the data</li>
+<li>userid -&gt; hash of the user who requested the report</li>
+<li>time.time() -&gt; timestamp of the report query</li>
+</ul>
+</blockquote>
+<ul>
+<li>If a TDQL call returns with a status “ready”. the entire report is handed off to the responds media and returned to the client. Otherwise, the status will be indicated as “processing” and will prompt with an additional message “check back later”.</li>
+</ul>
+</li>
+<li><strong><code>crypto</code></strong>
+<ul>
+<li>The crypto module is a utility-based module used by both the <code>query</code> and <code>raw</code> module and is largely responsible for providing and handling the privacy preservation aspect of the <code>Cybex-P API Module</code>. The modules sole function is take the the provided API POST data (when called by the other 2 modules) and encrypt it with the public key of the archive modules’ server.</li>
+</ul>
+<blockquote>
+<ul>
+<li>def encrypt_filfe( fbytes, fpub_name=“pub.pem”)</li>
+</ul>
+</blockquote>
+<ul>
+<li>Before the data itself gets encrypted, a 32-byte long session key is generated and encrypted with the provided public RSA key (by default the public key is stored in “pub.pem”). Once the session key is encrypted, the data gets encrypted with the AES session key.</li>
+</ul>
+<blockquote>
+<ul>
+<li>enc_session_key  =  cipher_rsa.encrypt(session_key)</li>
+</ul>
+</blockquote>
+<ul>
+<li>A string made out of the concatenation of the encrypted session key, nonce, tag, and ciphertext is then returned as hash that works as an identity hash of the encrypted data.</li>
+</ul>
+<blockquote>
+<ul>
+<li>dout = enc_session_key + cipher_aes.nonce + tag + ciphertext</li>
+<li>return dout</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h2 id="resource">Resource</h2>
+<p>The resource module contains a variety of decorator functions and utility functions meant to handle and support the more miscellaneous task of the <code>Cybex-P API Module</code>. Some of these task include:</p>
+<ul>
+<li>Token authentication</li>
+<li>Login authentication</li>
+<li>Hash supplying</li>
+<li>User preferences and configuration</li>
+<li>New user and organization registration</li>
+</ul>
+<p>And more internal responsibilities such as:</p>
+<ul>
+<li>
+<p>System exception handling</p>
+</li>
+<li>
+<p>Backend configurations</p>
+</li>
+<li>
+<p>Required input fields</p>
+</li>
+<li>
+<h1 id="small-commonsmall"><small> Common</small></h1>
+</li>
+</ul>
+<p><code>Common</code> is the code in resources that contains common resources and decorators widely used throughout the <code>Cybex-P API Module</code>.</p>
+<ul>
+<li>
+<p><em><strong>configureIDBackend()</strong></em> :</p>
+<ul>
+<li>use by <code>api.py</code> to setup the identity backend. The information on the backend identity gets stored in the two variables below. If the following variables aren’t properly set, the rest of the code will not work.</li>
+</ul>
+<blockquote>
+<ul>
+<li>ResourceBase._backend = _backend</li>
+<li>Identity._backend = _backend</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p><em><strong>early_return()</strong></em></p>
+<ul>
+<li>Utility dectorator used by other decorators as a way to early return from any function call if a decorator calls for an early return. It is meant to be placed between any decorators before the action calling of the function. That is because if any of the previous decorators delcare an error on their part, <em><strong>early_return()</strong></em> can return a true as a way of allowing the previous decorater to return that error message; It also signals the current process to return earlier.</li>
+</ul>
+</li>
+<li>
+<p><em><strong>exception_handler()</strong></em> :</p>
+<ul>
+<li>This decorator function is in tandem with almost all other functions and API endpoint calls in the API module. the exception handler signals on any errors such as a bad HTTP request, Invalid input, and if the backend is currently down and/or not working properly.</li>
+</ul>
+</li>
+<li>
+<p><em><strong>require_fields()</strong></em> :</p>
+<ul>
+<li>Another decorator function that is responsible for establishing the fields mandated in order to process a request. If any fields are missing from a request, a response of <code>"Missing the following fields: {}"</code> is returned with a HTTP 400.</li>
+</ul>
+</li>
+<li>
+<p><em><strong>validate_org()</strong></em> :</p>
+<ul>
+<li>This function takes the provided JSON Web Token (JWT) of an organization request and ensures the validity of it and authentication. If the token is valid, it will return the request organization object</li>
+</ul>
+</li>
+<li>
+<p><em><strong>validate_user()</strong></em> :</p>
+<ul>
+<li>Works equivalently to   <em><strong>validate_org()</strong></em> , Just with returning a user object is the token is valid</li>
+</ul>
+</li>
+<li>
+<h1 id="smallconfigsmall"><small>config</small></h1>
+</li>
+</ul>
+<p><code>config</code> deals with initializing the an organization object and it’s required keys within the <code>Cybex-P API</code>.</p>
+<p>Classes:</p>
+<ul>
+<li>
+<p><em><strong>AddConfig()</strong></em></p>
+</li>
+<li>
+<h1 id="small-identity-small"><small> Identity </small></h1>
+</li>
+</ul>
+<p><code>Identity</code> contains functionality to handle various responsibilities of user and organization management, authentication, and access control list modification. Every class in the <code>Identity</code> source code is decorated with the <em><strong>validate_user()</strong></em> and <em><strong>exception_handler()</strong></em> functions from <code>Common</code> to assist with authentication and exception handling capabilities.</p>
+<p>Classes:</p>
+<ul>
+<li><em><strong>CreateOrg()</strong></em> :
+<ul>
+<li>Takes a request to register and create an organization in Cybex-P.</li>
+</ul>
+</li>
+<li><em><strong>CreateUser()</strong></em> :
+<ul>
+<li>Takes a request to register and create an user in Cybex-P.</li>
+</ul>
+</li>
+<li><em><strong>OrgAddUser()</strong></em> :
+<ul>
+<li>Appends a new user to an organization. Users can be appended in one of three different privilege categories to an organization object:
+<ul>
+<li><strong>admin</strong> : add the user as a new admin to the org</li>
+<li><strong>user</strong> : add the user as a new general user under the org</li>
+<li><strong>acl</strong> : add the user as a general user under the organizations access control list (acl)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><em><strong>OrgInfo()</strong></em> :
+<ul>
+<li>Returns information of an organization based on the request. This function can return information on the list of admins, users, and users under the organizations access control list. The user making the request must have admin privileges of their organization.</li>
+</ul>
+</li>
+<li><em><strong>OrgDelUser()</strong></em> :
+<ul>
+<li>Takes a request to remove a user from the acl or admin privileges of an organization. If the user is delete from the general user category of an orgnization, that user is removed from the organization as a whole and does not exist in the list of users. Must have admin privileges to request</li>
+</ul>
+</li>
+<li><em><strong>OrgsAdminOf()</strong></em> :
+<ul>
+<li>Provides a list of organizations that a user is an admin to</li>
+</ul>
+</li>
+<li><em><strong>OrgsUserOf()</strong></em> :
+<ul>
+<li>Provides a list of organizations that a user exist under</li>
+</ul>
+</li>
+<li><em><strong>UserInfoSelf()</strong></em> :
+<ul>
+<li>Provides information on the current user</li>
+</ul>
+</li>
+</ul>
+<p>The following are  <em><strong>deprecated</strong></em> or previous functions in the source code:</p>
+<blockquote>
+<ul>
+<li><em><strong>validate_token()</strong></em> - Decorator function that checks the validity of a token, failures will return a response code of 401. tokens are received from request_data[“token”] of a user request,</li>
+<li><em><strong>extract_request_data()</strong></em> - Decorator function that grabs the data from the falcon request objected and passes it to the decorated function as <em>‘request_data’</em>. The <em>required_fields</em> parameter is often used with the decorator to properly extract certain pieces of data within a query; otherwise, the request_data will only contain the timestamp of the call.</li>
+<li><em><strong>exception_handler()</strong></em> - This decorator function is in tandem with almost all other functions and API endpoint calls in the API module. the exception handler signals on any errors such as a bad HTTP request, Invalid input, and if the backend is currently down and/or not working properly.</li>
+<li><em><strong>early_return()</strong></em> - Utility dectorator used by other decorators as a way to early return from any function call if a decorator calls for an early return.</li>
+<li><em><strong>get_org_object()</strong></em> - checks to see if the key <code>org_hash</code> is present within the argument <code>request_data</code>. If it fails, then a response code 400 is returned. This decorator will pull <em>‘org_hash’</em> from <em>request_data[“org_hash”]</em> and place the org tahoe object under <em>org_object</em>.</li>
+</ul>
+</blockquote>
+<h1 id="miscellaneous">Miscellaneous</h1>
+<ul>
+<li>Public key
+<ul>
+<li>Public key of the Cybex-P API module, used with the privacy preservation system</li>
+</ul>
+</li>
+<li>Config repository
+<ul>
+<li>JSON format configurations of other module identities and the backend databases
+<ul>
+<li>api</li>
+<li>cache</li>
+<li>report</li>
+<li>identity</li>
+<li>tahoe</li>
+<li>archive</li>
+<li>analytics</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>load_config
+<ul>
+<li>handles the execution and updating of the API backend and module configurations</li>
+</ul>
+</li>
+<li>uwsgi
+<ul>
+<li>service file configuration for uwsgi instance</li>
+</ul>
+</li>
+</ul>
+</div>
+</body>
+
+</html>

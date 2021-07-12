@@ -1,0 +1,177 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cybex-P Report Module</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="cybex-p-report-module">Cybex-P Report Module</h1>
+<p>The <code>Cybex-P Report Module</code> is the final stop of processing for threat data in the system and where reports are generated and provided to the frontend web client.</p>
+<p>Cybex-P has a unique way in storing cyberthreat data in which the data is stored in graphs and the vertices amongst those graphs represent various attributes or events. Because of the way data is stored, Cybex-P has it’s own unique way of generating insightful reports.</p>
+<p>In regards to complexity in terms of the information provided from a report, a report can be something as straightforward as countign the occurences of a specific IP address within a time range to the correlational analysis of the attributes of a single URL.</p>
+<p><em><strong><u>Data Pipeline</u></strong></em></p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-umqMm97uA44elsZH" width="100%" xmlns="http://www.w3.org/2000/svg" height="368" style="max-width: 1146px;" viewBox="-150 -10 1146 368"><style>#mermaid-svg-umqMm97uA44elsZH{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-umqMm97uA44elsZH .error-icon{fill:#552222;}#mermaid-svg-umqMm97uA44elsZH .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-umqMm97uA44elsZH .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-umqMm97uA44elsZH .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-umqMm97uA44elsZH .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-umqMm97uA44elsZH .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-umqMm97uA44elsZH .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-umqMm97uA44elsZH .marker{fill:#666;stroke:#666;}#mermaid-svg-umqMm97uA44elsZH .marker.cross{stroke:#666;}#mermaid-svg-umqMm97uA44elsZH svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-umqMm97uA44elsZH .actor{stroke:hsl(0,0%,83%);fill:#eee;}#mermaid-svg-umqMm97uA44elsZH text.actor > tspan{fill:#333;stroke:none;}#mermaid-svg-umqMm97uA44elsZH .actor-line{stroke:#666;}#mermaid-svg-umqMm97uA44elsZH .messageLine0{stroke-width:1.5;stroke-dasharray:none;stroke:#333;}#mermaid-svg-umqMm97uA44elsZH .messageLine1{stroke-width:1.5;stroke-dasharray:2,2;stroke:#333;}#mermaid-svg-umqMm97uA44elsZH #arrowhead path{fill:#333;stroke:#333;}#mermaid-svg-umqMm97uA44elsZH .sequenceNumber{fill:white;}#mermaid-svg-umqMm97uA44elsZH #sequencenumber{fill:#333;}#mermaid-svg-umqMm97uA44elsZH #crosshead path{fill:#333;stroke:#333;}#mermaid-svg-umqMm97uA44elsZH .messageText{fill:#333;stroke:#333;}#mermaid-svg-umqMm97uA44elsZH .labelBox{stroke:hsl(0,0%,83%);fill:#eee;}#mermaid-svg-umqMm97uA44elsZH .labelText,#mermaid-svg-umqMm97uA44elsZH .labelText > tspan{fill:#333;stroke:none;}#mermaid-svg-umqMm97uA44elsZH .loopText,#mermaid-svg-umqMm97uA44elsZH .loopText > tspan{fill:#333;stroke:none;}#mermaid-svg-umqMm97uA44elsZH .loopLine{stroke-width:2px;stroke-dasharray:2,2;stroke:hsl(0,0%,83%);fill:hsl(0,0%,83%);}#mermaid-svg-umqMm97uA44elsZH .note{stroke:hsl(60,100%,23.3333333333%);fill:#ffa;}#mermaid-svg-umqMm97uA44elsZH .noteText,#mermaid-svg-umqMm97uA44elsZH .noteText > tspan{fill:#333;stroke:none;}#mermaid-svg-umqMm97uA44elsZH .activation0{fill:#f4f4f4;stroke:#666;}#mermaid-svg-umqMm97uA44elsZH .activation1{fill:#f4f4f4;stroke:#666;}#mermaid-svg-umqMm97uA44elsZH .activation2{fill:#f4f4f4;stroke:#666;}#mermaid-svg-umqMm97uA44elsZH:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-umqMm97uA44elsZH sequence{fill:apa;}</style><g></g><g><line id="actor14" x1="75" y1="5" x2="75" y2="357" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="0" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="75" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="75" dy="0">Archive-Database</tspan></text></g><g><line id="actor15" x1="275" y1="5" x2="275" y2="357" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="200" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="275" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="275" dy="0">Report-Cluster</tspan></text></g><g><line id="actor16" x1="640" y1="5" x2="640" y2="357" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="565" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="640" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="640" dy="0">Report-Database</tspan></text></g><g><line id="actor17" x1="871" y1="5" x2="871" y2="357" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="796" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="871" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="871" dy="0">Cybex-P-API</tspan></text></g><defs><marker id="arrowhead" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z"></path></marker></defs><defs><marker id="crosshead" markerWidth="15" markerHeight="8" orient="auto" refX="16" refY="4"><path fill="black" stroke="#000000" stroke-width="1px" d="M 9,2 V 6 L16,4 Z" style="stroke-dasharray: 0, 0;"></path><path fill="none" stroke="#000000" stroke-width="1px" d="M 0,1 L 6,7 M 6,1 L 0,7" style="stroke-dasharray: 0, 0;"></path></marker></defs><defs><marker id="filled-head" refX="18" refY="7" markerWidth="20" markerHeight="28" orient="auto"><path d="M 18,7 L9,13 L14,7 L9,1 Z"></path></marker></defs><defs><marker id="sequencenumber" refX="15" refY="15" markerWidth="60" markerHeight="40" orient="auto"><circle cx="15" cy="15" r="6"></circle></marker></defs><g><rect x="-100" y="75" fill="#EDF2AE" stroke="#666" width="150" height="53" rx="0" ry="0" class="note"></rect><text x="-25" y="80" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 14px; font-weight: 400;"><tspan x="-25">Begin data pipeline</tspan></text><text x="-25" y="97" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 14px; font-weight: 400;"><tspan x="-25"> here</tspan></text></g><text x="175" y="143" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">Encrypted query</text><line x1="75" y1="176" x2="275" y2="176" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="458" y="191" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">Report creation and storing of the report</text><line x1="275" y1="224" x2="640" y2="224" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="756" y="239" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">Pull report on demand</text><line x1="640" y1="272" x2="871" y2="272" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><rect x="0" y="292" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="75" y="324.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="75" dy="0">Archive-Database</tspan></text></g><g><rect x="200" y="292" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="275" y="324.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="275" dy="0">Report-Cluster</tspan></text></g><g><rect x="565" y="292" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="640" y="324.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="640" dy="0">Report-Database</tspan></text></g><g><rect x="796" y="292" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="871" y="324.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="871" dy="0">Cybex-P-API</tspan></text></g></svg></pre>
+<p><em><strong>Part 1: Query handling and processing</strong></em></p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-0CRnpPbVkCOU0I8v" width="100%" xmlns="http://www.w3.org/2000/svg" height="337" style="max-width: 1271px;" viewBox="-150 -10 1271 337"><style>#mermaid-svg-0CRnpPbVkCOU0I8v{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-0CRnpPbVkCOU0I8v .error-icon{fill:#552222;}#mermaid-svg-0CRnpPbVkCOU0I8v .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-0CRnpPbVkCOU0I8v .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-0CRnpPbVkCOU0I8v .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-0CRnpPbVkCOU0I8v .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-0CRnpPbVkCOU0I8v .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-0CRnpPbVkCOU0I8v .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-0CRnpPbVkCOU0I8v .marker{fill:#666;stroke:#666;}#mermaid-svg-0CRnpPbVkCOU0I8v .marker.cross{stroke:#666;}#mermaid-svg-0CRnpPbVkCOU0I8v svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-0CRnpPbVkCOU0I8v .actor{stroke:hsl(0,0%,83%);fill:#eee;}#mermaid-svg-0CRnpPbVkCOU0I8v text.actor > tspan{fill:#333;stroke:none;}#mermaid-svg-0CRnpPbVkCOU0I8v .actor-line{stroke:#666;}#mermaid-svg-0CRnpPbVkCOU0I8v .messageLine0{stroke-width:1.5;stroke-dasharray:none;stroke:#333;}#mermaid-svg-0CRnpPbVkCOU0I8v .messageLine1{stroke-width:1.5;stroke-dasharray:2,2;stroke:#333;}#mermaid-svg-0CRnpPbVkCOU0I8v #arrowhead path{fill:#333;stroke:#333;}#mermaid-svg-0CRnpPbVkCOU0I8v .sequenceNumber{fill:white;}#mermaid-svg-0CRnpPbVkCOU0I8v #sequencenumber{fill:#333;}#mermaid-svg-0CRnpPbVkCOU0I8v #crosshead path{fill:#333;stroke:#333;}#mermaid-svg-0CRnpPbVkCOU0I8v .messageText{fill:#333;stroke:#333;}#mermaid-svg-0CRnpPbVkCOU0I8v .labelBox{stroke:hsl(0,0%,83%);fill:#eee;}#mermaid-svg-0CRnpPbVkCOU0I8v .labelText,#mermaid-svg-0CRnpPbVkCOU0I8v .labelText > tspan{fill:#333;stroke:none;}#mermaid-svg-0CRnpPbVkCOU0I8v .loopText,#mermaid-svg-0CRnpPbVkCOU0I8v .loopText > tspan{fill:#333;stroke:none;}#mermaid-svg-0CRnpPbVkCOU0I8v .loopLine{stroke-width:2px;stroke-dasharray:2,2;stroke:hsl(0,0%,83%);fill:hsl(0,0%,83%);}#mermaid-svg-0CRnpPbVkCOU0I8v .note{stroke:hsl(60,100%,23.3333333333%);fill:#ffa;}#mermaid-svg-0CRnpPbVkCOU0I8v .noteText,#mermaid-svg-0CRnpPbVkCOU0I8v .noteText > tspan{fill:#333;stroke:none;}#mermaid-svg-0CRnpPbVkCOU0I8v .activation0{fill:#f4f4f4;stroke:#666;}#mermaid-svg-0CRnpPbVkCOU0I8v .activation1{fill:#f4f4f4;stroke:#666;}#mermaid-svg-0CRnpPbVkCOU0I8v .activation2{fill:#f4f4f4;stroke:#666;}#mermaid-svg-0CRnpPbVkCOU0I8v:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-0CRnpPbVkCOU0I8v sequence{fill:apa;}</style><g></g><g><line id="actor18" x1="75" y1="5" x2="75" y2="326" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="0" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="75" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="75" dy="0">Cybex-P-API</tspan></text></g><g><line id="actor19" x1="413" y1="5" x2="413" y2="326" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="338" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="413" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="413" dy="0">Frontend-Server</tspan></text></g><g><line id="actor20" x1="996" y1="5" x2="996" y2="326" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="921" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="996" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="996" dy="0">Frontend-Webclient</tspan></text></g><defs><marker id="arrowhead" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z"></path></marker></defs><defs><marker id="crosshead" markerWidth="15" markerHeight="8" orient="auto" refX="16" refY="4"><path fill="black" stroke="#000000" stroke-width="1px" d="M 9,2 V 6 L16,4 Z" style="stroke-dasharray: 0, 0;"></path><path fill="none" stroke="#000000" stroke-width="1px" d="M 0,1 L 6,7 M 6,1 L 0,7" style="stroke-dasharray: 0, 0;"></path></marker></defs><defs><marker id="filled-head" refX="18" refY="7" markerWidth="20" markerHeight="28" orient="auto"><path d="M 18,7 L9,13 L14,7 L9,1 Z"></path></marker></defs><defs><marker id="sequencenumber" refX="15" refY="15" markerWidth="60" markerHeight="40" orient="auto"><circle cx="15" cy="15" r="6"></circle></marker></defs><g><rect x="-100" y="75" fill="#EDF2AE" stroke="#666" width="150" height="70" rx="0" ry="0" class="note"></rect><text x="-25" y="80" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 14px; font-weight: 400;"><tspan x="-25">API has pulled the</tspan></text><text x="-25" y="97" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 14px; font-weight: 400;"><tspan x="-25">report from the</tspan></text><text x="-25" y="113" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 14px; font-weight: 400;"><tspan x="-25"> report database</tspan></text></g><text x="244" y="160" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">Frontend server pulls the report data</text><line x1="75" y1="193" x2="413" y2="193" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="705" y="208" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">Frontend web client pulls the report data and presents the information</text><line x1="413" y1="241" x2="996" y2="241" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><rect x="0" y="261" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="75" y="293.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="75" dy="0">Cybex-P-API</tspan></text></g><g><rect x="338" y="261" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="413" y="293.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="413" dy="0">Frontend-Server</tspan></text></g><g><rect x="921" y="261" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="996" y="293.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="996" dy="0">Frontend-Webclient</tspan></text></g></svg></pre>
+<p><em><strong>Part 2: Sending back the report and serving it to the frontend web application.</strong></em></p>
+<h1 id="cybex-p-report-module-repositories">Cybex-P Report Module Repositories</h1>
+<ul>
+<li><code>report [source code]</code>:
+<ul>
+<li>setting time range of a record</li>
+<li>raw threat data parsing</li>
+<li>query decryption</li>
+<li>Report types:
+<ul>
+<li>Attribute occurence counting</li>
+<li>Related sub_type</li>
+<li>Threat rank processing</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="report">report</h1>
+<p>The report repository is the source code that is entirely responsible for all aspects of the <code>Cybex-P Report Module</code>. The report source code is split up into various sections for handling report generation and queries:</p>
+<ul>
+<li>timelime recording and administration</li>
+<li>file decryption (for report querys made by the frontend client)</li>
+<li>query decanonicalizing</li>
+<li>report type generation</li>
+<li>report transferring via sockets</li>
+</ul>
+<p><em><strong>key functions</strong></em>:</p>
+<blockquote>
+<ul>
+<li>get_dtrange()</li>
+<li>decrypt_file()</li>
+<li>get_query()</li>
+<li>process_query()</li>
+<li>get_report()</li>
+<li>main()</li>
+</ul>
+</blockquote>
+<ul>
+<li>
+<h2 id="get_dtrange"><em><strong>get_dtrange()</strong></em></h2>
+<ul>
+<li>parameters:</li>
+</ul>
+<blockquote>
+<ul>
+<li><em><strong>from_</strong></em> = timeline value of when the threat data was received</li>
+<li><em><strong>to</strong></em> = timeline value of when the session of the  threat data was completed</li>
+<li><em><strong>last</strong></em> = last valid timeline value of the threat data</li>
+<li><em><strong>tzname</strong></em> = name of the timezone of the current user</li>
+</ul>
+</blockquote>
+<ul>
+<li>This function is responsible for translating the timeline of the provided threat data and parsing it<br>
+into the local timezone of the user who made the query.</li>
+</ul>
+</li>
+<li>
+<h2 id="decrypt_file"><em><strong>decrypt_file()</strong></em></h2>
+<ul>
+<li>the <em><strong>decrypt_file()</strong></em> functions works as exactly like the decrypt_file function located in the <code>Cybex-P Archive Module</code>. In this case its purpose serves to decrypt the querys provided from the <code>Cybex-P API Module</code>.</li>
+</ul>
+</li>
+<li>
+<h2 id="get_query"><em><strong>get_query()</strong></em></h2>
+<ul>
+<li>
+<p>get_query() serves to be the method that will consistently pull query request made to the report module provided from the archive database. get_query() encodes those querys into a TDQL and places it into a queue for processing.</p>
+<blockquote>
+<p>tdql = parse(i, backend=Report._backend, validate=False)<br>
+tdql.status = ‘processing’<br>
+queue.put(tdql)</p>
+</blockquote>
+</li>
+<li>
+<p>This process is ran forever in it’s own thread.</p>
+</li>
+</ul>
+</li>
+<li>
+<h2 id="get_report"><em><strong>get_report()</strong></em></h2>
+<p>get_report() is responsible for generating a report from a single TDQL object when called.</p>
+<p>The TDQL is first evaluated evaluated and decrypted from by the <strong>decrypt_file()</strong> function.</p>
+<blockquote>
+<ul>
+<li>if tdql.encrypted:<br>
+— canonical_qdata = decrypt_file(canonical_qdata)</li>
+</ul>
+</blockquote>
+<p>Proceeding the file decryption, parameters are extracted from the decrypted data such as teh category, context data, and return type.</p>
+<blockquote>
+<ul>
+<li>category = qdata.pop(‘category’, ‘all’)<br>
+context = qdata.pop(‘context’, ‘all’)<br>
+return_type = qdata.pop(‘return_type’, ‘all’)</li>
+</ul>
+</blockquote>
+<p>the timelime values are then extractd from the query and the <strong>get_dtrange()</strong> function is called to set the timelime according the timezone of the query.</p>
+<blockquote>
+<ul>
+<li>from_ = query.pop(‘from’, None)</li>
+<li>to = query.pop(‘to’, None)</li>
+<li>last = query.pop(‘last’, None)</li>
+<li>tzname = query.pop(‘tzname’, None)</li>
+<li>try:<br>
+—	start, end = get_dtrange(from_, to, last, tzname)</li>
+</ul>
+</blockquote>
+<p>At this point we can proceed to othe actual generation of the report requested by the query. Recall from this modules repository that we have three different report generation types; these three different report types are labeled, in Cybex-P terminology as:<br>
+- <code>count</code>:<br>
+- A report based on the on the number of occurences of a specific attribute as indicated by the sub type from the query<br>
+- <code>related</code>:<br>
+- A report based around all events related to a specific attributed within the provided time range of the query<br>
+-	<code>threat rank</code>:<br>
+-	A report based on generating the threat rank of an event. This sort of report is more complicated compared to the other report types as this report requires running the an even through Cybex-P’s own threat rank evaluation algorithm.</p>
+<p>In the event that none of the report types above correlate to the report type that is requested by the query. the query status is set to “failed”.</p>
+<blockquote>
+<ul>
+<li>query.status = ‘failed’</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<h2 id="process_query"><strong>Process_Query()</strong></h2>
+<p>Process query is a method that is used to process a single TDQL instance. It handles the address signing and websocket execution of where a processed TDQL report is to go outside of the API.</p>
+<p>Once the report is done generating (or the query is marked a "failure), we can go ahead and extract the report and encode all related parts of the query into a block of bytes.</p>
+<blockquote>
+<ul>
+<li>if not isinstance(nonce, bytes):</li>
+<li>— nonce = nonce.encode()</li>
+</ul>
+</blockquote>
+<p>At the final step, we use websockets to connect to the host API and send the report back.</p>
+<blockquote>
+<ul>
+<li>sock.connect((host, port))</li>
+<li>sock.send(nonce)</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<h2 id="main"><em><strong>Main()</strong></em></h2>
+<p>Main() is responsible for initializating the forever running query queue and consistently checking and executing any available TDQLs in the queue.</p>
+<blockquote>
+<p>queue = Queue()<br>
+thread_producer = Thread(target=get_query, args=(queue, ))</p>
+</blockquote>
+<p>executing querys to process:</p>
+<blockquote>
+<p>with ThreadPoolExecutor(64) as executor:<br>
+— executor.map(process_query, iter(queue.get, None))</p>
+</blockquote>
+</li>
+</ul>
+</div>
+</body>
+
+</html>
