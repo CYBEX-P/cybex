@@ -69,12 +69,12 @@ class NewDropdown extends React.Component {
               </Link>
             </DropdownItem>
 
-            <DropdownItem>
+            {/* <DropdownItem>
               <Link onClick={() => window.location.href = "https://cybexp-priv.ignaciochg.com/manual.html"} className="nav-link text-dark" to="graph">
                   <FontAwesomeIcon fixedWidth size="lg" icon="shield-alt" color="#e0e0e0" />
                   <span style={{ paddingLeft: '12px' }}>Privacy Preservation</span>
               </Link>
-            </DropdownItem>
+            </DropdownItem> */}
 
             <DropdownItem>
               <Link onClick={() => window.location.href ="/docs"} className="nav-link text-dark" to="/docs">

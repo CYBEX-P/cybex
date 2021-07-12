@@ -32,6 +32,8 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+        <script >mermaid.initialize({startOnLoad:true});</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -84,7 +86,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Front End</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Web Application</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#user-guide">User Guide</a></li>
@@ -101,6 +103,47 @@
 <li class="toctree-l2"><a class="reference internal" href="#react-frontend">React Frontend</a></li>
 </ul>
 </li>
+</ul>
+<p class="caption"><span class="caption-text">Back End</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="The_Cybex-P_Backend.html">The Cybex-P backend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="The_Cybex-P_Backend.html#documentation-structure-and-formatting-how-to-read">Documentation Structure and Formatting (How to read)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html">Cybex-P Input Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html#cybex-p-input-repository">Cybex-P Input Repository</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html#plugins">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html#miscellaneous">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html">Cybex-P API Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#cybex-p-api-repositories">Cybex-P API Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#small-common-small"><small> Common</small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#small-config-small"><small>config</small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#small-identity-small"><small> Identity </small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#miscellaneous">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html">Cybex-P Analytics Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html#cybex-p-analytics-repositories">Cybex-P Analytics Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html#analytics">analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html#filters">Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html#miscellaneous">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html">Cybex-P Archive Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html#cybex-p-archive-module-repositories">Cybex-P Archive Module Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html#archive">archive</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html#parsemain">parsemain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html#miscellaneous">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Report_Module.html">Cybex-P Report Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Report_Module.html#cybex-p-report-module-repositories">Cybex-P Report Module Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Report_Module.html#report">report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html">Cybex-P Installation guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-environment-setup-and-tahoe-installation-small"><small> Environment setup and Tahoe Installation  </small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-input-module-installation-small"><small> <strong>Input Module Installation</strong></small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-api-module-installation-small"><small> <strong>API Module Installation</strong></small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-archive-module-installation-small"><small> <strong>Archive Module Installation</strong></small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-analytics-module-installation-small"><small> <strong>Analytics Module Installation</strong></small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-report-module-installation-small"><small> <strong>Report Module Installation</strong></small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#database-setup-and-installation-mongodb">Database Setup and Installation (MongoDB)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#containzerization">Containzerization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#systemd-services-debian">Systemd Services (Debian)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-creating-the-service-files-small"><small> Creating the service files </small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-executing-cybex-services-small"><small> Executing Cybex Services </small></a></li>
+<li class="toctree-l1"><a class="reference external" href="https://cybex.cse.unr.edu/backendapi">Interactive Backend API Reference</a></li>
 </ul>
 
             
@@ -284,9 +327,6 @@
 <ul class="simple">
 <li><p>https://docs.djangoproject.com/en/3.0/howto/static-files/deployment/</p></li>
 </ul>
-<ol class="simple">
-<li><p>Configure nginx by setting a configuration file at /etc/nginx/conf.d/virtual.conf.d</p></li>
-</ol>
 <p>Deployment uses standard supervisor w/guncicorn approach to run Django app.
 Is run behind nginx web server as a reverse proxy. See pdf above for details.</p>
 </div>
@@ -313,7 +353,7 @@ in comments in their source code:</p>
 <ul class="simple">
 <li><p>cybexweb/graph/src/App.jsx</p>
 <ul>
-<li><p>description</p></li>
+<li><p>The parent component for the threat-intelligence graph application. All other components and functionality are inserted here.</p></li>
 </ul>
 </li>
 <li><p>cybexweb/graph/src/components/App/MainApp.jsx</p>
@@ -417,7 +457,7 @@ in comments in their source code:</p>
 </ul>
 </li>
 </ul>
-<p>The following files/directories are not component source code but are still relevant to the clientside source-code:</p>
+<p>The following files/directories are not source code for React components, but are still relevant to the front end operation:</p>
 <ul class="simple">
 <li><p>cybexweb/graph/src/testdata</p>
 <ul>

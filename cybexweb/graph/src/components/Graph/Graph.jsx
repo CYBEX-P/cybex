@@ -552,7 +552,7 @@ const Graph = ({ isLoading, setFromDate, setToDate, setTimezone, fromDate, toDat
         }}>
           {Array.isArray(hoverTextEdge.data) && (
             <div>
-              <h6 style={{textAlign:"center"}}>Has CYBEX Relationship:</h6>
+              <h6 style={{textAlign:"center"}}>Related Event:</h6>
               {/* &#8249; */}-
               {hoverTextEdge.data.map(item => (
                 // Creates colored tags with item description (item[0]). item[1] is the color

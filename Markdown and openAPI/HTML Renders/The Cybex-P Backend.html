@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Cybex-P Backend</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="the-cybex-p-backend">The Cybex-P backend</h1>
+<p>Hello! And Welcome to the <code>Cybex-P backend</code> documentation. The backend of Cybex-P is where all the magic happens of the entire <code>Cybex-P</code> project.</p>
+<p>The <code>Cybex-P backend</code> consists of everything from the servers that collect threat data, to the API gateway, to the analytical and record administrating modules in the very back.</p>
+<p>In order from where threat data starts traveling from beginning to end, The Cybex-P backend consist of the following 5 software modules and 1 Python library:</p>
+<ul>
+<li><code>Cybex-P Input Module</code>:
+<ul>
+<li>Various plugins and utility to help bring threat data to the API</li>
+</ul>
+</li>
+<li><code>Cybex-P API Module</code>:
+<ul>
+<li>The gateway between the Analytical/Records backend and everything else. Threat Data validation, encryption, and transferring</li>
+</ul>
+</li>
+<li><code>Cybex-P Archive Module</code>:
+<ul>
+<li>Threat data decryption, TAHOE object parsing</li>
+</ul>
+</li>
+<li><code>Cybex-P Analytics Module</code>:
+<ul>
+<li>Data correlation and processing</li>
+</ul>
+</li>
+<li><code>Cybex-P Report Module</code>:
+<ul>
+<li>Report generation for the frontend</li>
+</ul>
+</li>
+<li><code>Tahoe Python Library:</code>
+<ul>
+<li>Contemporary Cyber Threat Language</li>
+</ul>
+</li>
+</ul>
+<h1 id="documentation-structure-and-formatting-how-to-read">Documentation Structure and Formatting (How to read)</h1>
+<p>Each page of the different modules of the <code>Cybex-P backend</code> documentation have been formatted uniformly in a way to make understanding of the system comprehensive and easier to digest. The following is a flow chart that acts as a guideline on how all modules are structured and documented.</p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-hjRguPgB69yGlBpt" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="619.3333740234375" style="max-width: 562.05908203125px;" viewBox="0 0 562.05908203125 619.3333740234375"><style>#mermaid-svg-hjRguPgB69yGlBpt{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-hjRguPgB69yGlBpt .error-icon{fill:#552222;}#mermaid-svg-hjRguPgB69yGlBpt .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-hjRguPgB69yGlBpt .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-hjRguPgB69yGlBpt .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-hjRguPgB69yGlBpt .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-hjRguPgB69yGlBpt .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-hjRguPgB69yGlBpt .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-hjRguPgB69yGlBpt .marker{fill:#666;stroke:#666;}#mermaid-svg-hjRguPgB69yGlBpt .marker.cross{stroke:#666;}#mermaid-svg-hjRguPgB69yGlBpt svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-hjRguPgB69yGlBpt .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#000000;}#mermaid-svg-hjRguPgB69yGlBpt .cluster-label text{fill:#333;}#mermaid-svg-hjRguPgB69yGlBpt .cluster-label span{color:#333;}#mermaid-svg-hjRguPgB69yGlBpt .label text,#mermaid-svg-hjRguPgB69yGlBpt span{fill:#000000;color:#000000;}#mermaid-svg-hjRguPgB69yGlBpt .node rect,#mermaid-svg-hjRguPgB69yGlBpt .node circle,#mermaid-svg-hjRguPgB69yGlBpt .node ellipse,#mermaid-svg-hjRguPgB69yGlBpt .node polygon,#mermaid-svg-hjRguPgB69yGlBpt .node path{fill:#eee;stroke:#999;stroke-width:1px;}#mermaid-svg-hjRguPgB69yGlBpt .node .label{text-align:center;}#mermaid-svg-hjRguPgB69yGlBpt .node.clickable{cursor:pointer;}#mermaid-svg-hjRguPgB69yGlBpt .arrowheadPath{fill:#333333;}#mermaid-svg-hjRguPgB69yGlBpt .edgePath .path{stroke:#666;stroke-width:1.5px;}#mermaid-svg-hjRguPgB69yGlBpt .flowchart-link{stroke:#666;fill:none;}#mermaid-svg-hjRguPgB69yGlBpt .edgeLabel{background-color:white;text-align:center;}#mermaid-svg-hjRguPgB69yGlBpt .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#mermaid-svg-hjRguPgB69yGlBpt .cluster rect{fill:hsl(210,66.6666666667%,95%);stroke:#26a;stroke-width:1px;}#mermaid-svg-hjRguPgB69yGlBpt .cluster text{fill:#333;}#mermaid-svg-hjRguPgB69yGlBpt .cluster span{color:#333;}#mermaid-svg-hjRguPgB69yGlBpt div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(-160,0%,93.3333333333%);border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-svg-hjRguPgB69yGlBpt:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-hjRguPgB69yGlBpt flowchart{fill:apa;}</style><g><g class="output"><g class="clusters"></g><g class="edgePaths"><g class="edgePath LS-A LE-B" id="L-A-B" style="opacity: 1;"><path class="path" d="M281.029541015625,108L281.029541015625,133L281.029541015625,158" marker-end="url(https://stackedit.io/app#arrowhead111)" style="fill:none"></path><defs><marker id="arrowhead111" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B LE-C" id="L-B-C" style="opacity: 1;"><path class="path" d="M281.029541015625,284.6666717529297L281.029541015625,309.6666717529297L281.029541015625,334.6666717529297" marker-end="url(https://stackedit.io/app#arrowhead112)" style="fill:none"></path><defs><marker id="arrowhead112" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-C LE-D" id="L-C-D" style="opacity: 1;"><path class="path" d="M281.029541015625,461.3333435058594L281.029541015625,486.3333435058594L281.029541015625,511.3333435058594" marker-end="url(https://stackedit.io/app#arrowhead113)" style="fill:none"></path><defs><marker id="arrowhead113" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-B" class="edgeLabel L-LS-A' L-LE-B"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B-C" class="edgeLabel L-LS-B' L-LE-C"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-C-D" class="edgeLabel L-LS-C' L-LE-D"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="flowchart-A-465" transform="translate(281.029541015625,58)" style="opacity: 1;"><rect rx="0" ry="0" x="-84.94792175292969" y="-50" width="169.89584350585938" height="100" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-74.94792175292969,-40)"><foreignObject width="149.89584350585938" height="80"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Module Introduction:<br>- General Overiew<br>- Key Components</div></foreignObject></g></g></g><g class="node default" id="flowchart-B-466" transform="translate(281.029541015625,221.33333587646484)" style="opacity: 1;"><rect rx="0" ry="0" x="-192.04861450195312" y="-63.333335876464844" width="384.09722900390625" height="126.66667175292969" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-182.04861450195312,-53.333335876464844)"><foreignObject width="364.09722900390625" height="106.66667175292969"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Module Respositories:<br> - Table of contents <br>- Source code sections and their main purposes<br>- Sub-repositories and their purpose, if applicable.</div></foreignObject></g></g></g><g class="node default" id="flowchart-C-468" transform="translate(281.029541015625,398.00000762939453)" style="opacity: 1;"><rect rx="0" ry="0" x="-273.029541015625" y="-63.333335876464844" width="546.05908203125" height="126.66667175292969" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-263.029541015625,-53.333335876464844)"><foreignObject width="526.05908203125" height="106.66667175292969"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Module Technical Breakdown:<br>- Overview of the source code within each repository and sub-repositorys<br>- Key functions and classes <br>- Breakdown of key source code specifications</div></foreignObject></g></g></g><g class="node default" id="flowchart-D-470" transform="translate(281.029541015625,561.3333435058594)" style="opacity: 1;"><rect rx="0" ry="0" x="-160.08680725097656" y="-50" width="320.1736145019531" height="100" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-150.08680725097656,-40)"><foreignObject width="300.1736145019531" height="80"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Miscellaneous content:<br>- Configuration Loading <br>- Any Extra files. E.G: private/public keys<br></div></foreignObject></g></g></g></g></g></g></svg></pre>
+<ul>
+<li>
+<p><em><strong>1 - Module Introduction</strong></em>: Each module is first introduced with a superficial explanation of what the module does, the role(s) that it fills in the <code>Cybex-P Backend</code>, and how data is processed through that module. Some of the modules will come a flow chart that will either represent <em>how data is processed through that module</em> or <em>the location of that module and general direction of data within the <code>Cybex-P Backend</code> system topology</em>.</p>
+</li>
+<li>
+<p><em><strong>2 - Module Repositories</strong></em>: Like a table of contents, a list of the different code repositories of the backend is displayed here. A repository may either be a single file source code or a directory that leads to many more sub-repositories. Under each repository will be a short definition that represents a functionality that repository is responsible for within its module.</p>
+</li>
+<li>
+<p><em><strong>3 - Module Technical Breakdown</strong></em>: The technical breakdown consist of diving into each repository’s source code and addressing the key functions and classes that comprise that repository. Here, an explanation of those functions is provided along with a comprehensive explanation of it’s connections to other source code in the system (or even its connection to other modules, if applicable).</p>
+</li>
+<li>
+<p><em><strong>4 - Miscellaneous content</strong></em>:  Any additional files that don’t directly deal with the core responsibilties and functionality of a repository are addressed here, at the bottom of the modules page. These files can be anything from:</p>
+<ul>
+<li>backend config execution code</li>
+<li>private and public keys</li>
+<li>linux systemd service files</li>
+<li>JSON config files</li>
+<li>and more</li>
+</ul>
+</li>
+</ul>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cybex-P Archive Module</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="cybex-p-archive-module">Cybex-P Archive Module</h1>
+<p>The <code>Cybex-P Archive Module</code> is the next step in the process of threat data after being previously pushed to the cache data lake by the <code>Cybex-P API Module</code>.  This module has the prime responsibility to pull data from the cache data lake and parse it into a <em><strong>TAHOE</strong></em> object. Once parsed, it is then pushed and stored to it’s database server in which it will await to be used by the <code>Cybex-P Analytics Module</code>.</p>
+<p>The <code>Cybex-P Archive Module</code> is compromised of two modules that work in cohesion with each other on different servers. The <em><strong>Archive Cluster</strong></em> and the <em><strong>Archive Database</strong></em>.</p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-xPVu8UUzp2VTFPuV" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="62.66667175292969" style="max-width: 875.6007080078125px;" viewBox="0 0.0000019073486328125 875.6007080078125 62.66667175292969"><style>#mermaid-svg-xPVu8UUzp2VTFPuV{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-xPVu8UUzp2VTFPuV .error-icon{fill:#552222;}#mermaid-svg-xPVu8UUzp2VTFPuV .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-xPVu8UUzp2VTFPuV .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-xPVu8UUzp2VTFPuV .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-xPVu8UUzp2VTFPuV .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-xPVu8UUzp2VTFPuV .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-xPVu8UUzp2VTFPuV .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-xPVu8UUzp2VTFPuV .marker{fill:#666;stroke:#666;}#mermaid-svg-xPVu8UUzp2VTFPuV .marker.cross{stroke:#666;}#mermaid-svg-xPVu8UUzp2VTFPuV svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-xPVu8UUzp2VTFPuV .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#000000;}#mermaid-svg-xPVu8UUzp2VTFPuV .cluster-label text{fill:#333;}#mermaid-svg-xPVu8UUzp2VTFPuV .cluster-label span{color:#333;}#mermaid-svg-xPVu8UUzp2VTFPuV .label text,#mermaid-svg-xPVu8UUzp2VTFPuV span{fill:#000000;color:#000000;}#mermaid-svg-xPVu8UUzp2VTFPuV .node rect,#mermaid-svg-xPVu8UUzp2VTFPuV .node circle,#mermaid-svg-xPVu8UUzp2VTFPuV .node ellipse,#mermaid-svg-xPVu8UUzp2VTFPuV .node polygon,#mermaid-svg-xPVu8UUzp2VTFPuV .node path{fill:#eee;stroke:#999;stroke-width:1px;}#mermaid-svg-xPVu8UUzp2VTFPuV .node .label{text-align:center;}#mermaid-svg-xPVu8UUzp2VTFPuV .node.clickable{cursor:pointer;}#mermaid-svg-xPVu8UUzp2VTFPuV .arrowheadPath{fill:#333333;}#mermaid-svg-xPVu8UUzp2VTFPuV .edgePath .path{stroke:#666;stroke-width:1.5px;}#mermaid-svg-xPVu8UUzp2VTFPuV .flowchart-link{stroke:#666;fill:none;}#mermaid-svg-xPVu8UUzp2VTFPuV .edgeLabel{background-color:white;text-align:center;}#mermaid-svg-xPVu8UUzp2VTFPuV .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#mermaid-svg-xPVu8UUzp2VTFPuV .cluster rect{fill:hsl(210,66.6666666667%,95%);stroke:#26a;stroke-width:1px;}#mermaid-svg-xPVu8UUzp2VTFPuV .cluster text{fill:#333;}#mermaid-svg-xPVu8UUzp2VTFPuV .cluster span{color:#333;}#mermaid-svg-xPVu8UUzp2VTFPuV div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(-160,0%,93.3333333333%);border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-svg-xPVu8UUzp2VTFPuV:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-xPVu8UUzp2VTFPuV flowchart{fill:apa;}</style><g><g class="output"><g class="clusters"></g><g class="edgePaths"><g class="edgePath LS-A LE-B" id="L-A-B" style="opacity: 1;"><path class="path" d="M147.28819274902344,31.33333396911621L230.30035400390625,31.33333396911621L313.31251525878906,31.33333396911621" marker-end="url(https://stackedit.io/app#arrowhead46)" style="fill:none"></path><defs><marker id="arrowhead46" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B LE-C" id="L-B-C" style="opacity: 1;"><path class="path" d="M442.3750305175781,31.33333396911621L583.1042022705078,31.33333396911621L723.8333740234375,31.33333396911621" marker-end="url(https://stackedit.io/app#arrowhead47)" style="fill:none"></path><defs><marker id="arrowhead47" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" transform="translate(230.30035400390625,31.33333396911621)" style="opacity: 1;"><g transform="translate(-58.01216125488281,-13.333333969116211)" class="label"><rect rx="0" ry="0" width="116.02432250976562" height="26.666667938232422"></rect><foreignObject width="116.0243148803711" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-B" class="edgeLabel L-LS-A' L-LE-B">data gets pulled</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(583.1042022705078,31.33333396911621)" style="opacity: 1;"><g transform="translate(-115.72917175292969,-13.333333969116211)" class="label"><rect rx="0" ry="0" width="231.45834350585938" height="26.666667938232422"></rect><foreignObject width="231.45834350585938" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B-C" class="edgeLabel L-LS-B' L-LE-C">Converted to TAHOE and Pushed</span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="flowchart-A-233" transform="translate(77.64409637451172,31.33333396911621)" style="opacity: 1;"><rect rx="5" ry="5" x="-69.64410018920898" y="-23.33333396911621" width="139.28820037841797" height="46.66666793823242" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-59.644100189208984,-13.333333969116211)"><foreignObject width="119.28820037841797" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Cache Data Lake</div></foreignObject></g></g></g><g class="node default" id="flowchart-B-234" transform="translate(377.8437728881836,31.33333396911621)" style="opacity: 1;"><rect rx="0" ry="0" x="-64.53125762939453" y="-23.33333396911621" width="129.06251525878906" height="46.66666793823242" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-54.53125762939453,-13.333333969116211)"><foreignObject width="109.06250762939453" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Archive Cluster</div></foreignObject></g></g></g><g class="node default" id="flowchart-C-236" transform="translate(795.7170562744141,31.33333396911621)" style="opacity: 1;"><rect rx="0" ry="0" x="-71.88368225097656" y="-23.33333396911621" width="143.76736450195312" height="46.66666793823242" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-61.88368225097656,-13.333333969116211)"><foreignObject width="123.76736450195312" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Archive Database</div></foreignObject></g></g></g></g></g></g></svg></pre>
+<ul>
+<li><em><strong>Archive Cluster</strong></em>
+<ul>
+<li>Decryption of data</li>
+<li>Threat data to TAHOE object conversion</li>
+</ul>
+</li>
+<li><em><strong>Archive Database</strong></em>
+<ul>
+<li>Storage of the newly parse TAHOE object</li>
+</ul>
+</li>
+</ul>
+<h1 id="cybex-p-archive-module-repositories">Cybex-P Archive Module Repositories</h1>
+<ul>
+<li><code>archive [Source Code]</code>
+<ul>
+<li>Data decryption</li>
+<li>Data Archiving</li>
+<li>Module Initialization and Execution</li>
+</ul>
+</li>
+<li><code>parsemain [Source Code]</code>
+<ul>
+<li>Data Parsing
+<ul>
+<li>Turning a piece of data into a Raw <em><strong>TAHOE</strong></em> object</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="archive">archive</h1>
+<p><code>archive</code> is the core source code of the <code>Cybex-P Archive Module</code>  since alot of the main functionality takes place here. Everything from data decryption to archiving takes place in this module.</p>
+<p><em><strong>Key Functions</strong></em>:</p>
+<blockquote>
+<ul>
+<li><strong>decrypt_file</strong>(file_in, fpriv_name = “priv.pem”)</li>
+<li><strong>archive_one</strong>(event, cache_coll, fs, pkey_fp, parsemain_func)</li>
+<li><strong>archive</strong>(cacheconfig, force_process = False, exec_once = False)</li>
+</ul>
+</blockquote>
+<ul>
+<li>
+<p><code>decrypt_file()</code>:</p>
+<ul>
+<li>This function is only used by <em><strong>archive_one()</strong></em> and is used to decrypt threat data that has been previously encrypted with the public key of the <code>Cybex-P Archive Module</code>. When called, a file of the set of threat data is passed in along with the private key of the of the module (by default, the private key is under “priv.pem”). <strong>decrypt_file()</strong> go ahead and validate the file to ensure correct format. Once validated, the private key is pulled and the session key, nonce, tags, and ciphertext are extract from the private key. The session key is then decrypted with the private RSA key and the data gets decrypted with the AES session key. The threat data is then returned in <em>utf-8</em> formatting.</li>
+</ul>
+</li>
+<li>
+<p><code>archive_one()</code>:</p>
+<ul>
+<li><strong>archive_one()</strong> is responsible for taking a single event provided to it and administrating decryption and  TAHOE parsing methods to process the data. Like the <em><strong>decrypt_file()</strong></em> function, this function is only used by one other function: <em><strong>archive()</strong></em> [See below]. This function utilizes <strong>decrypt_file()</strong> in its definition take the provided byte data and return the raw threat data. A call is then made to the <strong>parsemain()</strong> function (defined as <em>parsemain_func</em> within the definition of this function) to take the provided threat data and parse it into a raw TAHOE object. When the data proceeds to get parsed, the result of the parsing will come back in 1 of 3 states administrated by <strong>parsemain()</strong>:
+<ul>
+<li><em><strong>SUCCESS</strong></em> - The parsing was successful and will be updated to the Archive module database with its reference hash</li>
+<li><em><strong>NOT_SUPPORTED</strong></em> - An attempt at parsing the passed data was made but the type of data that was passed is an unsupported sub-type. The data will be sent to the database with the <strong>“skip”</strong> set to True.</li>
+<li><em><strong>ERROR</strong></em> - An attempt at parsing the passed data was made but an error was caught during the the function call. With an error case, a object of <em><strong>Nonetype</strong></em> is returned and updated to the database with the <em><strong>"skip"</strong></em> flag set to true.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><code>archive()</code>:</p>
+<ul>
+<li><em><strong>archive()</strong></em> Is the main controlling function of the <code>archive</code> source code. When executed, the function while go into an infinite while loop that will consistently be checking for a provided cache configuration and proceed to set the path to the Archive database and tunnel to grab data from the cache data lake.</li>
+<li>The rest of <em><strong>archive()</strong></em> is then an infinitely running while loop that is consistently querying the the cache data lake for available raw threat data provided from the <code>Cybex-P API Module</code>. However, to save resources and optimize performance, <em><strong>archive()</strong></em> has a an exponential backoff method that is ran after every query attempt.</li>
+<li>The exponential backoff method is ran after every query and is meant to sleep the system for a certain amount of seconds in order to decrease the rate of querying in order to keep a stable rate of querys. If success is achieved after a single query and archive attempt, the amount of accounted failed attempts is reset to 0.</li>
+</ul>
+<blockquote>
+<ul>
+<li>n_failed_attempts -&gt; The number of failed attempts so far after <em><strong>every</strong></em> recent failed query.</li>
+<li><em><strong>exponential_backoff</strong></em>(n_failed_attempts)</li>
+</ul>
+</blockquote>
+<ul>
+<li>E.G: If <em>n_failed_attempts</em> is currently set to 3, meaning 3 querys were made and ended up being failed attempts, the exponential backoff function sleeps the archive module for a certain amount of seconds based on the following function:</li>
+</ul>
+<blockquote>
+<ul>
+<li>s = min(3600, (2 ** <strong>n)</strong> + (random.randint(0, 1000) / 1000))<br>
+time.sleep(s)<br>
+#Where <strong>n</strong> = n_failed_attempt</li>
+</ul>
+</blockquote>
+<ul>
+<li>Otherwise, if a successful query was made, <em>n_failed_attempts</em> is set back to 0 which will lead the archive module to increasing the rate of query and archive attempts again.</li>
+</ul>
+</li>
+</ul>
+<h1 id="parsemain">parsemain</h1>
+<p>The <code>parsemain</code> source code is a key sub-component that is utilized by <code>archive</code> to handle the responsibility of parsing threat data to the raw TAHOE objects that will eventually be used by the <code>Cybex-P Analytics Module</code>.</p>
+<p><em><strong>Key functions</strong></em>:</p>
+<blockquote>
+<ul>
+<li>parsemain(typtag, org id, timezone, data)</li>
+</ul>
+</blockquote>
+<ul>
+<li><code>parsemain()</code>:
+<ul>
+<li>parsemain is the sole function that is responsible for taking a single event of threat data and parsing it into a raw TAHOE object.  This function is only used by <em><strong>archive_one()</strong></em> from the <code>archive</code> source code.</li>
+<li>When called, the <em>typtag</em> will be used to pull the raw sub type from the list of available sub types within the Cybex-P database. if typtag is valid and we receive a valid raw_sub_type, we can then go ahead and call TAHOEs <em><strong>Raw()</strong></em>  and parse the following into a TAHOE instance that will get posted to the Archive Datababase:</li>
+</ul>
+<blockquote>
+<ul>
+<li>raw  =  Raw(raw_sub_type, data, orgid, timezone)</li>
+</ul>
+</blockquote>
+<ul>
+<li>Recall to the previous explanation within <em><strong>archive_one()</strong></em> above; based on the outcome of a valid raw sub type, parsemain will administrate 1 of 3 states to the function call:
+<ul>
+<li><em><strong>ParseState.SUCCESS</strong></em> - a valid raw sub type was found and the data was successfully parsed into a raw TAHOE object.</li>
+<li><em><strong>ParseState.NOT_SUPPORTED</strong></em> - an unknown typtag was supplied, therefore there was now available raw sub type.</li>
+<li><em><strong>ParseState.ERROR</strong></em> - An error happened and was caught</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="miscellaneous">Miscellaneous</h1>
+<ul>
+<li>Private Key
+<ul>
+<li>Private key of the cybex-p archive module</li>
+<li>TAKE STEPS TO ENSURE THAT CANNOT BE EASILY ACCESSIBLE/READ</li>
+</ul>
+</li>
+<li>cybexp-archive.service
+<ul>
+<li>systemd service file that maintains the cybex-p archive module</li>
+</ul>
+</li>
+</ul>
+</div>
+</body>
+
+</html>

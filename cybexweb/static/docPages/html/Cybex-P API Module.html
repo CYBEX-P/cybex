@@ -1,0 +1,535 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Cybex-P API Module &mdash; cybex_web_app 0.9.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+        <script >mermaid.initialize({startOnLoad:true});</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> cybex_web_app
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Front End</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Web Application</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cybex_web_app</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Cybex-P API Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/Cybex-P API Module.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cybex-p-api-module">
+<h1>Cybex-P API Module<a class="headerlink" href="#cybex-p-api-module" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">API</span> <span class="pre">Module</span></code> is the gateway for all data that travels in and out of Cybex-P during collection and posting. Cybex-P API is combintation of two sub-modules; the <em>Data Input sub-module</em> and the <em>Report Publishing sub-module</em>. The <em>Data Input sub-module</em> deals with the parsing of posted raw data and transferring of it to the backend. The <em>Report Publishing sub-module</em> deals with the handling of report request and the returning of any available ports to the user. In addition to being the gateway to the Cybex-P services, The API module also works as another checkpoint of additional privacy preservation  in which the data gets further encrypted.</p>
+<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>graph LR
+A[Cybex-P Input] --&gt; B
+B(Cybex-P API) --&gt; C
+C(Cybex-P Cache Data Lake)
+</pre></div>
+</div>
+</div>
+<div class="section" id="cybex-p-api-repositories">
+<h1>Cybex-P API Repositories<a class="headerlink" href="#cybex-p-api-repositories" title="Permalink to this headline">¶</a></h1>
+<p>the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">API</span> <span class="pre">Module</span></code> and it’s sub-modules is comprised of the following three modules.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">API</span></code></p>
+<ul>
+<li><p>URL calls</p></li>
+<li><p>Frontend to backend services</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">views</span></code></p>
+<ul>
+<li><p>Privacy preservation</p></li>
+<li><p>Report querying and status updates</p></li>
+<li><p>Data parsing and processing</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Resource</span></code></p>
+<ul>
+<li><p>Token validation</p></li>
+<li><p>User authentication</p></li>
+<li><p>Appending of new users and organiztion</p></li>
+<li><p>Configurations</p></li>
+<li><p>Access control Lists</p></li>
+</ul>
+</li>
+</ul>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<p>the Cybex-P <code class="docutils literal notranslate"><span class="pre">API</span></code> (not to be confused with <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">API</span> <span class="pre">Module</span></code>, which is the entire backend API module) is where URL calls are made depending on the type of desired service. The <code class="docutils literal notranslate"><span class="pre">API</span></code> modules web backend runs off the Falcon framework.</p>
+<p>The following calls can be made to <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">API</span></code>:</p>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>URL/Routes</p></th>
+<th class="head"><p>TYPE</p></th>
+<th class="head"><p>FUNCTION</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/ping</span></code></p></td>
+<td><p>PUT</p></td>
+<td><p>Utility call to ping the backend</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">/query</span></code></p></td>
+<td><p>GET</p></td>
+<td><p>When called, checks the status of the previously provided data set and returns it if available</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/raw</span></code></p></td>
+<td><p>POST</p></td>
+<td><p>Call the <code class="docutils literal notranslate"><span class="pre">raw</span></code> module and proceeds to parse and prepare the inputted data to be sent to the cache data lake</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Create/Org</span></code></p></td>
+<td><p>POST</p></td>
+<td><p>Register a new organization in Cybex-P</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/Create/User</span></code></p></td>
+<td><p>POST</p></td>
+<td><p>Register a new user</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">/org/add/user</span></code></p></td>
+<td><p>POST</p></td>
+<td><p>Register a new user under an organization</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/org/info</span></code></p></td>
+<td><p>GET</p></td>
+<td><p>Pull Organization information</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">/org/del/user</span></code></p></td>
+<td><p>DELETE</p></td>
+<td><p>Delete a user from an organization</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/org/admins_of</span></code></p></td>
+<td><p>GET</p></td>
+<td><p>Get the information of the current admins of an organization</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">/orgs/user_of</span></code></p></td>
+<td><p>GET</p></td>
+<td><p>Get the information of all users under an organization</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/user/info/self</span></code></p></td>
+<td><p>GET</p></td>
+<td><p>Get information on the current sessions user</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="views">
+<h2>Views<a class="headerlink" href="#views" title="Permalink to this headline">¶</a></h2>
+<p>The Views module is a respository of various functions and utility that encompass the funtionality behind <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">API</span> <span class="pre">Module</span></code>’s two sub-modules. The <em>Data Input sub-module</em> utilizes the <code class="docutils literal notranslate"><span class="pre">raw</span></code> module for the handling of raw data posted to the API while  <em>Report Publishing sub-module</em> utilizes the <code class="docutils literal notranslate"><span class="pre">query</span></code> module for the handling of report request made by users. Both sub-modules also rely on the <code class="docutils literal notranslate"><span class="pre">crypto</span></code> repository to handle the encryption of posted data and querys made by users.</p>
+<ul>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">raw</span></code></strong></p>
+<ul class="simple">
+<li><p>Raw data that is supplied from the frontend arrives at the <em><strong>Raw</strong></em> module. When called, it pulls the database config information and issues a timestamp index for the call. <em><strong>Raw</strong></em> then takes the raw unfiltered data (which comes in the form of an <em><strong>Input Configuration Object</strong></em> that is passed to it) and begins to parise it. That raw data arrives in the form of a long list of strings that is scanned for the following mandatory keys:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>typetag</p></li>
+<li><p>name</p></li>
+<li><p>orgid</p></li>
+<li><p>timezone</p></li>
+<li><p>config_hash</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>Once the The above tags have been identified. The data to be processed along with the identifying tags get encrypted with the public key of the archive server and gets stored in the cache data lake.</p></li>
+</ul>
+</li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">query</span></code></strong></p>
+<ul class="simple">
+<li><p>The query module is responsible for the handling and retrieval of report queries made to the backend. When called, all forms of input data are encoded into a canonical formatting and then encrypted via the <code class="docutils literal notranslate"><span class="pre">crpyto</span></code> module. A report query is then made via the  Cybex-P language <em><strong>TDQL</strong></em>.</p></li>
+</ul>
+<blockquote>
+<div><p><em><strong>query  =  TDQL(qtype, enc_qdata, qhash, userid, time.time())</strong></em></p>
+<ul class="simple">
+<li><p>qtype -&gt; data itype</p></li>
+<li><p>enc_qdata -&gt; JSON of the data query</p></li>
+<li><p>qhash -&gt; sha256 hexdigest of the data</p></li>
+<li><p>userid -&gt; hash of the user who requested the report</p></li>
+<li><p>time.time() -&gt; timestamp of the report query</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>If a TDQL call returns with a status “ready”. the entire report is handed off to the responds media and returned to the client. Otherwise, the status will be indicated as “processing” and will prompt with an additional message “check back later”.</p></li>
+</ul>
+</li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">crypto</span></code></strong></p>
+<ul class="simple">
+<li><p>The crypto module is a utility-based module used by both the <code class="docutils literal notranslate"><span class="pre">query</span></code> and <code class="docutils literal notranslate"><span class="pre">raw</span></code> module and is largely responsible for providing and handling the privacy preservation aspect of the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">API</span> <span class="pre">Module</span></code>. The modules sole function is take the the provided API POST data (when called by the other 2 modules) and encrypt it with the public key of the archive modules’ server.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>def encrypt_filfe( fbytes, fpub_name=”pub.pem”)</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>Before the data itself gets encrypted, a 32-byte long session key is generated and encrypted with the provided public RSA key (by default the public key is stored in “pub.pem”). Once the session key is encrypted, the data gets encrypted with the AES session key.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>enc_session_key  =  cipher_rsa.encrypt(session_key)</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>A string made out of the concatenation of the encrypted session key, nonce, tag, and ciphertext is then returned as hash that works as an identity hash of the encrypted data.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>dout = enc_session_key + cipher_aes.nonce + tag + ciphertext</p></li>
+<li><p>return dout</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="resource">
+<h2>Resource<a class="headerlink" href="#resource" title="Permalink to this headline">¶</a></h2>
+<p>The resource module contains a variety of decorator functions and utility functions meant to handle and support the more miscellaneous task of the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">API</span> <span class="pre">Module</span></code>. Some of these task include:</p>
+<ul class="simple">
+<li><p>Token authentication</p></li>
+<li><p>Login authentication</p></li>
+<li><p>Hash supplying</p></li>
+<li><p>User preferences and configuration</p></li>
+<li><p>New user and organization registration</p></li>
+</ul>
+<p>And more internal responsibilities such as:</p>
+<ul class="simple">
+<li><p>System exception handling</p></li>
+<li><p>Backend configurations</p></li>
+<li><p>Required input fields</p></li>
+<li></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">Common</span></code> is the code in resources that contains common resources and decorators widely used throughout the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">API</span> <span class="pre">Module</span></code>.</p>
+<ul>
+<li><p><em><strong>configureIDBackend()</strong></em> :</p>
+<ul class="simple">
+<li><p>use by <code class="docutils literal notranslate"><span class="pre">api.py</span></code> to setup the identity backend. The information on the backend identity gets stored in the two variables below. If the following variables aren’t properly set, the rest of the code will not work.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>ResourceBase._backend = _backend</p></li>
+<li><p>Identity._backend = _backend</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><em><strong>early_return()</strong></em></p>
+<ul class="simple">
+<li><p>Utility dectorator used by other decorators as a way to early return from any function call if a decorator calls for an early return. It is meant to be placed between any decorators before the action calling of the function. That is because if any of the previous decorators delcare an error on their part, <em><strong>early_return()</strong></em> can return a true as a way of allowing the previous decorater to return that error message; It also signals the current process to return earlier.</p></li>
+</ul>
+</li>
+<li><p><em><strong>exception_handler()</strong></em> :</p>
+<ul class="simple">
+<li><p>This decorator function is in tandem with almost all other functions and API endpoint calls in the API module. the exception handler signals on any errors such as a bad HTTP request, Invalid input, and if the backend is currently down and/or not working properly.</p></li>
+</ul>
+</li>
+<li><p><em><strong>require_fields()</strong></em> :</p>
+<ul class="simple">
+<li><p>Another decorator function that is responsible for establishing the fields mandated in order to process a request. If any fields are missing from a request, a response of <code class="docutils literal notranslate"><span class="pre">&quot;Missing</span> <span class="pre">the</span> <span class="pre">following</span> <span class="pre">fields:</span> <span class="pre">{}&quot;</span></code> is returned with a HTTP 400.</p></li>
+</ul>
+</li>
+<li><p><em><strong>validate_org()</strong></em> :</p>
+<ul class="simple">
+<li><p>This function takes the provided JSON Web Token (JWT) of an organization request and ensures the validity of it and authentication. If the token is valid, it will return the request organization object</p></li>
+</ul>
+</li>
+<li><p><em><strong>validate_user()</strong></em> :</p>
+<ul class="simple">
+<li><p>Works equivalently to   <em><strong>validate_org()</strong></em> , Just with returning a user object is the token is valid</p></li>
+</ul>
+</li>
+<li></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">config</span></code> deals with initializing the an organization object and it’s required keys within the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">API</span></code>.</p>
+<p>Classes:</p>
+<ul class="simple">
+<li><p><em><strong>AddConfig()</strong></em></p></li>
+<li></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">Identity</span></code> contains functionality to handle various responsibilities of user and organization management, authentication, and access control list modification. Every class in the <code class="docutils literal notranslate"><span class="pre">Identity</span></code> source code is decorated with the <em><strong>validate_user()</strong></em> and <em><strong>exception_handler()</strong></em> functions from <code class="docutils literal notranslate"><span class="pre">Common</span></code> to assist with authentication and exception handling capabilities.</p>
+<p>Classes:</p>
+<ul class="simple">
+<li><p><em><strong>CreateOrg()</strong></em> :</p>
+<ul>
+<li><p>Takes a request to register and create an organization in Cybex-P.</p></li>
+</ul>
+</li>
+<li><p><em><strong>CreateUser()</strong></em> :</p>
+<ul>
+<li><p>Takes a request to register and create an user in Cybex-P.</p></li>
+</ul>
+</li>
+<li><p><em><strong>OrgAddUser()</strong></em> :</p>
+<ul>
+<li><p>Appends a new user to an organization. Users can be appended in one of three different privilege categories to an organization object:</p>
+<ul>
+<li><p><strong>admin</strong> : add the user as a new admin to the org</p></li>
+<li><p><strong>user</strong> : add the user as a new general user under the org</p></li>
+<li><p><strong>acl</strong> : add the user as a general user under the organizations access control list (acl)</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><em><strong>OrgInfo()</strong></em> :</p>
+<ul>
+<li><p>Returns information of an organization based on the request. This function can return information on the list of admins, users, and users under the organizations access control list. The user making the request must have admin privileges of their organization.</p></li>
+</ul>
+</li>
+<li><p><em><strong>OrgDelUser()</strong></em> :</p>
+<ul>
+<li><p>Takes a request to remove a user from the acl or admin privileges of an organization. If the user is delete from the general user category of an orgnization, that user is removed from the organization as a whole and does not exist in the list of users. Must have admin privileges to request</p></li>
+</ul>
+</li>
+<li><p><em><strong>OrgsAdminOf()</strong></em> :</p>
+<ul>
+<li><p>Provides a list of organizations that a user is an admin to</p></li>
+</ul>
+</li>
+<li><p><em><strong>OrgsUserOf()</strong></em> :</p>
+<ul>
+<li><p>Provides a list of organizations that a user exist under</p></li>
+</ul>
+</li>
+<li><p><em><strong>UserInfoSelf()</strong></em> :</p>
+<ul>
+<li><p>Provides information on the current user</p></li>
+</ul>
+</li>
+</ul>
+<p>The following are  <em><strong>deprecated</strong></em> or previous functions in the source code:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em><strong>validate_token()</strong></em> - Decorator function that checks the validity of a token, failures will return a response code of 401. tokens are received from request_data[“token”] of a user request,</p></li>
+<li><p><em><strong>extract_request_data()</strong></em> - Decorator function that grabs the data from the falcon request objected and passes it to the decorated function as <em>‘request_data’</em>. The <em>required_fields</em> parameter is often used with the decorator to properly extract certain pieces of data within a query; otherwise, the request_data will only contain the timestamp of the call.</p></li>
+<li><p><em><strong>exception_handler()</strong></em> - This decorator function is in tandem with almost all other functions and API endpoint calls in the API module. the exception handler signals on any errors such as a bad HTTP request, Invalid input, and if the backend is currently down and/or not working properly.</p></li>
+<li><p><em><strong>early_return()</strong></em> - Utility dectorator used by other decorators as a way to early return from any function call if a decorator calls for an early return.</p></li>
+<li><p><em><strong>get_org_object()</strong></em> - checks to see if the key <code class="docutils literal notranslate"><span class="pre">org_hash</span></code> is present within the argument <code class="docutils literal notranslate"><span class="pre">request_data</span></code>. If it fails, then a response code 400 is returned. This decorator will pull <em>‘org_hash’</em> from <em>request_data[“org_hash”]</em> and place the org tahoe object under <em>org_object</em>.</p></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="small-common-small">
+<h1><small> Common</small><a class="headerlink" href="#small-common-small" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="small-config-small">
+<h1><small>config</small><a class="headerlink" href="#small-config-small" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="small-identity-small">
+<h1><small> Identity </small><a class="headerlink" href="#small-identity-small" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="miscellaneous">
+<h1>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Public key</p>
+<ul>
+<li><p>Public key of the Cybex-P API module, used with the privacy preservation system</p></li>
+</ul>
+</li>
+<li><p>Config repository</p>
+<ul>
+<li><p>JSON format configurations of other module identities and the backend databases</p>
+<ul>
+<li><p>api</p></li>
+<li><p>cache</p></li>
+<li><p>report</p></li>
+<li><p>identity</p></li>
+<li><p>tahoe</p></li>
+<li><p>archive</p></li>
+<li><p>analytics</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>load_config</p>
+<ul>
+<li><p>handles the execution and updating of the API backend and module configurations</p></li>
+</ul>
+</li>
+<li><p>uwsgi</p>
+<ul>
+<li><p>service file configuration for uwsgi instance</p></li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Adam Cassell.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

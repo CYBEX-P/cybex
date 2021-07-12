@@ -98,7 +98,7 @@ It is constructed from the following components, all of which are documented
 in comments in their source code:
 
 - cybexweb/graph/src/App.jsx
-  - description
+  - The parent component for the threat-intelligence graph application. All other components and functionality are inserted here.
 - cybexweb/graph/src/components/App/MainApp.jsx
   - Master component that holds the main subcomponents of the application. This is a very large component responsible for render the central Graph canvas component, navbar, all expandable menus, and all toggleable modals. A number of states are defined within this component that are relevant across the application.
 - cybexweb/graph/src/components/Button/Button.jsx

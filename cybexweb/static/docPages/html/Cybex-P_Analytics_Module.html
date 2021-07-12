@@ -1,0 +1,624 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Cybex-P Analytics Module &mdash; cybex_web_app 0.9.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+        <script >mermaid.initialize({startOnLoad:true});</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Cybex-P Archive Module" href="Cybex-P_Archive_Module.html" />
+    <link rel="prev" title="Cybex-P API Module" href="Cybex-P_API_Module.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> cybex_web_app
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Front End</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Web Application</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Back End</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html">Cybex-P Input Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html#cybex-p-input-repository">Cybex-P Input Repository</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html#plugins">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html#miscellaneous">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html">Cybex-P API Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#cybex-p-api-repositories">Cybex-P API Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#small-common-small"><small> Common</small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#small-config-small"><small>config</small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#small-identity-small"><small> Identity </small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#miscellaneous">Miscellaneous</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Cybex-P Analytics Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#cybex-p-analytics-repositories">Cybex-P Analytics Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#analytics">analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#filters">Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#miscellaneous">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html">Cybex-P Archive Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html#cybex-p-archive-module-repositories">Cybex-P Archive Module Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html#archive">archive</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html#parsemain">parsemain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html#miscellaneous">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Report_Module.html">Cybex-P Report Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Report_Module.html#cybex-p-report-module-repositories">Cybex-P Report Module Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Report_Module.html#report">report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html">Cybex-P Installation guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-environment-setup-and-tahoe-installation-small"><small> Environment setup and Tahoe Installation  </small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-input-module-installation-small"><small> <strong>Input Module Installation</strong></small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-api-module-installation-small"><small> <strong>API Module Installation</strong></small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-archive-module-installation-small"><small> <strong>Archive Module Installation</strong></small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-analytics-module-installation-small"><small> <strong>Analytics Module Installation</strong></small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-report-module-installation-small"><small> <strong>Report Module Installation</strong></small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#database-setup-and-installation-mongodb">Database Setup and Installation (MongoDB)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#containzerization">Containzerization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#systemd-services-debian">Systemd Services (Debian)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-creating-the-service-files-small"><small> Creating the service files </small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-executing-cybex-services-small"><small> Executing Cybex Services </small></a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cybex_web_app</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Cybex-P Analytics Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/Cybex-P_Analytics_Module.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cybex-p-analytics-module">
+<h1>Cybex-P Analytics Module<a class="headerlink" href="#cybex-p-analytics-module" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Analytics</span> <span class="pre">Module</span></code>, also known as the <em>Analytics Cluster</em>,  is responsible for changing and adjusting data that is provided to users at the frontend web client. It works on data that was archived to the Archive database and has various functionality to transform, enrich, correlate, and analyze threat data.</p>
+<div class="mermaid">
+            graph LR
+A(Analytical Cluster)
+B(Archive Dababase)
+A --send back analysed threat data--&gt; B
+B --Pull Newly parsed TAHOE objects of threat data--&gt; A
+        </div><p>The module works by the concept of <em>filtering</em>; threat data that is freshly processed from the Archive database is procedurely ran through various filters. When passed through these filters, a new piece of data is created. A single piece of data can be ran through multiple filters with each filter outputting a new piece of data. A simple example is extracting source/destination IP and the port it passed through.</p>
+<p>The flow chart below represents a simplified version on how <em>filtering</em> is integrated and how data passing through the same filter is a powerful notion capitlized by <code class="docutils literal notranslate"><span class="pre">Cybex-P</span></code> in how correlation of data operates:</p>
+<div class="mermaid">
+            graph LR
+
+d0(Threat Data 01) 
+d0 --&gt; f1
+d0 --&gt; f2
+d00(Threat Data 02)
+d00 --&gt; f3
+f1[Filter 1]
+f2[Filter 2]
+f3[Filter 3]
+f4[Filter 4]
+f1 --&gt; d1((New Data 1)) 
+f2 --&gt; d2((New Data 2)) --&gt; f4
+f3 --&gt; d3((New Data 3)) --&gt; f4
+
+f4 --&gt; d5((New Data of 2 and 3: Correlation))
+        </div></div>
+<div class="section" id="cybex-p-analytics-repositories">
+<h1>Cybex-P Analytics Repositories<a class="headerlink" href="#cybex-p-analytics-repositories" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">analytics</span> <span class="pre">[Source</span> <span class="pre">Code]</span></code></p>
+<ul>
+<li><p>Main module  responsible for executing and maintaining the entirety of the Analytics Cluster.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Filters</span></code>:</p>
+<ul>
+<li><p>Various filters that threat data is ran through</p>
+<ul>
+<li><p><em><strong>Cowrie</strong></em></p></li>
+<li><p><em><strong>OpenPhishFeed</strong></em></p></li>
+<li><p><em><strong>PhishTankFeed</strong></em></p></li>
+<li><p><em><strong>email</strong></em></p></li>
+<li><p><em><strong>sighting</strong></em></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="analytics">
+<h1>analytics<a class="headerlink" href="#analytics" title="Permalink to this headline">¶</a></h1>
+<p>The analytics file is the main source code that is reponsible for running and maintaining the analytics cluster.</p>
+<p><strong>Key Functions:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em><strong>infinite_worker(q)</strong></em></p></li>
+<li><p><em><strong>analytics()</strong></em></p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li></li>
+<li></li>
+</ul>
+<div class="section" id="analytics-analytics">
+<h2><em><strong>analytics.analytics()</strong></em><a class="headerlink" href="#analytics-analytics" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>The analytics function is essentially where the filters are loaded and executed before being sent to the <em><strong>infinite_worker()</strong></em> function.</p></li>
+<li><p>When launched, a queue is created that all loaded filters will be placed in. As the filters are being placed into the queue, they are individually executed and ran as seen below:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>filters = [Cowrie, Email, OpenPhishFeed, PhishTankFeed, Sighting]
+q = Queue()
+for f in filters:
+—– q.put(f().run)</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>Once stocked in the queue, a call to <em><strong>infinite_worker()</strong></em> is made with the queue.</p></li>
+</ul>
+</div>
+<div class="section" id="analytics-infinite-worker">
+<h2><em><strong>analytics.infinite_worker()</strong></em><a class="headerlink" href="#analytics-infinite-worker" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><em><strong>infinite_worker()</strong></em> handles the responsibility of maintaining and handling those filters until the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Analytics</span> <span class="pre">Module</span></code> is shutdown or reset.</p></li>
+<li><p>All filters that have been passed to the <em><strong>infinite_worker()</strong></em> have been executed previously and placed within a queue. Each filter, one at a time, is individually monitored and and re-executed by <em><strong>infinite_worker()</strong></em> as seen below:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>while not q.empty():
+func = q.get()
+try:
+<em>—–</em> r = func()</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>In the event(s) that the filters do not return anything to *<strong>r</strong> in the code above or  <em><strong>infinite_worker()</strong></em> catches any errors, the number of failed attempts (represented as <em>n_failed_attempts</em> in the code) will be increase. Increased failed attempts over time will result in longer exponential backoffs of the system; this is a sign that there is something potentially wrong with the filters of the worker function itself. Otherwise, successful attempts will always result in <em>n_failed_attempts</em> being set back to 0</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>r = func()
+if not r:
+—— exponential_backoff(n_failed_attempts)
+—— n_failed_attempts += 1
+else:
+—— n_failed_attempts = 0</p></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="filters">
+<h1>Filters<a class="headerlink" href="#filters" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Analytics</span> <span class="pre">Module</span></code> has various filters; along with those filters are Event IDs in the source code that extract, label, and source each piece of threat data into specific categories of a filter.</p>
+<p>A an example of a filter event ID will look like -</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ExampleEventID:</span></code></p>
+<ul>
+<li><p>Type: Example ID</p>
+<ul>
+<li><p>This part of the example is where what type of information is extracted and stored is located</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li></li>
+<li></li>
+<li></li>
+</ul>
+<div class="section" id="common">
+<h2><em><strong>common</strong></em><a class="headerlink" href="#common" title="Permalink to this headline">¶</a></h2>
+<p>Common is base filter module that supplies the other modules below with the filter() method. The filter method essentially handles the parsing of Tahoe data and storing the data and it’s hash to the backend.</p>
+</div>
+<div class="section" id="cowrie">
+<h2><em><strong>Cowrie</strong></em><a class="headerlink" href="#cowrie" title="Permalink to this headline">¶</a></h2>
+<p>Cowrie is a piece of open source software that can be used in any environment to emulate a UNIX system or SSH/Telnet Proxy; under the hood of the the system, it is a honeypot for gathering malicious SSH connections. The <em>Cowrie filter</em> itself processes the SSH login information provided by the cowrie system.</p>
+<p>Event IDs are ran through the following filters, each filter is categorized into the a <em>Type</em> which is the source of the threat data:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ClientKex</span></code>:</p>
+<ul>
+<li><p>Type: SSH</p>
+<ul>
+<li><p>Crpytographic client key exchange. Extract the key exchange information from a piece of threat data.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ClientSize</span></code>:</p>
+<ul>
+<li><p>Type: SSH</p>
+<ul>
+<li><p>Height and Width of the threat data</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ClientVar</span></code>:</p>
+<ul>
+<li><p>Type: SSH</p>
+<ul>
+<li><p>Client environment of the SSH attempt</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ClienVersion</span></code>:</p>
+<ul>
+<li><p>Type: SSH</p>
+<ul>
+<li><p>Information on the client version of the SSH attempt</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CommandInput</span></code>:</p>
+<ul>
+<li><p>Type: Shell Command</p>
+<ul>
+<li><p>Records of the shell input and flags that were activated with the SSH attempt</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DirectTcpIpData</span></code>:</p>
+<ul>
+<li><p>Type: Network Traffic</p>
+<ul>
+<li><p>Information on the hostname, source, url, port number, and destination of a piece of threat data.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DirectTcpIpRequest</span></code>:</p>
+<ul>
+<li><p>Type: Network Traffic</p>
+<ul>
+<li><p>Extra appended information on the source and port of a TCP request.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LoginFailed</span></code>:</p>
+<ul>
+<li><p>Type: SSH</p>
+<ul>
+<li><p>Record on a failed login attempt. Logs information on the username and password.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LoginSuccess</span></code>:</p>
+<ul>
+<li><p>Type: SSH</p>
+<ul>
+<li><p>Record on a successful login attempt. Logs information on the username and password.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SessionClosed</span></code>:</p>
+<ul>
+<li><p>Type: Cybex-P Session Info</p>
+<ul>
+<li><p>Logging and closing of a Cybex-P cowrie session</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SessionConnect</span></code>:</p>
+<ul>
+<li><p>Type: Cybex-P Session Info</p>
+<ul>
+<li><p>Logging and executation of a Cybex-P cowrie</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SessionFileDownload</span></code>:</p>
+<ul>
+<li><p>Type: File Download</p>
+<ul>
+<li><p>Information on a download of Cybex-P session information</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="email">
+<h2><em><strong>email</strong></em><a class="headerlink" href="#email" title="Permalink to this headline">¶</a></h2>
+<p>The email filter takes raw email data and parses it into a Tahoe event. In Cybex-P, email data can be split into 8 different components as an email Tahoe event. However, not every piece of email contains the exact same elements so not all email records will contain all 8 components:</p>
+<ul>
+<li><p>From attribute</p>
+<ul class="simple">
+<li><p>contains the from email address and source’s name</p></li>
+</ul>
+</li>
+<li><p>Sending IP</p>
+<ul class="simple">
+<li><p>IPv4 address of the sender</p></li>
+</ul>
+</li>
+<li><p>Source Object</p>
+<ul class="simple">
+<li><p>Source object is container of Cybex-P object data that contains the IPv4 address, the source’s name, and the email address of a piece of email data. If any one of the 3 components is missing, a source object will not be created.</p></li>
+</ul>
+</li>
+<li><p>Reply-to</p>
+<ul class="simple">
+<li><p>reply-to is a component that contains the replay-to address. If found, it is stored into Cybex-P as both an email address attribute and reply-to object</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>art = Attribute(‘email_addr’, art)
+art = Object(‘reply_to’, art)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>To attribute</p>
+<ul class="simple">
+<li><p>2 attributes that hold the name and email address of the email address that the email data was sent to</p></li>
+</ul>
+</li>
+<li><p>destination object</p>
+<ul class="simple">
+<li><p>Like the source object, it is another Cybex-P object element that contains both the name and email address attributes of the *To attributes</p></li>
+</ul>
+</li>
+<li><p>subject attribute</p>
+<ul class="simple">
+<li><p>Cybex-P Attribute of the emails subject</p></li>
+</ul>
+</li>
+<li><p>Body</p>
+<ul class="simple">
+<li><p>Cybex-P Attribute of the emails body</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>All the previous acquired data is then stored in the backend one last time, congregated together, as a piece of Cybex-P event data.</p>
+<p>A raw hash of the event data is then returned.</p>
+<ul class="simple">
+<li></li>
+<li></li>
+<li></li>
+</ul>
+<div class="section" id="openphish-feed">
+<h2><em><strong>openphish_feed</strong></em><a class="headerlink" href="#openphish-feed" title="Permalink to this headline">¶</a></h2>
+<p>The openphish filter deals with phishing intelligence and the identification any phishing URLs. It is derived from the openphish platform, a fully automated self-contained platform meant for large-scale phishing URL identification. The openphish filter has a single event ID:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">OpenPhish_Community</span></code>:</p>
+<ul>
+<li><p>Type: Sighting</p>
+<ul>
+<li><p>Data that is passed through the openphish filter is compared to recent or previous URLs provided from the openphish platform. Whether a correlation is found or not, the the data gets updated and stored to help the malicious scoring system to judge the source.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="phishtank-feed">
+<h2><em><strong>phishtank_feed</strong></em><a class="headerlink" href="#phishtank-feed" title="Permalink to this headline">¶</a></h2>
+<p>phishtank is another phishing intelligence platform that helps to provide the latest information on any URLs identified as phishing links. Unlike openphish, the phishtank platform is a collaborative community-based platform in which a large majority of phishing identification is done by the open community. Just like openphish, the phishtank filter pulls the information from the platform and is correlated against raw threat data.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">filt_phishtank</span></code>:</p>
+<ul>
+<li><p>Type: phishtank-url</p>
+<ul>
+<li><p>Data that shows similar findings from the phishtank database are translated into Tahoe objects an stored in the backend.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="sighting">
+<h2><em><strong>sighting</strong></em><a class="headerlink" href="#sighting" title="Permalink to this headline">¶</a></h2>
+<p>sightings is a filter that functions as method to catching cowrie honeypot data and parsing it into Tahoe events.  When honey pot data is is ran through the sightings filter, the pieces of data in the event are categorized into one of two filters:</p>
+<ul class="simple">
+<li><p><em>malicious</em></p></li>
+<li><p><em>benign</em></p></li>
+</ul>
+<p>All pieces of cowrie honeypot data are then parsed into a Tahoe event and that event gets assigned to a particular category. The Tahoe event’s reference hash is then generated and returned.</p>
+</div>
+</div>
+<div class="section" id="miscellaneous">
+<h1>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Config repository</p>
+<ul>
+<li><p>JSON format configurations of other module identities and the backend databases</p>
+<ul>
+<li><p>api</p></li>
+<li><p>cache</p></li>
+<li><p>report</p></li>
+<li><p>identity</p></li>
+<li><p>tahoe</p></li>
+<li><p>archive</p></li>
+<li><p>analytics</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>test/filters repository</p>
+<ul>
+<li><p>Various files of unfiltered data accompanied with python files to test out the filters</p></li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="Cybex-P_Archive_Module.html" class="btn btn-neutral float-right" title="Cybex-P Archive Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Cybex-P_API_Module.html" class="btn btn-neutral float-left" title="Cybex-P API Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Adam Cassell.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Cybex-P Report Module &mdash; cybex_web_app 0.9.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+        <script >mermaid.initialize({startOnLoad:true});</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> cybex_web_app
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Front End</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Web Application</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cybex_web_app</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Cybex-P Report Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/Cybex-P Report Module.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cybex-p-report-module">
+<h1>Cybex-P Report Module<a class="headerlink" href="#cybex-p-report-module" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Report</span> <span class="pre">Module</span></code> is the final stop of processing for threat data in the system and where reports are generated and provided to the frontend web client.</p>
+<p>Cybex-P has a unique way in storing cyberthreat data in which the data is stored in graphs and the vertices amongst those graphs represent various attributes or events. Because of the way data is stored, Cybex-P has it’s own unique way of generating insightful reports.</p>
+<p>In regards to complexity in terms of the information provided from a report, a report can be something as straightforward as countign the occurences of a specific IP address within a time range to the correlational analysis of the attributes of a single URL.</p>
+<p><em><strong><u>Data Pipeline</u></strong></em></p>
+<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>sequenceDiagram
+Note Left of Archive-Database: Begin data pipeline&lt;br&gt; here 
+Archive-Database-&gt;&gt; Report-Cluster: Encrypted query
+Report-Cluster-&gt;&gt; Report-Database: Report creation and storing of the report
+Report-Database-&gt;&gt; Cybex-P-API: Pull report on demand
+
+</pre></div>
+</div>
+<p><em><strong>Part 1: Query handling and processing</strong></em></p>
+<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>sequenceDiagram
+Note Left of Cybex-P-API: API has pulled the&lt;br&gt;report from the&lt;br&gt; report database
+Cybex-P-API-&gt;&gt; Frontend-Server: Frontend server pulls the report data
+Frontend-Server-&gt;&gt; Frontend-Webclient: Frontend web client pulls the report data and presents the information 
+</pre></div>
+</div>
+<p><em><strong>Part 2: Sending back the report and serving it to the frontend web application.</strong></em></p>
+</div>
+<div class="section" id="cybex-p-report-module-repositories">
+<h1>Cybex-P Report Module Repositories<a class="headerlink" href="#cybex-p-report-module-repositories" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">report</span> <span class="pre">[source</span> <span class="pre">code]</span></code>:</p>
+<ul>
+<li><p>setting time range of a record</p></li>
+<li><p>raw threat data parsing</p></li>
+<li><p>query decryption</p></li>
+<li><p>Report types:</p>
+<ul>
+<li><p>Attribute occurence counting</p></li>
+<li><p>Related sub_type</p></li>
+<li><p>Threat rank processing</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="report">
+<h1>report<a class="headerlink" href="#report" title="Permalink to this headline">¶</a></h1>
+<p>The report repository is the source code that is entirely responsible for all aspects of the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Report</span> <span class="pre">Module</span></code>. The report source code is split up into various sections for handling report generation and queries:</p>
+<ul class="simple">
+<li><p>timelime recording and administration</p></li>
+<li><p>file decryption (for report querys made by the frontend client)</p></li>
+<li><p>query decanonicalizing</p></li>
+<li><p>report type generation</p></li>
+<li><p>report transferring via sockets</p></li>
+</ul>
+<p><em><strong>key functions</strong></em>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get_dtrange()</p></li>
+<li><p>decrypt_file()</p></li>
+<li><p>get_query()</p></li>
+<li><p>process_query()</p></li>
+<li><p>get_report()</p></li>
+<li><p>main()</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+</ul>
+<div class="section" id="get-dtrange">
+<h2><em><strong>get_dtrange()</strong></em><a class="headerlink" href="#get-dtrange" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>parameters:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p><em><strong>from_</strong></em> = timeline value of when the threat data was received</p></li>
+<li><p><em><strong>to</strong></em> = timeline value of when the session of the  threat data was completed</p></li>
+<li><p><em><strong>last</strong></em> = last valid timeline value of the threat data</p></li>
+<li><p><em><strong>tzname</strong></em> = name of the timezone of the current user</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>This function is responsible for translating the timeline of the provided threat data and parsing it
+into the local timezone of the user who made the query.</p></li>
+</ul>
+</div>
+<div class="section" id="decrypt-file">
+<h2><em><strong>decrypt_file()</strong></em><a class="headerlink" href="#decrypt-file" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>the <em><strong>decrypt_file()</strong></em> functions works as exactly like the decrypt_file function located in the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Archive</span> <span class="pre">Module</span></code>. In this case its purpose serves to decrypt the querys provided from the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">API</span> <span class="pre">Module</span></code>.</p></li>
+</ul>
+</div>
+<div class="section" id="get-query">
+<h2><em><strong>get_query()</strong></em><a class="headerlink" href="#get-query" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p>get_query() serves to be the method that will consistently pull query request made to the report module provided from the archive database. get_query() encodes those querys into a TDQL and places it into a queue for processing.</p>
+<blockquote>
+<div><p>tdql = parse(i, backend=Report._backend, validate=False)
+tdql.status = ‘processing’
+queue.put(tdql)</p>
+</div></blockquote>
+</li>
+<li><p>This process is ran forever in it’s own thread.</p></li>
+</ul>
+</div>
+<div class="section" id="get-report">
+<h2><em><strong>get_report()</strong></em><a class="headerlink" href="#get-report" title="Permalink to this headline">¶</a></h2>
+<p>get_report() is responsible for generating a report from a single TDQL object when called.</p>
+<p>The TDQL is first evaluated evaluated and decrypted from by the <strong>decrypt_file()</strong> function.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>if tdql.encrypted:
+— canonical_qdata = decrypt_file(canonical_qdata)</p></li>
+</ul>
+</div></blockquote>
+<p>Proceeding the file decryption, parameters are extracted from the decrypted data such as teh category, context data, and return type.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>category = qdata.pop(‘category’, ‘all’)
+context = qdata.pop(‘context’, ‘all’)
+return_type = qdata.pop(‘return_type’, ‘all’)</p></li>
+</ul>
+</div></blockquote>
+<p>the timelime values are then extractd from the query and the <strong>get_dtrange()</strong> function is called to set the timelime according the timezone of the query.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>from_ = query.pop(‘from’, None)</p></li>
+<li><p>to = query.pop(‘to’, None)</p></li>
+<li><p>last = query.pop(‘last’, None)</p></li>
+<li><p>tzname = query.pop(‘tzname’, None)</p></li>
+<li><p>try:
+—	start, end = get_dtrange(from_, to, last, tzname)</p></li>
+</ul>
+</div></blockquote>
+<p>At this point we can proceed to othe actual generation of the report requested by the query. Recall from this modules repository that we have three different report generation types; these three different report types are labeled, in Cybex-P terminology as:
+- <code class="docutils literal notranslate"><span class="pre">count</span></code>:
+- A report based on the on the number of occurences of a specific attribute as indicated by the sub type from the query
+- <code class="docutils literal notranslate"><span class="pre">related</span></code>:
+- A report based around all events related to a specific attributed within the provided time range of the query
+-	<code class="docutils literal notranslate"><span class="pre">threat</span> <span class="pre">rank</span></code>:
+-	A report based on generating the threat rank of an event. This sort of report is more complicated compared to the other report types as this report requires running the an even through Cybex-P’s own threat rank evaluation algorithm.</p>
+<p>In the event that none of the report types above correlate to the report type that is requested by the query. the query status is set to “failed”.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>query.status = ‘failed’</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="process-query">
+<h2><strong>Process_Query()</strong><a class="headerlink" href="#process-query" title="Permalink to this headline">¶</a></h2>
+<p>Process query is a method that is used to process a single TDQL instance. It handles the address signing and websocket execution of where a processed TDQL report is to go outside of the API.</p>
+<p>Once the report is done generating (or the query is marked a “failure), we can go ahead and extract the report and encode all related parts of the query into a block of bytes.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>if not isinstance(nonce, bytes):</p></li>
+<li><p>— nonce = nonce.encode()</p></li>
+</ul>
+</div></blockquote>
+<p>At the final step, we use websockets to connect to the host API and send the report back.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>sock.connect((host, port))</p></li>
+<li><p>sock.send(nonce)</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="main">
+<h2><em><strong>Main()</strong></em><a class="headerlink" href="#main" title="Permalink to this headline">¶</a></h2>
+<p>Main() is responsible for initializating the forever running query queue and consistently checking and executing any available TDQLs in the queue.</p>
+<blockquote>
+<div><p>queue = Queue()
+thread_producer = Thread(target=get_query, args=(queue, ))</p>
+</div></blockquote>
+<p>executing querys to process:</p>
+<blockquote>
+<div><p>with ThreadPoolExecutor(64) as executor:
+— executor.map(process_query, iter(queue.get, None))</p>
+</div></blockquote>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Adam Cassell.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

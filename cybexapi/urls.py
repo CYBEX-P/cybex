@@ -51,4 +51,9 @@ urlpatterns = [
         template_name='apiportal.html',
         extra_context={'schema_url':'openapi-schema'}
     ), name='swagger-ui'),
+
+    path('backendapi/', TemplateView.as_view(
+        template_name='apibackend.html',
+        extra_context={'schema_url':'Cybex-P-backend-openAPI'}
+    ), name='swagger-ui'),
 ]
