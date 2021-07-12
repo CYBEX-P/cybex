@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cybex-P Analytics Module</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="cybex-p-analytics-module">Cybex-P Analytics Module</h1>
+<p>The <code>Cybex-P Analytics Module</code>, also known as the <em>Analytics Cluster</em>,  is responsible for changing and adjusting data that is provided to users at the frontend web client. It works on data that was archived to the Archive database and has various functionality to transform, enrich, correlate, and analyze threat data.</p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-PG6Ijq7w3lN2WWpc" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="89.33332824707031" style="max-width: 702.25439453125px;" viewBox="0.00000762939453125 0.0000019073486328125 702.25439453125 89.33332824707031"><style>#mermaid-svg-PG6Ijq7w3lN2WWpc{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-PG6Ijq7w3lN2WWpc .error-icon{fill:#552222;}#mermaid-svg-PG6Ijq7w3lN2WWpc .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-PG6Ijq7w3lN2WWpc .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-PG6Ijq7w3lN2WWpc .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-PG6Ijq7w3lN2WWpc .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-PG6Ijq7w3lN2WWpc .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-PG6Ijq7w3lN2WWpc .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-PG6Ijq7w3lN2WWpc .marker{fill:#666;stroke:#666;}#mermaid-svg-PG6Ijq7w3lN2WWpc .marker.cross{stroke:#666;}#mermaid-svg-PG6Ijq7w3lN2WWpc svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-PG6Ijq7w3lN2WWpc .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#000000;}#mermaid-svg-PG6Ijq7w3lN2WWpc .cluster-label text{fill:#333;}#mermaid-svg-PG6Ijq7w3lN2WWpc .cluster-label span{color:#333;}#mermaid-svg-PG6Ijq7w3lN2WWpc .label text,#mermaid-svg-PG6Ijq7w3lN2WWpc span{fill:#000000;color:#000000;}#mermaid-svg-PG6Ijq7w3lN2WWpc .node rect,#mermaid-svg-PG6Ijq7w3lN2WWpc .node circle,#mermaid-svg-PG6Ijq7w3lN2WWpc .node ellipse,#mermaid-svg-PG6Ijq7w3lN2WWpc .node polygon,#mermaid-svg-PG6Ijq7w3lN2WWpc .node path{fill:#eee;stroke:#999;stroke-width:1px;}#mermaid-svg-PG6Ijq7w3lN2WWpc .node .label{text-align:center;}#mermaid-svg-PG6Ijq7w3lN2WWpc .node.clickable{cursor:pointer;}#mermaid-svg-PG6Ijq7w3lN2WWpc .arrowheadPath{fill:#333333;}#mermaid-svg-PG6Ijq7w3lN2WWpc .edgePath .path{stroke:#666;stroke-width:1.5px;}#mermaid-svg-PG6Ijq7w3lN2WWpc .flowchart-link{stroke:#666;fill:none;}#mermaid-svg-PG6Ijq7w3lN2WWpc .edgeLabel{background-color:white;text-align:center;}#mermaid-svg-PG6Ijq7w3lN2WWpc .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#mermaid-svg-PG6Ijq7w3lN2WWpc .cluster rect{fill:hsl(210,66.6666666667%,95%);stroke:#26a;stroke-width:1px;}#mermaid-svg-PG6Ijq7w3lN2WWpc .cluster text{fill:#333;}#mermaid-svg-PG6Ijq7w3lN2WWpc .cluster span{color:#333;}#mermaid-svg-PG6Ijq7w3lN2WWpc div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(-160,0%,93.3333333333%);border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-svg-PG6Ijq7w3lN2WWpc:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-PG6Ijq7w3lN2WWpc flowchart{fill:apa;}</style><g><g class="output"><g class="clusters"></g><g class="edgePaths"><g class="edgePath LS-A LE-B" id="L-A-B" style="opacity: 1;"><path class="path" d="M154.77084350585938,38.323749884910875L351.34422302246094,21.33333396911621L547.9176025390625,38.337418877799834" marker-end="url(https://stackedit.io/app#arrowhead23)" style="fill:none"></path><defs><marker id="arrowhead23" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B LE-A" id="L-B-A" style="opacity: 1;"><path class="path" d="M547.9176025390625,50.99591699866501L351.34422302246094,68.00000190734863L154.77084350585938,51.00958599155397" marker-end="url(https://stackedit.io/app#arrowhead24)" style="fill:none"></path><defs><marker id="arrowhead24" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" transform="translate(351.34422302246094,21.33333396911621)" style="opacity: 1;"><g transform="translate(-112.30035400390625,-13.333333969116211)" class="label"><rect rx="0" ry="0" width="224.6007080078125" height="26.666667938232422"></rect><foreignObject width="224.6007080078125" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-B" class="edgeLabel L-LS-A' L-LE-B">send back analysed threat data</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(351.34422302246094,68.00000190734863)" style="opacity: 1;"><g transform="translate(-171.57337951660156,-13.333333969116211)" class="label"><rect rx="0" ry="0" width="343.1467590332031" height="26.666667938232422"></rect><foreignObject width="343.146728515625" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B-A" class="edgeLabel L-LS-B' L-LE-A">Pull Newly parsed TAHOE objects of threat data</span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="flowchart-A-118" transform="translate(81.38542175292969,44.66666793823242)" style="opacity: 1;"><rect rx="5" ry="5" x="-73.38541793823242" y="-23.33333396911621" width="146.77083587646484" height="46.66666793823242" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-63.38541793823242,-13.333333969116211)"><foreignObject width="126.77083587646484" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Analytical Cluster</div></foreignObject></g></g></g><g class="node default" id="flowchart-B-119" transform="translate(621.0860137939453,44.66666793823242)" style="opacity: 1;"><rect rx="5" ry="5" x="-73.16841125488281" y="-23.33333396911621" width="146.33682250976562" height="46.66666793823242" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-63.16841125488281,-13.333333969116211)"><foreignObject width="126.3368148803711" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Archive Dababase</div></foreignObject></g></g></g></g></g></g></svg></pre>
+<p>The module works by the concept of <em>filtering</em>; threat data that is freshly processed from the Archive database is procedurely ran through various filters. When passed through these filters, a new piece of data is created. A single piece of data can be ran through multiple filters with each filter outputting a new piece of data. A simple example is extracting source/destination IP and the port it passed through.</p>
+<p>The flow chart below represents a simplified version on how <em>filtering</em> is integrated and how data passing through the same filter is a powerful notion capitlized by <code>Cybex-P</code> in how correlation of data operates:</p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-24lwxw2V5QrYLXDf" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="423.0399169921875" style="max-width: 846.0001220703125px;" viewBox="0 0 846.0001220703125 423.0399169921875"><style>#mermaid-svg-24lwxw2V5QrYLXDf{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-24lwxw2V5QrYLXDf .error-icon{fill:#552222;}#mermaid-svg-24lwxw2V5QrYLXDf .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-24lwxw2V5QrYLXDf .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-24lwxw2V5QrYLXDf .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-24lwxw2V5QrYLXDf .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-24lwxw2V5QrYLXDf .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-24lwxw2V5QrYLXDf .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-24lwxw2V5QrYLXDf .marker{fill:#666;stroke:#666;}#mermaid-svg-24lwxw2V5QrYLXDf .marker.cross{stroke:#666;}#mermaid-svg-24lwxw2V5QrYLXDf svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-24lwxw2V5QrYLXDf .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#000000;}#mermaid-svg-24lwxw2V5QrYLXDf .cluster-label text{fill:#333;}#mermaid-svg-24lwxw2V5QrYLXDf .cluster-label span{color:#333;}#mermaid-svg-24lwxw2V5QrYLXDf .label text,#mermaid-svg-24lwxw2V5QrYLXDf span{fill:#000000;color:#000000;}#mermaid-svg-24lwxw2V5QrYLXDf .node rect,#mermaid-svg-24lwxw2V5QrYLXDf .node circle,#mermaid-svg-24lwxw2V5QrYLXDf .node ellipse,#mermaid-svg-24lwxw2V5QrYLXDf .node polygon,#mermaid-svg-24lwxw2V5QrYLXDf .node path{fill:#eee;stroke:#999;stroke-width:1px;}#mermaid-svg-24lwxw2V5QrYLXDf .node .label{text-align:center;}#mermaid-svg-24lwxw2V5QrYLXDf .node.clickable{cursor:pointer;}#mermaid-svg-24lwxw2V5QrYLXDf .arrowheadPath{fill:#333333;}#mermaid-svg-24lwxw2V5QrYLXDf .edgePath .path{stroke:#666;stroke-width:1.5px;}#mermaid-svg-24lwxw2V5QrYLXDf .flowchart-link{stroke:#666;fill:none;}#mermaid-svg-24lwxw2V5QrYLXDf .edgeLabel{background-color:white;text-align:center;}#mermaid-svg-24lwxw2V5QrYLXDf .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#mermaid-svg-24lwxw2V5QrYLXDf .cluster rect{fill:hsl(210,66.6666666667%,95%);stroke:#26a;stroke-width:1px;}#mermaid-svg-24lwxw2V5QrYLXDf .cluster text{fill:#333;}#mermaid-svg-24lwxw2V5QrYLXDf .cluster span{color:#333;}#mermaid-svg-24lwxw2V5QrYLXDf div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(-160,0%,93.3333333333%);border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-svg-24lwxw2V5QrYLXDf:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-24lwxw2V5QrYLXDf flowchart{fill:apa;}</style><g><g class="output"><g class="clusters"></g><g class="edgePaths"><g class="edgePath LS-d0 LE-f1" id="L-d0-f1" style="opacity: 1;"><path class="path" d="M98.77369294323886,111.5243091583252L160.11805725097656,58.9288215637207L185.11805725097656,58.9288215637207" marker-end="url(https://stackedit.io/app#arrowhead25)" style="fill:none"></path><defs><marker id="arrowhead25" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-d0 LE-f2" id="L-d0-f2" style="opacity: 1;"><path class="path" d="M98.77369294323886,158.19097709655762L160.11805725097656,210.7864646911621L185.11805725097656,210.7864646911621" marker-end="url(https://stackedit.io/app#arrowhead26)" style="fill:none"></path><defs><marker id="arrowhead26" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-d00 LE-f3" id="L-d00-f3" style="opacity: 1;"><path class="path" d="M135.11805725097656,362.6441078186035L160.11805725097656,362.6441078186035L185.11805725097656,362.6441078186035" marker-end="url(https://stackedit.io/app#arrowhead27)" style="fill:none"></path><defs><marker id="arrowhead27" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-f1 LE-d1" id="L-f1-d1" style="opacity: 1;"><path class="path" d="M257.3055648803711,58.9288215637207L282.3055648803711,58.9288215637207L307.3055648803711,58.9288215637207" marker-end="url(https://stackedit.io/app#arrowhead28)" style="fill:none"></path><defs><marker id="arrowhead28" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-f2 LE-d2" id="L-f2-d2" style="opacity: 1;"><path class="path" d="M257.3055648803711,210.7864646911621L282.3055648803711,210.7864646911621L307.3055648803711,210.7864646911621" marker-end="url(https://stackedit.io/app#arrowhead29)" style="fill:none"></path><defs><marker id="arrowhead29" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-d2 LE-f4" id="L-d2-f4" style="opacity: 1;"><path class="path" d="M409.1632080078125,210.7864646911621L434.1632080078125,210.7864646911621L476.4825237128787,263.3819522857666" marker-end="url(https://stackedit.io/app#arrowhead30)" style="fill:none"></path><defs><marker id="arrowhead30" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-f3 LE-d3" id="L-f3-d3" style="opacity: 1;"><path class="path" d="M257.3055648803711,362.6441078186035L282.3055648803711,362.6441078186035L307.3055648803711,362.6441078186035" marker-end="url(https://stackedit.io/app#arrowhead31)" style="fill:none"></path><defs><marker id="arrowhead31" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-d3 LE-f4" id="L-d3-f4" style="opacity: 1;"><path class="path" d="M409.1632080078125,362.6441078186035L434.1632080078125,362.6441078186035L476.4825237128787,310.048620223999" marker-end="url(https://stackedit.io/app#arrowhead32)" style="fill:none"></path><defs><marker id="arrowhead32" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-f4 LE-d5" id="L-f4-d5" style="opacity: 1;"><path class="path" d="M531.350715637207,286.7152862548828L556.350715637207,286.7152862548828L581.3507080078125,286.7152862548828" marker-end="url(https://stackedit.io/app#arrowhead33)" style="fill:none"></path><defs><marker id="arrowhead33" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-d0-f1" class="edgeLabel L-LS-d0' L-LE-f1"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-d0-f2" class="edgeLabel L-LS-d0' L-LE-f2"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-d00-f3" class="edgeLabel L-LS-d00' L-LE-f3"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-f1-d1" class="edgeLabel L-LS-f1' L-LE-d1"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-f2-d2" class="edgeLabel L-LS-f2' L-LE-d2"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-d2-f4" class="edgeLabel L-LS-d2' L-LE-f4"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-f3-d3" class="edgeLabel L-LS-f3' L-LE-d3"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-d3-f4" class="edgeLabel L-LS-d3' L-LE-f4"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-f4-d5" class="edgeLabel L-LS-f4' L-LE-d5"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="flowchart-d0-146" transform="translate(71.55902862548828,134.8576431274414)" style="opacity: 1;"><rect rx="5" ry="5" x="-63.55902862548828" y="-23.33333396911621" width="127.11805725097656" height="46.66666793823242" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-53.55902862548828,-13.333333969116211)"><foreignObject width="107.11805725097656" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Threat Data 01</div></foreignObject></g></g></g><g class="node default" id="flowchart-f1-148" transform="translate(221.21181106567383,58.9288215637207)" style="opacity: 1;"><rect rx="0" ry="0" x="-36.093753814697266" y="-23.33333396911621" width="72.18750762939453" height="46.66666793823242" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-26.093753814697266,-13.333333969116211)"><foreignObject width="52.187503814697266" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Filter 1</div></foreignObject></g></g></g><g class="node default" id="flowchart-f2-150" transform="translate(221.21181106567383,210.7864646911621)" style="opacity: 1;"><rect rx="0" ry="0" x="-36.093753814697266" y="-23.33333396911621" width="72.18750762939453" height="46.66666793823242" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-26.093753814697266,-13.333333969116211)"><foreignObject width="52.187503814697266" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Filter 2</div></foreignObject></g></g></g><g class="node default" id="flowchart-d00-151" transform="translate(71.55902862548828,362.6441078186035)" style="opacity: 1;"><rect rx="5" ry="5" x="-63.55902862548828" y="-23.33333396911621" width="127.11805725097656" height="46.66666793823242" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-53.55902862548828,-13.333333969116211)"><foreignObject width="107.11805725097656" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Threat Data 02</div></foreignObject></g></g></g><g class="node default" id="flowchart-f3-153" transform="translate(221.21181106567383,362.6441078186035)" style="opacity: 1;"><rect rx="0" ry="0" x="-36.093753814697266" y="-23.33333396911621" width="72.18750762939453" height="46.66666793823242" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-26.093753814697266,-13.333333969116211)"><foreignObject width="52.187503814697266" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Filter 3</div></foreignObject></g></g></g><g class="node default" id="flowchart-f4-157" transform="translate(495.25696182250977,286.7152862548828)" style="opacity: 1;"><rect rx="0" ry="0" x="-36.093753814697266" y="-23.33333396911621" width="72.18750762939453" height="46.66666793823242" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-26.093753814697266,-13.333333969116211)"><foreignObject width="52.187503814697266" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Filter 4</div></foreignObject></g></g></g><g class="node default" id="flowchart-d1-159" transform="translate(358.2343864440918,58.9288215637207)" style="opacity: 1;"><circle x="-50.9288215637207" y="-23.33333396911621" r="50.9288215637207" class="label-container"></circle><g class="label" transform="translate(0,0)"><g transform="translate(-40.9288215637207,-13.333333969116211)"><foreignObject width="81.8576431274414" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">New Data 1</div></foreignObject></g></g></g><g class="node default" id="flowchart-d2-161" transform="translate(358.2343864440918,210.7864646911621)" style="opacity: 1;"><circle x="-50.9288215637207" y="-23.33333396911621" r="50.9288215637207" class="label-container"></circle><g class="label" transform="translate(0,0)"><g transform="translate(-40.9288215637207,-13.333333969116211)"><foreignObject width="81.8576431274414" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">New Data 2</div></foreignObject></g></g></g><g class="node default" id="flowchart-d3-164" transform="translate(358.2343864440918,362.6441078186035)" style="opacity: 1;"><circle x="-50.9288215637207" y="-23.33333396911621" r="50.9288215637207" class="label-container"></circle><g class="label" transform="translate(0,0)"><g transform="translate(-40.9288215637207,-13.333333969116211)"><foreignObject width="81.8576431274414" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">New Data 3</div></foreignObject></g></g></g><g class="node default" id="flowchart-d5-167" transform="translate(709.6753768920898,286.7152862548828)" style="opacity: 1;"><circle x="-128.32466888427734" y="-23.33333396911621" r="128.32466888427734" class="label-container"></circle><g class="label" transform="translate(0,0)"><g transform="translate(-118.32466888427734,-13.333333969116211)"><foreignObject width="236.64932250976562" height="26.666667938232422"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">New Data of 2 and 3: Correlation</div></foreignObject></g></g></g></g></g></g></svg></pre>
+<h1 id="cybex-p-analytics-repositories">Cybex-P Analytics Repositories</h1>
+<ul>
+<li><code>analytics [Source Code]</code>
+<ul>
+<li>Main module  responsible for executing and maintaining the entirety of the Analytics Cluster.</li>
+</ul>
+</li>
+<li><code>Filters</code>:
+<ul>
+<li>Various filters that threat data is ran through
+<ul>
+<li><em><strong>Cowrie</strong></em></li>
+<li><em><strong>OpenPhishFeed</strong></em></li>
+<li><em><strong>PhishTankFeed</strong></em></li>
+<li><em><strong>email</strong></em></li>
+<li><em><strong>sighting</strong></em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="analytics">analytics</h1>
+<p>The analytics file is the main source code that is reponsible for running and maintaining the analytics cluster.</p>
+<p><strong>Key Functions:</strong></p>
+<blockquote>
+<ul>
+<li><em><strong>infinite_worker(q)</strong></em></li>
+<li><em><strong>analytics()</strong></em></li>
+</ul>
+</blockquote>
+<ul>
+<li>
+<h2 id="analytics.analytics"><em><strong>analytics.analytics()</strong></em></h2>
+<ul>
+<li>The analytics function is essentially where the filters are loaded and executed before being sent to the <em><strong>infinite_worker()</strong></em> function.</li>
+<li>When launched, a queue is created that all loaded filters will be placed in. As the filters are being placed into the queue, they are individually executed and ran as seen below:</li>
+</ul>
+<blockquote>
+<ul>
+<li>filters = [Cowrie, Email, OpenPhishFeed, PhishTankFeed, Sighting]<br>
+q = Queue()<br>
+for f in filters:<br>
+----- q.put(f().run)</li>
+</ul>
+</blockquote>
+<ul>
+<li>Once stocked in the queue, a call to <em><strong>infinite_worker()</strong></em> is made with the queue.</li>
+</ul>
+</li>
+<li>
+<h2 id="analytics.infinite_worker"><em><strong>analytics.infinite_worker()</strong></em></h2>
+<ul>
+<li><em><strong>infinite_worker()</strong></em> handles the responsibility of maintaining and handling those filters until the <code>Cybex-P Analytics Module</code> is shutdown or reset.</li>
+<li>All filters that have been passed to the <em><strong>infinite_worker()</strong></em> have been executed previously and placed within a queue. Each filter, one at a time, is individually monitored and and re-executed by <em><strong>infinite_worker()</strong></em> as seen below:</li>
+</ul>
+<blockquote>
+<ul>
+<li>while not q.empty():<br>
+func = q.get()<br>
+try:<br>
+<em>-----</em> r = func()</li>
+</ul>
+</blockquote>
+<ul>
+<li>In the event(s) that the filters do not return anything to *<strong>r</strong> in the code above or  <em><strong>infinite_worker()</strong></em> catches any errors, the number of failed attempts (represented as <em>n_failed_attempts</em> in the code) will be increase. Increased failed attempts over time will result in longer exponential backoffs of the system; this is a sign that there is something potentially wrong with the filters of the worker function itself. Otherwise, successful attempts will always result in <em>n_failed_attempts</em> being set back to 0</li>
+</ul>
+<blockquote>
+<ul>
+<li>r = func()<br>
+if not r:<br>
+------ exponential_backoff(n_failed_attempts)<br>
+------ n_failed_attempts += 1<br>
+else:<br>
+------ n_failed_attempts = 0</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h1 id="filters">Filters</h1>
+<p>The <code>Cybex-P Analytics Module</code> has various filters; along with those filters are Event IDs in the source code that extract, label, and source each piece of threat data into specific categories of a filter.</p>
+<p>A an example of a filter event ID will look like -</p>
+<blockquote>
+<ul>
+<li><code>ExampleEventID:</code>
+<ul>
+<li>Type: Example ID
+<ul>
+<li>This part of the example is where what type of information is extracted and stored is located</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<ul>
+<li>
+<h2 id="common"><em><strong>common</strong></em></h2>
+<p>Common is base filter module that supplies the other modules below with the filter() method. The filter method essentially handles the parsing of Tahoe data and storing the data and it’s hash to the backend.</p>
+</li>
+<li>
+<h2 id="cowrie"><em><strong>Cowrie</strong></em></h2>
+<p>Cowrie is a piece of open source software that can be used in any environment to emulate a UNIX system or SSH/Telnet Proxy; under the hood of the the system, it is a honeypot for gathering malicious SSH connections. The <em>Cowrie filter</em> itself processes the SSH login information provided by the cowrie system.</p>
+<p>Event IDs are ran through the following filters, each filter is categorized into the a <em>Type</em> which is the source of the threat data:</p>
+<ul>
+<li><code>ClientKex</code>:
+<ul>
+<li>Type: SSH
+<ul>
+<li>Crpytographic client key exchange. Extract the key exchange information from a piece of threat data.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>ClientSize</code>:
+<ul>
+<li>Type: SSH
+<ul>
+<li>Height and Width of the threat data</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>ClientVar</code>:
+<ul>
+<li>Type: SSH
+<ul>
+<li>Client environment of the SSH attempt</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>ClienVersion</code>:
+<ul>
+<li>Type: SSH
+<ul>
+<li>Information on the client version of the SSH attempt</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>CommandInput</code>:
+<ul>
+<li>Type: Shell Command
+<ul>
+<li>Records of the shell input and flags that were activated with the SSH attempt</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>DirectTcpIpData</code>:
+<ul>
+<li>Type: Network Traffic
+<ul>
+<li>Information on the hostname, source, url, port number, and destination of a piece of threat data.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>DirectTcpIpRequest</code>:
+<ul>
+<li>Type: Network Traffic
+<ul>
+<li>Extra appended information on the source and port of a TCP request.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>LoginFailed</code>:
+<ul>
+<li>Type: SSH
+<ul>
+<li>Record on a failed login attempt. Logs information on the username and password.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>LoginSuccess</code>:
+<ul>
+<li>Type: SSH
+<ul>
+<li>Record on a successful login attempt. Logs information on the username and password.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>SessionClosed</code>:
+<ul>
+<li>Type: Cybex-P Session Info
+<ul>
+<li>Logging and closing of a Cybex-P cowrie session</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>SessionConnect</code>:
+<ul>
+<li>Type: Cybex-P Session Info
+<ul>
+<li>Logging and executation of a Cybex-P cowrie</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>SessionFileDownload</code>:
+<ul>
+<li>Type: File Download
+<ul>
+<li>Information on a download of Cybex-P session information</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<h2 id="email"><em><strong>email</strong></em></h2>
+<p>The email filter takes raw email data and parses it into a Tahoe event. In Cybex-P, email data can be split into 8 different components as an email Tahoe event. However, not every piece of email contains the exact same elements so not all email records will contain all 8 components:</p>
+<ul>
+<li>From attribute
+<ul>
+<li>contains the from email address and source’s name</li>
+</ul>
+</li>
+<li>Sending IP
+<ul>
+<li>IPv4 address of the sender</li>
+</ul>
+</li>
+<li>Source Object
+<ul>
+<li>Source object is container of Cybex-P object data that contains the IPv4 address, the source’s name, and the email address of a piece of email data. If any one of the 3 components is missing, a source object will not be created.</li>
+</ul>
+</li>
+<li>Reply-to
+<ul>
+<li>reply-to is a component that contains the replay-to address. If found, it is stored into Cybex-P as both an email address attribute and reply-to object</li>
+</ul>
+<blockquote>
+<ul>
+<li>art = Attribute(‘email_addr’, art)<br>
+art = Object(‘reply_to’, art)</li>
+</ul>
+</blockquote>
+</li>
+<li>To attribute
+<ul>
+<li>2 attributes that hold the name and email address of the email address that the email data was sent to</li>
+</ul>
+</li>
+<li>destination object
+<ul>
+<li>Like the source object, it is another Cybex-P object element that contains both the name and email address attributes of the *To attributes</li>
+</ul>
+</li>
+<li>subject attribute
+<ul>
+<li>Cybex-P Attribute of the emails subject</li>
+</ul>
+</li>
+<li>Body
+<ul>
+<li>Cybex-P Attribute of the emails body</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>All the previous acquired data is then stored in the backend one last time, congregated together, as a piece of Cybex-P event data.</p>
+<p>A raw hash of the event data is then returned.</p>
+<ul>
+<li>
+<h2 id="openphish_feed"><em><strong>openphish_feed</strong></em></h2>
+<p>The openphish filter deals with phishing intelligence and the identification any phishing URLs. It is derived from the openphish platform, a fully automated self-contained platform meant for large-scale phishing URL identification. The openphish filter has a single event ID:</p>
+<ul>
+<li><code>OpenPhish_Community</code>:
+<ul>
+<li>Type: Sighting
+<ul>
+<li>Data that is passed through the openphish filter is compared to recent or previous URLs provided from the openphish platform. Whether a correlation is found or not, the the data gets updated and stored to help the malicious scoring system to judge the source.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<h2 id="phishtank_feed"><em><strong>phishtank_feed</strong></em></h2>
+<p>phishtank is another phishing intelligence platform that helps to provide the latest information on any URLs identified as phishing links. Unlike openphish, the phishtank platform is a collaborative community-based platform in which a large majority of phishing identification is done by the open community. Just like openphish, the phishtank filter pulls the information from the platform and is correlated against raw threat data.</p>
+<ul>
+<li><code>filt_phishtank</code>:
+<ul>
+<li>Type: phishtank-url
+<ul>
+<li>Data that shows similar findings from the phishtank database are translated into Tahoe objects an stored in the backend.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<h2 id="sighting"><em><strong>sighting</strong></em></h2>
+<p>sightings is a filter that functions as method to catching cowrie honeypot data and parsing it into Tahoe events.  When honey pot data is is ran through the sightings filter, the pieces of data in the event are categorized into one of two filters:</p>
+<ul>
+<li><em>malicious</em></li>
+<li><em>benign</em></li>
+</ul>
+<p>All pieces of cowrie honeypot data are then parsed into a Tahoe event and that event gets assigned to a particular category. The Tahoe event’s reference hash is then generated and returned.</p>
+</li>
+</ul>
+<h1 id="miscellaneous">Miscellaneous</h1>
+<ul>
+<li>Config repository
+<ul>
+<li>JSON format configurations of other module identities and the backend databases
+<ul>
+<li>api</li>
+<li>cache</li>
+<li>report</li>
+<li>identity</li>
+<li>tahoe</li>
+<li>archive</li>
+<li>analytics</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>test/filters repository
+<ul>
+<li>Various files of unfiltered data accompanied with python files to test out the filters</li>
+</ul>
+</li>
+</ul>
+</div>
+</body>
+
+</html>
