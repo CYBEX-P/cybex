@@ -1,0 +1,298 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>The Cybex-P backend &mdash; cybex_web_app 0.9.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+        <script >mermaid.initialize({startOnLoad:true});</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> cybex_web_app
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Front End</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Web Application</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Back End</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html">Cybex-P Input Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html#cybex-p-input-repository">Cybex-P Input Repository</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html#plugins">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html#miscellaneous">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html">Cybex-P API Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#cybex-p-api-repositories">Cybex-P API Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#small-common-small"><small> Common</small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#small-config-small"><small>config</small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#small-identity-small"><small> Identity </small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#miscellaneous">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html">Cybex-P Analytics Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html#cybex-p-analytics-repositories">Cybex-P Analytics Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html#analytics">analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html#filters">Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html#miscellaneous">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html">Cybex-P Archive Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html#cybex-p-archive-module-repositories">Cybex-P Archive Module Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html#archive">archive</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html#parsemain">parsemain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html#miscellaneous">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Report_Module.html">Cybex-P Report Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Report_Module.html#cybex-p-report-module-repositories">Cybex-P Report Module Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Report_Module.html#report">report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html">Cybex-P Installation guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-environment-setup-and-tahoe-installation-small"><small> Environment setup and Tahoe Installation  </small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-input-module-installation-small"><small> <strong>Input Module Installation</strong></small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-api-module-installation-small"><small> <strong>API Module Installation</strong></small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-archive-module-installation-small"><small> <strong>Archive Module Installation</strong></small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-analytics-module-installation-small"><small> <strong>Analytics Module Installation</strong></small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-report-module-installation-small"><small> <strong>Report Module Installation</strong></small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#database-setup-and-installation-mongodb">Database Setup and Installation (MongoDB)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#containzerization">Containzerization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#systemd-services-debian">Systemd Services (Debian)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-creating-the-service-files-small"><small> Creating the service files </small></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installationtion_guide.html#small-executing-cybex-services-small"><small> Executing Cybex Services </small></a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cybex_web_app</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>The Cybex-P backend</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/The Cybex-P_Backend.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="the-cybex-p-backend">
+<h1>The Cybex-P backend<a class="headerlink" href="#the-cybex-p-backend" title="Permalink to this headline">¶</a></h1>
+<p>Hello! And Welcome to the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">backend</span></code> documentation. The backend of Cybex-P is where all the magic happens of the entire <code class="docutils literal notranslate"><span class="pre">Cybex-P</span></code> project.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">backend</span></code> consists of everything from the servers that collect threat data, to the API gateway, to the analytical and record administrating modules in the very back.</p>
+<p>In order from where threat data starts traveling from beginning to end, The Cybex-P backend consist of the following 5 modules:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Input</span> <span class="pre">Module</span></code>:</p>
+<ul>
+<li><p>Various plugins and utility to help bring threat data to the API</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">API</span> <span class="pre">Module</span></code>:</p>
+<ul>
+<li><p>The gateway between the Analytical/Records backend and everything else. Threat Data validation, encryption, and transferring</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Archive</span> <span class="pre">Module</span> </code>:</p>
+<ul>
+<li><p>Threat data decryption, TAHOE object parsing</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Analytics</span> <span class="pre">Module</span></code>:</p>
+<ul>
+<li><p>Data correlation and processing</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Record</span> <span class="pre">Module</span></code>:</p>
+<ul>
+<li><p>Report generation for the frontend</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="documentation-structure-and-formatting-how-to-read">
+<h1>Documentation Structure and Formatting (How to read)<a class="headerlink" href="#documentation-structure-and-formatting-how-to-read" title="Permalink to this headline">¶</a></h1>
+<p>Each page of the different modules of the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">backend</span></code> documentation have been formatted uniformly in a way to make understanding of the system comprehensive and easier to digest. The following is a flow chart that acts as a guideline on how all modules are structured and documented.</p>
+<div class="mermaid">
+            graph 
+A[Module Introduction:&lt;br&gt;- General Overiew&lt;br&gt;- Key Components ] --&gt; B
+B[Module Respositories:&lt;br&gt; - Table of contents &lt;br&gt;- Source code sections and their main purposes&lt;br&gt;- Sub-repositories and their purpose, if applicable.] --&gt; C
+C[Module Technical Breakdown:&lt;br&gt;- Overview of the source code within each repository and sub-repositorys&lt;br&gt;- Key functions and classes &lt;br&gt;- Breakdown of key source code specifications] --&gt; D
+D[Miscellaneous content:&lt;br&gt;- Configuration Loading &lt;br&gt;- Any Extra files. E.G: private/public keys&lt;br&gt;]
+
+        </div><ul class="simple">
+<li><p><em><strong>1 - Module Introduction</strong></em>: Each module is first introduced with a superficial explanation of what the module does, the role(s) that it fills in the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Backend</span></code>, and how data is processed through that module. Some of the modules will come a flow chart that will either represent <em>how data is processed through that module</em> or <em>the location of that module and general direction of data within the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Backend</span></code> system topology</em>.</p></li>
+<li><p><em><strong>2 - Module Repositories</strong></em>: Like a table of contents, a list of the different code repositories of the backend is displayed here. A repository may either be a single file source code or a directory that leads to many more sub-repositories. Under each repository will be a short definition that represents a functionality that repository is responsible for within its module.</p></li>
+<li><p><em><strong>3 - Module Technical Breakdown</strong></em>: The technical breakdown consist of diving into each repository’s source code and addressing the key functions and classes that comprise that repository. Here, an explanation of those functions is provided along with a comprehensive explanation of it’s connections to other source code in the system (or even its connection to other modules, if applicable).</p></li>
+<li><p><em><strong>4 - Miscellaneous content</strong></em>:  Any additional files that don’t directly deal with the core responsibilties and functionality of a repository are addressed here, at the bottom of the modules page. These files can be anything from:</p>
+<ul>
+<li><p>backend config execution code</p></li>
+<li><p>private and public keys</p></li>
+<li><p>linux systemd service files</p></li>
+<li><p>JSON config files</p></li>
+<li><p>and more</p></li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Adam Cassell.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
