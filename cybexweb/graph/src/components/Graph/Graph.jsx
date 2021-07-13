@@ -341,7 +341,6 @@ const Graph = ({ isLoading, setFromDate, setToDate, setTimezone, fromDate, toDat
               .get('/api/v1/neo4j/export')
               .then(response => {
                 setNeo4jData(response.data);
-                //setCommentTextState(''); // replaced by resetCards();
                 setLoading(false);
               })
               .catch(() => {
@@ -597,7 +596,7 @@ const Graph = ({ isLoading, setFromDate, setToDate, setTimezone, fromDate, toDat
           }}>
             <b>{selectText.type.replace(/"/g,"")}</b>
           </h4>
-          <h6 style={{textAlign:"center"}}>{selectText.data.replace(/"/g,"")}</h6>
+          <h6 style={{textAlign:"center",pointerEvents:'auto'}}>{selectText.data.replace(/"/g,"")}</h6>
           <div style={{color:"white"}}>
             <div style = {{backgroundColor: "#232323",borderRadius: "10px", padding: "10px",marginBottom:"10px",backdropFilter: "blur(20px)"}}>
               <div style = {{display: "flex", justifyContent: "space-between"}}>
@@ -709,7 +708,7 @@ const Graph = ({ isLoading, setFromDate, setToDate, setTimezone, fromDate, toDat
           }}>
             <b>{pinnedText.type.replace(/"/g,"")}</b>
           </h4>
-          <h6 style={{textAlign:"center"}}>{pinnedText.data.replace(/"/g,"")}</h6>
+          <h6 style={{textAlign:"center",pointerEvents:'auto'}}>{pinnedText.data.replace(/"/g,"")}</h6>
           <div style={{color:"white"}}>
             <div style = {{backgroundColor: "#232323",borderRadius: "10px", padding: "10px",marginBottom:"10px",backdropFilter: "blur(20px)"}}>
               <div style = {{display: "flex", justifyContent: "space-between"}}>

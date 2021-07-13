@@ -1,7 +1,6 @@
 """Module containing functions for handling graph comments."""
 
 from py2neo import Graph, Node, Relationship
-from exportDB import bucket
 import json
 from django.conf import settings
 

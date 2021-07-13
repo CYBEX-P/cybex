@@ -37,6 +37,7 @@ from cybexapi.delete_node import delete_node
 from cybexapi.positions import update_positions
 from cybexapi.directory import get_contents
 from cybexapi.user_management import user_info, org_info, org_add_remove
+from cybexapi.comments import insertComment
 import json
 from cybexapi.wipe_db import wipeDB
 import pandas as pd
@@ -304,6 +305,9 @@ class enrichNodePost(APIView):
                 data["Ntype"], graph, user=current_user, 
                 from_date=data["fromDate"], to_date=data["toDate"], 
                 timezone=data["timezone"])
+        elif enrich_type == "comment":
+            status = insertComment(data["comment"], graph, data["value"], data["Ntype"])
+            result = json.dumps({"insert status": status})
         else:
             result = enrichLocalNode(enrich_type, data["value"], data["Ntype"], graph, current_user)
         return Response(result)
