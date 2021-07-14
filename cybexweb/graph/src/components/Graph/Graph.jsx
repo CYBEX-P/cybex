@@ -39,6 +39,7 @@ function InitializeGraph(data) {
   const options = {
     layout: { improvedLayout: true },
     height: '99vh',
+    autoResize: false,
     nodes: {
       shape: 'circularImage',
       image: '/static/SVG/DataAnalytics/svg_other.svg', //default IOC image
