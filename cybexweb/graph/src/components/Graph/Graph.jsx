@@ -65,11 +65,6 @@ function InitializeGraph(data) {
   };
   const container = document.getElementById('mynetwork');
   const nw = new Network(container, dataObject, options);
-
-  nw.once('afterDrawing', () => {
-    container.style.height = '100vh'
-  })
-
   return nw;
 }
 
