@@ -39,6 +39,7 @@ function InitializeGraph(data) {
   const options = {
     layout: { improvedLayout: true },
     height: '99vh',
+    autoResize: false,
     nodes: {
       shape: 'circularImage',
       image: '/static/SVG/DataAnalytics/svg_other.svg', //default IOC image
@@ -65,11 +66,6 @@ function InitializeGraph(data) {
   };
   const container = document.getElementById('mynetwork');
   const nw = new Network(container, dataObject, options);
-
-  nw.once('afterDrawing', () => {
-    container.style.height = '100vh'
-  })
-
   return nw;
 }
 
