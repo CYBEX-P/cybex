@@ -65,6 +65,11 @@ function InitializeGraph(data) {
   };
   const container = document.getElementById('mynetwork');
   const nw = new Network(container, dataObject, options);
+
+  nw.once('afterDrawing', () => {
+    container.style.height = '100vh'
+  })
+
   return nw;
 }
 
@@ -334,7 +339,7 @@ const Graph = ({ isLoading, setFromDate, setToDate, setTimezone, fromDate, toDat
       resetCards();
       setLoading("Adding comment");
       axios
-        .post(`/api/v1/enrich/comment`, {Ntype: `${nodeObj.properties.type}`, value: `${nodeObj.properties.data}`, comment: `${currentCommentText}`})
+        .post(`/api/v1/enrich/comment/`, {Ntype: `${nodeObj.properties.type}`, value: `${nodeObj.properties.data}`, comment: `${currentCommentText}`})
         .then(({ data }) => {
           if (data['insert status'] !== 0) {
             axios
