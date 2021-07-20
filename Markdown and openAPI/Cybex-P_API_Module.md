@@ -33,7 +33,7 @@ The following calls can be made to `Cybex-P API`:
 |URL/Routes                |TYPE	| FUNCTION                         |
 |----------------|-------------------------------|-----------------------------|
 |`/ping`|PUT |Utility call to ping the backend            |
-|`/query`|GET           |When called, checks the status of the previously provided data set and returns it if available            |
+|`/query`|POST           |When called, checks the status of the previously provided data set and returns it if available            |
 |`/raw`          |POST|Call the `raw` module and proceeds to parse and prepare the inputted data to be sent to the cache data lake|
 |`Create/Org`          |POST|Register a new organization in Cybex-P|
 |`/Create/User`          |POST|Register a new user|
@@ -42,7 +42,7 @@ The following calls can be made to `Cybex-P API`:
 |`/org/del/user`			|DELETE|Delete a user from an organization|
 |`/org/admins_of`			|GET|Get the information of the current admins of an organization|
 |`/orgs/user_of`			|GET|Get the information of all users under an organization|
-|`/user/info/self`			|GET|Get information on the current sessions user|
+|`/user/info/self`			|POST|Get information on the current sessions user|
 
 
 ## Views
