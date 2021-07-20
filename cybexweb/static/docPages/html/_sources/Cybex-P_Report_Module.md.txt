@@ -7,7 +7,7 @@ In regards to complexity in terms of the information provided from a report, a r
 
 ***<u>Data Pipeline</u>***
 
-```mermaid
+```{mermaid}
 sequenceDiagram
 Note Left of Archive-Database: Begin data pipeline<br> here 
 Archive-Database->> Report-Cluster: Encrypted query
@@ -16,14 +16,14 @@ Report-Database->> Cybex-P-API: Pull report on demand
 
 ```
 ***Part 1: Query handling and processing***
-```mermaid
+```{mermaid}
 sequenceDiagram
 Note Left of Cybex-P-API: API has pulled the<br>report from the<br> report database
 Cybex-P-API->> Frontend-Server: Frontend server pulls the report data
 Frontend-Server->> Frontend-Webclient: Frontend web client pulls the report data and presents the information 
 ```
 ***Part 2: Sending back the report and serving it to the frontend web application.***
-# Cybex-P Report Module Repositories
+## Cybex-P Report Module Repositories
 -	`report [source code]`:
 	-	setting time range of a record
 	-	raw threat data parsing
@@ -32,7 +32,7 @@ Frontend-Server->> Frontend-Webclient: Frontend web client pulls the report data
 		-	Attribute occurence counting
 		-	Related sub_type 
 		-	Threat rank processing
-# report
+## report
 The report repository is the source code that is entirely responsible for all aspects of the `Cybex-P Report Module`. The report source code is split up into various sections for handling report generation and queries:
 -	timelime recording and administration
 -	file decryption (for report querys made by the frontend client)

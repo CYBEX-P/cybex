@@ -1,77 +1,152 @@
-﻿# Cybex-P Archive Module
-The `Cybex-P Archive Module` is the next step in the process of threat data after being previously pushed to the cache data lake by the `Cybex-P API Module`.  This module has the prime responsibility to pull data from the cache data lake and parse it into a ***TAHOE*** object. Once parsed, it is then pushed and stored to it's database server in which it will await to be used by the `Cybex-P Analytics Module`.
+﻿
+#  Cybex-P Installation guide
 
-The `Cybex-P Archive Module` is compromised of two modules that work in cohesion with each other on different servers. The ***Archive Cluster*** and the ***Archive Database***.
+## Environment setup and Tahoe Installation
+To set up the the Cybex-P backend run the following list of commands.
 
-```{mermaid}
-graph LR
-A(Cache Data Lake) --data gets pulled--> B
-B[Archive Cluster] -- Converted to TAHOE and Pushed--> C
-C[Archive Database]
+**Note**: Operating System used: Ubuntu (Debian)
+- Create the python environment
+	- Depdendencys:
+		- Python3.9
+		- Python3.9 Headers
+
+`$: sudo apt-get install python3.9 python3.9-dev`
+-	Downloading The Tahoe Module Code:
 ```
-- ***Archive Cluster*** 
-	-  Decryption of data
-	-  Threat data to TAHOE object conversion
-- ***Archive Database***
-	- Storage of the newly parse TAHOE object
-# Cybex-P Archive Module Repositories
-- `archive [Source Code]`
-	- Data decryption
-	- Data Archiving
-	- Module Initialization and Execution
-- `parsemain [Source Code]`
-	-  Data Parsing
-		- Turning a piece of data into a Raw ***TAHOE*** object
+$: `git clone <Tahoe-Module-URL>`
+```
+- Setting up The Tahoe Virtual Environment
+```
+$: `python3.9 -m venv <venv-name>`
+$: `source <venv-name>/bin/activate`
+(example_name)$:
+```
+- Installing Tahoe Dependencies into Tahoe's virtual environment
+```
+(example_name) $: `pip install -r  <project-dir>/requirements.txt`
+(example_name) $: `cd tahoe`
+(example_name) $: `python -m unittest` (optional)
+runs unit test (optional)
+```
+-	Installing  Tahoe
+```
+(example_name) $: `python3,9 setup.py install`
+```
+## TAHOE Module Installation
+- With the prev
 
-# archive
+## **Input Module Installation**
+***TODO***
+## **API Module Installation**
+- Basic Installation:
+	- (example_name) $: `cd <project-dir>/...`
+	- (example_name) $: `git clone https://github.com/CYBEX-P/cybexp-api.git`
+	- (example_name) $: `cd cybexp-api`
+	- (example_name) $:`pip install -r requirements.txt`
+- Unit testing:
+	- (example_name) $:`cd ../cybexp-api`
+	- (example_name) $:`python3.9 -m unittest`
+- Test run the environment:
+	- hupper -m api
+	- curl http://localhost:5000/ping
+## **Archive Module Installation**
+***TODO***
+## **Analytics Module Installation**
+***TODO***
+## **Report Module Installation**
+***TODO***
 
-`archive` is the core source code of the `Cybex-P Archive Module`  since alot of the main functionality takes place here. Everything from data decryption to archiving takes place in this module.
+## Database Setup and Installation (MongoDB)
+Cybex-P uses MongoDB as its relational database in storing and comparing threat data
 
-***Key Functions***:
-> -	**decrypt_file**(file_in, fpriv_name = "priv.pem")
-> -	**archive_one**(event, cache_coll, fs, pkey_fp, parsemain_func)
-> - **archive**(cacheconfig, force_process = False, exec_once = False)
+As for setting up the database, all that is needed is a simple installation of MongoDB. The Cybex-P configuration settings and code will handle the rest at run-time.
 
-- `decrypt_file()`: 
-	- This function is only used by ***archive_one()*** and is used to decrypt threat data that has been previously encrypted with the public key of the `Cybex-P Archive Module`. When called, a file of the set of threat data is passed in along with the private key of the of the module (by default, the private key is under "priv.pem"). **decrypt_file()** go ahead and validate the file to ensure correct format. Once validated, the private key is pulled and the session key, nonce, tags, and ciphertext are extract from the private key. The session key is then decrypted with the private RSA key and the data gets decrypted with the AES session key. The threat data is then returned in *utf-8* formatting.
-- `archive_one()`:
-	- **archive_one()** is responsible for taking a single event provided to it and administrating decryption and  TAHOE parsing methods to process the data. Like the ***decrypt_file()*** function, this function is only used by one other function: ***archive()*** [See below]. This function utilizes **decrypt_file()** in its definition take the provided byte data and return the raw threat data. A call is then made to the **parsemain()** function (defined as *parsemain_func* within the definition of this function) to take the provided threat data and parse it into a raw TAHOE object. When the data proceeds to get parsed, the result of the parsing will come back in 1 of 3 states administrated by **parsemain()**:
-		-	 ***SUCCESS*** - The parsing was successful and will be updated to the Archive module database with its reference hash
-		-	***NOT_SUPPORTED*** - An attempt at parsing the passed data was made but the type of data that was passed is an unsupported sub-type. The data will be sent to the database with the **"skip"** set to True.
-		-	***ERROR*** - An attempt at parsing the passed data was made but an error was caught during the the function call. With an error case, a object of ***Nonetype*** is returned and updated to the database with the ***"skip"*** flag set to true.
-- `archive()`:
-	- ***archive()*** Is the main controlling function of the `archive` source code. When executed, the function while go into an infinite while loop that will consistently be checking for a provided cache configuration and proceed to set the path to the Archive database and tunnel to grab data from the cache data lake. 
-	- The rest of ***archive()*** is then an infinitely running while loop that is consistently querying the the cache data lake for available raw threat data provided from the `Cybex-P API Module`. However, to save resources and optimize performance, ***archive()*** has a an exponential backoff method that is ran after every query attempt. 
-	- The exponential backoff method is ran after every query and is meant to sleep the system for a certain amount of seconds in order to decrease the rate of querying in order to keep a stable rate of querys. If success is achieved after a single query and archive attempt, the amount of accounted failed attempts is reset to 0.
-	>	- n_failed_attempts -> The number of failed attempts so far after ***every*** recent failed query. 
-	>	- ***exponential_backoff***(n_failed_attempts)
-	
-	-	E.G: If *n_failed_attempts* is currently set to 3, meaning 3 querys were made and ended up being failed attempts, the exponential backoff function sleeps the archive module for a certain amount of seconds based on the following function:
-	>	-	s = min(3600, (2 ** **n)** + (random.randint(0, 1000) / 1000))
-			time.sleep(s)
-			#Where **n** = n_failed_attempt
+To install MongoDB, execute the following commands:
+- Install gnupg
+```
+sudo apt-get install gnupg
+```
+- importing the MongoDB public GPG key
+```
+wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+```
+- Appending mongodb to apt sources list
+```
+echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+```
+- Updating the apt package list
+```
+sudo apt-get update
+```
+- Installing the latest stable version of MongoDB
+```
+sudo apt-get install -y mongodb-org
+```
+At this point your mongodb installation is complete, execute the following commands to initialize the mongodb systemd daemon:
+```
+sudo systemctl start mongod
+```
+If the following prompt comes up:
+***Failed to start mongod.service: Unit mongod.service not found.***
 
-	-	Otherwise, if a successful query was made, *n_failed_attempts* is set back to 0 which will lead the archive module to increasing the rate of query and archive attempts again. 
+Execute the following command:
+```
+sudo systemctl daemon-reload
+```
+Then run the systemctl start command again.
 
-# parsemain
-The `parsemain` source code is a key sub-component that is utilized by `archive` to handle the responsibility of parsing threat data to the raw TAHOE objects that will eventually be used by the `Cybex-P Analytics Module`.
+For any other concerns and additional functionality and support on MongoDB, consult the following [documentation](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/).
 
-***Key functions***:
 
-> - parsemain(typtag, org id, timezone, data)
+## Systemd Services (Debian)
+Each Module of the Cybex-P backend has their own systemd Service file to handle execution and monitoring.
 
--	`parsemain()`:
-	-	parsemain is the sole function that is responsible for taking a single event of threat data and parsing it into a raw TAHOE object.  This function is only used by ***archive_one()*** from the `archive` source code.
-	-	When called, the *typtag* will be used to pull the raw sub type from the list of available sub types within the Cybex-P database. if typtag is valid and we receive a valid raw_sub_type, we can then go ahead and call TAHOEs ***Raw()***  and parse the following into a TAHOE instance that will get posted to the Archive Datababase:
-	> -	raw  =  Raw(raw_sub_type, data, orgid, timezone)
-	- Recall to the previous explanation within ***archive_one()*** above; based on the outcome of a valid raw sub type, parsemain will administrate 1 of 3 states to the function call:
-		- ***ParseState.SUCCESS*** - a valid raw sub type was found and the data was successfully parsed into a raw TAHOE object.
-		- ***ParseState.NOT_SUPPORTED*** - an unknown typtag was supplied, therefore there was now available raw sub type.
-		- ***ParseState.ERROR*** - An error happened and was caught
+Below you will find a basic example of setting up the systemd service files:
 
-# Miscellaneous 
-- Private Key
-	- Private key of the cybex-p archive module
-	- TAKE STEPS TO ENSURE THAT CANNOT BE EASILY ACCESSIBLE/READ
-- cybexp-archive.service
-	- systemd service file that maintains the cybex-p archive module
+```
+#This systemd file executes and maintains Cybex-P's Archive Module
+
+[Unit]
+Description=Cybex-P archive Module
+After=network-online.target
+
+[Service]
+User=cybexp-archive
+Group=cybexp-archive
+WorkingDirectory=../<proj-dir>/archive
+Type=simple
+ExecStart=../cybexp/env/bin/python3 ../<project-dir>/archive/archive.py
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+````
+
+In the template above replace the following parameters with the indicated values:
+- `../<proj-dir>/` - The full directory leading to where the module is stored
+- `archive` - Name of the module for the systemd service file
+
+There should be 5 linux systemd service files that serve and maintain all of the Cybex-P Modules
+
+ ### Creating the service files
+ ---
+ To make the cybex-p systemd service files, simply do the following
+ ```
+$: cd /etc/systemd/system
+$: touch cybexp_archive.service
+$: nano cybexp_archive.service
+```
+Replace the following to any appropriate name of the module you are constructing the systemd file for:
+-	`cybex_archive.service` - the name of whichever module's systemd file is currently being created (E.G: `cybexp_api.service`)
+
+Then write in the template above and adjust accordingly to where your python3.9 cybex-p virtual environment and module is located
+### Executing Cybex Systemd Services 
+---
+Once all systemd service files have been provisioned to the Cybex-P modules. Run the following to command on all service files to execute the modules.
+```
+$: systemctl start ***
+```
+- Replacing `***` with the name of a module ( E.G: `cybex_archive` )

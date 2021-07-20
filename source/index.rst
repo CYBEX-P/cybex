@@ -17,12 +17,12 @@ Welcome to the CYBEX-P documentation!
    :titlesonly:
 
    The Cybex-P Backend <The_Cybex-P_Backend.md>
-   Cybex-P_Input_Module <Cybex-P_Input_Module.md>
-   Cybex-P_API_Module <Cybex-P_API_Module.md>
-   Cybex-P_Analytics_Module <Cybex-P_Analytics_Module.md>
-   Cybex-P_Archive_Module <Cybex-P_Archive_Module.md>
-   Cybex-P_Report_Module <Cybex-P_Report_Module.md>
-   Cybex-P_Installationtion_guide <Cybex-P_Installationtion_guide.md>
+   Cybex-P Input Module <Cybex-P_Input_Module.md>
+   Cybex-P API_Module <Cybex-P_API_Module.md>
+   Cybex-P Archive_Module <Cybex-P_Archive_Module.md>
+   Cybex-P Analytics Module <Cybex-P_Analytics_Module.md>
+   Cybex-P Report_Module <Cybex-P_Report_Module.md>
+   Cybex-P Installation Guide <Cybex-P_Installation_Guide.md>
    Interactive Backend API Reference <https://cybex.cse.unr.edu/backendapi>
 
 Indices and tables

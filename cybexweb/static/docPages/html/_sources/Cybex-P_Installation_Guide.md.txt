@@ -1,26 +1,36 @@
-﻿
+
 #  Cybex-P Installation guide
 
 ## Environment setup and Tahoe Installation
 To set up the the Cybex-P backend run the following list of commands.
 
 **Note**: Operating System used: Ubuntu (Debian)
+
 - Create the python environment
 	- Depdendencys:
 		- Python3.9
 		- Python3.9 Headers
 
 `$: sudo apt-get install python3.9 python3.9-dev`
+
+## TAHOE Installation and setup
 -	Downloading The Tahoe Module Code:
 ```
-$: `git clone <Tahoe-Module-URL>`
+$: `git clone https://github.com/CYBEX-P/tahoe.git`
 ```
-- Setting up The Tahoe Virtual Environment
+- Activate the Tahoe virtual environment
 ```
 $: `python3.9 -m venv <venv-name>`
 $: `source <venv-name>/bin/activate`
-(example_name)$:
+(example_name)$: //<------- You should be in your virtual environment now
 ```
+- For activating on Windows ---
+```
+$: `python3.9 -m venv <venv-name>`
+$: `<venv-name>/Scripts/activate.bat`
+(example_name)$: //<------- You should be in your virtual environment now
+```
+
 - Installing Tahoe Dependencies into Tahoe's virtual environment
 ```
 (example_name) $: `pip install -r  <project-dir>/requirements.txt`
@@ -32,8 +42,6 @@ runs unit test (optional)
 ```
 (example_name) $: `python3,9 setup.py install`
 ```
-## TAHOE Module Installation
-- With the prev
 
 ## **Input Module Installation**
 ***TODO***
