@@ -2,14 +2,14 @@
 # Cybex-P API Module
 
 The `Cybex-P API Module` is the gateway for all data that travels in and out of Cybex-P during collection and posting. Cybex-P API is combintation of two sub-modules; the *Data Input sub-module* and the *Report Publishing sub-module*. The *Data Input sub-module* deals with the parsing of posted raw data and transferring of it to the backend. The *Report Publishing sub-module* deals with the handling of report request and the returning of any available ports to the user. In addition to being the gateway to the Cybex-P services, The API module also works as another checkpoint of additional privacy preservation  in which the data gets further encrypted. 
-```mermaid
+```{mermaid}
 graph LR
 A[Cybex-P Input] --> B
 B(Cybex-P API) --> C
 C(Cybex-P Cache Data Lake)
 ```
 
-# Cybex-P API Repositories
+## Cybex-P API Repositories
 the `Cybex-P API Module` and it's sub-modules is comprised of the following three modules.
  - `API`
 	 - URL calls
@@ -113,7 +113,9 @@ And more internal responsibilities such as:
 
 Classes:
 -	***AddConfig()***
-
+	-	Main Class of the `config` source code 
+	-	Takes in a python dictionary that contains a set of values corresponding to the Identity of backends and Input configurations
+	-	Those values then get pulled and are formed into a TAHOE Input configuration that belongs to that organization/user
 -	# <small> Identity </small>
 `Identity` contains functionality to handle various responsibilities of user and organization management, authentication, and access control list modification. Every class in the `Identity` source code is decorated with the ***validate_user()*** and ***exception_handler()*** functions from `Common` to assist with authentication and exception handling capabilities.
 
@@ -147,10 +149,10 @@ The following are  ***deprecated*** or previous functions in the source code:
 
 
 
-# Miscellaneous 
--	Public key
+## Miscellaneous 
+-	### Public key
 	- Public key of the Cybex-P API module, used with the privacy preservation system
-- 	Config repository
+- 	### Config repository
 	- JSON format configurations of other module identities and the backend databases
 		- api
 		- cache
@@ -159,7 +161,7 @@ The following are  ***deprecated*** or previous functions in the source code:
 		- tahoe
 		- archive
 		- analytics
-- load_config
+- ### load_config
 	- handles the execution and updating of the API backend and module configurations
-- uwsgi
+- ### uwsgi
 	- service file configuration for uwsgi instance
