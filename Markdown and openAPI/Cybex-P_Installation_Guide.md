@@ -138,7 +138,6 @@ In the template above replace the following parameters with the indicated values
 - `archive` - Name of the module for the systemd service file
 
 There should be 5 linux systemd service files that serve and maintain all of the Cybex-P Modules
-
  ### Creating the service files
  ---
  To make the cybex-p systemd service files, simply do the following
