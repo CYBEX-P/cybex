@@ -3,7 +3,7 @@ Hello! And Welcome to the `Cybex-P backend` documentation. The backend of Cybex-
 
 The `Cybex-P backend` consists of everything from the servers that collect threat data, to the API gateway, to the analytical and record administrating modules in the very back. 
 
-In order from where threat data starts traveling from beginning to end, The Cybex-P backend consist of the following 5 modules:
+In order from where threat data starts traveling from beginning to end, The Cybex-P backend consist of the following 5 software modules and 1 Python library:
 - `Cybex-P Input Module`:
 	- Various plugins and utility to help bring threat data to the API
 - `Cybex-P API Module`:
@@ -12,15 +12,16 @@ In order from where threat data starts traveling from beginning to end, The Cybe
 	- Threat data decryption, TAHOE object parsing
 - `Cybex-P Analytics Module`:
 	- Data correlation and processing
-- `Cybex-P Record Module`:
+- `Cybex-P Report Module`:
 	- Report generation for the frontend
-
-# Documentation Structure and Formatting (How to read)
+- `Tahoe Python Library:`
+	- Contemporary Cyber Threat Language
+## Documentation Structure and Formatting (How to read)
 
 Each page of the different modules of the `Cybex-P backend` documentation have been formatted uniformly in a way to make understanding of the system comprehensive and easier to digest. The following is a flow chart that acts as a guideline on how all modules are structured and documented. 
 
 
-```mermaid
+```{mermaid}
 graph 
 A[Module Introduction:<br>- General Overiew<br>- Key Components ] --> B
 B[Module Respositories:<br> - Table of contents <br>- Source code sections and their main purposes<br>- Sub-repositories and their purpose, if applicable.] --> C

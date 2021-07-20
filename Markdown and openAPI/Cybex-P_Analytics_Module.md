@@ -1,7 +1,7 @@
 ﻿# Cybex-P Analytics Module
 The `Cybex-P Analytics Module`, also known as the *Analytics Cluster*,  is responsible for changing and adjusting data that is provided to users at the frontend web client. It works on data that was archived to the Archive database and has various functionality to transform, enrich, correlate, and analyze threat data. 
 
-```mermaid
+```{mermaid}
 graph LR
 A(Analytical Cluster)
 B(Archive Dababase)
@@ -13,7 +13,7 @@ The module works by the concept of *filtering*; threat data that is freshly proc
 
 
 The flow chart below represents a simplified version on how *filtering* is integrated and how data passing through the same filter is a powerful notion capitlized by `Cybex-P` in how correlation of data operates:
-```mermaid
+```{mermaid}
 graph LR
 
 d0(Threat Data 01) 
@@ -32,7 +32,7 @@ f3 --> d3((New Data 3)) --> f4
 f4 --> d5((New Data of 2 and 3: Correlation))
 ```
 
-# Cybex-P Analytics Repositories
+## Cybex-P Analytics Repositories
 - `analytics [Source Code]`
 	- Main module  responsible for executing and maintaining the entirety of the Analytics Cluster.
 - `Filters`:
@@ -43,15 +43,15 @@ f4 --> d5((New Data of 2 and 3: Correlation))
 		- ***email***
 		- ***sighting***
 
-# analytics
+## analytics
 
-The analytics file is the main source code that is reponsible for running and maintaining the analytics cluster. 
+The `analytics` file is the main source code that is reponsible for running and maintaining the analytics cluster. 
 
 **Key Functions:**
 > - ***infinite_worker(q)***
 > - ***analytics()***
 
--	***analytics.analytics()***
+- 	***analytics.analytics()***
 	-	
 	-	The analytics function is essentially where the filters are loaded and executed before being sent to the ***infinite_worker()*** function. 
 	-	When launched, a queue is created that all loaded filters will be placed in. As the filters are being placed into the queue, they are individually executed and ran as seen below:
@@ -78,18 +78,18 @@ The analytics file is the main source code that is reponsible for running and ma
 	 else:
 	 ------ n_failed_attempts = 0
 
-# Filters
+## Filters
 The `Cybex-P Analytics Module` has various filters; along with those filters are Event IDs in the source code that extract, label, and source each piece of threat data into specific categories of a filter. 
 
 A an example of a filter event ID will look like - 
 > - `ExampleEventID:`
 	> 	- Type: Example ID
 		> 		- This part of the example is where what type of information is extracted and stored is located
-- ***common***
-	- 
+- ### ***common***
+	--- 
 	Common is base filter module that supplies the other modules below with the filter() method. The filter method essentially handles the parsing of Tahoe data and storing the data and it's hash to the backend.
--	***Cowrie***
-	-	
+-	### ***Cowrie***
+	---
 	Cowrie is a piece of open source software that can be used in any environment to emulate a UNIX system or SSH/Telnet Proxy; under the hood of the the system, it is a honeypot for gathering malicious SSH connections. The *Cowrie filter* itself processes the SSH login information provided by the cowrie system. 	
 	
 	Event IDs are ran through the following filters, each filter is categorized into the a *Type* which is the source of the threat data:
@@ -131,8 +131,8 @@ A an example of a filter event ID will look like -
 		-	Type: File Download
 			-	Information on a download of Cybex-P session information
 
-- ***email***
-	- 
+- ### ***email***
+	---
 	The email filter takes raw email data and parses it into a Tahoe event. In Cybex-P, email data can be split into 8 different components as an email Tahoe event. However, not every piece of email contains the exact same elements so not all email records will contain all 8 components:
 	-	From attribute
 		-	contains the from email address and source's name
@@ -158,15 +158,15 @@ All the previous acquired data is then stored in the backend one last time, cong
 A raw hash of the event data is then returned. 
 
 
-- ***openphish_feed***
-	- 
+- ### ***openphish_feed***
+	---
 	The openphish filter deals with phishing intelligence and the identification any phishing URLs. It is derived from the openphish platform, a fully automated self-contained platform meant for large-scale phishing URL identification. The openphish filter has a single event ID:
 		
 	- `OpenPhish_Community`:
 		- Type: Sighting
 			-  Data that is passed through the openphish filter is compared to recent or previous URLs provided from the openphish platform. Whether a correlation is found or not, the the data gets updated and stored to help the malicious scoring system to judge the source.
-- ***phishtank_feed***
-	- 
+- ### ***phishtank_feed***
+	---- 
 	 phishtank is another phishing intelligence platform that helps to provide the latest information on any URLs identified as phishing links. Unlike openphish, the phishtank platform is a collaborative community-based platform in which a large majority of phishing identification is done by the open community. Just like openphish, the phishtank filter pulls the information from the platform and is correlated against raw threat data.
 	
 	- `filt_phishtank`:
@@ -174,8 +174,8 @@ A raw hash of the event data is then returned.
 			-  Data that shows similar findings from the phishtank database are translated into Tahoe objects an stored in the backend.
 
 
-- ***sighting***
-	- 
+- ### ***sighting***
+	--- 
 	sightings is a filter that functions as method to catching cowrie honeypot data and parsing it into Tahoe events.  When honey pot data is is ran through the sightings filter, the pieces of data in the event are categorized into one of two filters:
 	
 	-	*malicious*
@@ -183,8 +183,8 @@ A raw hash of the event data is then returned.
 	
 	All pieces of cowrie honeypot data are then parsed into a Tahoe event and that event gets assigned to a particular category. The Tahoe event's reference hash is then generated and returned.
 
-# Miscellaneous 
-- 	Config repository
+## Miscellaneous 
+- 	### Config Repository
 	- JSON format configurations of other module identities and the backend databases
 		- api
 		- cache
@@ -193,5 +193,5 @@ A raw hash of the event data is then returned.
 		- tahoe
 		- archive
 		- analytics
-- test/filters repository
+- ### test/filters repository
 	- Various files of unfiltered data accompanied with python files to test out the filters
