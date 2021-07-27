@@ -40,8 +40,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Cybex-P Analytics Module" href="Cybex-P_Analytics_Module.html" />
-    <link rel="prev" title="Cybex-P Installation guide" href="Cybex-P_Input_Module.html" /> 
+    <link rel="next" title="Cybex-P Archive Module" href="Cybex-P_Archive_Module.html" />
+    <link rel="prev" title="Cybex-P Input Module" href="Cybex-P_Input_Module.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -93,14 +93,16 @@
 <p class="caption"><span class="caption-text">Back End</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="The_Cybex-P_Backend.html">The Cybex-P Backend</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html">Cybex-P_Input_Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html">Cybex-P Input Module</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Cybex-P API Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#small-common-small"><small> Common</small></a></li>
 <li class="toctree-l1"><a class="reference internal" href="#small-config-small"><small>config</small></a></li>
 <li class="toctree-l1"><a class="reference internal" href="#small-identity-small"><small> Identity </small></a></li>
-<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html">Cybex-P_Analytics_Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html">Cybex-P_Archive_Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Report_Module.html">Cybex-P_Report_Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html">Cybex-P Archive_Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html">Cybex-P Analytics Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Report_Module.html">Cybex-P Report_Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installation_Guide.html">Cybex-P Installation guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installation_Guide.html#cybex-p-database-overview">Cybex-P Database Overview</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://cybex.cse.unr.edu/backendapi">Interactive Backend API Reference</a></li>
 </ul>
 
@@ -222,7 +224,7 @@ C(Cybex-P Cache Data Lake)
 <td><p>Utility call to ping the backend</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">/query</span></code></p></td>
-<td><p>GET</p></td>
+<td><p>POST</p></td>
 <td><p>When called, checks the status of the previously provided data set and returns it if available</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/raw</span></code></p></td>
@@ -258,7 +260,7 @@ C(Cybex-P Cache Data Lake)
 <td><p>Get the information of all users under an organization</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/user/info/self</span></code></p></td>
-<td><p>GET</p></td>
+<td><p>POST</p></td>
 <td><p>Get information on the current sessions user</p></td>
 </tr>
 </tbody>
@@ -452,15 +454,11 @@ C(Cybex-P Cache Data Lake)
 </li>
 </ul>
 <p>The following are  <em><strong>deprecated</strong></em> or previous functions in the source code:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><em><strong>validate_token()</strong></em> - Decorator function that checks the validity of a token, failures will return a response code of 401. tokens are received from request_data[“token”] of a user request,</p></li>
-<li><p><em><strong>extract_request_data()</strong></em> - Decorator function that grabs the data from the falcon request objected and passes it to the decorated function as <em>‘request_data’</em>. The <em>required_fields</em> parameter is often used with the decorator to properly extract certain pieces of data within a query; otherwise, the request_data will only contain the timestamp of the call.</p></li>
-<li><p><em><strong>exception_handler()</strong></em> - This decorator function is in tandem with almost all other functions and API endpoint calls in the API module. the exception handler signals on any errors such as a bad HTTP request, Invalid input, and if the backend is currently down and/or not working properly.</p></li>
-<li><p><em><strong>early_return()</strong></em> - Utility dectorator used by other decorators as a way to early return from any function call if a decorator calls for an early return.</p></li>
-<li><p><em><strong>get_org_object()</strong></em> - checks to see if the key <code class="docutils literal notranslate"><span class="pre">org_hash</span></code> is present within the argument <code class="docutils literal notranslate"><span class="pre">request_data</span></code>. If it fails, then a response code 400 is returned. This decorator will pull <em>‘org_hash’</em> from <em>request_data[“org_hash”]</em> and place the org tahoe object under <em>org_object</em>.</p></li>
-</ul>
-</div></blockquote>
+<p><em><strong>validate_token()</strong></em> - Decorator function that checks the validity of a token, failures will return a response code of 401. tokens are received from request_data[“token”] of a user request,</p>
+<p><em><strong>extract_request_data()</strong></em> - Decorator function that grabs the data from the falcon request objected and passes it to the decorated function as <em>‘request_data’</em>. The <em>required_fields</em> parameter is often used with the decorator to properly extract certain pieces of data within a query; otherwise, the request_data will only contain the timestamp of the call.</p>
+<p><em><strong>exception_handler()</strong></em> - This decorator function is in tandem with almost all other functions and API endpoint calls in the API module. the exception handler signals on any errors such as a bad HTTP request, Invalid input, and if the backend is currently down and/or not working properly.</p>
+<p><em><strong>early_return()</strong></em> - Utility dectorator used by other decorators as a way to early return from any function call if a decorator calls for an early return.</p>
+<p><em><strong>get_org_object()</strong></em> - checks to see if the key <code class="docutils literal notranslate"><span class="pre">org_hash</span></code> is present within the argument <code class="docutils literal notranslate"><span class="pre">request_data</span></code>. If it fails, then a response code 400 is returned. This decorator will pull <em>‘org_hash’</em> from <em>request_data[“org_hash”]</em> and place the org tahoe object under <em>org_object</em>.</p>
 </div>
 </div>
 <div class="section" id="small-common-small">
@@ -474,20 +472,13 @@ C(Cybex-P Cache Data Lake)
 <div class="section" id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li></li>
-<li></li>
-<li></li>
-<li></li>
-</ul>
-<div class="section" id="public-key">
-<h3>Public key<a class="headerlink" href="#public-key" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
+<li><p><em><strong>Public key</strong></em></p>
+<ul>
 <li><p>Public key of the Cybex-P API module, used with the privacy preservation system</p></li>
 </ul>
-</div>
-<div class="section" id="config-repository">
-<h3>Config repository<a class="headerlink" href="#config-repository" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
+</li>
+<li><p><em><strong>Config repository</strong></em></p>
+<ul>
 <li><p>JSON format configurations of other module identities and the backend databases</p>
 <ul>
 <li><p>api</p></li>
@@ -500,19 +491,18 @@ C(Cybex-P Cache Data Lake)
 </ul>
 </li>
 </ul>
-</div>
-<div class="section" id="load-config">
-<h3>load_config<a class="headerlink" href="#load-config" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
+</li>
+<li><p><em><strong>load_config</strong></em></p>
+<ul>
 <li><p>handles the execution and updating of the API backend and module configurations</p></li>
 </ul>
-</div>
-<div class="section" id="uwsgi">
-<h3>uwsgi<a class="headerlink" href="#uwsgi" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
+</li>
+<li><p><em><strong>uwsgi</strong></em></p>
+<ul>
 <li><p>service file configuration for uwsgi instance</p></li>
 </ul>
-</div>
+</li>
+</ul>
 </div>
 </div>
 
@@ -522,8 +512,8 @@ C(Cybex-P Cache Data Lake)
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="Cybex-P_Analytics_Module.html" class="btn btn-neutral float-right" title="Cybex-P Analytics Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="Cybex-P_Input_Module.html" class="btn btn-neutral float-left" title="Cybex-P Installation guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Cybex-P_Archive_Module.html" class="btn btn-neutral float-right" title="Cybex-P Archive Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Cybex-P_Input_Module.html" class="btn btn-neutral float-left" title="Cybex-P Input Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

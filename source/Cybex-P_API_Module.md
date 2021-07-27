@@ -33,7 +33,7 @@ The following calls can be made to `Cybex-P API`:
 |URL/Routes                |TYPE	| FUNCTION                         |
 |----------------|-------------------------------|-----------------------------|
 |`/ping`|PUT |Utility call to ping the backend            |
-|`/query`|GET           |When called, checks the status of the previously provided data set and returns it if available            |
+|`/query`|POST           |When called, checks the status of the previously provided data set and returns it if available            |
 |`/raw`          |POST|Call the `raw` module and proceeds to parse and prepare the inputted data to be sent to the cache data lake|
 |`Create/Org`          |POST|Register a new organization in Cybex-P|
 |`/Create/User`          |POST|Register a new user|
@@ -42,7 +42,7 @@ The following calls can be made to `Cybex-P API`:
 |`/org/del/user`			|DELETE|Delete a user from an organization|
 |`/org/admins_of`			|GET|Get the information of the current admins of an organization|
 |`/orgs/user_of`			|GET|Get the information of all users under an organization|
-|`/user/info/self`			|GET|Get information on the current sessions user|
+|`/user/info/self`			|POST|Get information on the current sessions user|
 
 
 ## Views
@@ -141,18 +141,24 @@ Classes:
 	-	Provides information on the current user
 
 The following are  ***deprecated*** or previous functions in the source code:
->- ***validate_token()*** - Decorator function that checks the validity of a token, failures will return a response code of 401. tokens are received from request_data["token"] of a user request,
->- ***extract_request_data()*** - Decorator function that grabs the data from the falcon request objected and passes it to the decorated function as *'request_data'*. The *required_fields* parameter is often used with the decorator to properly extract certain pieces of data within a query; otherwise, the request_data will only contain the timestamp of the call.
->- ***exception_handler()*** - This decorator function is in tandem with almost all other functions and API endpoint calls in the API module. the exception handler signals on any errors such as a bad HTTP request, Invalid input, and if the backend is currently down and/or not working properly.
-> - ***early_return()*** - Utility dectorator used by other decorators as a way to early return from any function call if a decorator calls for an early return.
-> - ***get_org_object()*** - checks to see if the key `org_hash` is present within the argument `request_data`. If it fails, then a response code 400 is returned. This decorator will pull *'org_hash'* from *request_data["org_hash"]* and place the org tahoe object under *org_object*.
 
 
+
+
+***validate_token()*** - Decorator function that checks the validity of a token, failures will return a response code of 401. tokens are received from request_data["token"] of a user request,
+
+***extract_request_data()*** - Decorator function that grabs the data from the falcon request objected and passes it to the decorated function as *'request_data'*. The *required_fields* parameter is often used with the decorator to properly extract certain pieces of data within a query; otherwise, the request_data will only contain the timestamp of the call.
+
+ ***exception_handler()*** - This decorator function is in tandem with almost all other functions and API endpoint calls in the API module. the exception handler signals on any errors such as a bad HTTP request, Invalid input, and if the backend is currently down and/or not working properly.
+ 
+ ***early_return()*** - Utility dectorator used by other decorators as a way to early return from any function call if a decorator calls for an early return.
+
+ ***get_org_object()*** - checks to see if the key `org_hash` is present within the argument `request_data`. If it fails, then a response code 400 is returned. This decorator will pull *'org_hash'* from *request_data["org_hash"]* and place the org tahoe object under *org_object*.
 
 ## Miscellaneous 
--	### Public key
+- ***Public key***
 	- Public key of the Cybex-P API module, used with the privacy preservation system
-- 	### Config repository
+- ***Config repository***
 	- JSON format configurations of other module identities and the backend databases
 		- api
 		- cache
@@ -161,7 +167,7 @@ The following are  ***deprecated*** or previous functions in the source code:
 		- tahoe
 		- archive
 		- analytics
-- ### load_config
+-  ***load_config***
 	- handles the execution and updating of the API backend and module configurations
-- ### uwsgi
+- ***uwsgi***
 	- service file configuration for uwsgi instance
