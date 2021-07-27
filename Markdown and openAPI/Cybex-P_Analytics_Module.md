@@ -46,13 +46,10 @@ f4 --> d5((New Data of 2 and 3: Correlation))
 ## analytics
 
 The `analytics` file is the main source code that is reponsible for running and maintaining the analytics cluster. 
-
 **Key Functions:**
 > - ***infinite_worker(q)***
 > - ***analytics()***
-
 - 	***analytics.analytics()***
-	-	
 	-	The analytics function is essentially where the filters are loaded and executed before being sent to the ***infinite_worker()*** function. 
 	-	When launched, a queue is created that all loaded filters will be placed in. As the filters are being placed into the queue, they are individually executed and ran as seen below:
 	> -	filters = [Cowrie, Email, OpenPhishFeed, PhishTankFeed, Sighting]
@@ -62,7 +59,6 @@ The `analytics` file is the main source code that is reponsible for running and 
 	- Once stocked in the queue, a call to ***infinite_worker()*** is made with the queue.
 
 -	***analytics.infinite_worker()***
-	-	
 	-	***infinite_worker()*** handles the responsibility of maintaining and handling those filters until the `Cybex-P Analytics Module` is shutdown or reset. 
 	-	All filters that have been passed to the ***infinite_worker()*** have been executed previously and placed within a queue. Each filter, one at a time, is individually monitored and and re-executed by ***infinite_worker()*** as seen below:
 	> -	while not q.empty():
@@ -154,10 +150,7 @@ A an example of a filter event ID will look like -
 		-	Cybex-P Attribute of the emails body
 
 All the previous acquired data is then stored in the backend one last time, congregated together, as a piece of Cybex-P event data. 
-
 A raw hash of the event data is then returned. 
-
-
 - ### ***openphish_feed***
 	---
 	The openphish filter deals with phishing intelligence and the identification any phishing URLs. It is derived from the openphish platform, a fully automated self-contained platform meant for large-scale phishing URL identification. The openphish filter has a single event ID:
@@ -184,7 +177,7 @@ A raw hash of the event data is then returned.
 	All pieces of cowrie honeypot data are then parsed into a Tahoe event and that event gets assigned to a particular category. The Tahoe event's reference hash is then generated and returned.
 
 ## Miscellaneous 
-- 	### Config Repository
+-  ***Config Repository***
 	- JSON format configurations of other module identities and the backend databases
 		- api
 		- cache
@@ -193,5 +186,5 @@ A raw hash of the event data is then returned.
 		- tahoe
 		- archive
 		- analytics
-- ### test/filters repository
+- ***test/filters repository***
 	- Various files of unfiltered data accompanied with python files to test out the filters
