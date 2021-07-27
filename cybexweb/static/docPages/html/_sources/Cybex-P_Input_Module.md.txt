@@ -1,152 +1,102 @@
-﻿
-#  Cybex-P Installation guide
+﻿# Cybex-P Input Module
+The `Cybex-P Input Module` is reponsible for the collection of threat data provided from user input and to populate it into the `Cybex-P API Module`. The Input module is located Inside the collector server and in between the frontend client and `Cybex-P API Module`.  Users can manually post threat data through the frontend web client or let handling be done automatically via the connector server to the collector.
 
-## Environment setup and Tahoe Installation
-To set up the the Cybex-P backend run the following list of commands.
+Examples of automatic data collection include:
+> - Calling an API
+> - A pre-configured websocket
+> - reading from a text file
+> - reading from a database
+> - Using linux syslog protocol
 
-**Note**: Operating System used: Ubuntu (Debian)
-- Create the python environment
-	- Depdendencys:
-		- Python3.9
-		- Python3.9 Headers
+The following flow chart is a smaller scale summarization of the flow of data to the `Cybex-P API Module` via the `Cybex-P Input Module`:
 
-`$: sudo apt-get install python3.9 python3.9-dev`
--	Downloading The Tahoe Module Code:
-```
-$: `git clone <Tahoe-Module-URL>`
-```
-- Setting up The Tahoe Virtual Environment
-```
-$: `python3.9 -m venv <venv-name>`
-$: `source <venv-name>/bin/activate`
-(example_name)$:
-```
-- Installing Tahoe Dependencies into Tahoe's virtual environment
-```
-(example_name) $: `pip install -r  <project-dir>/requirements.txt`
-(example_name) $: `cd tahoe`
-(example_name) $: `python -m unittest` (optional)
-runs unit test (optional)
-```
--	Installing  Tahoe
-```
-(example_name) $: `python3,9 setup.py install`
-```
-## TAHOE Module Installation
-- With the prev
+```{mermaid}
+graph TD
+A[Automatically Collected Data] --> E((Connector Server)) --> F((Collector Server)) --> D 
+B[User webapp Inputted Data] --> G((Frontend Server))
+G --> D[Cybex-P API Module]
+H[Cache Data Lake]
 
-## **Input Module Installation**
-***TODO***
-## **API Module Installation**
-- Basic Installation:
-	- (example_name) $: `cd <project-dir>/...`
-	- (example_name) $: `git clone https://github.com/CYBEX-P/cybexp-api.git`
-	- (example_name) $: `cd cybexp-api`
-	- (example_name) $:`pip install -r requirements.txt`
-- Unit testing:
-	- (example_name) $:`cd ../cybexp-api`
-	- (example_name) $:`python3.9 -m unittest`
-- Test run the environment:
-	- hupper -m api
-	- curl http://localhost:5000/ping
-## **Archive Module Installation**
-***TODO***
-## **Analytics Module Installation**
-***TODO***
-## **Report Module Installation**
-***TODO***
-
-## Database Setup and Installation (MongoDB)
-Cybex-P uses MongoDB as its relational database in storing and comparing threat data
-
-As for setting up the database, all that is needed is a simple installation of MongoDB. The Cybex-P configuration settings and code will handle the rest at run-time.
-
-To install MongoDB, execute the following commands:
-- Install gnupg
-```
-sudo apt-get install gnupg
-```
-- importing the MongoDB public GPG key
-```
-wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
-```
-- Appending mongodb to apt sources list
-```
-echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
-```
-- Updating the apt package list
-```
-sudo apt-get update
-```
-- Installing the latest stable version of MongoDB
-```
-sudo apt-get install -y mongodb-org
-```
-At this point your mongodb installation is complete, execute the following commands to initialize the mongodb systemd daemon:
-```
-sudo systemctl start mongod
-```
-If the following prompt comes up:
-***Failed to start mongod.service: Unit mongod.service not found.***
-
-Execute the following command:
-```
-sudo systemctl daemon-reload
-```
-Then run the systemctl start command again.
-
-For any other concerns and additional functionality and support on MongoDB, consult the following [documentation](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/).
-
-
-## Systemd Services (Debian)
-Each Module of the Cybex-P backend has their own systemd Service file to handle execution and monitoring.
-
-Below you will find a basic example of setting up the systemd service files:
+D --> H
+I[...]
+H --Data Continues further--> I
 
 ```
-#This systemd file executes and maintains Cybex-P's Archive Module
+## Cybex-P Input Repository
 
-[Unit]
-Description=Cybex-P archive Module
-After=network-online.target
+The `Cybex-P Input Module`handles all kinds of data incoming to CYBEX-P. Users can manually upload threat data via a web client or automatically send machine data via a connector to the collector.
 
-[Service]
-User=cybexp-archive
-Group=cybexp-archive
-WorkingDirectory=../<proj-dir>/archive
-Type=simple
-ExecStart=../cybexp/env/bin/python3 ../<project-dir>/archive/archive.py
+The module is compromised of multiple ***plugins*** to handle inputs. Plugins are their own seperate add-ons and each plugin handles one type of source (e.g. Cowrie honeypot). 
 
-Restart=on-failure
-RestartSec=5
+Files:
 
-[Install]
-WantedBy=multi-user.target
+- `input.py`
+	-  This is the main file to start, stop or restart the input module. This file passes the start/stop/restart command to `run.py` and exits itself.
+- `run.py`
+	- This script keeps continuously running in the background. The `input.py` file starts this script as a process/fork and exits. The `run.py` creates an websocket and saves that info in the runningconfig file in the working directory. It also as functions to start/stop/restart specific plugins or inputs. 
+- `runningconfig`
+	- A text file created by `run.py` and deleted during normal exit. This file contains the host, port of the websocket used by `input.py`  to pass commands to `run.py`  (IPC). 
 
-````
+There are currently six plugins in the input module; four of the plugins are open source threat intelligence platforms while the other two plugins are entities that are fully native to the `Cybex-P Input Module`. The  ***plugins*** themselves are comprosed of the following services:
+- `common`
+	- Cybex Source Fetching, Exponential backoff, Cybex Sources. Common plugin module used by the other modules
+- `misp_api`
+	-  MISP api with python wrapper. Malware information sharing platform; Open source threat intelligence 
+- `misp_file`
+	-  MISP file input
+- `openphish`
+	- phishing intelligence platform
+- `phishtank`
+	- Gets phishing URLs from phishtank.com.
+- `websocket`
+	- Lomond websocket plugin
 
-In the template above replace the following parameters with the indicated values:
-- `../<proj-dir>/` - The full directory leading to where the module is stored
-- `archive` - Name of the module for the systemd service file
+Below is a general diagram of how threat data is handled by the various plugins in the `Cybex-P Input Module`: 
+```{mermaid}
+graph
+A[Threat data] --> B((Common:<br> Base Cybex <br> source fetcher)) --> H[Cybex-P API Module]
+A[Threat data] --> C((misp_api:<br> MISP threat<br> intelligence API)) --> H[Cybex-P API Module]
+A[Threat data] --> D((misp_file:<br> MISP file input)) --> H[Cybex-P API Module]
+A[Threat data] --> E((openphish:<br> Phishing intel <br> patform)) --> H[Cybex-P API Module]
+A[Threat data] --> F((phishtank:<br> Community <br> phishing intel <br> platform)) --> H[Cybex-P API Module]
+A[Threat data] --> G((websocket:<br> Cybex-P General <br>websocket)) --> H[Cybex-P API Module]
 
-There should be 5 linux systemd service files that serve and maintain all of the Cybex-P Modules
-
- ### Creating the service files
- ---
- To make the cybex-p systemd service files, simply do the following
- ```
-$: cd /etc/systemd/system
-$: touch cybexp_archive.service
-$: nano cybexp_archive.service
 ```
-Replace the following to any appropriate name of the module you are constructing the systemd file for:
--	`cybex_archive.service` - the name of whichever module's systemd file is currently being created (E.G: `cybexp_api.service`)
 
-Then write in the template above and adjust accordingly to where your python3.9 cybex-p virtual environment and module is located
-### Executing Cybex Systemd Services 
----
-Once all systemd service files have been provisioned to the Cybex-P modules. Run the following to command on all service files to execute the modules.
-```
-$: systemctl start ***
-```
-- Replacing `***` with the name of a module ( E.G: `cybex_archive` )
+## Plugins
+
+- ### Common
+	- As it's name states, `common` is a module that contains common utility and functions that is used by the other plugins within the `Cybex-P Input Module`.  The following are classes utilized by the other plugins to handle data:
+	> - CybexSource()
+	> - CybexSourceFectcher()
+
+	- ***CybexSource()*** is `common`'s class that is responsible for validating input configuration and posting Cybex-P ***events*** to the `Cybex-P API Module`. All modules within the `Cybex-P Input Module` inherit this class due to the responsibility of posting data to the api being on this module. 
+	- ***CybexSourceFetch()*** is an additional class in `common` that serves to handle the rate of input from input sources provided by ***CybexSource()***. It executes signal events in multiple threads and executes the signals in those threads based on certain conditions.
+
+- ### misp_api 
+	- Malware Information Share Platform (or MISP) is an open-source platform that provides information on the threat levels and malicious capabilities of threat data provided to it. `misp_api` is a Cybex-P integration of the platform which utilizes the projects API endpoint to populate Cybex-P's backend with additional data on any provided threat attribute. The project is integrated into the `Cybex-P Input Module` by a python wrapper of the platform. The plugin works by simply taking the provided threat data and posting it to the platforms endpoint; the response data, provided it isn't an error, proceeds to get posted to the `Cybex-P API Module`.
+- ### misp_file
+	-  This plugin acts as a direct input of MISP data. Users who have files available that come from MISP can be inputted through this plugin and easily populated to the `Cybex-P API Module`.
+- ### openphish
+	- the openphish plugin is a Cybex-P input plugin that actively retrieves URL sources from the openphish platform for the Cybex-P backend. Openphish is a phishing intelligence source that consistently gets updated with URLs that have been flagged as phishing links. This data is populated to the backend of Cybex-P and used as additional attribute data that is correlated to other threat data and sources that is provided to the backend. 
+- ### phishtank
+	- like openphish, phishtank is another phishing intelligence platform that offers a community-based phish verification system and users get to vote if the URL should be flagged as a phish. like openphish, phishtank calls are consistently made and data is returned, compressed, in either .bz2 or .gz extension. The data then gets decompressed and comes out in the form a list of records from phishtank. All provided records get posted to the `Cybex-P API Module`.
+- ### websocket
+	- the websocket plugin is a general purpose plugin with no specific specification directly attached to it. This plugin is used for all other miscellaneous forms of threat data collection. This plugin establishes a connection to the `Cybex-P API Module` using lomond websocket protocol ws. Use it to connect to the log stash socket module.  The log stash provides information on threat data.
+## Miscellaneous 
+
+- ### PluginHandler 
+	- deals with the handling of any threads spun up
+- ### PluginManager
+	- takes care and maintains the sockets of the cybex-p input module, these methods include:
+		- Updating socket configurations
+		- Spawning configurations
+		- Restarting sockets
+		- Killing sockets
+		- Checking on the running configs
+		- Initiating and updating to new configs
+		- Running input plugins
+		- Retrieving configurations from files
+		- running the files of input plugins
+		- handling changins
+		- removing stale sockets 

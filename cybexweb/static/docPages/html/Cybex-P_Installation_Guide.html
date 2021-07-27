@@ -39,7 +39,8 @@
 
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Cybex-P Report Module" href="Cybex-P_Report_Module.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -89,16 +90,18 @@
 <li class="toctree-l1"><a class="reference internal" href="README.html">Web Application</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Back End</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="The_Cybex-P_Backend.html">The Cybex-P Backend</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html">Cybex-P_Input_Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html">Cybex-P Input Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html">Cybex-P API Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#small-common-small"><small> Common</small></a></li>
 <li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#small-config-small"><small>config</small></a></li>
 <li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#small-identity-small"><small> Identity </small></a></li>
-<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html">Cybex-P_Analytics_Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html">Cybex-P_Archive_Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Report_Module.html">Cybex-P_Report_Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Archive_Module.html">Cybex-P Archive_Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html">Cybex-P Analytics Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Report_Module.html">Cybex-P Report_Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Cybex-P Installation guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#cybex-p-database-overview">Cybex-P Database Overview</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://cybex.cse.unr.edu/backendapi">Interactive Backend API Reference</a></li>
 </ul>
 
@@ -186,6 +189,7 @@
 </li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">$:</span> <span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">python3.9</span> <span class="pre">python3.9-dev</span></code></p>
+<p><em><strong>NOTE</strong></em>: While it is not required, it is recommended when installing all the Cybex-P modules that each modules should have it’s own virtual environment to hold all of its dependencies.</p>
 </div>
 <div class="section" id="tahoe-installation-and-setup">
 <h2>TAHOE Installation and setup<a class="headerlink" href="#tahoe-installation-and-setup" title="Permalink to this headline">¶</a></h2>
@@ -223,50 +227,267 @@ runs unit test (optional)
 <ul class="simple">
 <li><p>Installing  Tahoe</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(example_name) $: `python3,9 setup.py install`
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(example_name) $: `python3.9 setup.py install`
 </pre></div>
+</div>
+<div class="section" id="identity-secret-key">
+<h3>Identity Secret Key<a class="headerlink" href="#identity-secret-key" title="Permalink to this headline">¶</a></h3>
+<p>Each Cybex-P has a secret key located in Tahoes Identity class that acts a global key for your entire Cybex-P internal system. When Tahoe gets installed on multiple systems across, all those systems that are yours must have the exact same secret key.</p>
+<p>To generate this key, do the following:</p>
+<ul class="simple">
+<li><p>Generate the copy
+<code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">-c</span> <span class="pre">'import</span> <span class="pre">os;</span> <span class="pre">print(os.urandom(16).hex())</span></code></p></li>
+<li><p>This will generate a 16-byte string that will act as your cryptographically secure key.</p></li>
+<li><p>For all installation of Tahoe on your internal system, go to the following repository
+<code class="docutils literal notranslate"> <span class="pre">tahoe/tahoe/identity/identity.py</span></code></p></li>
+<li><p>Within the source code, within the class <code class="docutils literal notranslate"><span class="pre">Identity</span></code>, place replace the value of the varilable <em><strong>secret</strong></em> with your 16-byte string</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Identity</span><span class="p">(</span><span class="n">tahoe</span><span class="o">.</span><span class="n">Object</span><span class="p">):</span>
+<span class="o">-</span> <span class="n">Secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Your 16-byte string here&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p><em><strong>For anything that uses the Tahoe identity module, please change the secret key value to the key you’ve generated</strong></em></p>
 </div>
 </div>
 <div class="section" id="input-module-installation">
 <h2><strong>Input Module Installation</strong><a class="headerlink" href="#input-module-installation" title="Permalink to this headline">¶</a></h2>
-<p><em><strong>TODO</strong></em></p>
+<ul class="simple">
+<li><p>Create and activate a python virtual environment</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$: python3.9 -m venv $(example_name)
+$: source example_name/bin/activate
+(example_name)$:
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Install the module requirements</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(example_name)$:cd cybexp-input
+(example_name)$:pip install -r requirements.txt
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><em><strong>Configurations</strong></em></p>
+<ul>
+<li><p>In the root of module/project there will be a <code class="docutils literal notranslate"><span class="pre">config.json</span></code> that has all the database configurations, URLs, and other content related to the database identities. If it is not found or has incorrect configuration parameters, The input module will default to <code class="docutils literal notranslate"><span class="pre">localhost</span></code> database configurations.</p></li>
+</ul>
+</li>
+<li><p>the following is what you’ll see and need to configure within the <code class="docutils literal notranslate"><span class="pre">config.json</span></code>:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+
+	<span class="s2">&quot;api&quot;</span> <span class="p">:</span> <span class="p">{</span>
+	<span class="s2">&quot;url&quot;</span> <span class="p">:</span> <span class="s2">&quot;https://cybex-api.cse.unr.edu:5000&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;host&quot;</span> <span class="p">:</span> <span class="s2">&quot;cybex-api.cse.unr.edu&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;port&quot;</span> <span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
+	<span class="s2">&quot;protocol&quot;</span> <span class="p">:</span> <span class="s2">&quot;https&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;token&quot;</span><span class="p">:</span> <span class="c1">#YOUR API TOKEN GOES HERE</span>
+	<span class="p">},</span>
+
+	<span class="s2">&quot;cache&quot;</span> <span class="p">:</span> <span class="p">{</span>
+	<span class="s2">&quot;mongo_url&quot;</span> <span class="p">:</span> <span class="s2">&quot;mongodb://cici-api/&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;db&quot;</span> <span class="p">:</span> <span class="s2">&quot;cache_db&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;coll&quot;</span><span class="p">:</span> <span class="s2">&quot;file_entries&quot;</span>
+	<span class="p">},</span>
+
+	<span class="s2">&quot;report&quot;</span> <span class="p">:</span> <span class="p">{</span>
+	<span class="s2">&quot;mongo_url&quot;</span> <span class="p">:</span> <span class="s2">&quot;mongodb://cici-api/&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;db&quot;</span> <span class="p">:</span> <span class="s2">&quot;report_db&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;coll&quot;</span><span class="p">:</span> <span class="s2">&quot;instance&quot;</span>
+	<span class="p">},</span>
+
+	<span class="s2">&quot;identity&quot;</span> <span class="p">:</span> <span class="p">{</span>
+	<span class="s2">&quot;mongo_url&quot;</span> <span class="p">:</span> <span class="s2">&quot;mongodb://cici-api/&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;idenity_db&quot;</span> <span class="p">:</span> <span class="s2">&quot;identity_db&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;coll&quot;</span><span class="p">:</span> <span class="s2">&quot;instance&quot;</span>
+	<span class="p">},</span>
+
+	<span class="s2">&quot;tahoe&quot;</span><span class="p">:</span> <span class="p">{</span>
+	<span class="s2">&quot;mongo_url&quot;</span><span class="p">:</span> <span class="s2">&quot;mongodb://mongo1,mongo2,mongo2:27020/?replicaSet=rs0&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;db&quot;</span><span class="p">:</span> <span class="s2">&quot;tahoe_db&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;coll&quot;</span><span class="p">:</span> <span class="s2">&quot;instance&quot;</span>
+	<span class="p">},</span>
+
+	<span class="s2">&quot;analytics&quot;</span><span class="p">:</span> <span class="p">{</span>
+	<span class="s2">&quot;mongo_url&quot;</span><span class="p">:</span> <span class="s2">&quot;mongodb://mongo1,mongo2,mongo2:27020/?replicaSet=rs0&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;db&quot;</span><span class="p">:</span> <span class="s2">&quot;tahoe_db&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;coll&quot;</span><span class="p">:</span> <span class="s2">&quot;instance&quot;</span>
+	<span class="p">},</span>
+
+	<span class="s2">&quot;archive&quot;</span><span class="p">:</span> <span class="p">{</span>
+	<span class="s2">&quot;mongo_url&quot;</span><span class="p">:</span> <span class="s2">&quot;mongodb://mongo1,mongo2,mongo2:27020/?replicaSet=rs0&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;db&quot;</span><span class="p">:</span> <span class="s2">&quot;tahoe_db&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;coll&quot;</span><span class="p">:</span> <span class="s2">&quot;instance&quot;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>this is where the module will fetch data to-and-from in regards to the input configurations and where to send (like in the example above, the backend API, or the localhost API).</p></li>
+</ul>
+<hr class="docutils" />
+<p><big> <em><strong>Before we initialize the Cybex-P Input module, we’ll want to provide some of our own input sources.</strong></em> </big></p>
+<ul class="simple">
+<li><p>The Identity backend should hold input configs that will be ran on initialization of the input module</p></li>
+<li><p>after setting up config.json, use the load config module to use the configured parameters</p></li>
+<li><p><em><strong>To configure input configurations, we can accomplished this by using the <code class="docutils literal notranslate"><span class="pre">WebSocketConfig()</span></code> function of the identity module of tahoe.</strong></em></p></li>
+<li><p>For a full example of how to set up input configurations, refer to the <a class="reference external" href="https://github.com/CYBEX-P/cybexp-input/blob/farhan/configure_honeypots.py">configure_honeypots</a> script in the Cybex-P Input module. Here we will go how to provide an input configuration to the backend</p></li>
+<li><p>Open a blank python file and import the following modules:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tahoe.identity</span> <span class="k">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Org</span>
+<span class="kn">from</span> <span class="nn">tahoe.identity.config</span> <span class="k">import</span> <span class="n">WebSocketConfig</span>
+<span class="kn">from</span> <span class="nn">loadconfig</span> <span class="k">import</span> <span class="n">get_identity_backend</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Grab the identity of the backend (These parameters should be adjusted in your <code class="docutils literal notranslate"><span class="pre">config.json</span></code> file)</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">_ID_B</span>  <span class="o">=</span>  <span class="n">get_identity_backend</span><span class="p">()</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>grab or create a new user from the backend
+<code class="docutils literal notranslate"><span class="pre">user</span>&#160; <span class="pre">=</span>&#160; <span class="pre">_ID_B.find_user(email='exampleuser&#64;unr.edu',</span> <span class="pre">parse=True)</span></code></p></li>
+<li><p>grab an organization that user will be appended to
+<code class="docutils literal notranslate"><span class="pre">o</span> <span class="pre">=</span> <span class="pre">Org('unr_honeypot',</span> <span class="pre">u,</span> <span class="pre">u,</span> <span class="pre">'UNR</span> <span class="pre">Honeypot')</span></code></p></li>
+<li><p>Now we can finally set up and initialize our own input configurations, Your input configurations will vary, but below is the method and an example used to send an input configuration to the backend</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">WebSocketConfig</span><span class="p">(</span>
+	<span class="s2">&quot;UNR Cowrie Amsterdam&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;cowrie&quot;</span><span class="p">,</span>
+	<span class="n">o</span><span class="o">.</span><span class="n">_hash</span><span class="p">,</span>
+	<span class="s2">&quot;US/Pacific&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;ws://134.122.58.51:5000/&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Each parameter is associated with the following:
+“UNR Cowrie Amsterdam” = <strong>plugin name</strong>
+“cowrie” = <strong>the type tag of this input</strong>
+o._hash = <strong>organization id (or just the hash)</strong>
+“US/Pacific” = <strong>timezone</strong>
+“ws://134.122.58.51:5000/” = <strong>URL / IP of where this input configuration is located</strong></p>
+<ul class="simple">
+<li><p>Repeat this process for all available input configurations</p></li>
+<li><p>To run your Cybex-P Input Module, execute the following command:
+<code class="docutils literal notranslate"><span class="pre">python3.9</span> <span class="pre">input.py</span></code> start</p></li>
+</ul>
 </div>
 <div class="section" id="api-module-installation">
 <h2><strong>API Module Installation</strong><a class="headerlink" href="#api-module-installation" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Basic Installation:</p>
-<ul>
-<li><p>(example_name) $: <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">&lt;project-dir&gt;/...</span></code></p></li>
-<li><p>(example_name) $: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/CYBEX-P/cybexp-api.git</span></code></p></li>
-<li><p>(example_name) $: <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">cybexp-api</span></code></p></li>
-<li><p>(example_name) $:<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code></p></li>
+<li><p>Basic Installation:</p></li>
 </ul>
-</li>
-<li><p>Unit testing:</p>
-<ul>
-<li><p>(example_name) $:<code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">../cybexp-api</span></code></p></li>
-<li><p>(example_name) $:<code class="docutils literal notranslate"><span class="pre">python3.9</span> <span class="pre">-m</span> <span class="pre">unittest</span></code></p></li>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>	- (example_name) $: `cd &lt;project-dir&gt;/...`
+	- (example_name) $: `git clone https://github.com/CYBEX-P/cybexp-api.git`
+	- (example_name) $: `cd cybexp-api`
+	- (example_name) $:`pip install -r requirements.txt`
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Unit testing:</p></li>
 </ul>
-</li>
-<li><p>Test run the environment:</p>
-<ul>
-<li><p>hupper -m api</p></li>
-<li><p>curl http://localhost:5000/ping</p></li>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>	- (example_name) $:`cd ../cybexp-api`
+	- (example_name) $:`python3.9 -m unittest`
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Test run the environment:</p></li>
 </ul>
-</li>
-</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>	<span class="o">-</span> <span class="n">hupper</span> <span class="o">-</span><span class="n">m</span> <span class="n">api</span>
+	<span class="o">-</span> <span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">5000</span><span class="o">/</span><span class="n">ping</span>
+</pre></div>
+</div>
+<div class="section" id="running-in-production">
+<h3>Running in Production<a class="headerlink" href="#running-in-production" title="Permalink to this headline">¶</a></h3>
+<hr class="docutils" />
+<p>In production, THe Cybex-P API should be ran in tandem with uwsgi and a reverse-proxy like nginx.</p>
+<p>The Cybex-P API module is built on the falcon API framework. To set up the Cybex-P API in tandem with the uwsgi and nginx. Please consult this <a class="reference external" href="https://falcon.readthedocs.io/en/stable/deploy/nginx-uwsgi.html">Falcon API official documentation</a>.</p>
+</div>
 </div>
 <div class="section" id="archive-module-installation">
 <h2><strong>Archive Module Installation</strong><a class="headerlink" href="#archive-module-installation" title="Permalink to this headline">¶</a></h2>
-<p><em><strong>TODO</strong></em></p>
+<ul class="simple">
+<li><p>Create and activate a python virtual environment</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$: python3.9 -m venv $(example_name)
+$: source example_name/bin/activate
+(example_name)$:
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>clone the Cybex-P Archive repository</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/CYBEX-P/cybexp-archive.git</span></code></p>
+<ul class="simple">
+<li><p>Install the requirements</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(example_name)$: cd cybexp-archive
+pip install -r requirements.txt
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Run the module</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(example_name)$: python3.9 archive.py
+</pre></div>
+</div>
 </div>
 <div class="section" id="analytics-module-installation">
 <h2><strong>Analytics Module Installation</strong><a class="headerlink" href="#analytics-module-installation" title="Permalink to this headline">¶</a></h2>
-<p><em><strong>TODO</strong></em></p>
+<ul class="simple">
+<li><p>Create and activate a python virtual environment</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$: python3.9 -m venv $(example_name)
+$: source example_name/bin/activate
+(example_name)$:
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>clone the Cybex-P Archive repository</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/CYBEX-P/cybexp-analytics.git</span></code></p>
+<ul class="simple">
+<li><p>Install the requirements</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(example_name)$: cd cybexp-analytics
+pip install -r requirements.txt
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Run the module</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(example_name)$: python3.9 analytics.py
+</pre></div>
+</div>
 </div>
 <div class="section" id="report-module-installation">
 <h2><strong>Report Module Installation</strong><a class="headerlink" href="#report-module-installation" title="Permalink to this headline">¶</a></h2>
-<p><em><strong>TODO</strong></em></p>
+<ul class="simple">
+<li><p>Create and activate a python virtual environment</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$: python3.9 -m venv $(example_name)
+$: source example_name/bin/activate
+(example_name)$:
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>clone the Cybex-P Archive repository</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/CYBEX-P/cybexp-report.git</span></code></p>
+<ul class="simple">
+<li><p>Install the requirements</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(example_name)$: cd cybexp-report
+pip install -r requirements.txt
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Run the module</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(example_name)$: python3.9 report.py
+</pre></div>
+</div>
 </div>
 <div class="section" id="database-setup-and-installation-mongodb">
 <h2>Database Setup and Installation (MongoDB)<a class="headerlink" href="#database-setup-and-installation-mongodb" title="Permalink to this headline">¶</a></h2>
@@ -316,8 +537,35 @@ runs unit test (optional)
 <p>Then run the systemctl start command again.</p>
 <p>For any other concerns and additional functionality and support on MongoDB, consult the following <a class="reference external" href="https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/">documentation</a>.</p>
 </div>
-<div class="section" id="systemd-services-debian">
-<h2>Systemd Services (Debian)<a class="headerlink" href="#systemd-services-debian" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="cybex-p-database-overview">
+<h1>Cybex-P Database Overview<a class="headerlink" href="#cybex-p-database-overview" title="Permalink to this headline">¶</a></h1>
+<p>The ideal Cybex-P database setup contains 3 databases to handle everything:</p>
+<ul class="simple">
+<li><p>2 external databases located outside in the DMZ</p>
+<ul>
+<li><p>Cache data Lake</p></li>
+<li><p>Identity database containing input configurations, users, organizations, and other backend identification data</p></li>
+</ul>
+</li>
+<li><p>1 internal database</p>
+<ul>
+<li><p>The archive data base</p></li>
+</ul>
+</li>
+</ul>
+<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>graph TD
+DMZ[DMZ / External]
+NONDMZ[NON-DMZ / Internal]
+
+CDL(Cache Data Lake) --&gt; DMZ
+IDT(Identity Database) --&gt; DMZ
+ACH(Archive Database) --&gt; NONDMZ
+
+</pre></div>
+</div>
+<div class="section" id="systemd-services">
+<h2>Systemd Services<a class="headerlink" href="#systemd-services" title="Permalink to this headline">¶</a></h2>
 <p>Each Module of the Cybex-P backend has their own systemd Service file to handle execution and monitoring.</p>
 <p>Below you will find a basic example of setting up the systemd service files:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#This systemd file executes and maintains Cybex-P&#39;s Archive Module</span>
@@ -381,6 +629,9 @@ $: nano cybexp_archive.service
            
           </div>
           <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="Cybex-P_Report_Module.html" class="btn btn-neutral float-left" title="Cybex-P Report Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Cybex-P Installation guide &mdash; cybex_web_app 0.9.0 documentation</title>
+  <title>Cybex-P Archive Module &mdash; cybex_web_app 0.9.0 documentation</title>
   
 
   
@@ -40,8 +40,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Cybex-P Report Module" href="Cybex-P_Report_Module.html" />
-    <link rel="prev" title="Cybex-P Analytics Module" href="Cybex-P_Analytics_Module.html" /> 
+    <link rel="next" title="Cybex-P Analytics Module" href="Cybex-P_Analytics_Module.html" />
+    <link rel="prev" title="Cybex-P API Module" href="Cybex-P_API_Module.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -93,14 +93,16 @@
 <p class="caption"><span class="caption-text">Back End</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="The_Cybex-P_Backend.html">The Cybex-P Backend</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html">Cybex-P_Input_Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Input_Module.html">Cybex-P Input Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html">Cybex-P API Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#small-common-small"><small> Common</small></a></li>
 <li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#small-config-small"><small>config</small></a></li>
 <li class="toctree-l1"><a class="reference internal" href="Cybex-P_API_Module.html#small-identity-small"><small> Identity </small></a></li>
-<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html">Cybex-P_Analytics_Module</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Cybex-P_Archive_Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Report_Module.html">Cybex-P_Report_Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Cybex-P Archive_Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Analytics_Module.html">Cybex-P Analytics Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Report_Module.html">Cybex-P Report_Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installation_Guide.html">Cybex-P Installation guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cybex-P_Installation_Guide.html#cybex-p-database-overview">Cybex-P Database Overview</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://cybex.cse.unr.edu/backendapi">Interactive Backend API Reference</a></li>
 </ul>
 
@@ -150,7 +152,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Cybex-P Installation guide</li>
+      <li>Cybex-P Archive Module</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -169,207 +171,152 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="cybex-p-installation-guide">
-<h1>Cybex-P Installation guide<a class="headerlink" href="#cybex-p-installation-guide" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="environment-setup-and-tahoe-installation">
-<h2>Environment setup and Tahoe Installation<a class="headerlink" href="#environment-setup-and-tahoe-installation" title="Permalink to this headline">¶</a></h2>
-<p>To set up the the Cybex-P backend run the following list of commands.</p>
-<p><strong>Note</strong>: Operating System used: Ubuntu (Debian)</p>
+  <div class="section" id="cybex-p-archive-module">
+<h1>Cybex-P Archive Module<a class="headerlink" href="#cybex-p-archive-module" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Archive</span> <span class="pre">Module</span></code> is the next step in the process of threat data after being previously pushed to the cache data lake by the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">API</span> <span class="pre">Module</span></code>.  This module has the prime responsibility to pull data from the cache data lake and parse it into a <em><strong>TAHOE</strong></em> object. Once parsed, it is then pushed and stored to it’s database server in which it will await to be used by the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Analytics</span> <span class="pre">Module</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Archive</span> <span class="pre">Module</span></code> is compromised of two modules that work in cohesion with each other on different servers. The <em><strong>Archive Cluster</strong></em> and the <em><strong>Archive Database</strong></em>.</p>
+<div class="mermaid">
+            graph LR
+A(Cache Data Lake) --data gets pulled--&gt; B
+B[Archive Cluster] -- Converted to TAHOE and Pushed--&gt; C
+C[Archive Database]
+        </div><ul class="simple">
+<li><p><em><strong>Archive Cluster</strong></em></p>
+<ul>
+<li><p>Decryption of data</p></li>
+<li><p>Threat data to TAHOE object conversion</p></li>
+</ul>
+</li>
+<li><p><em><strong>Archive Database</strong></em></p>
+<ul>
+<li><p>Storage of the newly parse TAHOE object</p></li>
+</ul>
+</li>
+</ul>
+<div class="section" id="cybex-p-archive-module-repositories">
+<h2>Cybex-P Archive Module Repositories<a class="headerlink" href="#cybex-p-archive-module-repositories" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Create the python environment</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">archive</span> <span class="pre">[Source</span> <span class="pre">Code]</span></code></p>
 <ul>
-<li><p>Depdendencys:</p>
+<li><p>Data decryption</p></li>
+<li><p>Data Archiving</p></li>
+<li><p>Module Initialization and Execution</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">parsemain</span> <span class="pre">[Source</span> <span class="pre">Code]</span></code></p>
 <ul>
-<li><p>Python3.9</p></li>
-<li><p>Python3.9 Headers</p></li>
+<li><p>Data Parsing</p>
+<ul>
+<li><p>Turning a piece of data into a Raw <em><strong>TAHOE</strong></em> object</p></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
-<p><code class="docutils literal notranslate"><span class="pre">$:</span> <span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">python3.9</span> <span class="pre">python3.9-dev</span></code></p>
-<ul class="simple">
-<li><p>Downloading The Tahoe Module Code:</p></li>
+</div>
+<div class="section" id="archive">
+<h2>archive<a class="headerlink" href="#archive" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">archive</span></code> is the core source code of the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Archive</span> <span class="pre">Module</span></code>  since alot of the main functionality takes place here. Everything from data decryption to archiving takes place in this module.</p>
+<p><em><strong>Key Functions</strong></em>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>decrypt_file</strong>(file_in, fpriv_name = “priv.pem”)</p></li>
+<li><p><strong>archive_one</strong>(event, cache_coll, fs, pkey_fp, parsemain_func)</p></li>
+<li><p><strong>archive</strong>(cacheconfig, force_process = False, exec_once = False)</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$: `git clone &lt;Tahoe-Module-URL&gt;`
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>Setting up The Tahoe Virtual Environment</p></li>
-</ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$: `python3.9 -m venv &lt;venv-name&gt;`
-$: `source &lt;venv-name&gt;/bin/activate`
-(example_name)$:
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>Installing Tahoe Dependencies into Tahoe’s virtual environment</p></li>
-</ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(example_name) $: `pip install -r  &lt;project-dir&gt;/requirements.txt`
-(example_name) $: `cd tahoe`
-(example_name) $: `python -m unittest` (optional)
-runs unit test (optional)
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>Installing  Tahoe</p></li>
-</ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(example_name) $: `python3,9 setup.py install`
-</pre></div>
-</div>
-</div>
-<div class="section" id="tahoe-module-installation">
-<h2>TAHOE Module Installation<a class="headerlink" href="#tahoe-module-installation" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>With the prev</p></li>
-</ul>
-</div>
-<div class="section" id="input-module-installation">
-<h2><strong>Input Module Installation</strong><a class="headerlink" href="#input-module-installation" title="Permalink to this headline">¶</a></h2>
-<p><em><strong>TODO</strong></em></p>
-</div>
-<div class="section" id="api-module-installation">
-<h2><strong>API Module Installation</strong><a class="headerlink" href="#api-module-installation" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>Basic Installation:</p>
+</div></blockquote>
 <ul>
-<li><p>(example_name) $: <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">&lt;project-dir&gt;/...</span></code></p></li>
-<li><p>(example_name) $: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/CYBEX-P/cybexp-api.git</span></code></p></li>
-<li><p>(example_name) $: <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">cybexp-api</span></code></p></li>
-<li><p>(example_name) $:<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">decrypt_file()</span></code>:</p>
+<ul class="simple">
+<li><p>This function is only used by <em><strong>archive_one()</strong></em> and is used to decrypt threat data that has been previously encrypted with the public key of the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Archive</span> <span class="pre">Module</span></code>. When called, a file of the set of threat data is passed in along with the private key of the of the module (by default, the private key is under “priv.pem”). <strong>decrypt_file()</strong> go ahead and validate the file to ensure correct format. Once validated, the private key is pulled and the session key, nonce, tags, and ciphertext are extract from the private key. The session key is then decrypted with the private RSA key and the data gets decrypted with the AES session key. The threat data is then returned in <em>utf-8</em> formatting.</p></li>
 </ul>
 </li>
-<li><p>Unit testing:</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">archive_one()</span></code>:</p>
+<ul class="simple">
+<li><p><strong>archive_one()</strong> is responsible for taking a single event provided to it and administrating decryption and  TAHOE parsing methods to process the data. Like the <em><strong>decrypt_file()</strong></em> function, this function is only used by one other function: <em><strong>archive()</strong></em> [See below]. This function utilizes <strong>decrypt_file()</strong> in its definition take the provided byte data and return the raw threat data. A call is then made to the <strong>parsemain()</strong> function (defined as <em>parsemain_func</em> within the definition of this function) to take the provided threat data and parse it into a raw TAHOE object. When the data proceeds to get parsed, the result of the parsing will come back in 1 of 3 states administrated by <strong>parsemain()</strong>:</p>
 <ul>
-<li><p>(example_name) $:<code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">../cybexp-api</span></code></p></li>
-<li><p>(example_name) $:<code class="docutils literal notranslate"><span class="pre">python3.9</span> <span class="pre">-m</span> <span class="pre">unittest</span></code></p></li>
+<li><p><em><strong>SUCCESS</strong></em> - The parsing was successful and will be updated to the Archive module database with its reference hash</p></li>
+<li><p><em><strong>NOT_SUPPORTED</strong></em> - An attempt at parsing the passed data was made but the type of data that was passed is an unsupported sub-type. The data will be sent to the database with the <strong>“skip”</strong> set to True.</p></li>
+<li><p><em><strong>ERROR</strong></em> - An attempt at parsing the passed data was made but an error was caught during the the function call. With an error case, a object of <em><strong>Nonetype</strong></em> is returned and updated to the database with the <em><strong>“skip”</strong></em> flag set to true.</p></li>
 </ul>
 </li>
-<li><p>Test run the environment:</p>
-<ul>
-<li><p>hupper -m api</p></li>
-<li><p>curl http://localhost:5000/ping</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">archive()</span></code>:</p>
+<ul class="simple">
+<li><p><em><strong>archive()</strong></em> Is the main controlling function of the <code class="docutils literal notranslate"><span class="pre">archive</span></code> source code. When executed, the function while go into an infinite while loop that will consistently be checking for a provided cache configuration and proceed to set the path to the Archive database and tunnel to grab data from the cache data lake.</p></li>
+<li><p>The rest of <em><strong>archive()</strong></em> is then an infinitely running while loop that is consistently querying the the cache data lake for available raw threat data provided from the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">API</span> <span class="pre">Module</span></code>. However, to save resources and optimize performance, <em><strong>archive()</strong></em> has a an exponential backoff method that is ran after every query attempt.</p></li>
+<li><p>The exponential backoff method is ran after every query and is meant to sleep the system for a certain amount of seconds in order to decrease the rate of querying in order to keep a stable rate of querys. If success is achieved after a single query and archive attempt, the amount of accounted failed attempts is reset to 0.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>n_failed_attempts -&gt; The number of failed attempts so far after <em><strong>every</strong></em> recent failed query.</p></li>
+<li><p><em><strong>exponential_backoff</strong></em>(n_failed_attempts)</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>E.G: If <em>n_failed_attempts</em> is currently set to 3, meaning 3 querys were made and ended up being failed attempts, the exponential backoff function sleeps the archive module for a certain amount of seconds based on the following function:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>s = min(3600, (2 ** <strong>n)</strong> + (random.randint(0, 1000) / 1000))
+time.sleep(s)
+#Where <strong>n</strong> = n_failed_attempt</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>Otherwise, if a successful query was made, <em>n_failed_attempts</em> is set back to 0 which will lead the archive module to increasing the rate of query and archive attempts again.</p></li>
 </ul>
 </li>
 </ul>
 </div>
-<div class="section" id="archive-module-installation">
-<h2><strong>Archive Module Installation</strong><a class="headerlink" href="#archive-module-installation" title="Permalink to this headline">¶</a></h2>
-<p><em><strong>TODO</strong></em></p>
-</div>
-<div class="section" id="analytics-module-installation">
-<h2><strong>Analytics Module Installation</strong><a class="headerlink" href="#analytics-module-installation" title="Permalink to this headline">¶</a></h2>
-<p><em><strong>TODO</strong></em></p>
-</div>
-<div class="section" id="report-module-installation">
-<h2><strong>Report Module Installation</strong><a class="headerlink" href="#report-module-installation" title="Permalink to this headline">¶</a></h2>
-<p><em><strong>TODO</strong></em></p>
-</div>
-<div class="section" id="database-setup-and-installation-mongodb">
-<h2>Database Setup and Installation (MongoDB)<a class="headerlink" href="#database-setup-and-installation-mongodb" title="Permalink to this headline">¶</a></h2>
-<p>Cybex-P uses MongoDB as its relational database in storing and comparing threat data</p>
-<p>As for setting up the database, all that is needed is a simple installation of MongoDB. The Cybex-P configuration settings and code will handle the rest at run-time.</p>
-<p>To install MongoDB, execute the following commands:</p>
-<ul class="simple">
-<li><p>Install gnupg</p></li>
+<div class="section" id="parsemain">
+<h2>parsemain<a class="headerlink" href="#parsemain" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">parsemain</span></code> source code is a key sub-component that is utilized by <code class="docutils literal notranslate"><span class="pre">archive</span></code> to handle the responsibility of parsing threat data to the raw TAHOE objects that will eventually be used by the <code class="docutils literal notranslate"><span class="pre">Cybex-P</span> <span class="pre">Analytics</span> <span class="pre">Module</span></code>.</p>
+<p><em><strong>Key functions</strong></em>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>parsemain(typtag, org id, timezone, data)</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">gnupg</span>
-</pre></div>
-</div>
+</div></blockquote>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">parsemain()</span></code>:</p>
 <ul class="simple">
-<li><p>importing the MongoDB public GPG key</p></li>
+<li><p>parsemain is the sole function that is responsible for taking a single event of threat data and parsing it into a raw TAHOE object.  This function is only used by <em><strong>archive_one()</strong></em> from the <code class="docutils literal notranslate"><span class="pre">archive</span></code> source code.</p></li>
+<li><p>When called, the <em>typtag</em> will be used to pull the raw sub type from the list of available sub types within the Cybex-P database. if typtag is valid and we receive a valid raw_sub_type, we can then go ahead and call TAHOEs <em><strong>Raw()</strong></em>  and parse the following into a TAHOE instance that will get posted to the Archive Datababase:</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="o">-</span><span class="n">qO</span> <span class="o">-</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">mongodb</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">static</span><span class="o">/</span><span class="n">pgp</span><span class="o">/</span><span class="n">server</span><span class="o">-</span><span class="mf">4.4</span><span class="o">.</span><span class="n">asc</span> <span class="o">|</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">key</span> <span class="n">add</span> <span class="o">-</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>Appending mongodb to apt sources list</p></li>
+<blockquote>
+<div><ul class="simple">
+<li><p>raw  =  Raw(raw_sub_type, data, orgid, timezone)</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">echo</span> <span class="s2">&quot;deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main&quot;</span> <span class="o">|</span> <span class="n">sudo</span> <span class="n">tee</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">sources</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">mongodb</span><span class="o">-</span><span class="n">org</span><span class="o">-</span><span class="mf">4.4</span><span class="o">.</span><span class="n">list</span>
-</pre></div>
-</div>
+</div></blockquote>
 <ul class="simple">
-<li><p>Updating the apt package list</p></li>
+<li><p>Recall to the previous explanation within <em><strong>archive_one()</strong></em> above; based on the outcome of a valid raw sub type, parsemain will administrate 1 of 3 states to the function call:</p>
+<ul>
+<li><p><em><strong>ParseState.SUCCESS</strong></em> - a valid raw sub type was found and the data was successfully parsed into a raw TAHOE object.</p></li>
+<li><p><em><strong>ParseState.NOT_SUPPORTED</strong></em> - an unknown typtag was supplied, therefore there was now available raw sub type.</p></li>
+<li><p><em><strong>ParseState.ERROR</strong></em> - An error happened and was caught</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>Installing the latest stable version of MongoDB</p></li>
+</li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">mongodb</span><span class="o">-</span><span class="n">org</span>
-</pre></div>
-</div>
-<p>At this point your mongodb installation is complete, execute the following commands to initialize the mongodb systemd daemon:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">start</span> <span class="n">mongod</span>
-</pre></div>
-</div>
-<p>If the following prompt comes up:
-<em><strong>Failed to start mongod.service: Unit mongod.service not found.</strong></em></p>
-<p>Execute the following command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">daemon</span><span class="o">-</span><span class="n">reload</span>
-</pre></div>
-</div>
-<p>Then run the systemctl start command again.</p>
-<p>For any other concerns and additional functionality and support on MongoDB, consult the following <a class="reference external" href="https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/">documentation</a>.</p>
-</div>
-<div class="section" id="systemd-services-debian">
-<h2>Systemd Services (Debian)<a class="headerlink" href="#systemd-services-debian" title="Permalink to this headline">¶</a></h2>
-<p>Each Module of the Cybex-P backend has their own systemd Service file to handle execution and monitoring.</p>
-<p>Below you will find a basic example of setting up the systemd service files:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#This systemd file executes and maintains Cybex-P&#39;s Archive Module</span>
-
-<span class="p">[</span><span class="n">Unit</span><span class="p">]</span>
-<span class="n">Description</span><span class="o">=</span><span class="n">Cybex</span><span class="o">-</span><span class="n">P</span> <span class="n">archive</span> <span class="n">Module</span>
-<span class="n">After</span><span class="o">=</span><span class="n">network</span><span class="o">-</span><span class="n">online</span><span class="o">.</span><span class="n">target</span>
-
-<span class="p">[</span><span class="n">Service</span><span class="p">]</span>
-<span class="n">User</span><span class="o">=</span><span class="n">cybexp</span><span class="o">-</span><span class="n">archive</span>
-<span class="n">Group</span><span class="o">=</span><span class="n">cybexp</span><span class="o">-</span><span class="n">archive</span>
-<span class="n">WorkingDirectory</span><span class="o">=../&lt;</span><span class="n">proj</span><span class="o">-</span><span class="nb">dir</span><span class="o">&gt;/</span><span class="n">archive</span>
-<span class="n">Type</span><span class="o">=</span><span class="n">simple</span>
-<span class="n">ExecStart</span><span class="o">=../</span><span class="n">cybexp</span><span class="o">/</span><span class="n">env</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span> <span class="o">../&lt;</span><span class="n">project</span><span class="o">-</span><span class="nb">dir</span><span class="o">&gt;/</span><span class="n">archive</span><span class="o">/</span><span class="n">archive</span><span class="o">.</span><span class="n">py</span>
-
-<span class="n">Restart</span><span class="o">=</span><span class="n">on</span><span class="o">-</span><span class="n">failure</span>
-<span class="n">RestartSec</span><span class="o">=</span><span class="mi">5</span>
-
-<span class="p">[</span><span class="n">Install</span><span class="p">]</span>
-<span class="n">WantedBy</span><span class="o">=</span><span class="n">multi</span><span class="o">-</span><span class="n">user</span><span class="o">.</span><span class="n">target</span>
-
-</pre></div>
-</div>
-<p>In the template above replace the following parameters with the indicated values:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">../&lt;proj-dir&gt;/</span></code> - The full directory leading to where the module is stored</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">archive</span></code> - Name of the module for the systemd service file</p></li>
-</ul>
-<p>There should be 5 linux systemd service files that serve and maintain all of the Cybex-P Modules</p>
-<div class="section" id="creating-the-service-files">
-<h3>Creating the service files<a class="headerlink" href="#creating-the-service-files" title="Permalink to this headline">¶</a></h3>
-<hr class="docutils" />
-<p>To make the cybex-p systemd service files, simply do the following</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$: cd /etc/systemd/system
-$: touch cybexp_archive.service
-$: nano cybexp_archive.service
-</pre></div>
-</div>
-<p>Replace the following to any appropriate name of the module you are constructing the systemd file for:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">cybex_archive.service</span></code> - the name of whichever module’s systemd file is currently being created (E.G: <code class="docutils literal notranslate"><span class="pre">cybexp_api.service</span></code>)</p></li>
-</ul>
-<p>Then write in the template above and adjust accordingly to where your python3.9 cybex-p virtual environment and module is located</p>
-</div>
-<div class="section" id="executing-cybex-systemd-services">
-<h3>Executing Cybex Systemd Services<a class="headerlink" href="#executing-cybex-systemd-services" title="Permalink to this headline">¶</a></h3>
-<hr class="docutils" />
-<p>Once all systemd service files have been provisioned to the Cybex-P modules. Run the following to command on all service files to execute the modules.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$: systemctl start ***
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>Replacing <code class="docutils literal notranslate"><span class="pre">***</span></code> with the name of a module ( E.G: <code class="docutils literal notranslate"><span class="pre">cybex_archive</span></code> )</p></li>
+</li>
 </ul>
 </div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><em><strong>Private Key</strong></em></p>
+<ul>
+<li><p>Private key of the cybex-p archive module</p></li>
+<li><p>TAKE STEPS TO ENSURE THAT CANNOT BE EASILY ACCESSIBLE/READ</p></li>
+</ul>
+</li>
+<li><p><em><strong>cybexp-archive.service</strong></em></p>
+<ul>
+<li><p>systemd service file that maintains the cybex-p archive module</p></li>
+</ul>
+</li>
+</ul>
 </div>
 </div>
 
@@ -379,8 +326,8 @@ $: nano cybexp_archive.service
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="Cybex-P_Report_Module.html" class="btn btn-neutral float-right" title="Cybex-P Report Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="Cybex-P_Analytics_Module.html" class="btn btn-neutral float-left" title="Cybex-P Analytics Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Cybex-P_Analytics_Module.html" class="btn btn-neutral float-right" title="Cybex-P Analytics Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Cybex-P_API_Module.html" class="btn btn-neutral float-left" title="Cybex-P API Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
