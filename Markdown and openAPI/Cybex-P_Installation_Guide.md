@@ -13,6 +13,8 @@ To set up the the Cybex-P backend run the following list of commands.
 
 `$: sudo apt-get install python3.9 python3.9-dev`
 
+***NOTE***: While it is not required, it is recommended when installing all the Cybex-P modules that each modules should have it's own virtual environment to hold all of its dependencies.
+
 ## TAHOE Installation and setup
 -	Downloading The Tahoe Module Code:
 ```
@@ -40,30 +42,245 @@ runs unit test (optional)
 ```
 -	Installing  Tahoe
 ```
-(example_name) $: `python3,9 setup.py install`
+(example_name) $: `python3.9 setup.py install`
 ```
 
+### Identity Secret Key
+Each Cybex-P has a secret key located in Tahoes Identity class that acts a global key for your entire Cybex-P internal system. When Tahoe gets installed on multiple systems across, all those systems that are yours must have the exact same secret key.
+
+To generate this key, do the following:
+-	Generate the copy
+`python3 -c 'import os; print(os.urandom(16).hex())`
+- This will generate a 16-byte string that will act as your cryptographically secure key.
+- For all installation of Tahoe on your internal system, go to the following repository
+` tahoe/tahoe/identity/identity.py`
+- Within the source code, within the class `Identity`, place replace the value of the varilable ***secret*** with your 16-byte string
+```
+class Identity(tahoe.Object):
+- Secret = """Your 16-byte string here"""
+```
+
+***For anything that uses the Tahoe identity module, please change the secret key value to the key you've generated***
+
 ## **Input Module Installation**
-***TODO***
+- Create and activate a python virtual environment 
+```
+$: python3.9 -m venv $(example_name)
+$: source example_name/bin/activate
+(example_name)$:
+```
+- Install the module requirements
+```
+(example_name)$:cd cybexp-input
+(example_name)$:pip install -r requirements.txt
+```
+
+
+- ***Configurations***
+	- In the root of module/project there will be a `config.json` that has all the database configurations, URLs, and other content related to the database identities. If it is not found or has incorrect configuration parameters, The input module will default to `localhost` database configurations.
+
+
+- the following is what you'll see and need to configure within the `config.json`:
+```
+{
+
+	"api" : {
+	"url" : "https://cybex-api.cse.unr.edu:5000",
+	"host" : "cybex-api.cse.unr.edu",
+	"port" : 5000,
+	"protocol" : "https",
+	"token": #YOUR API TOKEN GOES HERE
+	},
+
+	"cache" : {
+	"mongo_url" : "mongodb://cici-api/",
+	"db" : "cache_db",
+	"coll": "file_entries"
+	},
+
+	"report" : {
+	"mongo_url" : "mongodb://cici-api/",
+	"db" : "report_db",
+	"coll": "instance"
+	},
+
+	"identity" : {
+	"mongo_url" : "mongodb://cici-api/",
+	"idenity_db" : "identity_db",
+	"coll": "instance"
+	},
+
+	"tahoe": {
+	"mongo_url": "mongodb://mongo1,mongo2,mongo2:27020/?replicaSet=rs0",
+	"db": "tahoe_db",
+	"coll": "instance"
+	},
+
+	"analytics": {
+	"mongo_url": "mongodb://mongo1,mongo2,mongo2:27020/?replicaSet=rs0",
+	"db": "tahoe_db",
+	"coll": "instance"
+	},
+
+	"archive": {
+	"mongo_url": "mongodb://mongo1,mongo2,mongo2:27020/?replicaSet=rs0",
+	"db": "tahoe_db",
+	"coll": "instance"
+	}
+}
+```
+
+- this is where the module will fetch data to-and-from in regards to the input configurations and where to send (like in the example above, the backend API, or the localhost API).
+
+---
+
+
+<big> ***Before we initialize the Cybex-P Input module, we'll want to provide some of our own input sources.*** </big>
+
+
+- The Identity backend should hold input configs that will be ran on initialization of the input module
+- after setting up config.json, use the load config module to use the configured parameters
+
+
+- ***To configure input configurations, we can accomplished this by using the `WebSocketConfig()` function of the identity module of tahoe.***
+
+- For a full example of how to set up input configurations, refer to the [configure_honeypots](https://github.com/CYBEX-P/cybexp-input/blob/farhan/configure_honeypots.py) script in the Cybex-P Input module. Here we will go how to provide an input configuration to the backend
+
+- Open a blank python file and import the following modules:
+```
+from tahoe.identity import User, Org
+from tahoe.identity.config import WebSocketConfig
+from loadconfig import get_identity_backend
+```
+- Grab the identity of the backend (These parameters should be adjusted in your `config.json` file)
+```
+_ID_B  =  get_identity_backend()
+```
+-	grab or create a new user from the backend
+`user  =  _ID_B.find_user(email='exampleuser@unr.edu', parse=True)`
+- grab an organization that user will be appended to
+`o = Org('unr_honeypot', u, u, 'UNR Honeypot')`
+
+- Now we can finally set up and initialize our own input configurations, Your input configurations will vary, but below is the method and an example used to send an input configuration to the backend
+```
+WebSocketConfig(
+	"UNR Cowrie Amsterdam",
+	"cowrie",
+	o._hash,
+	"US/Pacific",
+	"ws://134.122.58.51:5000/"
+)
+```
+Each parameter is associated with the following: 
+"UNR Cowrie Amsterdam" = **plugin name**
+"cowrie" = **the type tag of this input**
+o._hash = **organization id (or just the hash)**
+"US/Pacific" = **timezone**
+"ws://134.122.58.51:5000/" = **URL / IP of where this input configuration is located**
+
+
+- Repeat this process for all available input configurations
+
+
+- To run your Cybex-P Input Module, execute the following command:
+`python3.9 input.py` start
+
+
+
+
+
 ## **API Module Installation**
 - Basic Installation:
+```
 	- (example_name) $: `cd <project-dir>/...`
 	- (example_name) $: `git clone https://github.com/CYBEX-P/cybexp-api.git`
 	- (example_name) $: `cd cybexp-api`
 	- (example_name) $:`pip install -r requirements.txt`
+```
+
 - Unit testing:
+```
 	- (example_name) $:`cd ../cybexp-api`
 	- (example_name) $:`python3.9 -m unittest`
+```
 - Test run the environment:
+```
 	- hupper -m api
 	- curl http://localhost:5000/ping
-## **Archive Module Installation**
-***TODO***
-## **Analytics Module Installation**
-***TODO***
-## **Report Module Installation**
-***TODO***
+```
 
+
+### Running in Production
+---
+
+In production, THe Cybex-P API should be ran in tandem with uwsgi and a reverse-proxy like nginx.
+
+The Cybex-P API module is built on the falcon API framework. To set up the Cybex-P API in tandem with the uwsgi and nginx. Please consult this [Falcon API official documentation](https://falcon.readthedocs.io/en/stable/deploy/nginx-uwsgi.html).
+
+## **Archive Module Installation**
+- Create and activate a python virtual environment 
+```
+$: python3.9 -m venv $(example_name)
+$: source example_name/bin/activate
+(example_name)$:
+```
+
+- clone the Cybex-P Archive repository
+
+`git clone https://github.com/CYBEX-P/cybexp-archive.git`
+
+- Install the requirements
+```
+(example_name)$: cd cybexp-archive
+pip install -r requirements.txt
+```
+- Run the module
+```
+(example_name)$: python3.9 archive.py
+```
+
+## **Analytics Module Installation**
+- Create and activate a python virtual environment 
+```
+$: python3.9 -m venv $(example_name)
+$: source example_name/bin/activate
+(example_name)$:
+```
+
+- clone the Cybex-P Archive repository
+
+`git clone https://github.com/CYBEX-P/cybexp-analytics.git`
+
+- Install the requirements
+```
+(example_name)$: cd cybexp-analytics
+pip install -r requirements.txt
+```
+- Run the module
+```
+(example_name)$: python3.9 analytics.py
+```
+## **Report Module Installation**
+- Create and activate a python virtual environment 
+```
+$: python3.9 -m venv $(example_name)
+$: source example_name/bin/activate
+(example_name)$:
+```
+
+- clone the Cybex-P Archive repository
+
+`git clone https://github.com/CYBEX-P/cybexp-report.git`
+
+- Install the requirements
+```
+(example_name)$: cd cybexp-report
+pip install -r requirements.txt
+```
+- Run the module
+```
+(example_name)$: python3.9 report.py
+```
 ## Database Setup and Installation (MongoDB)
 Cybex-P uses MongoDB as its relational database in storing and comparing threat data
 
@@ -105,8 +322,27 @@ Then run the systemctl start command again.
 
 For any other concerns and additional functionality and support on MongoDB, consult the following [documentation](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/).
 
+# Cybex-P Database Overview
+The ideal Cybex-P database setup contains 3 databases to handle everything:
+- 2 external databases located outside in the DMZ
+	- Cache data Lake
+	- Identity database containing input configurations, users, organizations, and other backend identification data
+- 1 internal database
+	- The archive data base
+```mermaid
+graph TD
+DMZ[DMZ / External]
+NONDMZ[NON-DMZ / Internal]
 
-## Systemd Services (Debian)
+CDL(Cache Data Lake) --> DMZ
+IDT(Identity Database) --> DMZ
+ACH(Archive Database) --> NONDMZ
+
+```
+
+
+
+## Systemd Services
 Each Module of the Cybex-P backend has their own systemd Service file to handle execution and monitoring.
 
 Below you will find a basic example of setting up the systemd service files:
