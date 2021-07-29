@@ -87,7 +87,7 @@ And more internal responsibilities such as:
 - Backend configurations
 - Required input fields
 
- - # <small> Common</small>
+ - ##  Common
 `Common` is the code in resources that contains common resources and decorators widely used throughout the `Cybex-P API Module`. 
 -	***configureIDBackend()*** :
 	-	use by `api.py` to setup the identity backend. The information on the backend identity gets stored in the two variables below. If the following variables aren't properly set, the rest of the code will not work.
@@ -108,7 +108,7 @@ And more internal responsibilities such as:
 	- Works equivalently to   ***validate_org()*** , Just with returning a user object is the token is valid
 
 
-- # <small>config</small>
+- ## config
 `config` deals with initializing the an organization object and it's required keys within the `Cybex-P API`.
 
 Classes:

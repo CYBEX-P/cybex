@@ -322,7 +322,7 @@ Then run the systemctl start command again.
 
 For any other concerns and additional functionality and support on MongoDB, consult the following [documentation](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/).
 
-# Cybex-P Database Overview
+## Cybex-P Database Overview
 The ideal Cybex-P database setup contains 3 databases to handle everything:
 - 2 external databases located outside in the DMZ
 	- Cache data Lake
