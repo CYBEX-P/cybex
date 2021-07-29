@@ -47,9 +47,10 @@ def org_info(user,org_hash,return_type):
         JSON response from backend CYBEX API.
     
     """
-    user_token = user.profile.cybex_token
+    # user_token = user.profile.cybex_token
+    cybex_token = settings.CYBEX_TOKEN
     headers = {'content-type': 'application/json',
-               'Authorization': 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWJfdHlwZSI6ImN5YmV4cF91c2VyIiwiX2hhc2giOiJkMjMwZjU0Y2IxYzc3MmMwNWFiZmE1MGYxN2U2NGYxNmI2YTg4NGM5MTRmMDEyMjIyM2ZlOWRkYzk4ZGMyOTQxIiwianRpIjoiMzc0N2Q4NzctOTY2MC00NzhjLWEzNDAtZjYzMmRmNWQwNjM4In0.GM3nFOCg_JRZqqABaqwcW_s-AK0YP_m5agg2fZRV_zo'}
+               'Authorization': 'Bearer ' + cybex_token}
     data = {'org_hash': org_hash, 'return_type': return_type}
     data = json.dumps(data)
     url = "https://cybex-api.cse.unr.edu:5000/org/info"
@@ -73,9 +74,10 @@ def org_add_remove(user,org_hash,users,list_type,action):
         JSON response from backend CYBEX API.
     
     """
-    user_token = user.profile.cybex_token
+    # user_token = user.profile.cybex_token
+    cybex_token = settings.CYBEX_TOKEN
     headers = {'content-type': 'application/json',
-               'Authorization': 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWJfdHlwZSI6ImN5YmV4cF91c2VyIiwiX2hhc2giOiJkMjMwZjU0Y2IxYzc3MmMwNWFiZmE1MGYxN2U2NGYxNmI2YTg4NGM5MTRmMDEyMjIyM2ZlOWRkYzk4ZGMyOTQxIiwianRpIjoiMzc0N2Q4NzctOTY2MC00NzhjLWEzNDAtZjYzMmRmNWQwNjM4In0.GM3nFOCg_JRZqqABaqwcW_s-AK0YP_m5agg2fZRV_zo'}
+               'Authorization': 'Bearer ' + cybex_token}
     if action == "add":
         data = {'org_hash': org_hash, 'user': users, "add_to": list_type}
         url = "https://cybex-api.cse.unr.edu:5000/org/add/user"

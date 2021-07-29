@@ -26,6 +26,7 @@ SECRET_KEY = os.getenv('SECRET_KEY','9143289qrweqiuystupiddevkeyqweri32123412341
 WHOIS_KEY = os.getenv('WHOIS_KEY','')
 SHODAN_KEY = os.getenv('SHODAN_KEY','')
 TAHOE_KEY = os.getenv('TAHOE_KEY','')
+CYBEX_TOKEN = os.getenv('CYBEX_TOKEN','')
 DEBUG = True # Use False for deployment
 USE_MYSQL = False
 
