@@ -15,7 +15,7 @@
     "@tippyjs/react": "^4.2.5",
     "@types/styled-components": "^5.1.4",
     "@wojtekmaj/react-daterange-picker": "^3.1.0",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "bootstrap": "^4.3.1",
     "browserslist": "^4.14.5",
     "deck.gl": "^8.4.13",
