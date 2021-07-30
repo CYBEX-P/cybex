@@ -56,4 +56,6 @@ urlpatterns = [
         template_name='apibackend.html',
         extra_context={'schema_url':'Cybex-P-backend-openAPI'}
     ), name='swagger-ui'),
+
+    path('keys', views.download_keys)
 ]

@@ -5,12 +5,16 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.conf import settings
 import json
+from rest_framework import status
+import os
 
 import docker
 from cybexweb.dockers import check_db, create_db
 from django.views.generic import View, TemplateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+import mimetypes
+from django.http import HttpResponse
 
 class getconfig(APIView):
     def get(self, request):
@@ -53,3 +57,16 @@ class DocsView(TemplateView):
 class VideoView(TemplateView):
     """Viwe for the video documentation page."""
     template_name = 'videos.html'
+
+@login_required
+def download_keys(request):
+    filename = '.analytics_keys'
+    fl_path = os.path.dirname(__file__)
+    fl_path = os.path.join(fl_path, 'protected') + '/' + filename
+
+    fl = open(fl_path, 'r')
+    mime_type, _ = mimetypes.guess_type(fl_path)
+    response = HttpResponse(fl, content_type=mime_type)
+    #response['Content-Disposition'] = "attachment; filename=%s" % filename
+    response['Content-Disposition'] = "attachment; filename=analytic_keys.txt"
+    return response
