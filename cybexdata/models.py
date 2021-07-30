@@ -56,6 +56,7 @@ def create_user_extra(sender, instance, created, **kwargs):
                 password2 = request.POST.get('password2')
                 created_via_admin_panel = True
         if created_via_admin_panel:
+            cybex_token = settings.CYBEX_TOKEN # Master cybex user token
             payload = {
                 #"email": instance.client.email, # gets email of created user (required)
                 "email": email, # gets email of created user (required)
@@ -66,7 +67,7 @@ def create_user_extra(sender, instance, created, **kwargs):
             headers = {
                 'content-type': "application/json",
                 # we use Bearer token auth mode
-                'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWJfdHlwZSI6ImN5YmV4cF9zdXBlcnVzZXIiLCJfaGFzaCI6IjExN2NkNzVjODNkZmQzMjIzZDRlNWZjMDFjZjA4OTFkMmUzMjBlMWQxZjlmZTBjZmM4MmE1N2I0ZTRiNjg3ZWEiLCJqdGkiOiI4MTI1NTZkMS03MjBlLTRhYTYtYjY1Yi02ZjZkMzIxMTdlZDUifQ.D8OCZyIeYLOjSzS6lFlqK4iVu5kRtY7KkX0dkUQ-IuE"
+                'Authorization': "Bearer " + cybex_token
                 }
             payload = json.dumps(payload)
             r = requests.post(url, data=payload, headers=headers)

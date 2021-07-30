@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SECRET_KEY','9143289qrweqiuystupiddevkeyqweri3212341234124oiuy1234')
 WHOIS_KEY = os.getenv('WHOIS_KEY','')
 SHODAN_KEY = os.getenv('SHODAN_KEY','')
-TAHOE_KEY = os.getenv('TAHOE_KEY','')
+CYBEX_TOKEN = os.getenv('CYBEX_TOKEN','')
 DEBUG = False # Use False for deployment
 USE_MYSQL = False
 
