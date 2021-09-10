@@ -36,7 +36,7 @@ shodan==1.23.0
 six==1.15.0
 Sphinx==3.5.3
 sphinx-rtd-theme==0.5.1
-sqlparse==0.4.1
+sqlparse==0.4.2
 toml==0.10.1
 urllib3
 wcwidth==0.2.4
