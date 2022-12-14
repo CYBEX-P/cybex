@@ -13,7 +13,7 @@
   "dependencies": {
     "@nivo/core": "^0.69.0",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "mysql": "^2.18.1",
     "nivo": "^0.31.0"
   },
